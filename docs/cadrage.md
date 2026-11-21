@@ -100,3 +100,12 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Exclure du MVP l'historique exhaustif des coups, l'analyse stratégique automatisée et les recommandations tactiques détaillées.
 - Garantir un retour lisible en français et en anglais, accessible au clavier et sur smartphone.
 - Enregistrer le résultat une seule fois pour éviter les doublons statistiques après fermeture, reprise ou rafraîchissement de l'écran final.
+
+## Comptabilisation des abandons — décision du 21 novembre 2026
+- **Option B validée : l'abandon volontaire est comptabilisé séparément** des victoires et des défaites définies par les règles.
+- Indicateurs par jeu : victoires, défaites, abandons, et total des parties closes ; distinguer les parties achevées normalement des parties abandonnées.
+- Le taux de victoire est calculé sur les parties ayant abouti normalement à une victoire ou une défaite : victoires / (victoires + défaites). Afficher « — » lorsqu'aucune partie n'a abouti normalement.
+- Une demande volontaire d'abandon exige une confirmation ; une interruption involontaire, un simple retour au catalogue ou la fermeture de l'application ne constituent **pas** un abandon.
+- Lorsqu'une nouvelle partie remplace une partie active après confirmation, l'ancienne est enregistrée comme abandon, une seule fois. En revanche, une partie de tutoriel n'alimente aucune statistique ordinaire.
+- Les compteurs sont indépendants des sauvegardes actives et persistent après remplacement. Les mises à jour doivent être atomiques et idempotentes pour éviter un double comptage.
+- L'écran de bilan immersif de victoire/défaite n'est pas déclenché par un abandon ; une confirmation d'abandon suivie d'un retour adapté suffit.
