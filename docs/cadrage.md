@@ -169,3 +169,10 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les aspects non explicitement rapportés (utilisation du nom, plateformes Web/Android, pays de diffusion, crédits, durée, contenus originaux réutilisés) restent à documenter à partir de la réponse de l'auteur ; ne pas supposer qu'ils sont tous couverts.
 - Le travail de cadrage et le développement peuvent avancer sur la base de cet accord déclaré, avec une vérification documentaire avant publication publique.
 - Les règles officielles Classic 1.1.0 et leurs cas limites restent à valider avant de déclarer le jeu fidèle et jouable.
+
+## Configuration du jeu Classic — décision du 22 novembre 2026
+- **Option A validée : réserve facultative désactivée pour le MVP** de Clear the Dungeon.
+- Une seule configuration initiale, basée sur les règles Classic 1.1.0 ; aucune sélection de variante avant la partie en V1.
+- Les cartes de dégâts ne sont donc pas rejouables via la mécanique de réserve facultative. Les règles normales de défausse, de dégâts et de défaite continuent de s'appliquer.
+- Ne pas confondre la désactivation de cette option avec la suppression de la pile de dégâts, des jokers, ni avec l'utilisation du mode Advanced 1.2.0.
+- Étude des cas limites : [matrice de conformité des règles](../_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md).

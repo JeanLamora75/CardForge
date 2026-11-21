@@ -115,3 +115,9 @@ Passer à John après :
 4. Rédaction d'une matrice de tests de conformité à partir des règles vérifiées.
 
 **État :** cadrage documentaire initial terminé ; conformité complète et droits de publication non encore validés.
+
+## Décision complémentaire — réserve facultative (22 novembre 2026)
+- **Option A approuvée : aucune réserve facultative activée dans le MVP** de CardForge.
+- Le moteur ne doit autoriser aucun prélèvement de carte dans la pile de dégâts par l'effet de cette option. La pile et le seuil de défaite demeurent applicables.
+- Cette décision constitue une configuration de Classic 1.1.0 et n'autorise pas à inventer d'autres variantes.
+- Les scénarios et questions ouverts sont consignés dans [la matrice de conformité](./clear-the-dungeon-rule-test-matrix.md).

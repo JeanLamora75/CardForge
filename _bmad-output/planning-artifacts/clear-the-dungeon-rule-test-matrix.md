@@ -1,0 +1,77 @@
+# Clear the Dungeon — matrice initiale de conformité aux règles
+
+**Auteur BMAD :** Mary (analyse métier)  
+**Date :** 22 novembre 2026  
+**Référence de travail :** Classic 1.1.0, sans réserve facultative, avec les deux jokers  
+**Statut :** matrice de spécification **à confirmer sur la source primaire intégrale**, pas une preuve de conformité ni un jeu déjà testé.
+
+## Règles de référence et statut
+
+| ID | Règle ou décision | Statut |
+| --- | --- | --- |
+| C-01 | Un paquet classique contient 52 cartes et deux jokers ; les 12 figures J/Q/K représentent les monstres. | Documenté |
+| C-02 | Quatre colonnes de trois figures ; révélation progressive des ennemis. | Documenté ; détails de révélation à vérifier |
+| C-03 | Les 40 cartes A–10 plus deux jokers alimentent le jeu. | Documenté |
+| C-04 | Une main de trois cartes pour former les attaques. | Documenté ; séquences de jeu à confirmer |
+| C-05 | Valeur de résistance des figures : J=11, Q=12, K=13. | Documenté |
+| C-06 | Une attaque requiert deux cartes dont la **somme est supérieure ou égale** à la résistance. | Documenté |
+| C-07 | Une troisième carte déclenche l'attaque avec une enseigne identique à celle du monstre. | Documenté |
+| C-08 | Le joker vaut 10 et peut être de l'enseigne requise. | Documenté ; contraintes de combinaison à détailler |
+| C-09 | Sept cartes dans la pile de dégâts entraînent une défaite selon la règle retenue. | Documenté ; ordre d'évaluation exact à confirmer |
+| C-10 | Gagner signifie éliminer les 12 monstres. | Documenté |
+| C-11 | **Réserve facultative désactivée** pour CardForge V1. | Décision utilisateur validée |
+| C-12 | Advanced 1.2.0 et les autres modifications de difficulté ne font pas partie du MVP. | Décision de périmètre |
+| C-13 | Habillage original : quatre factions, personnages illustrés fixes, puissance lisible. Aucun pouvoir nouveau. | Décision de présentation |
+
+## Scénarios déterministes — contrats de tests à prévoir
+
+Tous les exemples qui suivent sont **conceptuels**. Ils servent à préciser les règles, pas à annoncer des tests exécutés.
+
+| Test | Précondition | Action | Résultat attendu | Statut |
+| --- | --- | --- | --- | --- |
+| T-01 | Monstre J (11), cartes 5 et 6, déclencheur de même enseigne | Attaquer | Attaque admissible à 11 | Spécifié |
+| T-02 | Monstre J (11), cartes 8 et 6, déclencheur de même enseigne | Attaquer | Attaque admissible à 14 : **pas** d'égalité stricte | Spécifié |
+| T-03 | Monstre J (11), cartes 5 et 5, déclencheur correct | Attaquer | Insuffisant, ennemi non vaincu | Spécifié |
+| T-04 | Monstre Q (12), cartes 6 et 6, déclencheur d'une autre enseigne | Attaquer | Attaque non admissible | Spécifié |
+| T-05 | Monstre Q (12), cartes 6 et 6, déclencheur de bonne enseigne | Attaquer | Attaque admissible | Spécifié |
+| T-06 | Monstre K (13), cartes 6 et 7, déclencheur correct | Attaquer | Attaque admissible | Spécifié |
+| T-07 | Monstre J, cartes 1 (As) et 10, déclencheur correct | Attaquer | Attaque admissible si As=1 | Spécifié ; confirmer As |
+| T-08 | Monstre J, deux valeurs suffisantes et joker déclencheur | Attaquer | Attaque admissible si le joker tient l'enseigne requise | Spécifié |
+| T-09 | Main contenant un joker comme carte de puissance | Attaquer | Valeur joker 10, respecter les contraintes du jeu | À préciser |
+| T-10 | Pioche initiale | Distribuer la mise en place | Douze figures en quatre colonnes, paquet de puissance de 42 cartes, aucune carte créée/perdue | Spécifié |
+| T-11 | Un monstre accessible est vaincu, un autre est caché sous lui | Finaliser l'attaque | Révélation du monstre suivant et mouvement des cartes conforme à la règle | À préciser |
+| T-12 | Pile de dégâts à 6 cartes | Ajouter une carte de dégâts | Défaite au seuil de 7 selon l'ordre officiel de résolution | À préciser |
+| T-13 | Pile de dégâts non vide, réserve désactivée | Tenter de jouer son sommet | Action impossible dans le MVP | Validé par décision |
+| T-14 | Onzième monstre vaincu, un dernier encore présent | Jouer une attaque valide | Pas de victoire prématurée | Spécifié |
+| T-15 | Douzième monstre vaincu | Finaliser | Victoire définitive, un seul résultat enregistré | Spécifié |
+| T-16 | La pioche est épuisée avec des cartes restantes en main | Continuer les actions | Ne pas déclarer de fin sans appliquer la condition exacte de la règle | À préciser |
+| T-17 | Parties et cartes avec état de pioche ordonné | Sauvegarder et reprendre | Ordre de pioche et état inchangés, aucun nouveau mélange | Décision transverse |
+| T-18 | Partie active et « Nouvelle partie » confirmé | Remplacer | L'ancienne partie compte comme **un** abandon, les autres jeux sont intacts | Décision transverse |
+| T-19 | Une attaque déjà conclue | Rafraîchir l'interface | Aucun double retrait de cartes ni double comptage du résultat | Décision transverse |
+| T-20 | Même carte interne, habillage Fantasy | Calculer une attaque | Résultat identique avec ou sans illustrations | Décision transverse |
+
+## Questions métier bloquantes avant de coder le moteur complet
+
+1. Ordre exact des phases : distribution, manipulation des cartes, déclaration d'une attaque, élimination et réapprovisionnement.
+2. Possibilité de répartir les cartes de la main entre plusieurs ennemis, et gestion de cartes déjà posées.
+3. Détails de consommation et défausse après une attaque, et fonctionnement de la pile de dégâts lorsque la réserve est désactivée.
+4. Cas limites avec joker (carte de puissance, déclencheur, plusieurs jokers et règles de disponibilité).
+5. Détermination exacte de l'échec sur la pile de dégâts, de l'épuisement de pioche et d'une éventuelle absence d'actions.
+6. Critères de score officiel, si présent, distincts des statistiques transversales de CardForge.
+
+Les points « à préciser » doivent être tranchés par le texte original ou par clarification de l'auteur, **pas par invention produit**.
+
+## Critères de sortie pour John / Winston / Amelia
+
+- Version primaire des règles intégralement consultée et référencée.
+- Toute ambiguïté résolue, exemples de test réconciliés avec la source.
+- Transitions de jeu décrites comme états et événements sans dépendance à l'interface graphique.
+- Les règles retenues restent Classic 1.1.0, sans réserve ; les autres modes sont exclus du MVP.
+- Une suite de tests exécutés couvrira ultérieurement les cas normaux et limites. Ce document seul ne valide aucune implémentation.
+
+## Références
+
+- [Étude initiale Mary — règles, versions et droits](./clear-the-dungeon-rules-rights-study.md).
+- [Cadrage produit de CardForge](../../docs/cadrage.md).
+- [Présentation des règles Clear the Dungeon](https://giftsforcardplayers.com/clear-the-dungeon-a-solo-card-game/).
+- [Publication des règles sur BoardGameGeek](https://boardgamegeek.com/thread/3392258/clear-the-dungeon-complete-rule-book).
