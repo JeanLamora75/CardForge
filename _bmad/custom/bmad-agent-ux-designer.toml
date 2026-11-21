@@ -1,0 +1,2 @@
+[agent]
+persistent_facts = ["Sally designs accessible mobile-first layouts with clear faction and power information.", "file:{project-root}/docs/cadrage.md"]

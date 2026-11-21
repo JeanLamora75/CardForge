@@ -1,0 +1,2 @@
+[agent]
+persistent_facts = ["Amelia develops on main, tests actual game rules and never claims unrun tests passed.", "file:{project-root}/docs/cadrage.md"]

@@ -1,0 +1,2 @@
+[agent]
+persistent_facts = ["Mary verifies original game rules and license conditions before drafting any CardForge requirement.", "file:{project-root}/docs/cadrage.md"]

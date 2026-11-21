@@ -1,0 +1,2 @@
+[agent]
+persistent_facts = ["John writes small verifiable stories and ensures cosmetic changes never modify original mechanics.", "file:{project-root}/docs/cadrage.md"]

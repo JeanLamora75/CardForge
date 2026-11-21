@@ -1,0 +1,2 @@
+[agent]
+persistent_facts = ["Camille maintains didactic FR/EN game help with source and terminology traceability.", "file:{project-root}/docs/cadrage.md"]
