@@ -141,3 +141,15 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Prévoir une structure de stockage versionnée et des migrations locales testées, sans pour autant ajouter de mécanisme d'export.
 - La suppression volontaire des données et son périmètre restent à préciser dans les paramètres de l'application.
 - La possibilité d'un export/import ultérieur reste une évolution non retenue pour le MVP.
+
+## Paramètres de l'application — décision du 21 novembre 2026
+- **Option B validée : paramètres complets mais simples**, disponibles depuis l'icône commune de navigation.
+- Langue de l'interface : français et anglais au lancement, avec prise en charge d'autres langues envisageable ultérieurement.
+- Réglages sonores distincts : musique et effets sonores activables/désactivables indépendamment. L'existence des pistes musicales reste à confirmer au moment de la production.
+- Animations : possibilité de les réduire ou désactiver ; respecter les préférences de réduction des mouvements du système.
+- Aides : les indices/contextes et assistances facultatives peuvent être désactivés, sans masquer l'accès aux règles ni au tutoriel.
+- Accessibilité : lisibilité des cartes, contraste, libellés accessibles, navigation clavier et alternatives aux signaux uniquement sonores ou colorés. Les options concrètes seront précisées par Sally.
+- Gestion des données locales : informer sur la nature des données et proposer leur suppression volontaire avec confirmation explicite ; aucun export/import ni cloud dans le MVP.
+- Informations : version de l'application, crédits des créations originales, licences et droits de tiers vérifiés.
+- Sauvegarder les préférences localement, sans compte et sans modifier la mécanique des jeux.
+- Pas de réglages avancés spécifiques à chaque jeu dans le MVP, sauf nécessité indispensable à son accessibilité.
