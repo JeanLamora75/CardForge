@@ -78,3 +78,14 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Le remplacement ne touche jamais aux parties sauvegardées des autres jeux de CardForge.
 - Une partie terminée ne déclenche pas cette confirmation de perte d'une partie en cours ; ses résultats/statistiques éventuels sont gérés indépendamment.
 - Une seule sauvegarde active par jeu dans le MVP ; aucune sauvegarde secondaire implicite.
+
+## Statistiques et progression — décision du 21 novembre 2026
+- **Option B validée : statistiques simples par jeu**, stockées localement, sans compte ni service distant.
+- Indicateurs communs : nombre de parties terminées, victoires, défaites et taux de victoire (sur les seules parties terminées).
+- Indicateur de meilleure performance uniquement si la règle du jeu permet une mesure pertinente et reproductible ; sinon, ne pas en inventer.
+- Une partie reprise n'est pas comptée une seconde fois ; les parties en cours ne sont pas incluses dans les victoires/défaites.
+- Le tutoriel ne doit pas fausser les statistiques de parties ordinaires.
+- Les abandons doivent être distingués explicitement ; leur traitement statistique précis est à spécifier avant implémentation.
+- Les statistiques survivent à la création d'une nouvelle partie et ne sont pas effacées avec la sauvegarde de la partie active.
+- Pas de trophées, série de récompenses, défis quotidiens, classement en ligne ni progression influençant les règles dans le MVP.
+- Les données restent sur le navigateur/appareil ; une suppression des données locales peut les effacer.
