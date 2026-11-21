@@ -50,3 +50,12 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les illustrations sont des ressources de présentation, séparées du moteur de règles pour permettre de futures évolutions sans changement de mécanique.
 - Les illustrations fixes ne doivent pas introduire de capacités nouvelles ou changer les règles originales.
 - Les éventuelles variantes d'apparence sont reportées à une étude ultérieure.
+
+## Apprentissage par jeu — décision du 21 novembre 2026
+- **Option B validée : tutoriel proposé mais facultatif** au premier lancement de chaque jeu.
+- Au premier démarrage, proposer clairement « Apprendre à jouer » et « Jouer directement » ; aucun blocage de l'accès à une partie libre.
+- Le tutoriel reste accessible à tout moment depuis l'aide du jeu et peut être rejoué.
+- Chaque jeu dispose d'un scénario pédagogique propre à ses règles, avec des composants d'interface réutilisables au niveau CardForge.
+- La préférence de premier lancement est enregistrée localement par jeu et ne nécessite ni compte ni connexion.
+- Les scénarios pédagogiques expliquent les règles officielles sans les altérer ; une situation préparée pour enseigner est clairement identifiée comme tutoriel et non comme une partie ordinaire.
+- Les deux parcours restent accessibles aux personnes utilisant le tactile, le clavier ou des technologies d'assistance.
