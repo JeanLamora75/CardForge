@@ -59,3 +59,13 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - La préférence de premier lancement est enregistrée localement par jeu et ne nécessite ni compte ni connexion.
 - Les scénarios pédagogiques expliquent les règles officielles sans les altérer ; une situation préparée pour enseigner est clairement identifiée comme tutoriel et non comme une partie ordinaire.
 - Les deux parcours restent accessibles aux personnes utilisant le tactile, le clavier ou des technologies d'assistance.
+
+## Sauvegarde et reprise des parties — décision du 21 novembre 2026
+- **Option B validée : sauvegarde automatique et reprise** pour chaque jeu.
+- Enregistrer automatiquement et localement une partie après chaque action de jeu validée, sans bouton de sauvegarde manuel.
+- Conserver **une partie en cours par jeu** : interrompre Clear the Dungeon puis jouer à Gridcannon ne doit pas effacer la progression de Clear the Dungeon.
+- À la réouverture du jeu, proposer la reprise de la partie exactement dans l'état où elle était (plateau, main, pioche dans son ordre exact, défausse, phase de jeu, états et effets éventuels).
+- Aucune recomposition aléatoire lors de la reprise : les règles et probabilités restent inchangées.
+- Les sauvegardes sont versionnées et leurs données doivent être vérifiées avant restauration ; prévoir une gestion explicite d'une sauvegarde corrompue ou devenue incompatible.
+- Tout abandon ou remplacement de la partie en cours nécessite une confirmation claire du joueur ; le comportement précis de « Nouvelle partie » reste à cadrer.
+- Pas de compte ni de synchronisation cloud en MVP ; les sauvegardes sont locales à l'appareil/navigateur et peuvent disparaître si ses données sont effacées.
