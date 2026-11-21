@@ -4,6 +4,16 @@
 **Statut :** analyse documentaire vérifiée, pas une autorisation de publication  
 **Usage :** étude BMAD préparatoire au PRD et aux tests du moteur de jeu
 
+## Mise à jour des droits — 22 novembre 2026
+
+**Information fournie directement par le porteur de CardForge :** Mark S. Ball a donné son accord pour l'adaptation de Clear the Dungeon **tant que le jeu reste gratuit**.
+
+- Statut : **accord déclaré**, non vérifié indépendamment (copie de l'échange et formulation précise non consultées).
+- Contraintes de CardForge : le jeu doit rester gratuit ; ne prévoir ni paiement ni achat intégré, et maintenir l'absence de publicité prévue pour la V1. Toute monétisation ultérieure requiert une nouvelle vérification et, si nécessaire, un accord complémentaire.
+- Périmètre à documenter avant la publication : usage du nom Clear the Dungeon, adaptation graphique avec illustrations inédites, diffusion Web et Android, territoires, attribution, durée et éventuelles autres conditions.
+- Cette déclaration permet de faire avancer le cadrage et le développement, sans remplacer la vérification du périmètre exact des droits avant publication.
+- Les mentions antérieures de « droits non clarifiés » ci-dessous décrivent **l'état au moment de la recherche initiale**, avant cette déclaration, et ne doivent pas être interprétées comme le statut actuel.
+
 ## Synthèse
 
 - Auteur identifié : **Mark S. Ball**.
