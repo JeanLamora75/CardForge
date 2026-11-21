@@ -26,3 +26,10 @@ Flammes, Givre, Nature, Lumière. La correspondance avec les quatre enseignes lo
 
 ## Périmètre du socle initial
 Catalogue responsive + modèle de paquet standard + mélange déterministe testable. Aucun jeu n'est simulé ni présenté comme jouable.
+
+## Public cible — décision du 21 novembre 2026
+- **Option C validée :** grand public et amateurs de stratégie, avec une prise en main accessible et une profondeur tactique préservée.
+- La progression concerne l'apprentissage : tutoriel interactif, explications contextuelles, visibilité des actions autorisées et aides facultatives.
+- **Aucune simplification automatique des règles originales :** un mode d'apprentissage ne change ni les cartes, ni les probabilités, ni les conditions de victoire/défaite.
+- Les défis additionnels et variantes de difficulté ne font pas partie du périmètre initial ; ils nécessiteraient un cadrage distinct et un étiquetage explicite comme variantes.
+- Les aides doivent pouvoir être désactivées pour les joueurs expérimentés.
