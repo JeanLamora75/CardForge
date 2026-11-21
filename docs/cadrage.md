@@ -120,3 +120,14 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - La présentation est mobile-first, accessible au clavier, compatible avec les préférences de réduction des animations, et ne repose pas exclusivement sur des illustrations.
 - Les illustrations et les textes narratifs enrichissent l'immersion sans modifier les règles d'origine.
 - Aucune fonction de suivi publicitaire, de personnalisation commerciale ou d'achat n'est intégrée au MVP.
+
+## Navigation générale — décision du 21 novembre 2026
+- **Option B validée : navigation contextuelle**, sans barre de navigation permanente.
+- Le catalogue immersif est l'accueil principal de CardForge.
+- Chaque fiche de jeu centralise les actions de ce jeu : Jouer / Nouvelle partie, Reprendre (si sauvegarde), Règles, Statistiques et tutoriel facultatif.
+- Pendant une partie, conserver le maximum d'espace pour le plateau et les cartes ; les actions de navigation et d'aide sont discrètes, accessibles et cohérentes entre jeux.
+- Un retour au catalogue n'abandonne ni ne supprime la partie : la sauvegarde automatique demeure disponible.
+- Les paramètres globaux sont accessibles depuis une icône commune ; les options propres au jeu sont regroupées dans son contexte.
+- Un retour explicite et prévisible (mobile et clavier) est disponible sur les fiches, écrans de règles, statistiques et plateaux.
+- L'interface reste accessible sans reposer exclusivement sur des icônes non libellées ; les éléments interactifs sont utilisables au tactile et au clavier.
+- Les actions destructives (abandon, remplacement de partie) conservent les confirmations déjà validées.
