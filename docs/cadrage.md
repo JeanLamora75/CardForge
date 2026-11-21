@@ -131,3 +131,13 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Un retour explicite et prévisible (mobile et clavier) est disponible sur les fiches, écrans de règles, statistiques et plateaux.
 - L'interface reste accessible sans reposer exclusivement sur des icônes non libellées ; les éléments interactifs sont utilisables au tactile et au clavier.
 - Les actions destructives (abandon, remplacement de partie) conservent les confirmations déjà validées.
+
+## Gestion des données locales — décision du 21 novembre 2026
+- **Option A validée : données locales uniquement dans le MVP**.
+- Les sauvegardes des parties, statistiques et préférences restent sur l'appareil ou dans le navigateur utilisé, sans compte utilisateur et sans serveur de synchronisation.
+- Aucun export/import manuel ni synchronisation cloud ou multi-appareils dans la V1.
+- La fermeture ou la mise en arrière-plan de l'application ne doit pas supprimer volontairement les données persistantes ; la reprise utilise les sauvegardes locales existantes.
+- Signaler clairement au joueur qu'une désinstallation, un effacement des données du navigateur ou une réinitialisation de l'appareil peut entraîner une perte définitive des sauvegardes et statistiques.
+- Prévoir une structure de stockage versionnée et des migrations locales testées, sans pour autant ajouter de mécanisme d'export.
+- La suppression volontaire des données et son périmètre restent à préciser dans les paramètres de l'application.
+- La possibilité d'un export/import ultérieur reste une évolution non retenue pour le MVP.
