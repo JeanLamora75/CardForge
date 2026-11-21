@@ -1,0 +1,76 @@
+name: Complete BMAD assets from SMN reference
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bmad-install.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout CardForge
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 1
+
+      - name: Download pinned BMAD reference files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/JeanLamora75/SMN.git /tmp/cardforge-bmad-reference
+          cd /tmp/cardforge-bmad-reference
+          git sparse-checkout set .agents/skills _bmad
+          git fetch --depth 1 origin dd1743e825d138e999e8ab775482b8d9024bdd05
+          git checkout --detach dd1743e825d138e999e8ab775482b8d9024bdd05
+
+      - name: Import complete skill library and BMAD resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync -a /tmp/cardforge-bmad-reference/.agents/skills/ .agents/skills/
+          rsync -a \
+            --exclude='scripts/' \
+            --exclude='custom/' \
+            --exclude='config.toml' \
+            --exclude='bmm/config.yaml' \
+            --exclude='core/config.yaml' \
+            --exclude='_config/manifest.yaml' \
+            /tmp/cardforge-bmad-reference/_bmad/ _bmad/
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          for p in Path(".agents/skills").rglob("SKILL.md"):
+              text = p.read_text(encoding="utf-8")
+              text = re.sub(r"Run: `uv run \{project-root\}/_bmad/scripts/resolve_customization\.py[^`]*`", "Resolve the customization by reading skill customize.toml, then project _bmad/custom overrides; do not run uv.", text)
+              text = re.sub(r"Run `uv run \{project-root\}/_bmad/scripts/resolve_config\.py[^`]*`", "Read project _bmad/config.toml and _bmad/custom/config.toml directly; do not run uv.", text)
+              p.write_text(text, encoding="utf-8")
+          PY
+          grep -q 'project_name = "CardForge"' _bmad/config.toml
+          grep -q 'project_name: CardForge' _bmad/bmm/config.yaml
+          test -f .agents/skills/bmad-agent-analyst/SKILL.md
+          test -f .agents/skills/bmad-prd/SKILL.md
+          test -f .agents/skills/bmod-tea/SKILL.md
+          test -f .agents/skills/bmad-agent-qa/SKILL.md
+          test -f _bmad-output/planning-artifacts/README.md
+          echo "BMAD assets synchronized without running uv"
+
+      - name: Commit assets on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .agents/skills _bmad
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore(bmad): complete BMAD 6 reference skill library"
+            git push origin HEAD:main
+          fi
