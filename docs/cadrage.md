@@ -33,3 +33,12 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - **Aucune simplification automatique des règles originales :** un mode d'apprentissage ne change ni les cartes, ni les probabilités, ni les conditions de victoire/défaite.
 - Les défis additionnels et variantes de difficulté ne font pas partie du périmètre initial ; ils nécessiteraient un cadrage distinct et un étiquetage explicite comme variantes.
 - Les aides doivent pouvoir être désactivées pour les joueurs expérimentés.
+
+## Direction artistique des cartes — décision du 21 novembre 2026
+- **Option B validée : une famille de personnages par faction**, avec variantes visuelles selon les puissances.
+- Chaque faction doit être reconnaissable par sa silhouette, son emblème, sa palette et ses conventions d'illustration, et non par la couleur seule.
+- Les valeurs numériques et les symboles de faction restent lisibles à taille mobile, en dehors des illustrations.
+- Une carte conserve un identifiant logique stable ; le nom du personnage, l'illustration, la faction affichée et la puissance affichée sont une couche de présentation.
+- Aucune capacité additionnelle ou modification des mécanismes n'est déduite des illustrations.
+- Les quatre factions proposées (Flammes, Givre, Nature, Lumière) restent provisoires, en attente d'une validation artistique détaillée.
+- Prévoir des gabarits de cartes, états interactifs et variantes d'actifs réutilisables pour limiter les coûts de production graphique.
