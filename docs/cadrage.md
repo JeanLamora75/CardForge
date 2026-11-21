@@ -42,3 +42,11 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Aucune capacité additionnelle ou modification des mécanismes n'est déduite des illustrations.
 - Les quatre factions proposées (Flammes, Givre, Nature, Lumière) restent provisoires, en attente d'une validation artistique détaillée.
 - Prévoir des gabarits de cartes, états interactifs et variantes d'actifs réutilisables pour limiter les coûts de production graphique.
+
+## Personnalisation des cartes — décision du 21 novembre 2026
+- **Option A validée : illustrations fixes** pour les cartes de chaque jeu dans le MVP.
+- Une carte logique présente une illustration, un nom, une faction (ou son équivalent propre à l'univers du jeu) et une puissance stable.
+- Aucun choix de skin, déblocage cosmétique, collection de variantes ou personnalisation avancée n'est prévu en V1.
+- Les illustrations sont des ressources de présentation, séparées du moteur de règles pour permettre de futures évolutions sans changement de mécanique.
+- Les illustrations fixes ne doivent pas introduire de capacités nouvelles ou changer les règles originales.
+- Les éventuelles variantes d'apparence sont reportées à une étude ultérieure.
