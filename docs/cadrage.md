@@ -153,3 +153,11 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Informations : version de l'application, crédits des créations originales, licences et droits de tiers vérifiés.
 - Sauvegarder les préférences localement, sans compte et sans modifier la mécanique des jeux.
 - Pas de réglages avancés spécifiques à chaque jeu dans le MVP, sauf nécessité indispensable à son accessibilité.
+
+## Étude Mary — règles et droits de Clear the Dungeon (21 novembre 2026)
+- Rapport BMAD : [Étude Clear the Dungeon](../_bmad-output/planning-artifacts/clear-the-dungeon-rules-rights-study.md).
+- **Version de travail : Clear the Dungeon Classic 1.1.0** (mise à jour attribuée à l'auteur au 23 octobre 2024). Advanced 1.2.0 est une variante distincte, non retenue automatiquement.
+- Correction de règle : les deux premières cartes d'attaque doivent totaliser **au moins** la résistance du monstre ; la troisième correspond à son enseigne. Ne pas coder une égalité stricte.
+- Les règles publiées mentionnent un seuil de sept cartes dans la pile de dégâts ; une réserve jouable est facultative. Les interactions de ces règles et les cas limites d'épuisement du paquet nécessitent encore une formalisation.
+- **Point juridique non levé :** les documents portent une mention CC BY-NC-ND 4.0 et n'autorisent pas par eux-mêmes la diffusion d'adaptations de leurs éléments protégés ; l'accord accordé à une autre adaptation (PySolFC) n'est pas transférable. Clarifier les autorisations avant toute publication sous le nom du jeu ou réutilisation de contenu protégé.
+- Les primitives techniques génériques de CardForge peuvent continuer à évoluer indépendamment de cette clarification.
