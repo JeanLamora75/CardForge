@@ -69,3 +69,12 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les sauvegardes sont versionnées et leurs données doivent être vérifiées avant restauration ; prévoir une gestion explicite d'une sauvegarde corrompue ou devenue incompatible.
 - Tout abandon ou remplacement de la partie en cours nécessite une confirmation claire du joueur ; le comportement précis de « Nouvelle partie » reste à cadrer.
 - Pas de compte ni de synchronisation cloud en MVP ; les sauvegardes sont locales à l'appareil/navigateur et peuvent disparaître si ses données sont effacées.
+
+## Création d'une nouvelle partie — décision du 21 novembre 2026
+- **Option B validée : confirmation avant remplacement** si une partie non terminée est déjà sauvegardée pour le jeu.
+- Proposer explicitement les choix « Reprendre la partie » et « Nouvelle partie » lors du retour sur un jeu avec une partie active.
+- Une demande de nouvelle partie affiche une confirmation indiquant que l'ancienne progression de ce jeu sera perdue ; « Annuler » préserve intégralement la sauvegarde.
+- Le remplacement n'est effectué **qu'après confirmation**, de manière atomique : la nouvelle partie est créée puis sauvegardée sans laisser un état partiellement initialisé.
+- Le remplacement ne touche jamais aux parties sauvegardées des autres jeux de CardForge.
+- Une partie terminée ne déclenche pas cette confirmation de perte d'une partie en cours ; ses résultats/statistiques éventuels sont gérés indépendamment.
+- Une seule sauvegarde active par jeu dans le MVP ; aucune sauvegarde secondaire implicite.
