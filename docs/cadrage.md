@@ -161,3 +161,11 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les règles publiées mentionnent un seuil de sept cartes dans la pile de dégâts ; une réserve jouable est facultative. Les interactions de ces règles et les cas limites d'épuisement du paquet nécessitent encore une formalisation.
 - **Point juridique non levé :** les documents portent une mention CC BY-NC-ND 4.0 et n'autorisent pas par eux-mêmes la diffusion d'adaptations de leurs éléments protégés ; l'accord accordé à une autre adaptation (PySolFC) n'est pas transférable. Clarifier les autorisations avant toute publication sous le nom du jeu ou réutilisation de contenu protégé.
 - Les primitives techniques génériques de CardForge peuvent continuer à évoluer indépendamment de cette clarification.
+
+## Accord de l'auteur pour Clear the Dungeon — déclaré le 22 novembre 2026
+- Le porteur du projet indique avoir reçu **l'accord de Mark S. Ball** pour une adaptation de Clear the Dungeon, **à condition que le jeu reste gratuit**.
+- **Statut : accord déclaré par le porteur du projet ; justificatif et formulation exacte non consultés.** Ne pas présenter cette information comme une autorisation écrite indépendante vérifiée.
+- **Contrainte produit obligatoire pour cette adaptation : gratuité intégrale**. CardForge V1 est déjà défini comme gratuit, sans publicité ni achats intégrés ; tout changement ultérieur du modèle économique du jeu nécessite de réexaminer et clarifier l'accord avant diffusion.
+- Les aspects non explicitement rapportés (utilisation du nom, plateformes Web/Android, pays de diffusion, crédits, durée, contenus originaux réutilisés) restent à documenter à partir de la réponse de l'auteur ; ne pas supposer qu'ils sont tous couverts.
+- Le travail de cadrage et le développement peuvent avancer sur la base de cet accord déclaré, avec une vérification documentaire avant publication publique.
+- Les règles officielles Classic 1.1.0 et leurs cas limites restent à valider avant de déclarer le jeu fidèle et jouable.
