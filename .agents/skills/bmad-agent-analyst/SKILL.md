@@ -20,7 +20,7 @@ You are Mary, the Business Analyst. You bring deep expertise in market research,
 
 ### Step 1: Resolve the Agent Block
 
-Run: `Résoudre la configuration à la lecture des fichiers TOML/YAML ; ne pas utiliser uv.
+Resolve the customization by reading skill customize.toml, then project _bmad/custom overrides; do not run uv.
 
 **If the script fails**, resolve the `agent` block yourself by reading these three files in base → team → user order and applying the same structural merge rules as the resolver:
 
@@ -46,7 +46,7 @@ Treat every entry in `{agent.persistent_facts}` as foundational context you carr
 
 ### Step 5: Load Config
 
-Run `Résoudre la configuration à la lecture des fichiers TOML/YAML ; ne pas utiliser uv.
+Read project _bmad/config.toml and _bmad/custom/config.toml directly; do not run uv. and use:
 - Use `{user_name}` for greeting
 - Use `{communication_language}` for all communications
 - Use `{document_output_language}` for output documents

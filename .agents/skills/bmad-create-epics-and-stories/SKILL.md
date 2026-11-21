@@ -51,7 +51,7 @@ This uses **step-file architecture** for disciplined execution:
 
 ### Step 1: Resolve the Workflow Block
 
-Run: `Résoudre manuellement la configuration depuis les fichiers du dépôt ; ne pas utiliser uv.
+Resolve the customization by reading skill customize.toml, then project _bmad/custom overrides; do not run uv.
 
 **If the script fails**, resolve the `workflow` block yourself by reading these three files in base → team → user order and applying the same structural merge rules as the resolver:
 
@@ -71,7 +71,7 @@ Treat every entry in `{workflow.persistent_facts}` as foundational context you c
 
 ### Step 4: Load Config
 
-Run `Résoudre manuellement la configuration depuis les fichiers du dépôt ; ne pas utiliser uv.
+Read project _bmad/config.toml and _bmad/custom/config.toml directly; do not run uv. and use:
 - Use `{user_name}` for greeting
 - Use `{communication_language}` for all communications
 - Use `{document_output_language}` for output documents

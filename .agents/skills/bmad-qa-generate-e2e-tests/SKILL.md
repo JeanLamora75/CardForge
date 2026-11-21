@@ -20,7 +20,7 @@ description: 'Generate automated API and end-to-end tests for implemented featur
 
 ### Step 1: Resolve the Workflow Block
 
-Run: `Consulter les fichiers de configuration ; ne pas utiliser uv.
+Resolve the customization by reading skill customize.toml, then project _bmad/custom overrides; do not run uv.
 
 **If the script fails**, resolve the `workflow` block yourself by reading these three files in base → team → user order and applying the same structural merge rules as the resolver:
 
@@ -40,7 +40,7 @@ Treat every entry in `{workflow.persistent_facts}` as foundational context you c
 
 ### Step 4: Load Config
 
-Run `Consulter les fichiers de configuration ; ne pas utiliser uv.
+Read project _bmad/config.toml and _bmad/custom/config.toml directly; do not run uv. and resolve:
 
 - `project_name`, `user_name`
 - `communication_language`, `document_output_language`
@@ -171,6 +171,6 @@ Save summary to: `{default_output_file}`
 
 ## On Complete
 
-Run: `Consulter les fichiers de configuration ; ne pas utiliser uv.
+Resolve the customization by reading skill customize.toml, then project _bmad/custom overrides; do not run uv.
 
 If the resolved `workflow.on_complete` is non-empty, follow it as the final terminal instruction before exiting.
