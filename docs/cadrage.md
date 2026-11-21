@@ -109,3 +109,14 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Lorsqu'une nouvelle partie remplace une partie active après confirmation, l'ancienne est enregistrée comme abandon, une seule fois. En revanche, une partie de tutoriel n'alimente aucune statistique ordinaire.
 - Les compteurs sont indépendants des sauvegardes actives et persistent après remplacement. Les mises à jour doivent être atomiques et idempotentes pour éviter un double comptage.
 - L'écran de bilan immersif de victoire/défaite n'est pas déclenché par un abandon ; une confirmation d'abandon suivie d'un retour adapté suffit.
+
+## Catalogue de jeux — décision du 21 novembre 2026
+- **Option B validée : catalogue immersif avec fiches de jeux**.
+- L'accueil présente une galerie d'univers illustrés, chacun avec une identité visuelle propre, mais une structure de navigation cohérente.
+- Chaque jeu possède une fiche détaillée : titre, univers, courte présentation narrative, mécanismes principaux, nombre de joueurs, durée indicative si elle est sourcée, statut de disponibilité.
+- Actions sur la fiche : « Jouer » / « Nouvelle partie », « Reprendre » si une sauvegarde existe, « Règles » et « Statistiques ». La première visite propose le tutoriel facultatif selon la décision déjà validée.
+- Un indicateur discret signale les jeux ayant une partie en cours ; aucune sauvegarde n'est supprimée lors de la navigation.
+- Les jeux non encore disponibles peuvent être présentés comme « À venir », sans bouton Jouer trompeur ni promesse de date non validée.
+- La présentation est mobile-first, accessible au clavier, compatible avec les préférences de réduction des animations, et ne repose pas exclusivement sur des illustrations.
+- Les illustrations et les textes narratifs enrichissent l'immersion sans modifier les règles d'origine.
+- Aucune fonction de suivi publicitaire, de personnalisation commerciale ou d'achat n'est intégrée au MVP.
