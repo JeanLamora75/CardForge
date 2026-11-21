@@ -89,3 +89,14 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les statistiques survivent à la création d'une nouvelle partie et ne sont pas effacées avec la sauvegarde de la partie active.
 - Pas de trophées, série de récompenses, défis quotidiens, classement en ligne ni progression influençant les règles dans le MVP.
 - Les données restent sur le navigateur/appareil ; une suppression des données locales peut les effacer.
+
+## Écrans de fin de partie — décision du 21 novembre 2026
+- **Option B validée : résultat immersif avec bilan synthétique**, propre à l'univers graphique de chaque jeu.
+- À la fin d'une partie ordinaire, présenter distinctement victoire ou défaite avec une animation thématique courte, respectueuse des préférences de réduction des animations.
+- Afficher un bilan simple et factuel : résultat, indicateurs pertinents au jeu (par exemple ennemis vaincus si cette mesure existe dans les règles), et mise à jour des statistiques personnelles.
+- Offrir immédiatement les actions « Rejouer » et « Retour au catalogue », sans enfermer le joueur dans une animation ou un écran intermédiaire.
+- Les animations et illustrations ne modifient ni les règles, ni le résultat établi par le moteur.
+- Ne pas inventer de score, classement ou performance absents du jeu original ; les indicateurs de bilan doivent être explicitement définis pour chaque jeu.
+- Exclure du MVP l'historique exhaustif des coups, l'analyse stratégique automatisée et les recommandations tactiques détaillées.
+- Garantir un retour lisible en français et en anglais, accessible au clavier et sur smartphone.
+- Enregistrer le résultat une seule fois pour éviter les doublons statistiques après fermeture, reprise ou rafraîchissement de l'écran final.
