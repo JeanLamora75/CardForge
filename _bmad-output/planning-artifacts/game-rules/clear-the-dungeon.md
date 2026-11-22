@@ -229,3 +229,20 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Exemples :** 2 cartes restantes → main de 2 et pioche 0 ; 1 carte restante → main de 1 et pioche 0 ; 0 carte restante → aucune nouvelle main (son effet terminal est décidé séparément en CTD-05).
 
 **Statut : CTD-04 / CTD-ARB-04 CLOS pour CardForge.** La taille réduite de la dernière main est un arbitrage explicite du porteur et n'est pas attribuée comme précision certaine à Mark S. Ball faute de source primaire détaillée sur ce cas.
+
+
+## 16. Décision fonctionnelle CTD-05 / CTD-ARB-05 — défaite sur épuisement après la dernière main
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Une pioche vide **ne provoque pas immédiatement une défaite** si la dernière main, éventuellement composée d'une ou deux cartes (CTD-ARB-04), est encore active. Le joueur peut achever ses actions légales, y compris compléter les attaques partielles existantes. **Au moment de clôturer la dernière main**, si la pioche est vide et qu'au moins un monstre reste vivant, **défaite automatique**, sans imposer un clic inutile sur « Piocher ».
+
+**Règles de résolution retenues pour CardForge :**
+- Le moteur vérifie toujours une **victoire dès que le 12e monstre est vaincu**. Une partie gagnée ne doit pas être convertie en défaite parce que la pioche est vide ou que la main n'a pas été formellement clôturée.
+- Les cartes de la dernière main demeurent jouables jusqu'à leur utilisation ou leur **défausse explicite** selon CTD-ARB-03. La présence d'attaques partielles n'autorise pas à inventer des cartes ou de nouvelles mains quand la pioche est vide.
+- Si le **7e dégât** est atteint au cours de la défausse, la défaite s'applique **immédiatement**, avant toute clôture de la main ; cette règle déjà documentée reste prioritaire.
+- Une fois la main vide, le joueur peut clôturer cette main ; ses placements provisoires éventuels sont verrouillés selon CTD-ARB-02. Si **pioche vide + monstres restants**, la défaite par épuisement est alors prononcée automatiquement.
+- Si la pioche est encore non vide et la main vide, la clôture prépare normalement la pioche suivante. Aucun tirage ni remélange n'est autorisé après une fin de partie.
+- L'issue est persistée **une seule fois**, avec sa cause (victoire / dégâts / épuisement) ; une reprise, un double clic ou un rafraîchissement ne peut déclencher deux résultats.
+
+**Exemple de cas limite :** pioche vide, 2 cartes dans la dernière main et un seul monstre encore vivant. Si ces cartes permettent de terminer une attaque partielle qui tue ce monstre : **victoire immédiatement**. Sinon, le joueur utilise/défausse sa main, puis clôture ; si le monstre demeure, **défaite**.
+
+**Statut : CTD-05 / CTD-ARB-05 CLOS pour l'implémentation.** Le moment précis de cette défaite est un arbitrage fonctionnel CardForge, non revendiqué comme citation littérale de Mark S. Ball. **Prochain point CTD-06** : ordre de retrait des trois cartes d'attaque, élimination du monstre et révélation du suivant, lorsque plusieurs attaques sont en préparation.
