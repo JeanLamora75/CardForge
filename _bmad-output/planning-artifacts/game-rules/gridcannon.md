@@ -327,3 +327,40 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T27 | Sauvegarde/reprise après Extraction puis après réoccupation de la case | Même case vide ou pile réellement recréée ; aucune duplication de carte ni de pioche | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-04 / G-03 :** lorsqu'une carte est posée dans un coin et permet deux tirs (horizontal et vertical), faut-il résoudre les deux tirs à partir d'un même état, les traiter séquentiellement, ou demander au joueur de choisir leur ordre ? La possibilité d'un double tir est documentée ; l'ordre précis reste à arbitrer.
+
+
+## 18. Décision fonctionnelle Gridcannon V2 — GC-04 / G-03 : double tir depuis une case de coin
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Une pose légale de carte numérique **dans un coin** peut déclencher un tir **horizontal** et un tir **vertical**. Le moteur **évalue les deux directions indépendamment à partir du même instantané du plateau juste après la pose**, puis **applique ensemble** les résultats obtenus. **Aucune direction prioritaire et aucun choix d'ordre** n'est introduit.
+
+**Comportement exécutable pour CardForge :**
+1. Valider et réaliser la pose d'une **seule carte physique** au coin (ou la pose légale résultant d'une **Réaffectation** par joker, si elle déclenche normalement un tir). La nouvelle carte est présente dans l'instantané, mais **ne contribue pas** à la somme de puissance des tirs, conformément aux règles existantes.
+2. Calculer **pour chaque axe** (ligne et colonne) la cible vivante admissible à l'extrémité opposée, les **deux cartes intermédiaires réellement visibles**, la résistance actuelle (armure incluse) et les restrictions propres à la cible (valet : toute enseigne ; dame : même couleur ; roi : même enseigne). Les cartes intermédiaires d'une mauvaise couleur/enseigne contribuent pour zéro. Une case intermédiaire vide n'est **pas** une carte fictive de valeur zéro (GC-03).
+3. Les deux calculs lisent **le même instantané immuable** après la pose : aucune figure éliminée dans la première direction ne peut modifier le calcul de la seconde. Une figure absente ou déjà vaincue ne constitue pas une cible vivante.
+4. Former l'**ensemble des cibles distinctes effectivement vaincues** : zéro, une ou deux figures. Retourner les cibles gagnées **ensemble**, chacune une seule fois ; leur place reste occupée après élimination.
+5. Appliquer **une seule transition de jeu** pour la pose et les tirs dérivés : aucun tir ou résultat n'est « perdu » à cause du traitement prioritaire d'un autre axe. Si la résolution fait passer de 10 à **12 figures vaincues**, déclarer **une victoire unique** seulement après avoir comptabilisé les deux réussites et figer le score officiel (actions spéciales non utilisées). Si la victoire est obtenue par le seul premier ou seul second tir, aucun tir légal réussi ne doit être omis dans le résultat.
+6. Aucun écran ne demande au joueur de choisir l'ordre ; les éventuelles animations peuvent être simultanées ou séquencées pour la lisibilité, **sans changer le résultat de la résolution atomique**.
+7. Sauvegarde/reprise : préserver la pose, les deux évaluations et l'ensemble des cibles vaincues comme **un événement déterministe**, sans pouvoir rejouer une direction après interruption ou double action.
+8. L'évaluation d'autres effets **non documentés** (par exemple hypothétiques interactions nouvelles avec l'armure) n'est pas ajoutée ; GC-04 ne change ni les seuils de défaite ni les restrictions de couleur/enseigne.
+
+**Exemple :** une pose au coin satisfait indépendamment les seuils et restrictions contre une dame à l'extrémité de la ligne et un valet à l'extrémité de la colonne. **Les deux sont vaincus** à l'issue de la même action, quelle que soit la direction qu'une animation présente en premier.
+
+**Statut : GC-04 / G-03 CLOS pour CardForge.** La possibilité de deux tirs est étayée par les règles et leur géométrie ; **leur résolution simultanée sur un instantané commun est l'arbitrage CardForge approuvé**, non une précision explicite confirmée dans la Version 2 publiée par Tom Francis. Aucun test moteur n'a été exécuté.
+
+### 18.1. Scénarios de conformité — GC-04 / G-03
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T28 | Pose légale dans un coin ; une figure vivante attaquable dans chaque axe ; deux tirs suffisants | Deux figures vaincues dans la **même résolution** | Spécifié, non exécuté |
+| GC-V2-T29 | Pose de coin, horizontal suffisant et vertical insuffisant | Seule la figure horizontale est vaincue ; figure verticale conservée | Spécifié, non exécuté |
+| GC-V2-T30 | Pose de coin, vertical suffisant et horizontal insuffisant | Seule la figure verticale est vaincue, sans priorité horizontale | Spécifié, non exécuté |
+| GC-V2-T31 | Pose de coin, deux tirs insuffisants | Aucune figure vaincue ; carte posée reste en place | Spécifié, non exécuté |
+| GC-V2-T32 | Pose de coin, cible horizontale déjà vaincue ou absente, verticale vivante et attaquable | Seule la cible verticale est évaluée comme vivante | Spécifié, non exécuté |
+| GC-V2-T33 | Dame et roi aux deux extrémités ; couleurs/enseignes intermédiaires différentes | Contrôles **indépendants** avec restriction de chaque cible, armure incluse | Spécifié, non exécuté |
+| GC-V2-T34 | Pose de coin avec une case intermédiaire vidée par Extraction | Aucune carte fictive zéro ; seuls les sommets réellement présents contribuent | Spécifié, non exécuté |
+| GC-V2-T35 | 10 figures déjà vaincues, double tir suffisant contre les deux dernières | Passage à 12 figures vaincues et **une seule victoire**, aucun tir omis | Spécifié, non exécuté |
+| GC-V2-T36 | 11 figures déjà vaincues, une dernière figure vivante vaincue par un axe | Victoire immédiate avec résultat unique après résolution ; autre axe sans cible vivante | Spécifié, non exécuté |
+| GC-V2-T37 | Réaffectation légale de carte supérieure vers un coin ; deux tirs valides | Même règle de double évaluation ; joker consommé une seule fois | Spécifié, non exécuté |
+| GC-V2-T38 | Sauvegarder/reprendre ou répéter une action après le double tir | Deux évaluations et résultats conservés sans double élimination ni double statistique | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-05 / G-04 :** ordre exact des cartes **d'une pile complète** placée **face cachée sous la pioche** à la suite d'une Extraction. La règle de dépôt sous pioche est documentée, mais l'ordre interne et l'orientation lors de la réinsertion ne sont pas explicités dans la source primaire accessible.
