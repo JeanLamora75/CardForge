@@ -941,3 +941,48 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T210 | Tirage répété par erreur technique du même identifiant de carte | Une seule carte temporaire affichée, moteur cohérent avec le tirage réel | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-20 / fin de pioche en cours de jeu (G-05) :** lorsque la pioche est **vide** alors qu'au moins **une figure vivante subsiste**, faut-il **laisser le joueur utiliser ses actions spéciales légalement utiles** avant de prononcer une défaite, déclarer immédiatement une défaite, ou conserver indéfiniment la partie en attente ? Ce cas est **distinct de GC-12**, qui concerne une recherche sans figure vivante et des figures physiques introuvables.
+
+
+## 34. Décision fonctionnelle Gridcannon V2 — GC-20 / G-05 : pioche vide avec figure(s) vivante(s)
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Si la **pioche est vide** alors qu'il reste **au moins une figure vivante**, le moteur **ne prononce pas immédiatement la défaite**. Il examine les **actions spéciales disponibles et légalement utiles** ; le joueur peut les utiliser volontairement avant tout verdict. Une **Extraction par As d'une pile numérique non vide** peut remettre des cartes au bas de la pioche (GC-03/05), puis permettre la reprise des tirages. Une **Réaffectation par Joker** peut, si le déplacement est légal, **déclencher un tir normal** ou permettre une suite réellement utile, même sans nouvelle carte à piocher. La **défaite d'impasse** ne peut être prononcée que lorsqu'**aucune continuation légale utile** ne peut plus permettre au joueur de progresser vers l'élimination des figures restantes, après considération des ressources réellement disponibles.
+
+### 34.1. Contrat de fin de pioche CardForge
+
+1. **Ordre de priorité des résultats :** si les douze figures ont été vaincues, appliquer immédiatement la victoire et le score GC-08 ; si une condition de défaite par **armure excessive** est déjà atteinte (J/Q ≥ 20, K ≥ 19), conserver cette règle. **La pioche vide ne constitue pas en soi un résultat terminal.**
+2. **Cas concerné :** pioche de longueur zéro et **au moins une figure vivante**, en cours de partie et dans un état physiquement cohérent. Ne pas confondre ce cas avec la recherche sans figure vivante de **GC-06/12**, ni avec la phase de préparation **GC-14/16**.
+3. **Extraction utile :** si un As est **non dépensé** et qu'au moins une **pile de grille non vide** peut légalement être extraite, le joueur doit pouvoir déclencher cette Extraction selon GC-03/05. Elle réapprovisionne effectivement la pioche et peut relancer le jeu ; le simple constat « zéro carte à piocher » ne doit ni bloquer l'As ni déclarer une défaite.
+4. **Joker utile :** si un Joker non dépensé permet une **Réaffectation légale** susceptible de faire progresser la partie, par exemple une pose qui **déclenche un tir gagnant** (GC-04), proposer ce mouvement. Un Joker qui autorise seulement des déplacements stériles ne protège **pas indéfiniment** contre l'impasse.
+5. **Légalité et utilité :** distinguer **action disponible** de **continuation utile**, selon l'esprit de GC-07. Évaluer les actions légales et, lorsqu'il faut combiner les ressources disponibles, leurs suites **finies et licites** ; ne pas imposer au joueur une séquence de déplacements qui n'a **aucun effet possible** sur la pioche ou les figures vivantes. Aucune dépense forcée et aucun chemin fictif de progression.
+6. **Choix du joueur :** lorsque plusieurs recours utiles sont disponibles, le joueur choisit l'As, le Joker et leurs destinations légales ; aucune action spéciale n'est utilisée automatiquement. Après chaque action validée, recalculer l'état réel de la pioche, de la grille, des figures et des ressources.
+7. **Reprise des tirages :** une fois la pioche réalimentée par Extraction, le joueur peut reprendre le cycle normal selon les mécanismes de pioche déjà approuvés ; les cartes reviennent **face cachée dans leur ordre GC-05**, sans mélange ni bonus de score. Un As dépensé ne compte plus dans le score GC-08.
+8. **Défaite réelle par impasse :** si **aucune carte ne demeure en pioche**, **au moins une figure reste vivante**, et qu'aucune **suite d'actions spéciales légalement réalisable et utile** ne peut encore alimenter la pioche ou éliminer une figure, le moteur peut **terminer la partie par défaite d'impasse**. L'absence de résultat doit être établie sur les **vraies cartes et les vraies actions** ; ne pas assimiler automatiquement un Joker encore en réserve à une possibilité de victoire.
+9. **Pas d'attente infinie :** si les seules actions techniquement légales sont des Réaffectations répétitives sans effet possible sur les figures ni sur la pioche, elles ne rendent pas la partie « non perdue » indéfiniment. Inversement, ne pas déclarer une impasse alors qu'une Extraction légale et réellement réapprovisionnante existe.
+10. **État sauvegardé et statistiques :** conserver la possibilité de recours, la pioche vide, les ressources disponibles/dépensées et les figures vivantes. Une défaite d'impasse confirmée est enregistrée **une seule fois**, sans score officiel de victoire (GC-08), y compris après sauvegarde/reprise. Les vérifications d'état ne doivent jamais dépenser une ressource à la place du joueur.
+11. **Réserve d'implémentation :** la détection de l'absence de **toute suite utile** doit être testée sur les situations combinatoires avec Joker. **GC-20 fixe l'exigence métier** ; aucune preuve algorithmique, performance de recherche de mouvements ou vérification complète du moteur n'est revendiquée ici.
+
+**Exemple A — continuer :** il reste deux figures vivantes, **zéro carte en pioche**, un As intact et une pile numérique non vide. Le joueur peut extraire cette pile, consommer l'As, remettre ses cartes sous la pioche (GC-05) et reprendre les tirages. **Pas de défaite immédiate.**
+
+**Exemple B — impasse :** pioche vide, une figure vivante, **aucun As disponible**, et un Joker qui ne peut produire ni tir utile ni suite utile selon les actions légales. La simple présence du Joker n'évite pas l'**impasse définitive** ; la défaite est alors enregistrée sans score de victoire.
+
+**Statut : GC-20 / G-05 (sous-cas fin de pioche avec figure vivante) CLOS pour CardForge.** La possibilité d'utiliser les actions spéciales après épuisement de la pioche correspond au mécanisme étudié en Version 2 ; la **précision du critère de continuation utile** et son évaluation explicite sont des **arbitrages fonctionnels CardForge**, sans prétendre attribuer à Tom Francis cet algorithme exact. Aucun test du moteur ni recherche web supplémentaire n'a été exécuté.
+
+### 34.2. Scénarios de conformité — GC-20
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T211 | Pioche vide, figure vivante, As intact et pile non vide | Pas de défaite ; proposer Extraction légale | Spécifié, non exécuté |
+| GC-V2-T212 | Extraction choisie après fin de pioche | As dépensé une fois ; pile entière sous la pioche selon GC-05 ; reprise possible | Spécifié, non exécuté |
+| GC-V2-T213 | Pioche vide, figure vivante, Joker disponible, Réaffectation légale déclenchant un tir gagnant | Proposer cette Réaffectation, puis appliquer les tirs normaux | Spécifié, non exécuté |
+| GC-V2-T214 | Pioche vide, figure vivante, aucun As/Joker et aucun tirage possible | Défaite d'impasse, enregistrée une fois | Spécifié, non exécuté |
+| GC-V2-T215 | Pioche vide, seule ressource restante : Joker sans mouvement utile ni suite légale utile | Défaite d'impasse, malgré une carte spéciale non dépensée | Spécifié, non exécuté |
+| GC-V2-T216 | Pioche vide et un As en réserve, mais toutes les piles de grille vides | Pas d'Extraction illégale ; évaluer les autres recours et l'impasse | Spécifié, non exécuté |
+| GC-V2-T217 | Plusieurs actions utiles possibles, As et Joker | Choix du joueur, aucune dépense automatique | Spécifié, non exécuté |
+| GC-V2-T218 | Joker inutile immédiatement, mais suite licite d'actions spéciales finit par réalimenter la pioche ou vaincre une figure | Ne pas annoncer prématurément la défaite ; considérer la suite utile | Spécifié, non exécuté |
+| GC-V2-T219 | Pioche vide après victoire sur la douzième figure | Victoire GC-08 prioritaire ; aucune défaite d'impasse | Spécifié, non exécuté |
+| GC-V2-T220 | Pioche vide, aucune figure vivante mais moins de douze vaincues | Appliquer GC-06/12 et invariants ; pas de fausse défaite GC-20 | Spécifié, non exécuté |
+| GC-V2-T221 | Après Extraction puis victoire, trois actions spéciales non dépensées | Score officiel 3 selon GC-08 ; pas de pénalité de pioche | Spécifié, non exécuté |
+| GC-V2-T222 | Défaite d'impasse, puis rechargement et nouvel événement de vérification | Une seule défaite enregistrée, aucun score officiel de victoire | Spécifié, non exécuté |
+| GC-V2-T223 | Suite de Réaffectations tournant en boucle et n'ouvrant aucune progression possible | Détecter l'impasse ; pas de partie bloquée indéfiniment | À vérifier par moteur, non exécuté |
+
+**Prochain arbitrage GC-21 / égalité d'attribution d'armure :** lorsqu'une carte numérique doit devenir une **armure** (GC-07), la règle de « ressemblance inverse » peut désigner **plusieurs figures vivantes de même valeur minimale et de même rang de priorité**, sans départage explicite. Doit-on **laisser le joueur choisir** parmi ces cibles ex æquo, imposer un ordre de plateau déterministe, ou appliquer l'armure à toutes les cibles à égalité ? Les seuils de défaite J/Q/K demeurent inchangés.
