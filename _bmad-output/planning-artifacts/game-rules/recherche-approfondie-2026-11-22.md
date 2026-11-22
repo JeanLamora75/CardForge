@@ -114,3 +114,8 @@
 ## 10. Arbitrage CardForge CTD-ARB-03 — défausse explicite (22 novembre 2026)
 
 **Option B validée par le porteur :** défausse explicite (carte par carte ou toutes les restantes) avant la prochaine pioche ; chacune compte pour un dégât et le 7e déclenche immédiatement la défaite. Les cartes engagées dans des attaques partielles ne sont pas défaussées lors du renouvellement. Les placements provisoires deviennent verrouillés à la clôture de la main selon CTD-ARB-02. Le point **CTD-03 est clos pour CardForge**, sans résoudre **CTD-04** (épuisement de la pioche).
+
+
+## 11. Arbitrage CardForge CTD-ARB-04 — pioche finale de taille inférieure à trois (22 novembre 2026)
+
+**Option A validée par le porteur :** quand il reste une ou deux cartes au moment où la pioche est autorisée, le joueur prend toutes les cartes restantes, qui constituent une main jouable. La pioche devient vide, mais la main ne perd pas son droit d'être jouée ; aucune carte de dégâts n'est recyclée. **La défaite une fois la main épuisée demeure la question CTD-05**, qui n'est pas décidée ici. Décision de comportement CardForge, pas une citation officielle non ambiguë de l'auteur. Voir [règles](./clear-the-dungeon.md) et [matrice de conformité](../clear-the-dungeon-rule-test-matrix.md).
