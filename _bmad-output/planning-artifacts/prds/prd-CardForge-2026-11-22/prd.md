@@ -307,3 +307,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A approuvée :** Clear the Dungeon refuse de placer une deuxième carte de puissance si la somme avec la première reste strictement inférieure à la résistance du monstre. La carte refusée reste en main ; aucune mutation de la partie, aucun dégât ni pose irréversible ne survient. Le moteur accepte au contraire toute somme **supérieure ou égale** au seuil et conserve la nécessité d'une troisième carte déclencheuse distincte. Cette décision précise FR-06 et FR-07, avec tests de non-régression de sauvegarde FR-16/18.
 
 **CTD-08 / CTD-ARB-08 clos** ; CTD-09 ouvert : doit-on également empêcher une première carte de puissance qui est mathématiquement impossible à compléter ? Sources internes : [règles CTD](../../game-rules/clear-the-dungeon.md), [matrice CTD-T78 à CTD-T84](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision produit CTD-ARB-09 — première puissance mathématiquement possible (22 novembre 2026)
+
+**Option A validée pour Clear the Dungeon :** une première carte de puissance `P1` est admissible contre un monstre de résistance `R` seulement si `P1 + 10 >= R`. Première puissance minimale : Valet 1, Dame 2, Roi 3. Une pose impossible est refusée avant toute mutation ; la carte reste en main sans dégât. Le moteur ne vérifie **que la possibilité mathématique**, sans consulter les cartes cachées de la pioche. Le contrôle de la seconde puissance et de la troisième carte déclencheuse reste distinct. Ce choix complète FR-06/07, sauvegardes FR-16/18 et tests de non-mutation.
+
+**CTD-09 / CTD-ARB-09 clos**, CTD-10 restant à cadrer sur l'utilisation contextuelle du joker comme carte de puissance ou déclencheur. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md), [scénarios CTD-T85 à CTD-T93](../../clear-the-dungeon-rule-test-matrix.md).
