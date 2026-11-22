@@ -159,3 +159,8 @@
 ## 19. Arbitrage CardForge CTD-ARB-12 — score officiel et main restante (22 novembre 2026)
 
 **Option A validée par le porteur :** le score à la victoire compte **seulement les cartes encore en pioche**, et exclut toute carte encore en main. Pioche vide et douzième monstre vaincu = victoire avec score 0 ; aucune valeur de score officiel de victoire n'est attribuée en cas de défaite/abandon. Ce calcul est confirmé dans les références sur le jeu et reste distinct des statistiques maison CardForge. Tests CTD-T114 à CTD-T121 spécifiés, non exécutés. **CTD-12 clos ; CTD-13** concerne la séquence et l'autorisation des défausses pendant la main (distinct de leur caractère explicitement obligatoire déjà validé dans CTD-03).
+
+
+## 20. Arbitrage CardForge CTD-ARB-13 — alternance attaques / défausses (22 novembre 2026)
+
+**Option B validée :** le joueur peut alterner les attaques et les défausses explicites pendant une même main. La carte défaussée est définitivement versée aux dégâts ; les autres cartes et les placements provisoires restent utilisables selon CTD-ARB-02. Au septième dégât, défaite immédiate ; au douzième monstre, victoire immédiate. Cette flexibilité est une décision de fonctionnement CardForge, et non une précision attribuée à l'auteur ; le cycle général Pioche/Attaque/Défausse reste documenté. **CTD-13 clos**, tests CTD-T122 à CTD-T130 spécifiés, non exécutés ; **CTD-14 ouvert** sur le mécanisme de clôture lorsque la main est vide.
