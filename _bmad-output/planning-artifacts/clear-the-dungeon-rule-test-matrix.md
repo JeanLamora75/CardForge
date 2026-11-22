@@ -103,3 +103,17 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 - **CTD-T29 à implémenter :** deux jokers ont chacun valeur 10 dans un rôle de puissance si leur usage simultané est autorisé par les règles ; les contraintes de disponibilité et la séquence exacte restent à confirmer.
 - **CTD-T30 à implémenter :** joker déclencheur peut prendre l'enseigne du monstre, sans changer la valeur de puissance fixée (10) ; respecter les conditions officielles de combinaison.
 - La source Web évoquant une valeur variable ne doit plus introduire de sélection libre dans l'implémentation CardForge.
+
+
+## Arbitrage CTD-01 / CTD-ARB-01 — attaques partielles conservées (22 novembre 2026)
+
+**Option B VALIDÉE par le porteur : plusieurs attaques partielles peuvent coexister et persister entre mains/tours.** Ancienne question O-CTD-01/03 résolue sur ce point précis pour CardForge ; les questions de déplacement et de défausse demeurent ouvertes. Le code **CTD-ARB-01** désigne cet arbitrage pour ne pas écraser le contrôle existant « CTD-01 » sur le paquet.
+
+| Test à développer | Situation | Attendu CardForge | État |
+| --- | --- | --- | --- |
+| CTD-T31 | Poser une première carte de puissance sur le monstre A, puis une carte sur B | Les deux attaques partielles sont conservées séparément | Spécifié par décision, non exécuté |
+| CTD-T32 | Renouveler la main lorsque A et B ont chacun une attaque incomplète | Les cartes posées sur A et B restent affectées, sans aller automatiquement aux dégâts | Spécifié par décision, non exécuté |
+| CTD-T33 | Sauvegarder avec deux attaques partielles puis reprendre | Mêmes monstres, mêmes cartes attribuées et même ordre de pioche ; aucun nouveau mélange | Spécifié par décision, non exécuté |
+| CTD-T34 | Compléter une attaque sur A tandis que B est incomplète | A seulement peut être vaincu suivant ses règles ; B conserve ses cartes | Spécifié par décision, non exécuté |
+
+**Non tranché : CTD-02** — reprise, déplacement ou réaffectation d'une carte déjà posée ; la matrice sera complétée après décision. La persistance des attaques entre tours est une décision du projet et non une citation verbatim de l'auteur.
