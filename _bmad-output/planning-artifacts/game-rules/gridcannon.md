@@ -1005,7 +1005,7 @@ Ces cas sont **spécifiés, non exécutés**.
 9. **Traçabilité :** distinguer dans le journal de partie la carte, le groupe de candidates et la figure finalement choisie, pour faciliter les contrôles de conformité sans révéler le contenu futur de la pioche.
 10. **Portée de l'arbitrage :** ce départage par choix du joueur est une **précision fonctionnelle CardForge** pour un cas non explicité dans la source déjà étudiée, **pas une nouvelle règle attribuée à Tom Francis**.
 
-**Exemple :** une carte d'armure 5♥ doit être attribuée et deux valets vivants du même rang d'éligibilité ont chacun une résistance courante de 13. Le moteur propose ces deux cibles ; le joueur en choisit **une seule**, qui passe à 18. L'autre reste à 13. L'armure 5♥ n'est pas répliquée.
+**Exemple :** une carte d'armure 5♥ doit être attribuée, toutes les figures rouges sont vaincues et les valets noirs J♠ et J♣ sont les figures vivantes de plus faible valeur, chacun avec une résistance courante de 13. Le moteur propose ces deux cibles ; le joueur en choisit **une seule**, qui passe à 18. L'autre reste à 13. L'armure 5♥ n'est pas répliquée.
 
 **Statut : GC-21 CLOS pour CardForge par validation de l'option A le 22 novembre 2026.** Cette décision complète GC-07 et GC-20 sans modifier la définition des armures ni leurs seuils. **Spécification documentaire uniquement : aucun test n'a été exécuté.**
 
