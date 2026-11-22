@@ -124,3 +124,8 @@
 ## 12. Arbitrage CardForge CTD-ARB-05 — moment de défaite par pioche vide (22 novembre 2026)
 
 **Option A approuvée par le porteur :** une dernière main reste jouable même avec une pioche vide ; si la dernière main est clôturée et qu'au moins un monstre subsiste, la défaite est automatique. Une victoire par élimination du 12e monstre est immédiate ; le 7e dégât déclenche une défaite immédiate avant toute clôture. Ce comportement est acté pour le moteur CardForge sans présumer que tous ses détails figurent dans le texte officiel intégral encore inaccessible. Les tests CTD-T55 à CTD-T61 ont été ajoutés à la matrice. **CTD-06** (séquence d'élimination et révélation) reste à décider.
+
+
+## 13. Arbitrage CardForge CTD-ARB-06 — révélation après une victoire locale (22 novembre 2026)
+
+**Option A validée :** le monstre vaincu et ses trois cartes d'attaque sont retirés immédiatement, puis le prochain monstre de la même colonne est révélé aussitôt (s'il existe). La main en cours et les attaques partielles contre d'autres monstres restent jouables ; douzième monstre éliminé = victoire immédiate, sans révélation ou pioche supplémentaire. Le comportement est tracé dans [les règles](./clear-the-dungeon.md) et les tests CTD-T62 à CTD-T68 de [la matrice](../clear-the-dungeon-rule-test-matrix.md). **CTD-06 est clos ; CTD-07 reste ouvert**. Aucun test logiciel n'a été exécuté.
