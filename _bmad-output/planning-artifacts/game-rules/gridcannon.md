@@ -1988,4 +1988,50 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T497 | Navigation clavier et lecteur d'écran FR/EN | Libellés d'état compréhensibles sans révélation cachée | À vérifier en accessibilité, non exécuté |
 | GC-V2-T498 | Deux emplacements vides identifiés comme destinations potentielles | Le moteur garde seul la validation de la pose, aucune sélection automatique | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-45 / mode plein écran :** comment permettre au joueur de bénéficier d'un plateau plus vaste sur les petits écrans ? **A** conserver uniquement l'affichage normal du navigateur/de l'application ; **B** proposer un **mode plein écran facultatif**, activé et quitté explicitement avec solution de repli si la plateforme ne prend pas en charge l'API ; **C** lancer automatiquement les parties en plein écran lorsqu'il est disponible. Garder les commandes essentielles, l'accès au catalogue, l'orientation adaptative et la sauvegarde inchangés.
+**GC-45 : option B validée ultérieurement — plein écran facultatif avec repli en cas d'indisponibilité ; voir §59.**
+
+
+## 59. Décision UX Gridcannon V2 — GC-45 : plein écran facultatif avec repli gracieux
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Le joueur peut **activer ou quitter explicitement un mode plein écran**, lorsque le navigateur ou l'application le permet, pour maximiser la place du plateau et des cartes. **Le plein écran n'est jamais imposé** au lancement d'une partie ; si la fonction est indisponible ou refusée par la plateforme, la partie continue dans son affichage normal, sans erreur bloquante ni altération des données.
+
+### 59.1. Contrat fonctionnel et UX
+
+1. **Activation volontaire :** une commande explicite « Plein écran » dans l'interface de partie lance la demande de plein écran uniquement à la suite d'une action du joueur ; aucune bascule automatique au démarrage, à la reprise ou lors d'une rotation GC-41.
+2. **Sortie claire :** fournir « Quitter le plein écran » toujours accessible dans le mode immersif, en respectant aussi les mécanismes natifs de sortie (dont Échap quand pris en charge). La sortie ne correspond jamais à un abandon GC-32.
+3. **Disponibilité :** détecter l'absence de prise en charge ou le refus de la demande et conserver une interface normale fonctionnelle. Un message non bloquant peut signaler l'indisponibilité ; ne pas prétendre être en plein écran si l'API échoue.
+4. **Périmètre visuel :** maximiser la zone de jeu sans retirer les actions essentielles : validation, annulation, réglages de jeu, aide GC-26, accès au retour vers la collection, compteurs GC-29/31, ressources GC-30 et résumé GC-39 lorsqu'affiché.
+5. **Moteur inchangé :** l'activation et la sortie sont de simples changements de présentation et ne provoquent jamais de pioche, de pose, d'attaque, d'utilisation d'As/Joker, de variation de score ou de statistiques.
+6. **Zoom et panoramique GC-40 :** recalculer si nécessaire le cadrage pour la nouvelle surface disponible ; conserver autant que possible la zone d'intérêt et maintenir « Recentrer le plateau ». Aucun redimensionnement ne déplace une carte.
+7. **Orientation GC-41 :** mode utilisable en portrait et en paysage lorsqu'autorisé par la plateforme ; ne pas tenter de verrouiller l'orientation ni de forcer une rotation de l'appareil.
+8. **Gestes GC-36/37/38 :** maintenir l'agrandissement individuel des cartes, les parcours glisser-déposer ou sélection/destination et la surbrillance des cases légales sans recouvrement bloquant ; les gestes interrompus à une bascule sont annulés visuellement sans action métier.
+9. **Modales et focus :** garantir que les dialogues de confirmation et d'inspection restent visibles et au-dessus du plateau en plein écran, avec gestion correcte du focus, du clavier et du lecteur d'écran.
+10. **Événements externes :** si le navigateur quitte le plein écran de lui-même (Échap, changement d'onglet, restriction système), synchroniser immédiatement l'état des boutons avec l'état réel, sans déclencher de sortie de partie.
+11. **Sauvegarde et reprise :** le plein écran est un état éphémère d'interface, sans modification de la sauvegarde métier GC-32 ; une reprise après fermeture/rechargement doit se faire dans le mode normal tant que le joueur n'a pas explicitement redemandé le plein écran.
+12. **PWA et compatibilité :** privilégier le plein écran natif lorsqu'il est effectivement disponible et autorisé ; ne pas confondre une PWA installée en affichage « standalone » avec une requête plein écran native. Les plates-formes sans support conservent toute la jouabilité.
+13. **Accessibilité et i18n :** contrôle clavier/tactile accessible, état « Activer/Quitter » annoncé sans seule icône, labels FR/EN au MVP (GC-28) et extension ultérieure aux autres langues.
+14. **Transversalité :** prévoir un composant partagé CardForge avec adaptation à la disposition des différents jeux, sans changer leurs règles originales.
+
+**Exemple :** sur smartphone en paysage, le joueur active « Plein écran » et dispose d'un plateau plus grand. Il zoome, déplace la vue et poursuit la partie normalement, puis quitte le plein écran par un bouton. Sur un navigateur qui refuse la requête, le bouton ne déclare pas faussement la fonction active et le jeu reste intégralement utilisable.
+
+**Statut : GC-45 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation uniquement ; aucun développement, test ou vérification de compatibilité navigateur exécuté.
+
+### 59.2. Scénarios de conformité — GC-45
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T499 | Partie démarrée sur navigateur compatible | Mode normal par défaut, pas de bascule forcée | Spécifié, non exécuté |
+| GC-V2-T500 | Activation volontaire sur navigateur compatible | Plein écran réel actif, plateau et commandes utilisables | Spécifié, non exécuté |
+| GC-V2-T501 | Sortie volontaire par bouton | Retour au mode normal, partie inchangée | Spécifié, non exécuté |
+| GC-V2-T502 | Sortie native par Échap ou système | État de l'interface synchronisé, aucun abandon | Spécifié, non exécuté |
+| GC-V2-T503 | Navigateur sans API plein écran | Affichage normal conservé, aucune panne ni blocage | Spécifié, non exécuté |
+| GC-V2-T504 | Requête plein écran refusée | Aucune fausse indication de succès, jeu toujours disponible | Spécifié, non exécuté |
+| GC-V2-T505 | Activation puis sortie avec As/Joker disponibles | Ressources et score inchangés | Spécifié, non exécuté |
+| GC-V2-T506 | Zoom/panoramique pendant mode plein écran | Cadrage cohérent, recentrage fonctionnel | À vérifier en UX, non exécuté |
+| GC-V2-T507 | Rotation portrait/paysage en plein écran | Orientation non verrouillée, plateau adapté si supporté | À vérifier en UX, non exécuté |
+| GC-V2-T508 | Ouverture confirmation GC-30 ou inspection GC-36 | Dialogue visible et fonctionnel au-dessus du plateau | À vérifier en UX, non exécuté |
+| GC-V2-T509 | Bascule pendant un glisser-déposer inachevé | Aucun dépôt métier confirmé par la bascule | Spécifié, non exécuté |
+| GC-V2-T510 | Rafraîchissement ou reprise de partie précédemment en plein écran | Partie restaurée intacte, aucune nouvelle requête automatique | Spécifié, non exécuté |
+| GC-V2-T511 | Navigation au clavier, lecteur d'écran, FR/EN | Activation et sortie accessibles avec état explicite | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-46 / état de sauvegarde automatique :** GC-32 prévoit déjà la reprise automatique d'une partie ; comment informer le joueur que ses derniers coups sont bien enregistrés localement ? **A** sauvegarde silencieuse, sans état affiché ; **B** indicateur discret et fiable « Enregistrement… / Partie sauvegardée / Échec de sauvegarde », avec reprise ou nouvelle tentative contrôlée en cas d'erreur ; **C** panneau permanent détaillant chaque sauvegarde et ses diagnostics techniques. Le retour ne doit jamais afficher « Sauvegardée » avant la confirmation effective de l'écriture ni modifier le fonctionnement hors ligne.
