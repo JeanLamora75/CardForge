@@ -319,3 +319,21 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-09 / CTD-ARB-09 CLOS pour CardForge.** Décision explicite de validation de placement du porteur, non présentée comme précision officielle de Mark S. Ball. Aucun test n'a été exécuté.
 
 **Prochain arbitrage CTD-10 (ergonomie et moteur) :** affectation du joker polyvalent entre rôle « puissance » ou « déclencheur » et éventuel choix d'enseigne dans l'interface, sans changer la valeur 10 ni permettre de jouer une carte dans deux rôles.
+
+
+## 21. Décision fonctionnelle CTD-10 / CTD-ARB-10 — rôle du joker déterminé par son emplacement
+
+**Option A VALIDÉE par le porteur, le 22 novembre 2026.** Dans Clear the Dungeon, le joueur choisit **explicitement la cible et l'emplacement** de son joker : première puissance, deuxième puissance ou déclencheur. Le moteur déduit le rôle du joker de cet emplacement, sans demander un choix supplémentaire de rôle ni d'enseigne. Cette décision est compatible avec CTD-J01 (joker = **10 fixe**, enseigne polyvalente).
+
+**Comportements exécutables :**
+- **Emplacement puissance 1 :** joker de valeur 10, soumis au contrôle de faisabilité du premier placement (CTD-ARB-09). L'enseigne n'intervient pas dans la somme de puissance.
+- **Emplacement puissance 2 :** joker de valeur 10, soumis au contrôle de somme avec la première puissance déjà engagée (CTD-ARB-08). Les deux puissances suffisent ou non selon la résistance ; aucune victoire sans déclencheur.
+- **Emplacement déclencheur :** emplacement autorisé seulement **après** que deux puissances valides atteignent le seuil (CTD-ARB-07/08). Le joker prend **automatiquement l'enseigne du monstre ciblé** et déclenche immédiatement le retrait/révélation selon CTD-ARB-06. Aucune boîte de dialogue supplémentaire pour l'enseigne.
+- **Choix tactique conservé :** l'application ne choisit pas d'elle-même si le joker sert de puissance ou de déclencheur ; elle ne change pas son rôle après pose sans commande de déplacement autorisée par CTD-ARB-02.
+- **Identité des cartes :** chacun des **deux jokers physiques** reste un objet de carte unique, associé à un seul emplacement à la fois. Le même joker ne peut jamais apparaître simultanément en puissance et en déclencheur, ni sur plusieurs monstres. Un placement refusé ne consomme pas le joker et ne modifie pas le plateau ou les dégâts.
+- **Sauvegarde/reprise :** préserver l'identifiant de chaque joker, la cible, l'emplacement, le rôle déduit, l'état provisoire/verrouillé et l'état d'attaque ; ne pas attribuer définitivement une enseigne au joker hors du contexte du déclenchement.
+- **Visuel Fantasy :** le symbole et l'animation du joker peuvent varier selon l'emplacement ; jamais la valeur, la disponibilité ou les droits tactiques.
+
+**Statut : CTD-10 / CTD-ARB-10 CLOS pour CardForge.** Il s'agit d'une décision de conception d'interaction fidèle aux deux usages documentés du joker, non d'une nouvelle mécanique officielle attribuée à Mark S. Ball. Aucun test de moteur n'a été exécuté.
+
+**Prochain arbitrage CTD-11 :** les deux jokers physiques peuvent-ils être utilisés dans **une même attaque** (deux puissances ou une puissance et un déclencheur) ? La recherche documentaire n'établit pas de restriction spécifique ; aucune limite arbitraire n'est ajoutée avant validation du porteur.
