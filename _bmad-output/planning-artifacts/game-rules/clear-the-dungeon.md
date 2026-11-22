@@ -213,3 +213,19 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Exemple d'acceptation :** le joueur a joué un 8 sur un roi et conserve les cartes 4 et 2 en main. Une action explicite « Défausser les cartes restantes » envoie 4 et 2 aux dégâts (**+2**), laisse le 8 engagé sur le roi, puis rend la nouvelle pioche possible **si la partie n'est pas terminée**. En cas de six dégâts initiaux, la défausse déclenche la défaite dès la première carte défaussée.
 
 **Statut :** CTD-03 / CTD-ARB-03 **clos**. C'est un choix d'interface explicitant la défausse prévue par les règles publiées, et non une variante autorisant la conservation de cartes inutilisées entre les mains. **Prochain arbitrage : CTD-04, fin de pioche (1–2 cartes restantes, pioche vide, actions encore possibles).**
+
+
+## 15. Décision fonctionnelle CTD-04 / CTD-ARB-04 — dernière main incomplète
+
+**Décision du porteur, 22 novembre 2026 : option A VALIDÉE.** Lorsqu'une nouvelle pioche est autorisée (main précédente entièrement jouée ou explicitement défaussée et phase close), le joueur prend **toutes les cartes restant dans la pioche, dans leur ordre exact**, même si elles sont seulement une ou deux, au lieu d'exiger trois cartes.
+
+**Contrat métier :**
+- Si la pioche contient trois cartes ou plus, piocher trois cartes suivant la règle ordinaire. Si elle contient **deux**, en piocher deux ; si elle contient **une**, en piocher une.
+- Les cartes de cette dernière main peuvent être placées en attaque, y compris pour achever une attaque partielle précédemment engagée selon **CTD-ARB-01**, et restent provisoirement réaffectables selon **CTD-ARB-02** jusqu'à clôture ou résolution.
+- Les cartes non utilisées de cette dernière main sont explicitement défaussées, conformément à **CTD-ARB-03** et au seuil de sept dégâts. Le nombre inférieur à trois **n'entraîne pas une défausse automatique**, et aucune carte de la pile de dégâts ne sert à compléter artificiellement la main.
+- La pioche devenue vide **pendant le tirage de la dernière main ne déclenche pas de défaite instantanée du seul fait de son épuisement** : la main obtenue est disponible pour les actions légales. Le traitement final une fois toutes les ressources utilisables épuisées reste à décider en **CTD-05**.
+- Aucune création, aucun recyclage, aucun remélange des cartes de la pioche, notamment lors d'une reprise après sauvegarde.
+
+**Exemples :** 2 cartes restantes → main de 2 et pioche 0 ; 1 carte restante → main de 1 et pioche 0 ; 0 carte restante → aucune nouvelle main (son effet terminal est décidé séparément en CTD-05).
+
+**Statut : CTD-04 / CTD-ARB-04 CLOS pour CardForge.** La taille réduite de la dernière main est un arbitrage explicite du porteur et n'est pas attribuée comme précision certaine à Mark S. Ball faute de source primaire détaillée sur ce cas.
