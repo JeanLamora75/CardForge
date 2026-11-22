@@ -2,8 +2,8 @@
 
 **Responsable :** Mary — Business Analyst BMAD  
 **Étude :** 22 novembre 2026  
-**Version de référence :** **Version 2 révisée** publiée par Tom Francis (et non la v1 historique)  
-**Statut :** règles principales **consultées à la source primaire de l'auteur** ; cas limites et choix de nom à valider avant publication  
+**Version de référence validée par le porteur :** **Version 2 révisée** publiée par Tom Francis (et non la v1 historique), décision du 22 novembre 2026  
+**Statut :** choix de Version 2 **validé** ; règles principales documentées d'après la source primaire précédemment étudiée ; cas limites et choix de nom à valider avant publication  
 **Usage :** documentation fonctionnelle propre à Gridcannon, indépendante de la direction artistique « guerre spatiale » de CardForge.
 
 ## 1. Source primaire, version et provenance
@@ -12,7 +12,7 @@
 - Corroboration secondaire : [Howto.cards — Gridcannon, règles de la version révisée](https://howto.cards/en/gridcannon/).
 - [BoardGameGeek — Gridcannon](https://boardgamegeek.com/boardgame/288454/gridcannon).
 - L'auteur indique avoir conçu le jeu et crédite **Chris Thursten** pour la mécanique d'armure.
-- Dans la première livraison CardForge, **Version 2 est la référence documentaire proposée par Mary**, car c'est celle développée en premier dans la publication mise à jour de l'auteur. **[VALIDATION PRODUIT G-00]** Le porteur doit confirmer ce choix avant de considérer la version de règles officiellement retenue pour CardForge.
+- Dans la première livraison CardForge, **Version 2 est la référence officiellement retenue par CardForge, validée par le porteur le 22 novembre 2026.** Ce choix ferme G-00 ; les cas limites G-01 à G-05 restent indépendamment ouverts.
 - **Ne pas fusionner** les deux versions : l'ancienne v1 avait un centre vide, des remises à zéro différentes et une « shame pile ». Ces mécanismes ne font pas partie de la Version 2.
 
 ## 2. Objectif, matériel et mise en place
@@ -120,7 +120,7 @@ La valeur de la carte est ajoutée à la résistance actuelle de la figure. Plus
 
 **Version 1 ancienne** (présente plus bas dans l'article de l'auteur) : centre laissé vide à la mise en place, As et joker utilisés pour « reset », pile de honte comme score/recours. **Non retenue dans le présent dossier**.
 
-**Version 2 révisée** : centre rempli (3 × 3), actions spéciales stockées, armure, score en actions spéciales non utilisées, remplacement facultatif d'une carte initiale. **Proposition de référence** pour CardForge (G-00 à valider).
+**Version 2 révisée** : centre rempli (3 × 3), actions spéciales stockées, armure, score en actions spéciales non utilisées, remplacement facultatif d'une carte initiale. **Version retenue pour CardForge** (G-00 validé).
 
 Les versions numériques réalisées par des tiers ne prévalent pas sur la publication originale de Tom Francis.
 
@@ -163,7 +163,7 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 
 | Code | Sujet | Décision attendue |
 | --- | --- | --- |
-| G-00 | Version du jeu | Le porteur confirme **Version 2** comme base du MVP |
+| G-00 | Version du jeu | **VALIDÉ le 22 novembre 2026 : Version 2** pour le MVP, sans mécanismes de Version 1 |
 | G-01 | Placement figure quand meilleure position occupée | Clarification par source primaire/auteur ou décision explicite documentée |
 | G-02 | Emplacement de pile vide après Extraction | Comportement exact dans Version 2 |
 | G-03 | Double attaque depuis un coin | Ordre de résolution, notamment impacts terminaux |
@@ -171,4 +171,4 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 | G-05 | Armure, cas sans figure vivante et impasse | Clarification de séquencement |
 | G-06 | Nom de l'adaptation CardForge | Titre distinct et crédit attribuant Tom Francis |
 
-**Statut final de l'étude :** source primaire consultée et mécaniques générales documentées avec confiance élevée ; **les cas limites identifiés doivent être arbitrés avant que le moteur soit annoncé conforme**. Aucun code ni test n'a été exécuté ici.
+**Statut de l'étude après décision :** Version 2 validée par le porteur ; mécaniques générales documentées à partir de la source primaire précédemment étudiée. **Les cas limites G-01 à G-05 et le nom/crédit G-06 restent à préciser** avant de considérer le moteur et la publication conformes. Aucune nouvelle consultation Web, exécution de code ou validation de moteur lors de cette mise à jour. Aucun code ni test n'a été exécuté ici.
