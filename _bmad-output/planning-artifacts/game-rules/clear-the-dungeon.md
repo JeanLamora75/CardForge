@@ -246,3 +246,22 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Exemple de cas limite :** pioche vide, 2 cartes dans la dernière main et un seul monstre encore vivant. Si ces cartes permettent de terminer une attaque partielle qui tue ce monstre : **victoire immédiatement**. Sinon, le joueur utilise/défausse sa main, puis clôture ; si le monstre demeure, **défaite**.
 
 **Statut : CTD-05 / CTD-ARB-05 CLOS pour l'implémentation.** Le moment précis de cette défaite est un arbitrage fonctionnel CardForge, non revendiqué comme citation littérale de Mark S. Ball. **Prochain point CTD-06** : ordre de retrait des trois cartes d'attaque, élimination du monstre et révélation du suivant, lorsque plusieurs attaques sont en préparation.
+
+
+## 17. Décision fonctionnelle CTD-06 / CTD-ARB-06 — révélation immédiate après une victoire locale
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'une attaque complète contre un monstre accessible est reconnue valide, ce monstre est vaincu et **le monstre suivant de la même colonne est révélé immédiatement**, s'il en reste un caché.
+
+**Ordre de traitement du moteur CardForge :**
+1. Vérifier que l'attaque est complète et valide : deux cartes de puissance dont la somme atteint la résistance, puis déclencheur de l'enseigne du monstre (joker fixe 10 et polyvalent selon CTD-J01).
+2. Retirer du jeu **uniquement** les trois cartes de cette attaque et le monstre vaincu, sans les traiter comme des cartes défaussées infligeant des dégâts.
+3. Si la colonne contient encore une figure cachée et accessible, **la révéler immédiatement**, sans attendre la clôture de la main ni une action « Révéler ».
+4. Préserver l'état des attaques partielles sur les autres monstres ; le joueur peut continuer à jouer les cartes qu'il lui reste en main courante contre les monstres visibles, y compris celui qui vient d'être révélé.
+5. Si le monstre éliminé était le **douzième**, appliquer aussitôt la **victoire définitive** ; aucune action supplémentaire, aucune révélation ni pioche n'est nécessaire. Si la colonne est vide après élimination mais que d'autres monstres vivent ailleurs, il n'y a rien à révéler dans cette colonne.
+6. Persister dans un état cohérent le retrait, la nouvelle carte révélée, les cartes en main, les attaques partielles et le résultat éventuel ; un rafraîchissement ou une commande répétée ne peut retirer deux fois un monstre.
+
+**CTD-01 à CTD-05 restent applicables.** La révélation n'oblige pas le joueur à clôturer sa main, ne libère aucune carte engagée précédemment et ne compte jamais comme défausse vers la pile de dégâts.
+
+**Statut : CTD-06 / CTD-ARB-06 CLOS pour CardForge.** Le principe de révélation immédiate est étayé par le livret Classic reproduit, mais l'implémentation devra continuer à respecter les autres règles documentées ; aucun test de moteur n'a été exécuté lors de cet arbitrage.
+
+**Prochaine question CTD-07 :** l'ordre de pose des deux cartes de puissance et de la troisième carte déclencheuse, compte tenu des attaques partielles persistantes et de la correction de placements pendant la main courante.
