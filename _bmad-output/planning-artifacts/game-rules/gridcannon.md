@@ -2125,4 +2125,49 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T536 | Partie différente ou jeu différent dans autre onglet | Aucune exclusion indue sur cet autre jeu/partie | Spécifié, non exécuté |
 | GC-V2-T537 | Interface FR/EN, clavier et lecteur d'écran | État lecture seule et transfert accessibles et compréhensibles | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-48 / lisibilité renforcée et contrastes :** les cartes fantasy illustrées doivent rester compréhensibles indépendamment du contraste de leur illustration, d'un trouble de perception des couleurs ou d'un petit écran. **A** un seul rendu graphique standard ; **B** un **mode de lisibilité renforcée facultatif**, avec contrastes, contours et libellés explicites, sans modifier les illustrations originales ni les règles ; **C** un éditeur complet de palettes et de styles carte par carte. Respecter les codes non exclusivement colorés déjà définis, FR/EN et l'identité graphique de chaque univers CardForge.
+**GC-48 : option B validée ultérieurement — mode de lisibilité renforcée facultatif et commun à CardForge ; voir §62.**
+
+
+## 62. Décision UX Gridcannon V2 — GC-48 : mode de lisibilité renforcée facultatif
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** CardForge propose un **mode de lisibilité renforcée facultatif**, activable dans les paramètres communs de la plateforme et mémorisé localement. Ce mode améliore le **contraste des informations utiles, les contours, les symboles, les libellés et la lisibilité des valeurs des cartes**, sans remplacer ni modifier les illustrations originales propres à chaque univers. Les règles de Gridcannon V2 et les données de la partie restent inchangées.
+
+### 62.1. Contrat fonctionnel et UX
+
+1. **Choix volontaire :** proposer une préférence globale « Lisibilité renforcée » activable et désactivable à tout moment, sans imposer ce mode aux joueurs ni empêcher de l'activer au cours d'une partie.
+2. **Portée plateforme :** appliquer cette préférence à l'interface commune CardForge et aux rendus de cartes de tous les jeux, en prévoyant des variantes de présentation compatibles avec chaque identité graphique, sans uniformiser les illustrations ni les règles des jeux.
+3. **Illustrations intactes :** conserver les fichiers et les compositions artistiques d'origine ; renforcer des couches d'interface distinctes (valeurs, badges, labels, cadres, séparateurs et indicateurs), sans altération destructrice des assets.
+4. **Informations chiffrées :** augmenter la lisibilité de la valeur des cartes, des forces/résistances des figures, de la hauteur des piles GC-42, des compteurs pioche GC-29 et progression GC-31 et des ressources GC-30, y compris sur smartphone.
+5. **Codes redondants :** ne jamais distinguer un état de gameplay **uniquement par couleur** ; conserver textes, formes, icônes et contours pour les figures non révélées/actives/vaincues GC-44, destinations légales GC-38, résultats de tir GC-23 et statuts de sauvegarde GC-46.
+6. **Contraste et contours :** offrir des contours d'éléments interactifs et d'états actifs plus marqués, des fonds lisibles pour les valeurs et un focus clavier perceptible. Éviter que les cadres additionnels cachent des cartes ou rendent les gestes tactiles imprécis.
+7. **Intégrité de l'interface :** activer ou désactiver le mode ne déclenche ni nouvelle partie, ni tir, ni pioche, ni dépense d'As/Joker, ni sauvegarde métier. Une sélection ou prévisualisation en cours reste cohérente.
+8. **Préférence persistante :** conserver localement le choix utilisateur entre sessions ; ne pas le réinitialiser lors de la remise à zéro des statistiques GC-35. Aucune synchronisation entre appareils n'est présumée.
+9. **Adaptation responsive :** rendre le mode compatible avec portrait et paysage GC-41, zoom et panoramique GC-40, inspection individuelle GC-36, inspection de pile GC-43 et plein écran GC-45.
+10. **Traductions :** labels et textes explicatifs FR/EN au MVP (GC-28), architecture extensible aux langues futures ; anticiper les libellés plus longs et garantir que les contrastes ne dépendent pas de la langue.
+11. **Accessibilité :** veiller aux contrastes réels, aux tailles et espacements nécessaires à la consultation ; les attributs lecteurs d'écran restent descriptifs dans les deux modes. Les cibles tactiles et la navigation clavier ne doivent pas être dégradées.
+12. **Évolutivité sobre :** ne pas introduire dans le MVP un éditeur individuel de palette, police et contour par carte (option C écartée). Les détails de design et seuils d'accessibilité seront documentés/testés lors de la conception UX.
+13. **Aucune variation métier :** les valeurs, identifiants, enseignes, couleurs réglementaires, ordre des cartes, calculs d'attaque, victoire/défaite et scores officiels ne varient jamais selon la préférence.
+
+**Exemple :** sur un téléphone, un joueur active « Lisibilité renforcée » pendant sa partie. Les valeurs des cartes deviennent mieux contrastées et les destinations légales possèdent un contour explicite, tandis que les illustrations fantasy restent identiques. Il désactive ensuite l'option : l'état et les actions disponibles sont strictement les mêmes.
+
+**Statut : GC-48 CLOS pour CardForge — option B validée le 22 novembre 2026.** Décision documentaire uniquement ; aucune implémentation, validation d'accessibilité ni test exécuté.
+
+### 62.2. Scénarios de conformité — GC-48
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T538 | Nouvelle installation et affichage initial | Rendu standard disponible ; option activable sans impact métier | Spécifié, non exécuté |
+| GC-V2-T539 | Activation de la lisibilité renforcée au milieu d'une partie | Valeurs/contours mieux lisibles, même état moteur | Spécifié, non exécuté |
+| GC-V2-T540 | Désactivation après plusieurs coups | Retour au rendu standard ; aucune carte ni ressource modifiée | Spécifié, non exécuté |
+| GC-V2-T541 | Carte fantasy riche et chargée visuellement | Valeur, enseigne et marqueurs lisibles sans modifier son illustration source | À vérifier en UX, non exécuté |
+| GC-V2-T542 | États vides, révélés et vaincus GC-44 | Distinction par codes non exclusivement colorés | À vérifier en accessibilité, non exécuté |
+| GC-V2-T543 | Destinations légales GC-38 et prévisualisation GC-23 | Légalité et valeurs identifiables sans couleur seule | À vérifier en UX, non exécuté |
+| GC-V2-T544 | Piles GC-42 et inspection GC-43 sur smartphone | Compteur, ordre connu et textes lisibles dans les deux modes | À vérifier en UX, non exécuté |
+| GC-V2-T545 | Rechargement avec préférence activée | Choix local conservé et partie inchangée | Spécifié, non exécuté |
+| GC-V2-T546 | Réinitialisation statistiques GC-35 | Préférence de lisibilité conservée | Spécifié, non exécuté |
+| GC-V2-T547 | Alternance vers un autre jeu CardForge | Même préférence globale, illustration propre à l'univers conservée | À vérifier en intégration, non exécuté |
+| GC-V2-T548 | Zoom, plein écran et rotation portrait/paysage | Mise en page toujours fonctionnelle et contrôles accessibles | À vérifier en UX, non exécuté |
+| GC-V2-T549 | Parcours clavier et lecteur d'écran FR/EN | Focus, texte et états accessibles sans code couleur unique | À vérifier en accessibilité, non exécuté |
+| GC-V2-T550 | Deux parties identiques jouées avec des modes différents | Résultats, score et règles strictement identiques | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-49 / accompagnement de la première partie :** comment accueillir un nouveau joueur sans rendre l'apprentissage obligatoire ? **A** écran de règles et aide GC-26 uniquement, sans parcours guidé ; **B** **mini-tutoriel interactif facultatif**, proposé lors de la première partie et relançable depuis l'aide, expliquant le plateau, les placements, les tirs et les actions spéciales sans modifier les règles ; **C** tutoriel obligatoire avant tout accès à une vraie partie. Le tutoriel doit respecter les choix de langue GC-27/28, l'accessibilité et ne jamais affecter les statistiques ou la sauvegarde de la partie normale.
