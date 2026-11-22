@@ -133,3 +133,20 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T40 | Un monstre vient d'être vaincu par une attaque résolue | Impossible de reprendre les cartes de l'attaque achevée, même avant clôture de la main | Spécifié, non exécuté |
 
 **Reste à arbitrer : CTD-03**, traitement des cartes encore en main lors de la clôture (défausse/dégâts). Les ancienne mentions « CTD-02 ouvert » dans l'historique ne reflètent plus son statut courant.
+
+
+## Décision CTD-03 / CTD-ARB-03 — défausse explicite obligatoire avant pioche (22 novembre 2026)
+
+**Option B VALIDÉE.** Les cartes non utilisées dans la main doivent être explicitement défaussées vers les dégâts ; celles déjà placées sur un monstre ne sont pas défaussées lors du renouvellement. Pioche interdite si une carte reste en main, défaite immédiate au septième dégât.
+
+| Test | Précondition et action | Résultat attendu | État |
+| --- | --- | --- | --- |
+| CTD-T41 | Une carte non utilisée reste en main, demander une nouvelle main | Pioche refusée ; état inchangé | Spécifié, non exécuté |
+| CTD-T42 | Main : 8 posé sur roi, 4 et 2 non utilisés ; défausser explicitement les deux | 4 et 2 rejoignent dégâts (+2), 8 reste sur roi, main vidée | Spécifié, non exécuté |
+| CTD-T43 | Défausser une seule carte inutilisée | +1 dégât, autres cartes restent disponibles dans la main | Spécifié, non exécuté |
+| CTD-T44 | Six cartes de dégâts, demander « Défausser les cartes restantes » avec deux cartes en main | Défaite au 7e dégât, pas de nouvelle pioche ni de continuation après état terminal | Spécifié, non exécuté |
+| CTD-T45 | Après défausse explicite, main vide et attaque partielle sur plusieurs monstres | Les attaques partielles persistent ; clôture confirme les placements actuels | Spécifié, non exécuté |
+| CTD-T46 | Main vide, demande de nouvelle main | Clôture des placements actuels et nouveau tirage uniquement selon CTD-04 à arbitrer | Spécifié partiellement, non exécuté |
+| CTD-T47 | Défausse d'une carte puis rafraîchissement/reprise | Nombre de dégâts, état de la main et cartes engagées identiques ; pas de double dégât | Spécifié, non exécuté |
+
+**Question restante CTD-04 :** quelle suite lorsque la pioche contient moins de trois cartes ou est vide, avec des monstres ou des attaques partielles en cours ? CTD-03 ne décide pas cette règle.
