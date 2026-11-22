@@ -93,3 +93,9 @@
 - Règles générales Clear the Dungeon Classic : **élevé**.
 - Joker CTD et comportements Gridcannon lorsque la source est muette : **indéterminé / non confirmé**, et non pourcentage inventé.
 - Cette recherche est un **état de preuve documentaire**, pas une certification des moteurs.
+
+## 7. Décision de cadrage ultérieure — joker de Clear the Dungeon
+
+**22 novembre 2026 — décision explicite du porteur : joker = 10 fixe.** Le désaccord entre la page Web et le livret reproduit subsiste comme fait historique ; il est résolu **pour le comportement CardForge**, pas au nom de l'auteur. CTD-J01 n'est donc plus un point d'arbitrage produit bloquant. La [documentation du jeu](./clear-the-dungeon.md) et la [matrice de tests](../clear-the-dungeon-rule-test-matrix.md) comportent cette décision et les cas de test à appliquer.
+
+**Restent prioritaires :** attaques partielles et leur éventuelle persistance, main en fin de pioche, détails de défausse ; pour Gridcannon, centre/placements occupés, pile vide après as, pile réinjectée et armure quand un ploy existe mais ne sert à rien.
