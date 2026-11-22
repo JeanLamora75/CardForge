@@ -194,3 +194,9 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - **Gridcannon : la version de règles primaire, les cas limites et les droits de diffusion ne sont pas encore documentés.** Une analyse métier Mary et une matrice de conformité spécifiques sont bloquantes avant d'affirmer le jeu jouable et autorisé.
 - Clear the Dungeon reste Classic 1.1.0 sans réserve facultative, selon les décisions existantes. Son autorisation a été déclarée par le porteur sous condition de gratuité, portée exacte à documenter.
 - Le PRD de référence est [PRD CardForge v0.2](../_bmad-output/planning-artifacts/prds/prd-CardForge-2026-11-22/prd.md). Les portages Android et iOS restent prévus après la première version Web/PWA.
+
+## Gridcannon — choix définitif de la version (22 novembre 2026)
+- **Version 2 validée par le porteur pour CardForge** : publication révisée de Tom Francis, sans importer les règles de l'ancienne Version 1.
+- La source primaire a été identifiée et une étude spécifique est publiée dans [les règles Gridcannon](../_bmad-output/planning-artifacts/game-rules/gridcannon.md). L'ancienne mention « version de règles non encore documentée » reflétait un état antérieur.
+- Les cas limites G-01 à G-05 demeurent à clarifier ; titre public distinct de « Gridcannon » seul et crédits Tom Francis à valider (G-06).
+- Une matrice de conformité dédiée doit être finalisée et exécutée avant déclaration de jeu jouable.
