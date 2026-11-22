@@ -1,0 +1,231 @@
+---
+title: 'PRD — CardForge'
+status: draft-for-review
+created: '2026-11-22'
+updated: '2026-11-22'
+owner: 'John — Product Manager BMAD'
+project: CardForge
+sources:
+  - '../../../../docs/cadrage.md'
+  - '../../product-brief-cardforge.md'
+  - '../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md'
+  - '../../clear-the-dungeon-rule-test-matrix.md'
+---
+
+# PRD — CardForge
+
+**Version : 0.1 — projet de référence à valider par le porteur du projet.** Ce document exprime le *quoi* et les comportements observables. Les contraintes de réalisation AD-01 à AD-12 sont consignées dans l'architecture Winston, et non redécidées ici.
+
+## 0. Objet et sources
+
+Ce PRD aligne John, Mary, Sally, Winston, Amelia, Murat et Camille sur le périmètre de la collection de jeux de cartes solo et sur le premier jeu jouable. Il sert d'entrée au découpage en Epics et User Stories après validation fonctionnelle. Il ne remplace ni les règles primaires de Clear the Dungeon ni l'accord de l'auteur.
+
+Sources internes : [cadrage](../../../../docs/cadrage.md), [Product Brief](../../product-brief-cardforge.md), [architecture](../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md), [matrice de conformité du jeu](../../clear-the-dungeon-rule-test-matrix.md), [étude des droits](../../clear-the-dungeon-rules-rights-study.md).
+
+## 1. Vision
+
+CardForge propose dans une même application une collection gratuite, sans publicité, de jeux de cartes solo fidèles aux règles originales, tout en remplaçant leur présentation classique par des univers illustrés originaux. Chaque jeu dispose de son identité graphique, mais partage une expérience fluide de découverte, d'apprentissage, de sauvegarde et de consultation des résultats.
+
+L'objectif de la V1 est de **rendre réellement jouable Clear the Dungeon Classic 1.1.0**, de manière accessible à un débutant et satisfaisante pour un amateur de stratégie, puis de rendre la plateforme apte à accueillir d'autres jeux sans altérer les précédents. Le Web responsive et la PWA sont prioritaires ; Android et iOS restent des cibles de portage explicites.
+
+La valeur attendue n'est pas un système de progression ou de récompenses : c'est la fidélité des règles, l'immersion graphique et la possibilité de reprendre une partie à tout moment.
+
+## 2. Utilisateurs et parcours
+
+### 2.1 Jobs-to-be-done
+
+- **Débutant :** découvrir rapidement les règles sans bloquer son accès au jeu et obtenir une aide facultative.
+- **Joueur expérimenté :** commencer directement, retrouver des règles exactes et désactiver les aides superflues.
+- **Joueur mobile :** jouer à une partie solo courte ou fractionnée, hors ligne, puis reprendre exactement là où elle a été laissée.
+- **Collectionneur d'expériences :** découvrir différents univers visuels, consulter ses résultats et passer d'un jeu à un autre sans perdre les parties en cours.
+
+**Non-utilisateurs V1 :** joueurs cherchant multijoueur, classement mondial, achat de cartes, skins à débloquer ou synchronisation cloud.
+
+### 2.2 Parcours clés (à affiner par Sally)
+
+- **UJ-1 — Premier lancement :** une joueuse ouvre le catalogue, sélectionne Clear the Dungeon, lit sa fiche, choisit « Apprendre à jouer » ou « Jouer directement », puis commence à jouer. Elle peut retrouver les règles à tout moment.
+- **UJ-2 — Reprise après interruption :** un joueur ferme l'application après une action sauvegardée ; il la rouvre sans connexion, choisit « Reprendre » et retrouve la même pioche, la même main et les mêmes monstres.
+- **UJ-3 — Résultat et nouvelle partie :** une partie arrive à une victoire ou défaite déterminée par le moteur ; le joueur consulte un bilan immersif, ses statistiques sont mises à jour une seule fois, puis il peut rejouer.
+- **UJ-4 — Remplacement volontaire :** avec une partie en cours, le joueur choisit « Nouvelle partie », confirme le remplacement ; la précédente est comptée une seule fois comme abandon et les autres jeux restent inchangés.
+- **UJ-5 — Changement de contexte :** un joueur passe aux statistiques, aux règles ou au catalogue puis revient à sa partie ; la navigation n'implique aucun abandon.
+- **UJ-6 — Incident de sauvegarde :** une écriture locale échoue ; l'interface ne prétend pas que la progression est enregistrée, explique l'incident et propose un nouvel essai sans supprimer automatiquement les données connues.
+
+## 3. Glossaire partagé
+
+- **Jeu :** titre jouable du catalogue, avec son moteur et ses règles propres.
+- **Catalogue :** accueil commun présentant les jeux et leurs univers.
+- **Fiche de jeu :** écran de présentation et d'actions propres à un jeu.
+- **Partie :** session ordinaire de jeu identifiable, en cours ou clôturée.
+- **Partie active :** unique Partie sauvegardée en cours pour un Jeu.
+- **Tutoriel :** scénario pédagogique facultatif distinct d'une Partie ordinaire, exclu des statistiques.
+- **Règles du jeu :** règles originales de la version explicitement retenue ; l'illustration ne les modifie jamais.
+- **Carte métier :** objet avec identité, valeur et propriété d'enseigne interprétés par le moteur.
+- **Carte illustrée :** représentation graphique d'une Carte métier dans l'univers du Jeu.
+- **Sauvegarde :** état local complet et ordonné d'une Partie, versionné et validé.
+- **Résultat :** issue unique d'une Partie clôturée : victoire, défaite ou abandon.
+- **Statistiques :** agrégats locaux des Résultats d'un Jeu.
+- **Ressources :** images, polices, sons et textes indispensables au Jeu.
+- **MVP :** première version publique jouable, Web/PWA avec Clear the Dungeon ; architecture préparée pour Android/iOS.
+
+## 4. Fonctionnalités et exigences fonctionnelles
+
+### 4.1 Catalogue et navigation
+
+Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonctions restent cohérentes. Réalise UJ-1, UJ-5.
+
+**FR-01 — Afficher le catalogue.** Le joueur peut parcourir tous les Jeux référencés avec titre, univers, présentation, disponibilité et illustration. Un Jeu non disponible est signalé « À venir », sans action de démarrage trompeuse.
+
+**FR-02 — Consulter une fiche de Jeu.** Le joueur peut consulter une présentation narrative courte, les mécaniques principales et la durée indicative seulement lorsqu'elle est connue et vérifiée.
+
+**FR-03 — Actions contextualisées.** Une fiche de Jeu jouable donne accès à Jouer/Nouvelle partie, Reprendre si une Partie active existe, Règles du jeu et Statistiques. Un indicateur non intrusif signale une Partie active.
+
+**FR-04 — Naviguer sans perdre une partie.** Le retour au Catalogue, aux Règles du jeu ou aux Statistiques ne clôture ni n'abandonne la Partie ; l'accès aux paramètres globaux reste disponible. Aucun menu permanent n'est imposé au plateau.
+
+### 4.2 Partie et conformité des règles
+
+Le premier Jeu jouable est Clear the Dungeon Classic 1.1.0, sans réserve facultative, avec les jokers. Réalise UJ-1, UJ-2, UJ-3.
+
+**FR-05 — Créer une Partie réglementaire.** Une nouvelle Partie utilise une distribution, un ordre de pioche, un contenu de paquet et des conditions de jeu conformes à la version officielle retenue. **[BLOQUANT RÈGLES]** La matrice Mary doit être rapprochée de la source primaire avant réalisation complète.
+
+**FR-06 — Proposer uniquement les actions autorisées.** Le joueur peut sélectionner les cartes et cibles puis soumettre un coup ; la décision de validité relève exclusivement des Règles du jeu. Une action invalide ne modifie pas l'état de la Partie et retourne une explication compréhensible.
+
+**FR-07 — Résoudre les effets déterministes.** Une action acceptée met à jour les cartes, monstres, main, pioche et phases en appliquant les Règles du jeu. Une même Partie et une même suite d'actions produisent la même issue, sans nouveau mélange lors de la reprise.
+
+**FR-08 — Déterminer l'issue.** Le moteur établit seul victoire et défaite selon les Règles du jeu, y compris les cas limites documentés ; aucune mécanique de difficulté ou capacité nouvelle n'est créée par le thème.
+
+**FR-09 — Configurer Classic sans réserve.** La variante facultative de réserve est désactivée dans le MVP, sans supprimer la pile de dégâts ni les jokers. Advanced 1.2.0 n'est pas une option V1.
+
+### 4.3 Cartes illustrées et immersion
+
+**FR-10 — Présenter des Cartes illustrées.** Chaque Carte métier dispose d'une représentation fixe propre au Jeu (personnage, faction, puissance lisible). Valeur et faction doivent être identifiables sans dépendre uniquement de la couleur.
+
+**FR-11 — Préserver la mécanique.** Le remplacement d'illustration, de texte localisé ou d'effet audio ne change ni la validité des actions ni la composition de la Partie.
+
+**FR-12 — Animations de jeu facultatives.** Les animations et sons n'empêchent pas l'achèvement d'une action ; le joueur peut réduire les animations et désactiver les sons sans impact sur les Règles du jeu.
+
+### 4.4 Tutoriel et aide
+
+**FR-13 — Choisir au premier lancement.** Au premier démarrage de chaque Jeu, le joueur voit « Apprendre à jouer » ou « Jouer directement » ; le choix est conservé localement et ne bloque jamais l'accès direct.
+
+**FR-14 — Tutoriel réutilisable.** Le Tutoriel expose des situations pédagogiques conformes aux Règles du jeu ; il peut être relancé depuis l'aide et n'alimente ni sauvegarde de Partie ordinaire ni Statistiques.
+
+**FR-15 — Règles accessibles.** Les Règles du jeu et les aides contextuelles restent consultables pendant l'utilisation ; les aides facultatives peuvent être désactivées indépendamment des règles.
+
+### 4.5 Sauvegarde, reprise et résilience
+
+**FR-16 — Enregistrer automatiquement.** Après chaque action valide, l'application enregistre localement la Sauvegarde de la Partie, sans bouton de sauvegarde manuel. Les actions sont traitées dans un ordre contrôlé ; le statut « Enregistré » n'est affiché qu'après confirmation effective de persistance.
+
+**FR-17 — Une Partie active par Jeu.** Il existe au plus une Sauvegarde de Partie active pour chaque Jeu, indépendamment des autres Jeux.
+
+**FR-18 — Reprendre exactement.** Le joueur peut restaurer une Sauvegarde compatible et valide, avec ordre exact des cartes, position du plateau, main, phase et état des mécanismes propres au Jeu.
+
+**FR-19 — Confirmer avant remplacement.** Si une Partie active existe, Nouvelle partie déclenche une demande de confirmation ; Annuler conserve l'état initial, Confirmer crée une nouvelle Partie et clôt l'ancienne comme abandon une seule fois, sans toucher aux autres Jeux.
+
+**FR-20 — Préserver les Sauvegardes incompatibles.** À l'ouverture d'une Sauvegarde, le système valide son schéma, sa version et ses invariants ; une migration de format connue est appliquée sans transformation des Règles du jeu, et sans destruction de la Sauvegarde originale en cas d'échec.
+
+**FR-21 — Gérer les erreurs de stockage.** En cas d'échec d'écriture, l'application signale que la progression n'est pas durablement enregistrée, conserve l'état en mémoire lorsque possible et permet de réessayer. Aucune suppression ni réinitialisation automatique à l'échec.
+
+### 4.6 Résultats et statistiques
+
+**FR-22 — Présenter le résultat final.** À une victoire/défaite, l'application affiche une scène thématique avec animation courte ou réduite, un bilan factuel et les actions Rejouer et Catalogue ; aucune analyse exhaustive des coups n'est exigée.
+
+**FR-23 — Distinguer abandon et défaite.** Un abandon est uniquement le résultat d'une action volontaire confirmée, y compris un remplacement de Partie active ; fermer ou quitter l'écran ne compte jamais comme abandon.
+
+**FR-24 — Comptabiliser une seule fois.** Chaque Résultat est enregistré une seule fois, même après rafraîchissement, reprise ou répétition d'une commande. Les Tutoriels ne comptent pas.
+
+**FR-25 — Présenter les Statistiques par Jeu.** Afficher victoires, défaites, abandons, total des Parties closes, taux de victoire = victoires/(victoires+défaites) et « — » quand le dénominateur vaut zéro. Une meilleure performance n'est affichée que si la règle officielle du Jeu définit une mesure pertinente.
+
+### 4.7 Paramètres, données et langues
+
+**FR-26 — Régler l'expérience.** Paramètres globaux : langue français/anglais, musique et effets sonores séparés, niveau d'animations, aides facultatives et options d'accessibilité. Les préférences persistent localement.
+
+**FR-27 — Informer sur les données.** Le joueur peut comprendre quelles données locales sont conservées et qu'une désinstallation ou un effacement des données du navigateur peut les faire disparaître.
+
+**FR-28 — Effacer volontairement les données.** Une action explicite, avec présentation du périmètre et confirmation, permet de supprimer les données locales concernées ; l'annulation ne supprime rien. **[ASSUMPTION A-01]** La suppression peut porter sur toutes les données CardForge, sans granularité par Jeu en V1.
+
+**FR-29 — Afficher informations et crédits.** Présenter version de l'application, crédits et informations de licence ou d'autorisation nécessaires au Jeu.
+
+### 4.8 Disponibilité hors ligne et plateformes
+
+**FR-30 — Jouer hors connexion après installation.** Une fois la PWA correctement préparée, toutes les Ressources nécessaires au(x) Jeu(x) disponibles sont accessibles sans réseau. L'application indique si l'installation hors ligne est incomplète ; les données de Partie ne sont pas supprimées par une mise à jour du cache.
+
+**FR-31 — Préserver les mêmes règles sur plateformes.** La version Web et les futurs portages Android/iOS doivent utiliser la même définition fonctionnelle des actions, Résultats et Sauvegardes ; les adaptations de présentation ou de stockage ne changent pas les Règles du jeu.
+
+**FR-32 — Distinguer les états de disponibilité.** Le Catalogue distingue clairement « À venir », « Disponible » et, si nécessaire, « Préparation hors ligne en cours » sans présenter un Jeu indisponible comme jouable.
+
+## 5. Exigences non fonctionnelles (NFR)
+
+- **NFR-01 — Fidélité :** chaque règle officialisée doit être associée à au moins un test métier, et chaque cas limite du référentiel reçoit un statut explicite avant la déclaration « Jeu jouable ».
+- **NFR-02 — Déterminisme :** après reprise d'une Sauvegarde, les mêmes actions produisent le même état et la même issue, y compris l'ordre de la pioche.
+- **NFR-03 — Intégrité :** les transitions de Partie et le Résultat associé sont persistés de manière cohérente ; aucune double comptabilisation après interruption ou nouvelle exécution.
+- **NFR-04 — Résilience :** migration/écriture échouée ne détruit pas silencieusement la Sauvegarde existante ; toute erreur durable est explicitement signalée.
+- **NFR-05 — Accessibilité :** usage sur smartphone en portrait et au clavier ; cartes lisibles avec un contraste suffisant, valeurs non codées par couleur seule, respect de la préférence système de mouvement réduit.
+- **NFR-06 — Internationalisation :** l'interface et les aides du MVP sont disponibles en français et anglais ; aucune chaîne de règles originale n'est traduite au point d'en modifier le sens.
+- **NFR-07 — Vie privée :** aucune inscription, synchronisation ou collecte distante n'est nécessaire pour jouer au MVP.
+- **NFR-08 — Hors ligne :** après préparation complète, la Partie ordinaire reste utilisable sans réseau ; tester fermeture, redémarrage et mise à jour du cache.
+- **NFR-09 — Portabilité :** tests de compatibilité dédiés Android/iOS (notamment persistance WebView et suspension) avant publication sur ces plateformes, non présumée par un build réussi.
+- **NFR-10 — Gratuité :** aucune fonction payante ni publicité ; Clear the Dungeon demeure gratuit conformément à la condition de l'accord déclaré de l'auteur.
+- **NFR-11 — Performances :** [ASSUMPTION A-02] la cible chiffrée de fluidité et de temps de démarrage sera fixée après un prototype mesuré sur les appareils et navigateurs retenus ; aucun seuil arbitraire n'est imposé aujourd'hui.
+
+## 6. Périmètre et séquencement
+
+### 6.1 MVP Web/PWA — inclus
+
+Catalogue immersif, fiche de Clear the Dungeon, Partie Classic 1.1.0 sans réserve, cartes Fantasy fixes, tutoriel facultatif, règles, aide, Sauvegarde locale, résultats et Statistiques, préférences FR/EN, ressources embarquées et hors ligne PWA, gestion des incidents et tests de conformité.
+
+### 6.2 Exclusions V1
+
+Pas de compte, cloud, export/import de Sauvegarde, publicité, achats intégrés, trophées, défis, progression mécanique, skins, classements en ligne, multijoueur, moteur Advanced, historique détaillé des coups ni packs de Ressources à télécharger.
+
+### 6.3 Après le Web
+
+Portages Android et iOS via Capacitor, CI native sur GitHub Actions, tests matériels, signatures et distribution des applications : cibles explicites, calendrier non encore validé. Les autres Jeux du Catalogue restent « À venir » tant qu'ils ne sont pas conformes, testés et autorisés.
+
+## 7. Critères de succès et contre-mesures
+
+Les critères suivants sont des **critères de réussite du MVP**, et non des mesures actuellement observées :
+
+- **SM-01 — Jeu réellement jouable :** 100 % des scénarios obligatoires de la matrice officielle validée passent sur le moteur livré (FR-05 à FR-09 ; NFR-01).
+- **SM-02 — Sauvegarde fiable :** aucune perte ou modification de la séquence d'état dans les scénarios de reprise, de fermeture et de migration testés (FR-16 à FR-21).
+- **SM-03 — Disponibilité hors ligne :** les scénarios de jeu hors connexion après installation réussissent sur les environnements Web ciblés (FR-30).
+- **SM-04 — Accessibilité à l'entrée :** un nouveau joueur peut accéder à une Partie sans compte ni Tutoriel imposé, et consulter les règles (FR-01, FR-13, FR-15).
+- **SM-05 — Statistiques exactes :** aucun double Résultat dans les scénarios de reprise, abandon et rafraîchissement (FR-22 à FR-25).
+- **Contre-mesure :** ne pas mesurer ou optimiser la durée des sessions comme proxy de succès si cela conduit à modifier les règles, à forcer la rétention ou à rendre le Tutoriel obligatoire.
+
+Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisabilité restent à décider après les premières maquettes et prototypes.
+
+## 8. Risques, dépendances et critères de passage
+
+| Sujet | Dépendance / contrôle |
+| --- | --- |
+| Règles Classic 1.1.0 | Mary doit confirmer ordre des phases, jokers, épuisement de pioche et cas limites ; sans cela, pas d'acceptation du moteur complet |
+| Autorisation | Accord de l'auteur annoncé par le porteur du projet, sous condition de gratuité ; conserver/clarifier sa portée exacte et l'attribution avant diffusion |
+| Créations | Vérifier droits des illustrations, sons, polices et autres Ressources avant distribution |
+| Sauvegardes | Winston/Amelia définissent contrat de version et migrations ; Murat vérifie intégrité et reprise |
+| Web/PWA | Mettre en place et tester les Ressources offline, la gestion des mises à jour et le stockage |
+| Android/iOS | Valider IndexedDB dans les WebViews, chaîne GitHub Actions, signature, appareils cibles et exigences éditeurs avant sorties |
+| UX | Sally précise interactions de cartes, tutoriels, écran final et parcours accessibles |
+| Mesures | Définir un petit jeu d'appareils de référence et les cibles de performances après prototype |
+
+## 9. Questions ouvertes
+
+- **Q-01 [bloquante pour le moteur] :** texte primaire intégral et résolution des cas limites de Clear the Dungeon Classic 1.1.0.
+- **Q-02 [bloquante pour publication] :** formulation conservable de l'accord de Mark S. Ball et périmètre précis (nom, Web, Android, iOS, crédits, territoires).
+- **Q-03 :** valeurs cibles concrètes de fluidité, démarrage et tailles d'écran à tester.
+- **Q-04 :** granularité souhaitée de suppression des données locales.
+- **Q-05 :** appareils/navigateurs et versions minimales Android/iOS retenus lors du portage.
+- **Q-06 :** modalités de distribution publique Web et, ultérieurement, Android/iOS.
+- **Q-07 :** aide contextuelle exacte et interactions tactiles à définir par Sally.
+
+## 10. Hypothèses à confirmer
+
+- **A-01 :** en V1, la suppression volontaire porte sur toutes les données CardForge et non sur un Jeu particulier (FR-28). À valider.
+- **A-02 :** les budgets chiffrés de performance seront fixés avec des mesures de prototype (NFR-11), pas arbitrairement.
+- **A-03 :** une seule Partie active par Jeu suffit pour les deux publics cibles ; décision antérieure validée, à tester en UX.
+
+## 11. Statut du document et prochain relais
+
+- **Validé :** orientation produit et décisions architecturales AD-01 à AD-12.
+- **Rédigé, à approuver :** ce PRD comme périmètre de référence.
+- **Non validé :** règles complètes du premier Jeu, permission documentée, performance et appareils cibles.
+- **Prochaine étape :** validation fonctionnelle du PRD, puis découpage BMAD en Epics et User Stories petites et testables ; aucune création Jira sans autorisation explicite.
