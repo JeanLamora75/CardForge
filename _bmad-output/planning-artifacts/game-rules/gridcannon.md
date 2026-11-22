@@ -1274,4 +1274,37 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T300 | Changement de langue avec lecteur d'écran ou clavier | Sélecteur accessible, langue active identifiable | À vérifier en UX, non exécuté |
 | GC-V2-T301 | Dix langues annoncées par l'application | Anglais inclus, parcours fondamentaux complets dans chaque langue livrée | À vérifier, non exécuté |
 
-**Prochain arbitrage proposé — GC-28 / sélection des dix premières langues :** décider comment figer les **dix langues initialement livrées** en incluant obligatoirement l'anglais (GC-27). Choix envisagés : **A** décider maintenant une liste précise de dix langues ; **B** choisir d'abord les critères et priorités, puis valider la liste ; **C** conserver une liste extensible sans minimum concret par livraison. L'exigence de dix langues effectives reste impérative ; l'option C ne peut pas la réduire.
+**GC-28 : décision prise ultérieurement — première livraison limitée au français et à l’anglais ; objectif d’au moins dix langues à terme (voir §42).**
+
+
+## 42. Décision de livraison multilingue — GC-28 : français et anglais au lancement, extension progressive
+
+**Décision VALIDÉE le 22 novembre 2026.** La première livraison de CardForge et de ses jeux démarre avec **deux langues complètes : français (fr) et anglais (en)**. Les autres langues seront ajoutées dans des livraisons ultérieures, avec un **objectif global maintenu d'au moins dix langues**, sans liste ni calendrier arrêtés à ce stade. Cette décision précise et **remplace toute interprétation antérieure imposant dix langues dès le MVP** dans GC-26 et GC-27. Le repli reste **l'anglais** et la sélection reste **détection automatique puis choix manuel persistant**, commune à l'application et aux jeux (GC-27).
+
+### 42.1. Exigences et implications
+
+1. **Première livraison :** français et anglais sont disponibles pour toute l'application, Clear the Dungeon, Gridcannon V2, les règles, aides, résultats, messages d'erreur et parcours utiles ; pas seulement pour la page d'accueil.
+2. **Détection :** une préférence système en français sélectionne le français, une préférence en anglais sélectionne l'anglais, toute autre langue non prise en charge conduit à l'anglais, sauf si une préférence manuelle valide est enregistrée.
+3. **Choix manuel :** seul le catalogue de langues effectivement livrées est proposé. Aucun sélecteur laissant croire que huit langues non publiées seraient disponibles.
+4. **Extension :** l'architecture de localisation doit accepter de nouvelles langues par ressources isolées, sans changements du moteur de jeu, de ses sauvegardes ni de ses identifiants métier ; les langues ajoutées rejoignent la détection et le sélecteur quand leurs ressources sont complètes.
+5. **Hors ligne :** les textes et aides en français et anglais requis pour les parties hors ligne sont fournis localement ; les futures langues suivent la même exigence lorsqu'elles deviennent disponibles.
+6. **Qualité :** vérifier les deux langues sur tous les parcours et terminologies de règles avant livraison ; ne pas assimiler l'objectif de dix langues à un engagement de livraison immédiate.
+7. **Traçabilité :** GC-28 est une **décision de phasage** transversale à CardForge. Les références plus anciennes « dix langues complètes » dans GC-26/GC-27 décrivent désormais la **cible à terme** et doivent être lues avec cette précision de périmètre.
+8. **Hors décision :** les langues n°3 à n°10, leur ordre de priorité, leur date de livraison et les éventuelles variantes régionales ne sont pas validés.
+
+**Statut : GC-28 CLOS — lancement fr/en, extension ultérieure vers au moins dix langues.** Cadrage documentaire ; aucune traduction ni test exécuté.
+
+### 42.2. Scénarios de conformité — GC-28
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T302 | Premier lancement appareil en français sans choix enregistré | Interface et jeu en français | Spécifié, non exécuté |
+| GC-V2-T303 | Premier lancement appareil en anglais sans choix enregistré | Interface et jeu en anglais | Spécifié, non exécuté |
+| GC-V2-T304 | Premier lancement dans une langue autre que fr/en | Repli anglais | Spécifié, non exécuté |
+| GC-V2-T305 | Choix manuel du français depuis l'anglais | Application, règles et aides basculent en français sans changer la partie | Spécifié, non exécuté |
+| GC-V2-T306 | Sélecteur des langues au MVP | Français et anglais uniquement, sans langues indisponibles | Spécifié, non exécuté |
+| GC-V2-T307 | Partie hors ligne en français ou anglais | Règles, aide et actions restent utilisables sans réseau | À vérifier, non exécuté |
+| GC-V2-T308 | Ajout futur d'une troisième langue complète | Langue détectable/sélectionnable sans modification de règle ou sauvegarde | À vérifier lors d'une livraison ultérieure |
+| GC-V2-T309 | Relecture des écrans critiques dans les deux langues | Aucun texte métier manquant ni traduction ambiguë de règle | À vérifier, non exécuté |
+
+**Prochain arbitrage proposé — GC-29 / présentation du compteur de pioche :** quelles informations montrer constamment au joueur sur les cartes restantes en pioche ? Options : **A** paquet fermé sans compteur ; **B** paquet fermé avec nombre de cartes restantes ; **C** compteur plus historique des cartes déjà tirées, sans révéler les cartes futures. La représentation ne doit pas divulguer les cartes cachées ni altérer GC-06/18/19.
