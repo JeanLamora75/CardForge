@@ -4,7 +4,7 @@
 **Étude :** 22 novembre 2026  
 **Version étudiée :** livret officiel *Regicide*, règles du **mode solo** pour un joueur  
 **Statut :** **cadrage fonctionnel documenté à partir du livret officiel ; prêt pour revue de conformité des règles**, sans implémentation ni tests exécutés  
-**Périmètre :** règles solo originales, sans ajout de pouvoirs, d'objets, de capacités ou de difficulté. L'adaptation CardForge devra **changer de nom et d'univers** ; l'**Antiquité** est une direction thématique proposée mais non encore validée définitivement. Le thème n'a aucun effet sur le moteur.
+**Périmètre :** règles solo originales, sans ajout de pouvoirs, d'objets, de capacités ou de difficulté. **Décision produit validée : l'adaptation CardForge porte le nom « Les Douze Tyrans » et prend place dans un univers de Grèce antique.** Le thème n'a aucun effet sur le moteur. La disponibilité juridique du titre et les droits d'adaptation restent à vérifier avant diffusion.
 
 ## 1. Sources, version, provenance et périmètre
 
@@ -219,14 +219,26 @@ La source est claire sur les mécaniques fondamentales. Les vérifications suiva
 
 **État : 32 scénarios spécifiés, aucun exécuté.** Ces cas sont destinés aux tests du futur moteur ; aucune conclusion de réussite n'est déclarée.
 
-## 13. Direction artistique et nom : hors règles
+## 13. Décision produit validée — nom et univers de l'adaptation (hors règles)
 
-Le porteur a demandé **un nouveau nom et un nouvel univers**, avec une piste **Antiquité**. Les appellations envisagées telles que « Les Douze Tyrans » sont des **propositions de travail**, ni marques vérifiées ni titres définitivement adoptés.
+**Décision VALIDÉE par le porteur :**
 
-- Les catégories de cartes (J/Q/K, 2–10, As, Joker), leurs quantités et toutes les valeurs restent **strictement identiques**.
-- Les quatre pouvoirs sont renommables dans leur présentation mais **jamais modifiables mathématiquement**.
-- Les cartes de rang royal recrutées par la Taverne demeurent jouables avec les valeurs officielles.
-- Une direction antique (Grèce, Rome ou Antiquité mythologique) est un **habillage artistique**, à arbitrer dans un dossier distinct avec Sally, et non un nouveau chapitre de règles.
+- **Nom public retenu pour CardForge : « Les Douze Tyrans ».**
+- **Univers retenu : la Grèce antique.**
+- **Jeu de référence mécanique : Regicide, mode solo officiel.**
+- **Principe impératif : conserver toutes les règles originales sans modification.**
+
+Ces deux choix sont **définitivement validés au niveau du cadrage produit**, et ne sont plus de simples pistes créatives. Ils ne valent pas validation juridique de la disponibilité du nom ou des droits d'adaptation numérique ; ces contrôles restent nécessaires avant diffusion publique.
+
+**Frontière fonctionnelle à respecter :**
+- La préparation, les 54 cartes physiques, la main de huit cartes, la hiérarchie des douze ennemis, les valeurs, les quatre pouvoirs, les combinaisons, les immunités, les ripostes, les Jokers solo et les médailles de victoire restent **inchangés**.
+- Les catégories de cartes (J/Q/K, 2–10, As, Joker), leurs nombres et leurs identifiants fonctionnels restent strictement identiques dans le moteur.
+- Les illustrations, personnages, lieux, factions et appellations pourront être réinterprétés selon la **Grèce antique**, mais sans apporter de capacités ni d'exceptions aux règles.
+- Les quatre domaines de pouvoir antiques devront correspondre **un pour un** aux enseignes originales (♥ recyclage, ♦ pioche, ♣ dégâts doublés, ♠ protection cumulative) ; aucune substitution n'en change les calculs.
+- La déclinaison artistique détaillée et les choix de représentation relèveront de Sally, sans rouvrir les décisions de mécanique avec Mary.
+- Le document reste nommé `regicide.md` pour conserver une traçabilité claire vers les règles originales ; le produit est présenté au public sous le nom **Les Douze Tyrans**, sous réserve des vérifications juridiques.
+
+**Statut : nom et univers VALIDÉS ; fidélité mécanique inchangée ; aucune implémentation ni vérification de disponibilité du nom exécutée.**
 
 ## 14. Droits, crédits, publication
 
