@@ -783,3 +783,41 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T164 | Dernière figure initiale placée et sortie de préparation | Aucun tir rétroactif ni victoire artificielle à la transition | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-16 :** si un As ou un Joker a été révélé et mis en réserve pendant la mise en place ou pendant le **remplacement facultatif GC-14**, peut-on **activer volontairement une action spéciale alors que ce remplacement n'est pas encore terminé** (case provisoirement vide, figures en attente) ? Distinguer cette sous-phase préparatoire du droit déjà validé en **GC-11** d'utiliser des actions pendant la recherche d'une nouvelle figure **en cours de partie**.
+
+
+## 30. Décision fonctionnelle Gridcannon V2 — GC-16 : activer les actions spéciales seulement après la préparation complète
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Les As et Jokers révélés pendant la mise en place initiale et le remplacement facultatif **GC-14** rejoignent **immédiatement la réserve**, face visible et **non dépensés**. **Ils ne peuvent pas être activés tant que la préparation n'est pas entièrement terminée**, y compris lorsqu'une case de la grille est temporairement vide ou que des figures piochées pendant le remplacement attendent d'être placées. L'activation volontaire de toute action spéciale devient disponible **seulement après clôture de la préparation et entrée en phase de jeu**.
+
+**Contrat métier et séquencement :**
+1. La **préparation** comprend la construction de la grille de neuf cartes numériques, le placement des figures révélées lors de cette construction, l'offre explicite du **remplacement initial unique et facultatif**, puis, s'il est choisi, la restitution de la carte remplacée sous la pioche, les tirages successifs jusqu'à une numérique remplaçante, et enfin le placement des figures temporairement retenues (**GC-14**).
+2. Les As/Jokers découverts pendant cette période sont bien **présents et visibles dans la réserve** conformément aux règles de mise en place et à GC-14, mais restent **désactivés pour l'usage** jusqu'à la fin de la préparation. Leur statut de carte reste **disponible et non dépensé**, distinct de la permission de l'activer à cet instant.
+3. Pendant la préparation, aucune **Extraction** ni **Réaffectation** volontaire n'est acceptée, que la grille soit complète ou temporairement incomplète. Une tentative ne doit **ni consommer** de carte spéciale ni modifier le plateau, la pioche, les figures en attente ou la réserve.
+4. Une fois les neuf cases reconstituées et **toutes les figures en attente placées légalement**, ou après le refus du remplacement, effectuer **une seule transition de phase** « préparation terminée → partie en cours ». Les actions spéciales déjà découvertes deviennent alors activables, sous réserve de leurs conditions normales de légalité. La permission d'action ne nécessite aucun tirage artificiel.
+5. Les règles **GC-15** demeurent strictes : la pose de la numérique de remplacement ne déclenche **aucun tir** ; la clôture de préparation ne déclenche **aucune attaque rétroactive** contre les figures déjà installées. Les actions spéciales jouées **après cette clôture** et les poses de jeu ultérieures suivent les tirs normaux, dont GC-04.
+6. **GC-11 reste inchangé :** en **cours de partie**, pendant la recherche d'une nouvelle figure après élimination des figures vivantes, le joueur peut activer volontairement des As/Jokers. Cette recherche de figure en partie **n'est pas** une nouvelle phase de préparation.
+7. L'interface doit distinguer le statut « **en réserve / non dépensé** » du droit « **activable à cet instant** » : montrer la carte comme acquise, mais indiquer l'indisponibilité temporaire de son activation, sans simuler une action réussie ou effacer sa présence.
+8. La sauvegarde/reprise conserve la phase, la présence des actions dans la réserve, leurs identifiants et état dépensé/non dépensé, la case à remplacer, les figures retenues et la clôture de préparation. Les tentatives répétées et doubles clics ne doivent provoquer aucune transition prématurée, dépense ni tir.
+9. **La partie commence** une fois les choix de préparation terminés, sans offrir d'action supplémentaire gratuite, ni retirer les actions spéciales obtenues. Les conditions de score **GC-08** comptent seulement les As/Jokers effectivement non dépensés à la victoire, y compris ceux obtenus durant la préparation.
+
+**Exemple :** lors du remplacement initial du 6♥, une Dame puis un As sont révélés avant le 9♦ remplaçant. L'As rejoint aussitôt la réserve, **sans être utilisable pendant le remplacement**. Le 9♦ remplit la case **sans tir** (GC-15), puis la Dame est installée. Quand la préparation est entièrement terminée, l'As peut être volontairement utilisé pour une Extraction légale.
+
+**Statut : GC-16 CLOS pour CardForge.** La séparation entre présence en réserve et droit d'activation durant la préparation est une **décision fonctionnelle CardForge**, et non une interdiction explicitement attribuée à Tom Francis. Aucune implémentation, exécution du moteur ou test UX n'a été effectuée.
+
+### 30.1. Scénarios de conformité — GC-16
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T165 | As découvert pendant la construction des neuf cases | As immédiatement en réserve, non dépensé et activation indisponible pendant la préparation | Spécifié, non exécuté |
+| GC-V2-T166 | Joker découvert pendant le remplacement initial GC-14 | Joker immédiatement en réserve ; impossible de déclencher une Réaffectation avant clôture | Spécifié, non exécuté |
+| GC-V2-T167 | Case temporairement vide pendant le remplacement ; As disponible | Tentative d'Extraction refusée, As intact et pioche inchangée | Spécifié, non exécuté |
+| GC-V2-T168 | Numérique de remplacement déjà posée, une figure tirée attend encore son placement | Actions spéciales encore non activables | Spécifié, non exécuté |
+| GC-V2-T169 | Joueur refuse le remplacement initial après la mise en place | Transition de préparation terminée ; actions spéciales de la réserve deviennent activables | Spécifié, non exécuté |
+| GC-V2-T170 | Remplacement achevé et dernière figure en attente légalement placée | Transition unique en phase de jeu, activation des actions spéciales permise | Spécifié, non exécuté |
+| GC-V2-T171 | Carte de remplacement en coin, figures vivantes et As en réserve | Aucun tir ni dépense pendant préparation ; pas d'attaque rétroactive à la clôture (GC-15) | Spécifié, non exécuté |
+| GC-V2-T172 | Phase de jeu active, recherche nouvelle figure GC-06 et As disponible | Action légale utilisable pendant la recherche, selon GC-11 ; ne pas réappliquer le verrou de préparation | Spécifié, non exécuté |
+| GC-V2-T173 | Sauvegarde en plein remplacement avec deux cartes spéciales découvertes | Reprise avec cartes visibles non dépensées mais non activables tant que phase inachevée | Spécifié, non exécuté |
+| GC-V2-T174 | Double clic sur action spéciale non activable ou sur transition de phase | Aucune dépense prématurée, duplication de transition ou mutation de grille | Spécifié, non exécuté |
+| GC-V2-T175 | Victoire ultérieure avec cartes spéciales obtenues en préparation non dépensées | Compter ces cartes parmi les actions spéciales encore disponibles selon GC-08 | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-17 / G-06 :** choisir le **titre public distinct** de l'adaptation CardForge et la **formule de crédit à Tom Francis** dans la fiche du jeu, les règles, les écrans de jeu et les informations du projet. La publication de l'auteur encourage les adaptations, recommande un nom distinct de « Gridcannon » seul et un crédit explicite ; la **dénomination exacte de CardForge** n'est pas encore approuvée.
