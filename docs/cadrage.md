@@ -186,3 +186,11 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - **Préparation au portage :** évaluer Capacitor comme solution d'enveloppe native Web pour Android et iOS, sans considérer son adoption ni ses versions techniques comme validées avant l'étude d'architecture.
 - **Livraison :** Web en premier ; calendrier de livraison Android/iOS à définir séparément. La cible iOS ne signifie pas qu'une compilation ou publication App Store est possible depuis Windows : les prérequis Apple devront être étudiés.
 - **Qualité :** tests du moteur commun indépendants de la plateforme, puis vérifications spécifiques Web, Android et iOS avant leurs sorties.
+
+## Première livraison — décision de périmètre du 22 novembre 2026 (John)
+- **Option B validée : la première version Web/PWA doit inclure DEUX jeux entièrement jouables, Clear the Dungeon ET Gridcannon.**
+- Le catalogue affiche les deux comme « Disponibles » uniquement après vérification des règles, tests, tutoriels et ressources ; les autres jeux demeurent « À venir ».
+- Chaque jeu possède son propre moteur de règles, ses illustrations, son tutoriel, sa sauvegarde active et ses statistiques ; les services communs sont mutualisés sans transformer leurs règles.
+- **Gridcannon : la version de règles primaire, les cas limites et les droits de diffusion ne sont pas encore documentés.** Une analyse métier Mary et une matrice de conformité spécifiques sont bloquantes avant d'affirmer le jeu jouable et autorisé.
+- Clear the Dungeon reste Classic 1.1.0 sans réserve facultative, selon les décisions existantes. Son autorisation a été déclarée par le porteur sous condition de gratuité, portée exacte à documenter.
+- Le PRD de référence est [PRD CardForge v0.2](../_bmad-output/planning-artifacts/prds/prd-CardForge-2026-11-22/prd.md). Les portages Android et iOS restent prévus après la première version Web/PWA.
