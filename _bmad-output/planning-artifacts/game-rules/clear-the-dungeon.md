@@ -146,3 +146,11 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 | O-CTD-06 | Score = pioche restante, main exclue | Confirmé pour victoire |
 
 **À obtenir pour clore CTD-J01 et O-CTD :** consultation du Google Doc officiel via navigateur permettant JavaScript, PDF de l'auteur ou clarification directe de Mark S. Ball. Ne pas utiliser une simulation tierce comme source de règle supérieure au créateur.
+
+## 10. Approfondissement et hiérarchie des preuves (22 novembre 2026)
+- **[Dossier de recherche approfondie](./recherche-approfondie-2026-11-22.md)** — sources, confrontations et décisions différées.
+- **CTD-J01 demeure BLOQUANT :** la page de présentation donne un joker de puissance choisie jusqu'à 10, mais le livret Classic 1.1.0 reproduit et l'implémentation PySolFC attribuent une valeur fixe de 10. La valeur fixe **semble la mieux soutenue pour le livret Classic 1.1.0**, sans constituer un arbitrage officiel. La copie officielle du livret Google Docs n'a pas pu être récupérée malgré une tentative d'accès ; l'auteur reste la meilleure source de clarification.
+- **CTD-P01 :** le texte de la règle précise **exactement trois cartes pour vaincre un monstre**, avec les deux premières de puissance et la troisième de déclenchement. La possibilité de préparer plusieurs attaques partielles et leur persistance entre mains sont à confirmer séparément.
+- **CTD-P02 :** le texte du livret reproduit indique de dévoiler **immédiatement** une carte de monstre quand elle est entièrement découverte ; ce principe peut devenir un test, sans inventer le déroulement d'une attaque simultanée.
+- **CTD-D01 :** le jeu se termine **immédiatement au septième dégât**. L'épuisement de la pioche avec une main non vide reste une question distincte.
+- **Interdiction de mélange des variantes :** les variantes proposées sur des sites secondaires (Boomer-Ace, Power Reserve, aptitudes des rois, agencements alternatifs) ne font pas partie de la configuration Classic 1.1.0 retenue.
