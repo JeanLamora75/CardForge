@@ -434,7 +434,7 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T56 | Sauvegarde avec 2 cartes numériques temporairement écartées puis reprise | Même phase et mêmes identités de cartes ; aucun tirage, dégât ou armure fantôme | Spécifié, non exécuté |
 | GC-V2-T57 | Aucune figure vivante, pioche numérique traversée puis apparition normale d'une figure, retour au cycle de jeu | Cycle normal repris après placement de la figure et réintroduction des cartes numériques | Spécifié, non exécuté |
 | GC-V2-T58 | Dernière carte numérique tirée alors qu'aucune figure n'est vivante, moins de 12 vaincues | **Cas explicitement non tranché** : aucun remélange ni verdict de défaite inventé sous GC-06 ; à arbitrer avec G-05 | En attente d'arbitrage G-05 |
-| GC-V2-T59 | Tirage d'un As ou Joker pendant la recherche | **Cas explicitement non tranché** pour GC-06 ; à préciser séparément, sans supposer que le comportement numérique s'applique | En attente d'arbitrage |
+| GC-V2-T59 | Tirage d'un As ou Joker pendant la recherche | **Résolu par GC-09** : carte spéciale transférée face visible et non dépensée vers la réserve ; recherche poursuivie | Spécifié, non exécuté |
 | GC-V2-T60 | Fin de phase après passage de plusieurs numériques | Le total physique de cartes est conservé ; aucune carte numérique traversée ne devient une armure | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-07 / G-07 :** lorsqu'une carte numérique est **impossible à poser alors qu'une figure vivante existe**, une **action spéciale encore disponible mais incapable de rendre la carte posable** bloque-t-elle l'attribution d'armure ? Ce cas est distinct de la recherche de figure GC-06 et des règles d'Extraction d'As (GC-03/05).
@@ -511,3 +511,41 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T82 | Tentative d'ajouter l'As utilisé pour réapprovisionner au compteur des actions non dépensées | As **exclu**, sans remboursement ni bonus | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-09 / sous-cas G-05 :** pendant la recherche de la prochaine figure, lorsqu'aucune figure n'est vivante (GC-06), comment traiter **un As ou un Joker pioché** ? Les cartes numériques de cette phase sont déjà traitées par GC-06 ; les cartes spéciales demeurent un cas explicitement ouvert (GC-V2-T59).
+
+
+## 23. Décision fonctionnelle Gridcannon V2 — GC-09 / sous-cas G-05 : As et Jokers rencontrés pendant la recherche d'une figure
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Quand le joueur a vaincu toutes les figures actuellement présentes mais pas encore les douze figures du jeu, la recherche de la **prochaine figure** engagée selon **GC-06** se poursuit. Tout **As** ou **Joker** pioché pendant cette recherche rejoint **immédiatement, face visible, la réserve des actions spéciales**, exactement comme lors d'un tirage ordinaire. Il **n'est pas mis de côté avec les cartes numériques** ni réintroduit dans la pioche ; il **n'est pas consommé automatiquement**. Le moteur poursuit la recherche de la figure suivante après son attribution à la réserve.
+
+**Règles déterministes et séparation des cas :**
+1. Si **aucune figure n'est vivante** et que **moins de douze figures sont vaincues**, maintenir le mode de recherche **GC-06**. Le traitement de chaque carte tirée dépend de sa catégorie, **sans intervention tactique forcée**.
+2. **Cartes numériques 2–10 :** les mettre **temporairement de côté** pour réinsertion ultérieure sous la pioche, sans les poser ni les convertir en armure (GC-06).
+3. **As :** retirer l'As physique de la pioche, le placer **face visible dans la réserve** comme **action Extraction disponible**, **non dépensée**. Aucune pile n'est extraite par ce seul tirage.
+4. **Joker :** retirer le Joker physique de la pioche, le placer **face visible dans la réserve** comme **action Réaffectation disponible**, **non dépensée**. Aucune carte de la grille n'est déplacée par ce seul tirage.
+5. **Figure J/Q/K :** traiter son placement autour de la grille selon **GC-01 / GC-02**, puis achever le cycle de recherche et réinjecter les cartes numériques traversées sous la pioche selon GC-06, sans y inclure les As/Jokers désormais dans la réserve.
+6. Les **identifiants physiques** des quatre As et deux Jokers et leurs états `disponible` / `dépensé` restent uniques : il n'y a **ni duplication, ni disparition, ni pioche supplémentaire, ni nouvelle carte spéciale** inventée. Un As/Joker nouvellement trouvé est compté comme **non dépensé** pour un éventuel score de victoire, **s'il n'est pas utilisé ultérieurement** (GC-08).
+7. Révéler un As/Joker **ne met pas fin à la recherche**, ne déclenche pas de pose sur la grille, d'armure ou de défaite. En l'absence d'ennemi vivant, la règle de recherche **GC-06** prévaut sur les mécanismes habituels d'armure **GC-07**.
+8. L'usage volontaire d'une action spéciale **pendant** la recherche, avant l'apparition d'une nouvelle figure, **n'est pas décidé par GC-09** ; seule sa **mise en réserve immédiate** est validée. Le point pourra être arbitré indépendamment (sans attribuer à l'auteur une restriction ou permission nouvelle). Le comportement lorsque la pioche se vide sans nouvelle figure demeure ouvert (**G-05**).
+9. Une sauvegarde/reprise au milieu de la recherche conserve **la pioche restante**, les cartes numériques temporairement écartées, **les actions spéciales découvertes et disponibles**, l'état des figures et l'étape exacte de recherche. Le moteur ne redécouvre ni ne crédite deux fois un As/Joker après rechargement.
+
+**Exemple :** aucune figure vivante, 7 figures vaincues ; on rencontre successivement `4♣`, `A♠`, `Joker`, `Q♦`. Le `4♣` est temporairement écarté, `A♠` et `Joker` rejoignent **immédiatement la réserve sans être dépensés**, puis `Q♦` est placée suivant les règles de figures ; le `4♣` seul rejoint ensuite le dessous de la pioche. La réserve ne retourne pas dans la pioche lors de cette opération.
+
+**Statut : GC-09 / sous-cas G-05 CLOS pour CardForge.** L'application de la mécanique de réserve des As/Jokers durant cette recherche est un **arbitrage de précision** du porteur ; la Version 2 décrite dans les références expose ces actions comme une réserve mais ne confirme pas explicitement ce détail du cas limite. **GC-V2-T59 (état historique « en attente » de GC-06) est maintenant résolu par la présente décision.** Aucun test logiciel n'a été exécuté.
+
+### 23.1. Scénarios de conformité — GC-09
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T83 | Sans figure vivante, recherche 4♣, A♠, Joker, Q♦ | 4♣ écartée temporairement ; As et Joker disponibles dans la réserve ; Dame placée ; seul 4♣ sous la pioche | Spécifié, non exécuté |
+| GC-V2-T84 | As révélé alors que le mode recherche est actif | As déplacé en réserve, face visible et non dépensé ; recherche continue | Spécifié, non exécuté |
+| GC-V2-T85 | Joker révélé pendant la recherche | Joker déplacé en réserve, face visible et non dépensé ; aucun déplacement de carte de grille | Spécifié, non exécuté |
+| GC-V2-T86 | Trois actions spéciales tirées consécutivement avant la figure suivante | Trois cartes physiques distinctes créditées dans la réserve, sans arrêt de recherche ni duplication | Spécifié, non exécuté |
+| GC-V2-T87 | Cartes numériques mises de côté et As/Joker rencontrés entre elles | Seules les numériques sont réinjectées sous la pioche après la figure ; les spéciales restent en réserve | Spécifié, non exécuté |
+| GC-V2-T88 | Joker découvert puis ultérieurement inutilisé à la victoire | Joker toujours non dépensé, inclus dans le score officiel GC-08 | Spécifié, non exécuté |
+| GC-V2-T89 | Aucune figure vivante, rencontre d'un As ; grille incompatible avec la précédente numérique | Aucune armure, aucun recours imposé, recherche de figure maintenue | Spécifié, non exécuté |
+| GC-V2-T90 | Fin de recherche au tirage d'une figure juste après un As | Figure placée légalement, As conservé dans la réserve et non remis en pioche | Spécifié, non exécuté |
+| GC-V2-T91 | Sauvegarde après découverte d'un Joker, avant la prochaine figure | Reprise avec Joker disponible une seule fois, état de recherche et pioche inchangés | Spécifié, non exécuté |
+| GC-V2-T92 | Rejeu accidentel du même événement de tirage As/Joker | Une seule carte spéciale ajoutée à la réserve, aucun doublon statistique | Spécifié, non exécuté |
+| GC-V2-T93 | Recherche avec As/Joker, puis épuisement de pioche sans figure | As/Joker correctement en réserve ; **issue de l'épuisement non tranchée** et renvoyée à G-05 | En attente d'arbitrage G-05 |
+
+**Prochain arbitrage GC-10 :** à la sortie du mode recherche de GC-06, dans quel **ordre** remettre les cartes numériques traversées sous la pioche après l'apparition d'une figure ? La remise sans mélange est actée, mais l'ordre exact de la séquence temporaire (ordre de rencontre, ordre inverse, réorganisation) reste à valider. **Cette question est distincte de GC-05**, qui porte sur les piles complètes extraites par As.
