@@ -129,3 +129,8 @@
 ## 13. Arbitrage CardForge CTD-ARB-06 — révélation après une victoire locale (22 novembre 2026)
 
 **Option A validée :** le monstre vaincu et ses trois cartes d'attaque sont retirés immédiatement, puis le prochain monstre de la même colonne est révélé aussitôt (s'il existe). La main en cours et les attaques partielles contre d'autres monstres restent jouables ; douzième monstre éliminé = victoire immédiate, sans révélation ou pioche supplémentaire. Le comportement est tracé dans [les règles](./clear-the-dungeon.md) et les tests CTD-T62 à CTD-T68 de [la matrice](../clear-the-dungeon-rule-test-matrix.md). **CTD-06 est clos ; CTD-07 reste ouvert**. Aucun test logiciel n'a été exécuté.
+
+
+## 14. Décision CardForge CTD-ARB-07 — ordre des cartes d'attaque (22 novembre 2026)
+
+**Option A validée par le porteur :** deux cartes de puissance **avant** une troisième carte déclencheuse ; aucun déclencheur anticipé, aucun tri automatique des cartes pour construire a posteriori une attaque complète. Les cartes de puissance peuvent venir de mains successives selon CTD-ARB-01 et CTD-ARB-02. Une attaque complète et légale est résolue selon CTD-ARB-06. Les tests CTD-T69 à CTD-T77 sont spécifiés, non exécutés. **CTD-07 est clos ; CTD-08** (seconde puissance sous le seuil) reste à trancher. Cette décision ne résout pas d'autres incertitudes concernant l'auteur.
