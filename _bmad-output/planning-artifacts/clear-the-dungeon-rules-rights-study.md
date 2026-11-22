@@ -121,3 +121,6 @@ Passer à John après :
 - Le moteur ne doit autoriser aucun prélèvement de carte dans la pile de dégâts par l'effet de cette option. La pile et le seuil de défaite demeurent applicables.
 - Cette décision constitue une configuration de Classic 1.1.0 et n'autorise pas à inventer d'autres variantes.
 - Les scénarios et questions ouverts sont consignés dans [la matrice de conformité](./clear-the-dungeon-rule-test-matrix.md).
+
+## Révision de la valeur du joker — 22 novembre 2026
+La [publication des règles Classic v1.1.0](https://giftsforcardplayers.com/clear-the-dungeon-a-solo-card-game/) précise que la **puissance du joker est choisie, jusqu'à 10**. Les anciennes mentions « joker vaut 10 » sont une simplification insuffisante : une valeur variable doit être considérée. La borne inférieure et la gestion des choix dans des combinaisons particulières ne sont pas explicitement tranchées dans les sources consultées. Voir le [référentiel de règles actuel](./game-rules/clear-the-dungeon.md) et la [matrice de conformité](./clear-the-dungeon-rule-test-matrix.md).
