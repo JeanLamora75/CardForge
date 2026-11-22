@@ -164,3 +164,10 @@
 ## 20. Arbitrage CardForge CTD-ARB-13 — alternance attaques / défausses (22 novembre 2026)
 
 **Option B validée :** le joueur peut alterner les attaques et les défausses explicites pendant une même main. La carte défaussée est définitivement versée aux dégâts ; les autres cartes et les placements provisoires restent utilisables selon CTD-ARB-02. Au septième dégât, défaite immédiate ; au douzième monstre, victoire immédiate. Cette flexibilité est une décision de fonctionnement CardForge, et non une précision attribuée à l'auteur ; le cycle général Pioche/Attaque/Défausse reste documenté. **CTD-13 clos**, tests CTD-T122 à CTD-T130 spécifiés, non exécutés ; **CTD-14 ouvert** sur le mécanisme de clôture lorsque la main est vide.
+
+
+## 21. Arbitrage CardForge CTD-ARB-14 — main vide et clôture explicite (22 novembre 2026)
+
+**Option B validée :** une main vide peut rester ouverte ; les placements de cette main restent provisoires et réaffectables. Le joueur clôture par une action explicite, éventuellement combinée avec la nouvelle pioche s'il reste des cartes au paquet ; récupérer une carte provisoire rétablit une main non vide et empêche de clôturer. Si le paquet est vide et que des monstres survivent, cette clôture entraîne la défaite conformément à CTD-ARB-05. Les victoires et défaites immédiates restent prioritaires. Tests CTD-T131 à CTD-T140 ajoutés, **non exécutés**.
+
+**Relais d'analyse :** CTD-01 à CTD-14 sont des décisions produit actées, **pas** une certification complète des règles d'origine. Le prochain point de véritable ambiguïté identifié est dans **Gridcannon Version 2 — G-01a : meilleure carte de similitude au centre de la grille** ; ce cas n'est pas résolu par les textes précédemment consultés.
