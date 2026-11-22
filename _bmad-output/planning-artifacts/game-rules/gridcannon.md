@@ -2357,4 +2357,49 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T604 | Annulation ou fermeture de modale, vérification GC-39/46 | Aucun faux dernier coup ni fausse sauvegarde annoncée | Spécifié, non exécuté |
 | GC-V2-T605 | Smartphone portrait/paysage, plein écran, clavier, lecteur d'écran FR/EN | Confirmation exploitable, focus correct, textes accessibles | À vérifier en UX et accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-53 / préférence de réduction des animations :** GC-24 prévoit déjà des animations courtes et facultatives ; comment respecter la sensibilité au mouvement et les réglages d'accessibilité de l'appareil ? **A** laisser uniquement le réglage manuel existant d'activation/désactivation des animations ; **B** respecter par défaut la préférence système « Réduire les animations/mouvements » quand elle existe, tout en permettant au joueur de choisir explicitement l'activation ou la désactivation dans CardForge ; **C** supprimer toutes les animations de la plateforme. La détection ne doit jamais modifier le moteur, retarder une confirmation métier ni rendre un résultat incompréhensible sans effet visuel.
+**GC-53 : option B validée ultérieurement — réduction des animations selon l'appareil, avec choix manuel possible ; voir §67.**
+
+
+## 67. Décision UX Gridcannon V2 — GC-53 : respect du mouvement réduit système avec choix manuel
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Le réglage d'animation par défaut de CardForge est **« Suivre les préférences de l'appareil »** : lorsque le navigateur ou système expose une demande de réduction du mouvement, les animations de jeu non indispensables sont désactivées ou remplacées par un résultat statique immédiat. Le joueur peut choisir explicitement **« Activer les animations »** ou **« Désactiver les animations »** dans les paramètres, indépendamment de l'état système. Cette préférence est commune à CardForge, persistante localement et ne modifie ni les règles ni la résolution des actions.
+
+### 67.1. Contrat fonctionnel, ergonomie et accessibilité
+
+1. **Réglage à trois positions :** (a) Suivre les préférences de l'appareil (défaut), (b) Activer les animations, (c) Désactiver les animations. Ces valeurs représentent un choix de présentation et non un paramètre du moteur.
+2. **Détection système :** utiliser, lorsque disponible, l'équivalent de `prefers-reduced-motion` pour déterminer le comportement dans le seul mode automatique ; si le signal n'existe pas, appliquer le comportement standard sans signaler faussement une préférence explicite de l'utilisateur.
+3. **Changement en direct :** si la préférence du système évolue en cours de partie, actualiser le rendu dans le mode automatique sans rechargement de la partie. Un choix manuel explicite prime sur le signal système jusqu'à ce que le joueur revienne à « Suivre les préférences ».
+4. **Respect de GC-24 :** les animations de placement, de tir, de figure vaincue et de résultat restent facultatives et courtes ; lorsqu'elles sont réduites/désactivées, afficher directement l'état final canonique, sans animation fictive ni attente artificielle.
+5. **Information indépendante :** tout résultat reste lisible sous forme statique : valeurs, état des figures, axes/cibles nécessaires, compteur GC-31, prévisualisation GC-23 et résumé GC-39. Aucun événement métier ne dépend d'une animation ou de sa durée.
+6. **Confirmation inchangée :** aucune animation ne valide un coup, ne permet d'ignorer GC-23/30/32/52, ni ne bloque la confirmation du moteur. Une action confirmée est appliquée une seule fois quel que soit le mode de mouvement.
+7. **Durée et confort :** ne pas introduire de clignotement stroboscopique ou déplacement brusque nécessaire à la compréhension. Le changement de mode ne déplace jamais de carte dans le moteur.
+8. **Préférence persistante :** mémoriser localement l'option à l'échelle de CardForge entre sessions et jeux, indépendamment des statistiques GC-34/35 et de la sauvegarde de partie GC-32/46. Réinitialiser les statistiques n'efface pas le choix d'animation.
+9. **Interface accessible :** présenter trois libellés compréhensibles avec indication claire du choix actif ; pas de dépendance à la seule couleur, à l'audio ou à une icône. Fonctionnel au clavier, au tactile et au lecteur d'écran.
+10. **MVP multilingue :** textes et explications disponibles en français et anglais (GC-28), extensibles aux langues futures.
+11. **Autres préférences :** le mode de lisibilité renforcée GC-48 et les effets sonores GC-25 restent indépendants. Le tutoriel GC-49 doit rester compréhensible sans animations.
+12. **Responsive :** compatible portrait/paysage GC-41, zoom du plateau GC-40, plein écran GC-45 et inspections GC-36/43, sans altérer le focus ni les déplacements de cartes.
+13. **Portée CardForge :** préférer un composant de réglage global partagé par les jeux de la collection, avec adaptation des animations propres à chaque univers illustré.
+
+**Exemple :** un appareil signale « Réduire les animations » et CardForge est en mode automatique : l'attaque confirmée aboutit directement à son état final avec un résultat lisible. Le joueur choisit ensuite « Activer les animations » : les animations facultatives réapparaissent, même si le signal système demeure actif. Aucun effet sur les dégâts, la pioche, la sauvegarde ou les statistiques.
+
+**Statut : GC-53 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation uniquement ; aucun développement ni test exécuté.
+
+### 67.2. Scénarios de conformité — GC-53
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T606 | Première utilisation sans préférence manuelle | « Suivre les préférences de l'appareil » choisi par défaut | Spécifié, non exécuté |
+| GC-V2-T607 | Signal système « Réduire les animations » actif | Animations non indispensables supprimées, état final immédiatement lisible | Spécifié, non exécuté |
+| GC-V2-T608 | Signal système absent ou non pris en charge | Comportement standard, aucune erreur | Spécifié, non exécuté |
+| GC-V2-T609 | Signal système change pendant une partie en mode automatique | Rendu adapté, état métier inchangé | Spécifié, non exécuté |
+| GC-V2-T610 | Choix manuel « Activer » avec réduction système demandée | Choix manuel respecté, animations facultatives disponibles | Spécifié, non exécuté |
+| GC-V2-T611 | Choix manuel « Désactiver » avec mouvement système normal | Animations désactivées, résultat statique maintenu | Spécifié, non exécuté |
+| GC-V2-T612 | Retour au mode « Suivre les préférences » | Le signal système redevient déterminant | Spécifié, non exécuté |
+| GC-V2-T613 | Confirmation d'attaque GC-23 avec animations désactivées | Une seule résolution métier, aucune attente artificielle | Spécifié, non exécuté |
+| GC-V2-T614 | Confirmation As/Joker GC-30 et coup ordinaire GC-52 | Les confirmations restent identiques dans les trois modes | Spécifié, non exécuté |
+| GC-V2-T615 | Rafraîchissement, autre jeu CardForge, remise à zéro stats GC-35 | Préférence globale conservée, état et résultats préservés | Spécifié, non exécuté |
+| GC-V2-T616 | Tutoriel GC-49, résumé GC-39 et son coupé | Compréhension de tous les résultats sans mouvement ni son | À vérifier en UX, non exécuté |
+| GC-V2-T617 | Zoom, rotation et plein écran avec animations réduites | Rendu utilisable, aucune manipulation involontaire | À vérifier en UX, non exécuté |
+| GC-V2-T618 | Navigation clavier, lecteur d'écran, FR/EN | Modes sélectionnables et états explicites | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-54 / compatibilité des sauvegardes lors d'une mise à jour :** une mise à jour de CardForge peut faire évoluer le format de sauvegarde locale sans changer les règles de Gridcannon. Quelle conduite adopter face à une sauvegarde créée par une version antérieure ? **A** réinitialiser automatiquement les sauvegardes incompatibles et demander une nouvelle partie ; **B** prévoir une **migration automatique sûre lorsque possible**, avec sauvegarde de protection, vérification d'intégrité et information explicite en cas d'échec sans effacement silencieux ; **C** refuser toute mise à jour tant qu'une partie active existe. Conserver l'identité du jeu, l'ordre des cartes, les statistiques et la lisibilité hors ligne.
