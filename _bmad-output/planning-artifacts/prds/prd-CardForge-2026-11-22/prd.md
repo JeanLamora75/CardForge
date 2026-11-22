@@ -265,3 +265,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option B validée pour Clear the Dungeon :** toute carte posée pendant la main actuelle peut être récupérée dans cette main ou déplacée sur un autre monstre jusqu'à la clôture de la main, tant que l'attaque concernée n'est pas résolue. Les cartes déposées au cours des mains précédentes sont irréversiblement engagées ; les attaques déjà résolues restent définitives. Les FR-06, FR-07, FR-16 et FR-18 doivent respecter cette distinction, y compris après sauvegarde et reprise.
 
 **Statut :** CTD-02 / CTD-ARB-02 **validé**. La prochaine décision est CTD-03 (clôture de main et cartes non utilisées). [Règles Clear the Dungeon](../../game-rules/clear-the-dungeon.md).
+
+
+## Décision fonctionnelle CTD-ARB-03 — défausse en fin de main (22 novembre 2026)
+
+**Option B validée :** dans Clear the Dungeon, les cartes inutilisées de la main sont défaussées explicitement, individuellement ou via « Défausser les cartes restantes ». Elles alimentent la pile de dégâts une par une ; le 7e dégât entraîne immédiatement la défaite. Le joueur ne peut pas piocher une nouvelle main tant qu'il conserve des cartes dans la main actuelle ; les cartes posées sur des monstres restent engagées suivant CTD-ARB-01 et CTD-ARB-02. La clôture de la main verrouille les placements provisoires. Cela précise FR-06/07/16/18 sans introduire de conservation gratuite de cartes inutilisées.
+
+**Statut :** CTD-03 / CTD-ARB-03 clos ; CTD-04 (fin de pioche) à valider. [Règles](../../game-rules/clear-the-dungeon.md) · [Scénarios](../../clear-the-dungeon-rule-test-matrix.md).
