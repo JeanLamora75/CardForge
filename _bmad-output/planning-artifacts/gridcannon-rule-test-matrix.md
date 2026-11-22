@@ -93,3 +93,10 @@ La source primaire identifiée est [Tom Francis — Gridcannon](https://www.pent
 - **G-01/G-02 restent ouverts :** [Howto.cards](https://howto.cards/en/gridcannon/) reconnaît explicitement que V2 ne tranche pas l'emplacement de figure occupé ni la valeur d'une pile vide ; ses solutions de repli sont **des propositions secondaires**.
 - **G-04 :** l'extraction remet une pile entière face cachée sous la pioche, mais l'ordre interne exact n'est pas spécifié.
 - Ces nouvelles entrées sont des **spécifications de tests**, non des tests exécutés. [Règles actualisées](./game-rules/gridcannon.md).
+
+## Nouveaux scénarios de non-divergence découverts
+- **GC-T32 — G-01a :** une figure révélée dont la meilleure carte de même enseigne est au **centre** de la grille, les autres huit cartes étant moins semblables : **ATTENDU À DÉTERMINER** ; interdit de lui attribuer arbitrairement une position extérieure.
+- **GC-T33 — G-01b :** la meilleure carte périphérique a ses emplacements extérieurs adjacents occupés : **ATTENDU À DÉTERMINER** selon une clarification d'auteur.
+- **GC-T34 — G-07 :** une carte numérique n'est posable nulle part, un ploy non utile existe : **ATTENDU À DÉTERMINER** entre armure forcée et obligation de consommer un ploy.
+- **GC-T35 — G-08 :** fin de pioche puis Extraction réinjectant une pile, suivie d'une victoire : résultat de partie certain si douze figures vaincues, mais **convention de score à vérifier**.
+- La [recherche approfondie Mary](./game-rules/recherche-approfondie-2026-11-22.md) rappelle que la vidéo de Tom Francis présentée sur son site est antérieure à l'écriture de la Version 2 : ne pas y emprunter des règles V1.
