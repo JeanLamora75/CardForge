@@ -316,3 +316,22 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T121 | Score officiel et statistiques complémentaires CardForge sur le même écran | Score officiel séparé et identifié ; autres indicateurs n'en modifient pas le calcul | Spécifié, non exécuté |
 
 **Prochain point CTD-13 :** moment où les défausses explicites sont permises dans la main, et possibilité ou non de reprendre les attaques après une première défausse. CTD-03 ne tranchait que l'obligation de défausse explicite avant la pioche suivante.
+
+
+## Décision CTD-13 / CTD-ARB-13 — alternance attaque et défausse pendant une même main (22 novembre 2026)
+
+**Option B VALIDÉE :** dans une main, les opérations légales d'attaque et de défausse **peuvent être entrelacées**. Une défausse est immédiate, irréversible et ajoute un dégât ; le jeu se termine sans délai au septième dégât. Les autres cartes en main et les placements provisoires restent jouables tant que la partie continue.
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T122 | Main 8, 2, 6 ; joueur pose 8 sur monstre A, défausse explicitement 2, puis pose 6 légalement sur B | Les deux poses subsistent ; exactement un dégât, main vide ; ordre accepté | Spécifié, non exécuté |
+| CTD-T123 | Le joueur défausse une carte, conserve deux cartes en main et veut attaquer | L'attaque légale reste autorisée ; pas de phase « défausse seulement » | Spécifié, non exécuté |
+| CTD-T124 | Le joueur défausse une carte puis reprend une carte placée pendant cette même main sur un monstre | Reprise autorisée selon CTD-ARB-02 ; aucune annulation de défausse | Spécifié, non exécuté |
+| CTD-T125 | Après une défausse, tentative de récupérer la carte de la pile de dégâts | Récupération interdite ; coût en dégâts définitif (réserve optionnelle désactivée) | Spécifié, non exécuté |
+| CTD-T126 | Six dégâts, une carte explicitement défaussée, deux autres jouables en main | Défaite immédiate au septième dégât ; attaques restantes interdites | Spécifié, non exécuté |
+| CTD-T127 | Cinq dégâts, une carte défaussée puis deux cartes utilisées pour éliminer le 12e monstre | Victoire immédiate ; score calculé sur la pioche, pas de défausse forcée supplémentaire | Spécifié, non exécuté |
+| CTD-T128 | Le joueur défausse une carte et tente de piocher avec d'autres cartes encore en main | Pioche interdite selon CTD-03 ; la défausse ne termine pas automatiquement la main | Spécifié, non exécuté |
+| CTD-T129 | « Défausser les cartes restantes » avec six dégâts et plusieurs cartes en main | Arrêt au septième dégât ; aucune autre défausse/attaque/pioche après état terminal | Spécifié, non exécuté |
+| CTD-T130 | Défausse, attaque, sauvegarde, reprise pendant une main active | Identités/positions des cartes et dégâts stables ; pas de réapplication d'une action | Spécifié, non exécuté |
+
+**Prochaine question CTD-14 :** la main devenue vide est-elle clôturée automatiquement ou par action explicite ? Tant que ce point n'est pas validé, ne pas supposer que la pose ou la défausse de la dernière carte verrouille immédiatement tous les placements.
