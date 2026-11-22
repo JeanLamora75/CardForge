@@ -155,7 +155,7 @@ Les scénarios portent sur **des exigences de tests**, pas sur des tests exécut
 
 Cette déclaration publique est une autorisation exprimée en langage naturel ; elle ne constitue pas un contrat exhaustif couvrant toutes les marques, illustrations tierces et boutiques. La gratuité de CardForge est cohérente avec cette invitation, mais il faut conserver la source et vérifier l'identité publique finale.
 
-**Décision de nom CardForge à faire valider :** dans la documentation interne, l'identifiant « Gridcannon » peut rester stable ; **le nom public de l'adaptation devrait être distinct de « Gridcannon » seul**, accompagné d'une attribution explicite à Tom Francis. Le titre final et la formule des crédits ne sont **pas encore décidés**.
+**GC-17 / G-06 — Décision validée le 22 novembre 2026 :** le titre public **de travail** est « **Bastion Stellaire** », avec crédit explicite à **Gridcannon** et **Tom Francis**. Le porteur conserve expressément **la possibilité de changer le nom ultérieurement** sans modifier l'identifiant interne du jeu ni ses sauvegardes et statistiques. Voir §31 pour la formule, les emplacements du crédit et les vérifications à faire avant diffusion.
 
 Les illustrations originales de CardForge ne réutiliseront pas celles d'applications tierces.
 
@@ -197,7 +197,7 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 | G-03 | **Deux tirs potentiels depuis un coin sont attestés** ; ordre terminal et interactions simultanées non précisées | **Partiellement confirmé** |
 | G-04 | La pile extraite est déposée **face cachée au bas de la pioche** ; ordre interne de la pile et orientation des cartes non explicités | **Partiellement confirmé** |
 | G-05 | Conditions d'armure, seuils et possibilité d'utiliser les actions spéciales après fin de pioche confirmées ; cas limites d'absence de cible / recours utile à préciser | **Partiellement confirmé** |
-| G-06 | Invitation publique à créer des adaptations, crédit à Tom Francis recommandé et nom public différent de « Gridcannon » seul recommandé | **Consigne d'auteur confirmée ; décision de nom CardForge ouverte** |
+| G-06 | Invitation publique à créer des adaptations, crédit à Tom Francis recommandé et nom public différent de « Gridcannon » seul recommandé | **GC-17 validé : Bastion Stellaire (titre provisoire et révisable), attribution Gridcannon / Tom Francis ; vérification du titre avant diffusion** |
 
 ### Suites obligatoires
 
@@ -821,3 +821,38 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T175 | Victoire ultérieure avec cartes spéciales obtenues en préparation non dépensées | Compter ces cartes parmi les actions spéciales encore disponibles selon GC-08 | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-17 / G-06 :** choisir le **titre public distinct** de l'adaptation CardForge et la **formule de crédit à Tom Francis** dans la fiche du jeu, les règles, les écrans de jeu et les informations du projet. La publication de l'auteur encourage les adaptations, recommande un nom distinct de « Gridcannon » seul et un crédit explicite ; la **dénomination exacte de CardForge** n'est pas encore approuvée.
+
+
+## 31. Décision de présentation Gridcannon V2 — GC-17 / G-06 : nom public provisoire et crédit à l'auteur
+
+**Option A VALIDÉE avec réserve explicite par le porteur le 22 novembre 2026.** Le **nom public de travail** de l'adaptation spatiale de Gridcannon Version 2 dans CardForge est **« Bastion Stellaire »**, accompagné d'une **attribution explicite au jeu d'origine « Gridcannon » et à son auteur Tom Francis**. Ce **nom n'est pas définitif** : le porteur conserve **la possibilité de le changer ultérieurement**, avant ou après sa mise en œuvre, sans modification des règles, de l'identité logique de la partie, des sauvegardes ni des statistiques. La décision ne vaut **ni contrôle de disponibilité du nom, ni autorisation de marque, ni approbation juridique** de publication.
+
+### 31.1. Exigences produit de présentation et d'évolution
+
+1. **Nom d'affichage initial :** `Bastion Stellaire` (titre public **provisoire**, à confirmer avant diffusion). Ne pas l'utiliser comme clé technique pérenne.
+2. **Identifiant métier stable :** conserver l'identité interne existante du jeu **Gridcannon Version 2** (ou sa clé technique déjà retenue par l'architecture) pour les règles, la sélection du moteur, la persistance, les historiques, les statistiques et la compatibilité des sauvegardes. **Un renommage ne crée pas de nouveau jeu ni de nouvelle partie.**
+3. **Crédit obligatoire et lisible :** afficher au minimum la mention **« Adaptation du jeu de cartes Gridcannon, créé par Tom Francis. »** accompagnée, dans les informations/règles/crédits, du lien vers la publication primaire : https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/ .
+4. **Points d'affichage :** nom public dans le catalogue, la fiche, les en-têtes de jeu, les règles/tutoriels et les supports publics pertinents ; crédit à l'auteur **visible et accessible** depuis la fiche, les règles et les crédits de l'application, sans imposer un texte permanent encombrant le plateau de jeu.
+5. **Indépendance du visuel et des règles :** le nom public, les traductions et les textes de crédit relèvent des **métadonnées de présentation**, non du modèle de règles. Toute mise à jour du nom réutilise le même jeu, les mêmes cartes, illustrations sous réserve de leur propriété, statistiques, parties et états de sauvegarde.
+6. **Internationalisation :** gérer le titre affiché et les formules de crédit dans les ressources de texte / catalogue adaptées aux langues de CardForge ; garder les **noms propres « Gridcannon » et « Tom Francis »** dans l'attribution. Un renommage public peut concerner les variantes linguistiques sans changer la clé métier.
+7. **Renommage ultérieur :** un nouveau titre public pourra être soumis à validation du porteur puis propagé aux interfaces et documents publics. Éviter la duplication de la définition du titre dans le code ou des chemins de sauvegarde dépendant de la chaîne affichée ; conserver les liens internes pérennes si possible.
+8. **Contrôle avant publication :** vérifier, sur autorisation expresse du porteur pour toute nouvelle recherche web avancée, les risques éventuels de conflit de nom, la cohérence des crédits, les ressources artistiques utilisées et les conditions de diffusion. **Aucune vérification externe supplémentaire n'a été réalisée pour « Bastion Stellaire »** ; son adoption comme **nom de travail** n'implique pas une disponibilité prouvée ni un dépôt de marque.
+9. **Source et attribution :** la publication de Tom Francis encourage les adaptations et recommande l'identification de l'auteur et un titre distinct de « Gridcannon » seul. **Ce choix du nom, sa formulation française et sa réversibilité relèvent expressément de CardForge** ; ne pas confondre recommandation de l'auteur et garantie de droits sur le nom proposé.
+
+**Statut : GC-17 / G-06 CLOS sur le principe de présentation et l'attribution ; TITRE PROVISOIRE et révisable.** Le choix définitif de la dénomination pour diffusion et les contrôles préalables restent à confirmer. **Aucun changement de code, recherche de disponibilité, vérification juridique ni test logiciel n'a été exécuté.**
+
+### 31.2. Scénarios de conformité documentaire et produit — GC-17
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T176 | Affichage catalogue de l'adaptation | Titre provisoire **Bastion Stellaire** ; identifiant interne du jeu inchangé | Spécifié, non exécuté |
+| GC-V2-T177 | Consultation de la fiche et des règles | Crédit explicite à **Gridcannon** et **Tom Francis**, lien vers source primaire | Spécifié, non exécuté |
+| GC-V2-T178 | Consultation des crédits de l'application | Attribution de l'œuvre originale accessible et non ambiguë | Spécifié, non exécuté |
+| GC-V2-T179 | Choix ultérieur d'un nouveau titre public | Textes d'affichage mis à jour sans modification du moteur ni des règles | Spécifié, non exécuté |
+| GC-V2-T180 | Renommage avec une partie sauvegardée en cours | Reprise de la même partie, sans migration destructive de clé de jeu | Spécifié, non exécuté |
+| GC-V2-T181 | Renommage avec résultats historiques et statistiques | Historiques conservés sous la même identité métier | Spécifié, non exécuté |
+| GC-V2-T182 | Application en FR/EN et traduction ultérieure | Titres/crédits gérés comme métadonnées de présentation ; noms propres de l'auteur et de l'œuvre préservés | Spécifié, non exécuté |
+| GC-V2-T183 | Préparation d'une publication avec nom de travail non vérifié | Ne pas présumer disponibilité du nom ni validation juridique | À vérifier avant diffusion |
+| GC-V2-T184 | Navigation depuis le catalogue vers le jeu après renommage | Liaison par identifiant stable, sans rupture de partie ou de route pérenne | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-18 / UX en jeu (suite GC-11, GC-V2-T116) :** comment rendre le mode **recherche d'une figure** compatible avec le droit validé du joueur d'**intervenir volontairement avec un As/Joker** avant la révélation de la nouvelle figure ? Le moteur doit prévoir des **points de décision réels** plutôt qu'un défilement automatique non interruptible.
