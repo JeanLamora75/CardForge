@@ -10,6 +10,8 @@ sources:
   - '../../product-brief-cardforge.md'
   - '../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md'
   - '../../clear-the-dungeon-rule-test-matrix.md'
+  - '../../game-rules/clear-the-dungeon.md'
+  - '../../game-rules/gridcannon.md'
 ---
 
 # PRD — CardForge
@@ -19,6 +21,8 @@ sources:
 ## 0. Objet et sources
 
 Ce PRD aligne John, Mary, Sally, Winston, Amelia, Murat et Camille sur le périmètre de la collection de jeux de cartes solo et sur les deux premiers jeux jouables. Il sert d'entrée au découpage en Epics et User Stories après validation fonctionnelle. Il ne remplace ni les règles primaires de Clear the Dungeon ou de Gridcannon, ni les autorisations nécessaires à leur diffusion.
+
+**Référentiels de règles par Jeu :** [Clear the Dungeon Classic 1.1.0](../../game-rules/clear-the-dungeon.md) et [Gridcannon, Version 2 proposée](../../game-rules/gridcannon.md). Leurs points ouverts et statuts de validation priment sur toute description simplifiée de mécanique ci-dessous.
 
 Sources internes : [cadrage](../../../../docs/cadrage.md), [Product Brief](../../product-brief-cardforge.md), [architecture](../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md), [matrice de conformité du jeu](../../clear-the-dungeon-rule-test-matrix.md), [étude des droits](../../clear-the-dungeon-rules-rights-study.md).
 
@@ -201,7 +205,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 | Sujet | Dépendance / contrôle |
 | --- | --- |
 | Règles Classic 1.1.0 | Mary doit confirmer ordre des phases, jokers, épuisement de pioche et cas limites ; sans cela, pas d'acceptation du moteur complet |
-| Règles Gridcannon | **Bloquant nouveau :** identifier la version officielle, ses règles primaires, ses variantes et les cas limites ; établir une matrice de conformité indépendante et vérifier les droits et crédits avant publication |
+| Règles Gridcannon | Source primaire de Tom Francis identifiée et Version 2 documentée dans le référentiel Mary ; **validation du choix Version 2, cas limites et titre/crédits publics restent bloquants** avant d'affirmer la conformité et la diffusion |
 | Livraison à deux jeux | Deux moteurs, deux tutoriels et deux univers d'illustrations augmentent le périmètre ; les composants communs doivent être utilisables par les deux sans rapprocher artificiellement leurs règles |
 | Autorisation | Accord de l'auteur annoncé par le porteur du projet, sous condition de gratuité ; conserver/clarifier sa portée exacte et l'attribution avant diffusion |
 | Créations | Vérifier droits des illustrations, sons, polices et autres Ressources avant distribution |
@@ -215,7 +219,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 - **Q-01 [bloquante pour le moteur] :** texte primaire intégral et résolution des cas limites de Clear the Dungeon Classic 1.1.0.
 - **Q-02 [bloquante pour publication] :** formulation conservable de l'accord de Mark S. Ball et périmètre précis (nom, Web, Android, iOS, crédits, territoires).
-- **Q-08 [bloquante pour Gridcannon] :** identifier et vérifier les règles originales, les conditions d'utilisation et de diffusion, les variantes et les cas limites de Gridcannon avant implémentation conforme.
+- **Q-08 [bloquante pour Gridcannon] :** les règles originales **Version 2** ont été retrouvées dans la publication primaire de Tom Francis et étudiées par Mary ; confirmer leur adoption et arbitrer les cas limites G-00 à G-06 documentés, ainsi que le **nom public distinct** et les crédits de l'adaptation avant diffusion.
 - **Q-09 :** préciser le périmètre minimum des deux tutoriels et de leurs ressources illustrées pour une V1 à deux Jeux, sans supprimer les fonctions validées.
 - **Q-03 :** valeurs cibles concrètes de fluidité, démarrage et tailles d'écran à tester.
 - **Q-04 :** granularité souhaitée de suppression des données locales.
