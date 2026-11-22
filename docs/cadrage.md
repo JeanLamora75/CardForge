@@ -176,3 +176,13 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - Les cartes de dégâts ne sont donc pas rejouables via la mécanique de réserve facultative. Les règles normales de défausse, de dégâts et de défaite continuent de s'appliquer.
 - Ne pas confondre la désactivation de cette option avec la suppression de la pile de dégâts, des jokers, ni avec l'utilisation du mode Advanced 1.2.0.
 - Étude des cas limites : [matrice de conformité des règles](../_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md).
+
+## Contrainte multiplateforme Web, Android et iOS — rappel validé le 22 novembre 2026
+- **Cible produit : Web responsive d'abord, puis portages Android ET iOS.** Le développement Web ne doit pas créer de dette architecturale qui imposerait de réécrire les moteurs de jeu pour les plateformes mobiles.
+- **Base métier partagée :** moteurs de cartes, règles, état des parties, validations et statistiques en TypeScript sans dépendance à React, au navigateur ou à une API native Android/iOS.
+- **Interface réutilisable :** UI responsive au tactile, adaptée aux formats mobiles, zones de sécurité (encoches/barres système), clavier et accessibilité ; éviter les interactions dépendantes uniquement du survol.
+- **Accès aux capacités de plateforme :** stockage persistant, cycle de vie de l'application, éventuels sons et notifications via des interfaces/adaptateurs, et non des accès directs dans le moteur.
+- **Persistance locale :** contrat commun de sauvegarde versionnée ; implémentations différentes autorisées selon Web et applications mobiles, sans divergence des règles.
+- **Préparation au portage :** évaluer Capacitor comme solution d'enveloppe native Web pour Android et iOS, sans considérer son adoption ni ses versions techniques comme validées avant l'étude d'architecture.
+- **Livraison :** Web en premier ; calendrier de livraison Android/iOS à définir séparément. La cible iOS ne signifie pas qu'une compilation ou publication App Store est possible depuis Windows : les prérequis Apple devront être étudiés.
+- **Qualité :** tests du moteur commun indépendants de la plateforme, puis vérifications spécifiques Web, Android et iOS avant leurs sorties.
