@@ -1774,4 +1774,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T438 | Carte cachée non révélée | Aucune divulgation dans le texte du bilan | Spécifié, non exécuté |
 | GC-V2-T439 | Affichage mobile, clavier, lecteur d'écran FR/EN | Texte lisible, accès au masquage, sans annonces répétées | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-40 / modes de présentation du plateau sur mobile :** comment adapter l'affichage de la grille 3×3 et des douze figures périphériques aux petits écrans, sans masquer les informations nécessaires au jeu ? **A** plateau intégral fixe avec réduction proportionnelle ; **B** plateau intégral avec zoom/panoramique facultatifs et commandes essentielles toujours accessibles ; **C** affichage par zones (grille centrale et côtés séparés) avec navigation entre panneaux. Préserver la vue cohérente des attaques, des cartes et des figures ainsi que l'accessibilité tactile et clavier.
+**GC-40 : option B validée ultérieurement — plateau global avec zoom/panoramique facultatifs et recentrage ; voir §54.**
+
+
+## 54. Décision UX Gridcannon V2 — GC-40 : plateau intégral avec zoom et panoramique facultatifs
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Sur smartphone, CardForge présente par défaut la **vue d'ensemble du plateau** de Gridcannon V2, comprenant la grille 3×3 et les figures périphériques, sans découpage en panneaux. Le joueur peut **agrandir/réduire** et **déplacer la vue** pour mieux lire et manipuler les cartes, puis utiliser une commande explicite **« Recentrer le plateau »** afin de revenir à la vue globale. La navigation dans la vue est indépendante des actions métier, du glisser-déposer GC-37 et de l'inspection GC-36.
+
+### 54.1. Contrat fonctionnel et UX
+
+1. **Vue initiale :** afficher l'ensemble du plateau (grille, figures révélées autour, emplacements périphériques pertinents) dans un même repère spatial ; conserver les axes d'attaque et relations visuelles, sans exiger une rotation ou un changement d'onglet.
+2. **Zoom facultatif :** fournir des commandes zoom avant/arrière et un geste tactile adapté (pincement lorsque compatible), avec limites minimum/maximum garantissant une navigation utilisable et sans agrandissement infini ; un joueur peut toujours jouer sans zoom.
+3. **Déplacement de vue :** permettre un panoramique contrôlé pour atteindre les zones agrandies sans modifier les positions réelles des cartes sur la grille. Le zoom et le déplacement n'altèrent aucune carte, pioche, figure, armure, ressource spéciale ni score.
+4. **Recentrage :** commande « Recentrer le plateau » toujours retrouvable et accessible, rétablissant le cadrage global dans lequel le plateau entier est visible ; elle ne réinitialise pas le jeu ni une sélection métier confirmée.
+5. **Gestes non ambigus :** distinguer un glissement **de carte** GC-37 d'un déplacement **de caméra**, du défilement de page et du geste d'inspection GC-36 ; prévoir des zones ou modes de prise en main discernables, ainsi qu'une alternative par boutons pour les utilisateurs ne pouvant pas pincer ou glisser.
+6. **Contrôles essentiels :** les commandes d'annulation, confirmation, aide, compteur de pioche GC-29, progression GC-31 et accès aux As/Jokers GC-30 restent accessibles pendant le zoom sans être perdues hors champ. Leur affichage peut s'adapter aux résolutions sans masquer le plateau de façon durable.
+7. **Prévisualisation et surbrillance :** les destinations légales GC-38, cibles et axes d'attaque GC-23 restent correctement ancrés aux cases/figures à tout facteur de zoom ; leurs coordonnées visuelles n'affectent pas la validation métier.
+8. **Lisibilité :** texte et icônes des cartes restent lisibles ou consultables par inspection GC-36 ; prévoir des surfaces tactiles adéquates même lorsque la vue globale les réduit.
+9. **Sauvegarde :** le niveau de zoom et la position de caméra sont des **préférences d'affichage**, non un état métier de la partie ; une reprise ne doit ni déplacer une carte, ni confirmer une action. Le comportement exact de mémorisation du zoom peut être réglé à l'UX, avec accès permanent au recentrage.
+10. **Orientation et appareils :** l'interface doit tolérer les changements de taille de fenêtre et de rotation de l'appareil sans coordonnées invalides ni perte de progression. L'arbitrage spécifique de l'orientation optimale est réservé à **GC-41**.
+11. **Accessibilité et langues :** boutons de zoom/recentrage accessibles au clavier, à la souris et au tactile ; libellés et consignes en français/anglais au MVP (GC-28), puis extensibles ; aucune action de jeu obligatoire ne nécessite un geste multipoint.
+12. **Règles inchangées :** la transformation de la caméra n'affecte ni les règles originales de Gridcannon V2 ni les conditions de victoire/défaite, et ne révèle aucune carte cachée de la pioche.
+
+**Exemple :** sur téléphone, le joueur voit la grille et les douze positions périphériques. Il zoome sur une Dame et déplace la vue pour lire ses armures ; il peut ensuite sélectionner une carte et choisir sa destination. « Recentrer le plateau » rétablit la vue globale sans modifier le coup ou l'état canonique.
+
+**Statut : GC-40 CLOS pour CardForge — option B validée le 22 novembre 2026.** Décision documentaire seulement, sans implémentation ni tests exécutés.
+
+### 54.2. Scénarios de conformité — GC-40
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T440 | Ouverture sur smartphone étroit | Plateau entier visible, grille 3×3 et positions périphériques identifiables | Spécifié, non exécuté |
+| GC-V2-T441 | Zoom avant puis arrière | Géométrie visuelle ajustée, état métier invariant | Spécifié, non exécuté |
+| GC-V2-T442 | Panoramique vers figure éloignée | Figure consultable, aucune carte déplacée dans le moteur | Spécifié, non exécuté |
+| GC-V2-T443 | Recentrage après zoom et panoramique | Vue globale restaurée sans nouvelle action | Spécifié, non exécuté |
+| GC-V2-T444 | Glisser-déposer GC-37 pendant affichage zoomé | Carte/destination correctes, caméra et coup non confondus | À vérifier en UX, non exécuté |
+| GC-V2-T445 | Pincement sur surface tactile | Changement de cadrage uniquement, aucun coup joué | À vérifier en UX, non exécuté |
+| GC-V2-T446 | Prévisualisation d'attaque GC-23 sous zoom | Axes, valeurs et cibles exacts et ancrés au plateau | Spécifié, non exécuté |
+| GC-V2-T447 | Surbrillance GC-38 sous panoramique | Cases légales correctement positionnées, moteur seul juge | Spécifié, non exécuté |
+| GC-V2-T448 | Zoom important puis besoin d'annuler/confirmer | Commandes essentielles accessibles sans revenir à l'échelle initiale | À vérifier en UX, non exécuté |
+| GC-V2-T449 | Rotation du téléphone ou changement de taille de fenêtre | Vue recalculée, partie intacte, recentrage disponible | À vérifier en UX, non exécuté |
+| GC-V2-T450 | Parcours clavier seul avec lecteur d'écran, FR/EN | Zoom et recentrage possibles sans geste multipoint | À vérifier en accessibilité, non exécuté |
+| GC-V2-T451 | Rafraîchissement ou reprise pendant vue déplacée | Aucun changement du moteur ni déclenchement de coup | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-41 / orientation du jeu sur mobile :** faut-il privilégier un sens d'écran pour la lecture du plateau et les contrôles ? **A** mode portrait uniquement, même lorsque l'appareil pivote ; **B** modes portrait et paysage adaptatifs avec conservation du jeu et du cadrage, sans orientation imposée ; **C** mode paysage obligatoire avec invitation à faire pivoter l'appareil. Évaluer la densité du plateau, la taille des cartes, les zones tactiles et la continuité d'une partie en cours.
