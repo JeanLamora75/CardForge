@@ -393,3 +393,21 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Périmètre :** CTD-13 / CTD-ARB-13 **CLOS pour le comportement CardForge** ; le livret présente le cycle Pioche / Attaque / Défausse, mais la libre alternance est un arbitrage d'ergonomie explicite du porteur, et non une attribution de ce détail à Mark S. Ball. Les tests ne sont pas exécutés.
 
 **Prochain arbitrage CTD-14 :** une fois la main **vide** par poses/défausses, la clôture est-elle automatique ou soumise à une **confirmation explicite** ? Ce point influence la faculté, déjà validée en CTD-ARB-02, de repositionner une carte posée pendant la main avant verrouillage et la défaite automatique à la clôture de la dernière main (CTD-ARB-05).
+
+
+## 25. Décision fonctionnelle CTD-14 / CTD-ARB-14 — clôture explicite de la main vide
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Le fait que la main soit devenue **vide** après les poses et défausses **ne clôture pas automatiquement** le tour. Le joueur dispose d'une **action explicite « Terminer la main »**, ou de l'action combinée **« Terminer la main et piocher »** si la pioche n'est pas vide, pour confirmer et verrouiller ses placements provisoires.
+
+**Règles métier CardForge :**
+- Une main peut être **vide et encore ouverte**. Tant que le joueur n'a pas confirmé sa clôture, les cartes posées au cours de cette main sur des monstres vivants restent provisoires et peuvent être **reprises en main ou déplacées**, conformément à CTD-ARB-02.
+- Si le joueur récupère une carte provisoire alors que sa main était vide, **sa main redevient non vide** et le bouton de clôture doit être désactivé tant que cette carte n'est pas rejouée ou explicitement défaussée ; on ne pioche jamais avec des cartes résiduelles en main.
+- L'action de clôture n'est possible que lorsque la main est **réellement vide** : elle confirme et verrouille définitivement toutes les cartes de cette main encore posées en attaques partielles. Les cartes engagées lors de mains précédentes restent verrouillées sans changement.
+- Lorsque des cartes subsistent dans la pioche, l'interface peut présenter une **unique action « Terminer la main et piocher »** ; elle doit traiter atomiquement la confirmation des placements, la clôture puis la distribution de la prochaine main (jusqu'à 3 cartes selon CTD-ARB-04), **sans nouveau clic**.
+- Si la pioche est **vide**, l'action **« Terminer la main »** finalise la main et entraîne **immédiatement la défaite par épuisement lorsqu'il reste au moins un monstre**, conformément à CTD-ARB-05. L'interface doit signaler clairement cette conséquence avant confirmation.
+- **Victoire au 12e monstre** et **défaite au 7e dégât** restent **immédiates**, sans attendre ni permettre une clôture supplémentaire. La défausse explicite demeure irréversible, et une attaque achevée ne peut pas être annulée.
+- Le moteur et la sauvegarde doivent distinguer les états `handEmptyButOpen`, `handClosed`, `gameWon` et `gameLost` (noms indicatifs de concept, non contrat technique imposé). Une double activation, un rechargement ou une reprise ne doit jamais distribuer deux mains ni enregistrer deux résultats.
+
+**Statut : CTD-14 / CTD-ARB-14 CLOS pour CardForge.** Cet arbitrage est une décision de contrôle d'interface et de séquencement de tour, **non attribuée comme règle littérale de Mark S. Ball**. Les scénarios sont spécifiés et non exécutés.
+
+**Relais recommandé :** les **14 arbitrages CTD-01 à CTD-14** sont validés pour le cadrage fonctionnel, sous réserve d'une revue globale de cohérence et de la suite de tests exécutable, qui **n'ont pas encore été réalisées**. Plutôt que d'inventer des questions de détails déjà couverts, poursuivre les **ambiguïtés bloquantes de Gridcannon Version 2**, en commençant par **GC-01 / G-01a** : emplacement d'une figure si la carte de grille la plus semblable est au centre.
