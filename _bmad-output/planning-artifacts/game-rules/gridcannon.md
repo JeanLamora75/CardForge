@@ -364,3 +364,40 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T38 | Sauvegarder/reprendre ou répéter une action après le double tir | Deux évaluations et résultats conservés sans double élimination ni double statistique | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-05 / G-04 :** ordre exact des cartes **d'une pile complète** placée **face cachée sous la pioche** à la suite d'une Extraction. La règle de dépôt sous pioche est documentée, mais l'ordre interne et l'orientation lors de la réinsertion ne sont pas explicités dans la source primaire accessible.
+
+
+## 19. Décision fonctionnelle Gridcannon V2 — GC-05 / G-04 : ordre de la pile extraite sous la pioche
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'un As déclenche une Extraction, le moteur retire **toute la pile d'une case de la grille** et replace le groupe **face cachée sous la pioche**, **sans mélanger, inverser ni réordonner les cartes de la pile**. L'ordre relatif **sommet → fond** de la pile extraite devient l'ordre dans lequel ses cartes seront piochées à leur prochain passage. Aucune option de réorganisation n'est proposée au joueur.
+
+**Contrat métier et invariants CardForge :**
+1. Soit une pile extraite visible du sommet vers le fond `[9♥, 5♠, 2♦]`. Son ordre futur de tirage, après les cartes déjà présentes dans la pioche, reste **`9♥ → 5♠ → 2♦`**. La conversion à l'état face cachée ne renverse **pas** cet ordre.
+2. Pour définir sans ambiguïté le modèle de pioche, si son ordre de tirage actuel est `[A, B]`, après Extraction du groupe précédent l'ordre de tirage global devient **`[A, B, 9♥, 5♠, 2♦]`**. Le premier groupe ajouté est donc repioché avant un second groupe extrait plus tard.
+3. Lors d'**Extractions successives**, chaque pile est ajoutée **en bloc** à la fin de l'ordre de tirage déjà constitué, sans insertion au milieu, mélange, inversion ou fusion des groupes : `[A,B] + [G1 sommet→fond] + [G2 sommet→fond]`.
+4. Une Extraction d'une **pile à une carte** remet cette seule carte sous la pioche ; aucune autre carte n'est créée. L'Extraction d'une **case vide** n'est pas autorisée comme Extraction de pile : aucun As ne doit être consommé par une opération sans pile à retirer.
+5. L'As d'Extraction est dépensé **une seule fois** ; les cartes extraites ne deviennent pas des actions spéciales et conservent leur **identité physique** (valeur, enseigne, identifiant). La case vidée reste jouable selon **GC-03 / G-02**.
+6. Le moteur **ne révèle pas au joueur l'ordre futur de la pioche** au-delà des informations visibles qu'il connaissait déjà lors de l'Extraction ; la convention d'implémentation ne doit pas devenir un aperçu gratuit du deck. Les animations de retournement ne modifient pas l'ordre.
+7. Sauvegarde/reprise conserve **l'ordre global exact de pioche** et l'état des piles, y compris après plusieurs Extractions. La même séquence d'actions produit la même succession de cartes, sans remélange ni double restitution.
+8. Cette décision porte exclusivement sur l'**ordre interne et le point d'insertion** de la pile remise sous la pioche. Elle ne modifie pas les autres règles d'Extraction, de placement, de tirs, de scoring ou de fin de partie. La gestion des **impasses** et des **actions spéciales inefficaces** reste ouverte en **G-05 / G-07**.
+
+**Exemple :** avant l'Extraction, la pioche doit encore distribuer `[6♣, 8♦]`. La pile visée porte `9♥` au sommet, `5♠` au milieu et `2♦` au fond. Après l'Extraction, le moteur distribuera **6♣, 8♦, 9♥, 5♠, 2♦**, en respectant les règles normales du tirage ; la pile retirée de la grille a disparu et l'As est consommé.
+
+**Statut : GC-05 / G-04 CLOS pour CardForge.** La remise face cachée **sous la pioche** est documentée par la Version 2 ; **la conservation exacte de l'ordre sommet → fond, sans retournement interne, est une décision produit** et non une précision du livret de Tom Francis établie par lecture intégrale. Aucune exécution de tests du moteur n'a été réalisée.
+
+### 19.1. Scénarios de conformité — GC-05 / G-04
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T39 | Extraction d'une pile [9♥, 5♠, 2♦] affichée du sommet au fond ; pioche vide | Ordre de tirage reconstitué **9♥, 5♠, 2♦** ; cartes remises face cachée | Spécifié, non exécuté |
+| GC-V2-T40 | Pioche de tirage [6♣, 8♦] et pile extraite [9♥, 5♠, 2♦] | Pioche devient **[6♣, 8♦, 9♥, 5♠, 2♦]** | Spécifié, non exécuté |
+| GC-V2-T41 | Une Extraction de G1 puis une Extraction de G2, pioche initiale non vide | Ordre de tirage = pioche initiale, **G1 sommet→fond**, puis **G2 sommet→fond** | Spécifié, non exécuté |
+| GC-V2-T42 | Extraction d'une pile d'une seule carte | Une carte physique ajoutée au bas du paquet, sans double ajout | Spécifié, non exécuté |
+| GC-V2-T43 | Tentative d'Extraction sur une case déjà vide | Action non autorisée, As non consommé et pioche inchangée | Spécifié, non exécuté |
+| GC-V2-T44 | Extraction d'une pile avec valeurs croissantes du fond vers le sommet | Aucune inversion lors du passage face cachée ; le sommet ancien reste le premier de ce groupe repioché | Spécifié, non exécuté |
+| GC-V2-T45 | Extraction suivie d'une pose dans la case redevenue vide | Pose autorisée selon GC-03 ; les cartes de l'ancienne pile ne sont pas restaurées dans la grille | Spécifié, non exécuté |
+| GC-V2-T46 | Après Extraction, pioche épuisée jusqu'au groupe extrait | Les identités des cartes sont conservées et retournent dans l'ordre initial sommet→fond | Spécifié, non exécuté |
+| GC-V2-T47 | Sauvegarde après deux Extractions puis reprise juste avant une pioche | Même ordre, même nombre de cartes, mêmes As consommés ; pas de remélange | Spécifié, non exécuté |
+| GC-V2-T48 | Double clic ou reprise de l'action Extraction | Action effectuée une seule fois, aucune duplication de cartes ni consommation double d'As | Spécifié, non exécuté |
+| GC-V2-T49 | Animation de retournement d'un groupe extrait face cachée | L'animation ne modifie jamais l'ordre de tirage prévu | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-06 / G-05 :** lorsqu'aucune figure vivante n'est actuellement présente (moins de douze vaincues), comment traiter une carte numérique qui ne peut être posée pendant la recherche d'une nouvelle figure, alors qu'aucune cible vivante ne pourrait recevoir l'armure ? L'existence du cycle d'attente des figures est documentée ; ses détails en situation d'impasse sont à préciser.
