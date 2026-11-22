@@ -52,9 +52,9 @@ Aucun élément d'illustration Fantasy (faction, personnage, animation) n'entre 
 
 ### 3.3 Jokers
 
-- La publication consultée indique : **la valeur d'un joker est choisie, au maximum 10**, et son enseigne peut être celle requise.
+- La publication consultée indique : **la page Web permet de choisir la valeur d'un joker jusqu'à 10, mais le livret Classic v1.1.0 reproduit indique une valeur de 10**, et son enseigne peut être celle requise.
 - Le joker peut participer à la puissance ou jouer le rôle de déclencheur selon les restrictions officielles à préciser.
-- **Correction documentaire :** la formulation ancienne « joker vaut 10 » est trop restrictive pour restituer fidèlement la source ; pour CardForge, **valeur variable jusqu'à 10** est la règle documentée, mais le minimum possible, l'instant du choix et la disponibilité lors d'attaques partielles nécessitent validation du texte complet.
+- **Correction documentaire :** la formulation ancienne « joker vaut 10 » est trop restrictive pour restituer fidèlement la source ; pour CardForge, **valeur du joker = point de divergence entre sources**, mais le minimum possible, l'instant du choix et la disponibilité lors d'attaques partielles nécessitent validation du texte complet.
 - Aucun joker ne reçoit de capacité Fantasy supplémentaire.
 
 ### 3.4 Défausse et dégâts
@@ -81,7 +81,7 @@ Aucun élément d'illustration Fantasy (faction, personnage, animation) n'entre 
 | CTD-03 | Main de trois et séquence d'utilisation | Partiellement documenté |
 | CTD-04 | Résistances 11/12/13, somme ≥ résistance | Documenté |
 | CTD-05 | Déclencheur = enseigne identique au monstre | Documenté |
-| CTD-06 | Joker : choix de valeur jusqu'à 10 et enseigne libre | Documenté ; bornes/cas à préciser |
+| CTD-06 | Joker polyvalent en enseigne ; valeur variable jusqu'à 10 sur la page Web, valeur fixe 10 dans le livret Classic reproduit | **Conflit documentaire, non arbitré** |
 | CTD-07 | Après victoire : retrait des cartes et révélation | Documenté ; séquence fine à préciser |
 | CTD-08 | Pile de dégâts : sept entraîne une défaite | Documenté ; ordre à confirmer |
 | CTD-09 | Réserve facultative interdite dans la V1 | Décision utilisateur |
@@ -113,3 +113,36 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 ## 8. Statut de préparation
 
 **Documentation des règles principales : avancée ; feu vert pour moteur complet : NON tant que les points O-CTD ne sont pas arbitrés.** Les matrices de tests sont des spécifications ; aucun test de moteur n'a été exécuté pendant cette étude.
+
+## 9. Recherche complémentaire du 22 novembre 2026 — confrontation des textes
+
+**Sources examinées pendant cette recherche :**
+- [Règles de présentation publiées par Gifts for Card Players sous le nom de Mark S. Ball](https://giftsforcardplayers.com/clear-the-dungeon-a-solo-card-game/), sections Gameplay et Jokers.
+- [Reproduction Scribd du document « Clear the Dungeon Complete », incluant Classic v1.1.0 daté du 23 octobre 2024](https://www.scribd.com/document/846020212/Clear-the-Dungeon-Complete-1-0-2). **Source secondaire :** la reproduction ne prouve pas être la version officielle définitive ni inchangée ; toutefois le texte du livret est directement visible.
+- [Document original Google Docs lié par la page de règles](https://docs.google.com/document/d/1BBPusx0Q_UM7vo8i5Yzuk7UyrWBf3PvjdDsx_h-qHwQ/edit) : lien identifié, mais consultation du texte intégral impossible dans cet environnement (interface dépendante de JavaScript).
+
+### Ce que la recherche permet de confirmer
+
+- Classic 1.1.0 suit trois phases de tour **Pioche → Attaque → Défausse**. Trois cartes sont piochées ; elles doivent être jouées ou défaussées avant une nouvelle main.
+- Les deux premières cartes d'attaque totalisent **au moins** la résistance J11/Q12/K13 ; la troisième correspond à l'enseigne et provoque la défaite immédiate du monstre.
+- Les cartes non jouées/défaussées alimentent les dégâts ; **sept dégâts** font perdre immédiatement ; la réserve est facultative et reste **désactivée** par décision CardForge.
+- Le score officiel est la quantité de cartes encore dans la pioche, sans les cartes de la main ; il ne faut pas attribuer un score artificiel aux défaites ou abandons.
+
+### Divergence importante CTD-J01 — valeur du joker
+
+- **Page Web :** le joueur **choisit** la puissance du joker, dans une plage **jusqu'à 10** ; enseigne libre.
+- **Livret Classic reproduit :** le joker a une puissance **fixe de 10**, son enseigne est libre et il peut servir de **déclencheur**.
+- **Décision : INCONNUE.** Ces formulations ne sont pas équivalentes. Ne pas coder une puissance libre sans confirmation de la version originale faisant foi. La prise de décision doit être documentée comme clarification officielle, **pas** comme simplification par CardForge.
+
+### Questions réévaluées
+
+| ID | Résultat | Statut |
+| --- | --- | --- |
+| O-CTD-01 | Les phases Pioche/Attaque/Défausse sont attestées ; répartition et placement d'attaques partielles encore incomplets | Partiellement confirmé |
+| O-CTD-02 | Conditions « avant épuisement de la pioche » mentionnées ; derniers tirages incomplets/absence de coup non détaillés | Ouvert |
+| O-CTD-03 | Le texte indique que les cartes peuvent être posées sur les **monstres choisis** ; séquence d'élimination et défausse de plusieurs attaques restent à préciser | Partiellement confirmé |
+| O-CTD-04 / CTD-J01 | La plage de puissance du joker est **contradictoire** (choix jusqu'à 10 vs 10 fixe) ; l'enseigne flexible et sa fonction de déclencheur sont soutenues | **Bloquant** |
+| O-CTD-05 | La défaite est immédiate au **septième dégât** ; ordre en cas d'actions simultanées non décrit | Partiellement confirmé |
+| O-CTD-06 | Score = pioche restante, main exclue | Confirmé pour victoire |
+
+**À obtenir pour clore CTD-J01 et O-CTD :** consultation du Google Doc officiel via navigateur permettant JavaScript, PDF de l'auteur ou clarification directe de Mark S. Ball. Ne pas utiliser une simulation tierce comme source de règle supérieure au créateur.
