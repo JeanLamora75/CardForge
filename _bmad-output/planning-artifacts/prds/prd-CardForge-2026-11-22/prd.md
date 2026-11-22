@@ -247,3 +247,7 @@ Les [sources et contradictions documentées](../../game-rules/recherche-approfon
 - **Gridcannon V2 :** cas nouveaux G-01a (meilleure carte au centre), G-07 (ploy restant mais inutile) et G-08 (score après réapprovisionnement) ; les lacunes G-01b, G-02, G-03 et G-04 demeurent.
 - Les matrices de conformité ont été enrichies, mais **aucune exécution de moteur, validation automatique BMAD ou contact des auteurs** n'a eu lieu.
 - Le périmètre à deux jeux jouables reste validé ; les points ouverts sont des dépendances de conformité, non des options de gameplay que CardForge peut inventer silencieusement.
+
+## Arbitrage de règle — Clear the Dungeon (22 novembre 2026)
+
+**Décision produit validée : pour CardForge, la puissance du joker est fixée à 10.** Pas de choix de puissance inférieure. L'enseigne est polyvalente dans les conditions officielles ; un joker peut servir de déclencheur selon les règles documentées. **CTD-J01 est fermé pour l'implémentation**, sans prétendre avoir levé la divergence entre les publications de l'auteur et le livret Classic reproduit. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md) et [matrice mise à jour](../../clear-the-dungeon-rule-test-matrix.md).
