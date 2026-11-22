@@ -1431,4 +1431,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T342 | Petite résolution et lecteur d'écran FR/EN | Compteur et objectif compréhensibles, sans dépendance à la jauge ou couleur | À vérifier en UX, non exécuté |
 | GC-V2-T343 | État invalide contenant plus de douze figures distinctes vaincues | Anomalie détectable ; pas de masquage par plafonnement graphique | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-32 / abandon et nouvelle partie :** que faire lorsque le joueur demande à quitter définitivement une partie active ou à commencer une nouvelle partie ? Options **A** remplacement immédiat sans confirmation ; **B** confirmation explicite uniquement pour les actions destructrices, avec possibilité de reprendre une partie via la sauvegarde existante ; **C** archivage automatique de chaque partie remplacée pour consultation ou restauration ultérieure. Ce choix devra respecter les compteurs de victoires/défaites/abandons et éviter tout double comptage.
+**GC-32 : option B validée ultérieurement — confirmation des abandons et remplacements de partie active ; voir §46.**
+
+
+## 46. Décision UX Gridcannon V2 — GC-32 : confirmation avant abandon ou remplacement d'une partie active
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** CardForge sauvegarde automatiquement la partie active et permet sa reprise après sortie du jeu, fermeture de l'application ou retour au catalogue. Seules les commandes **« Abandonner »** et **« Nouvelle partie »** susceptibles de supprimer ou remplacer une partie **non terminée** exigent une confirmation explicite avant exécution. La simple navigation ou fermeture n'est jamais considérée comme un abandon.
+
+### 46.1. Contrat fonctionnel, données et UX
+
+1. **Une partie active à reprendre :** la sauvegarde locale conserve l'état déterministe complet du moteur, notamment la pioche et son ordre, les piles, figures, armures, As/Jokers, ressources dépensées, phase de jeu, choix non confirmés et cartes temporairement écartées. Le retour au catalogue ou la fermeture n'efface pas cette sauvegarde.
+2. **Reprise :** l'écran du jeu permet de reprendre explicitement une partie non terminée à son point de décision, sans tirage automatique, consommation de ressource, attaque supplémentaire ni modification des statistiques.
+3. **Confirmation d'abandon :** si une partie est active et non terminée, « Abandonner » ouvre une confirmation exposant clairement la perte de la possibilité de reprise, ainsi que l'enregistrement d'un **abandon**, distinct d'une défaite. Le bouton « Annuler » laisse état et statistiques inchangés.
+4. **Confirmation de nouvelle partie :** si une partie non terminée existe, « Nouvelle partie » demande de confirmer le remplacement. En cas de confirmation, l'ancienne partie est close comme **abandonnée une seule fois**, puis une nouvelle distribution est créée. La transition doit empêcher l'état où l'ancienne partie est perdue sans qu'une nouvelle partie valide soit installée.
+5. **Aucune confirmation superflue :** quand aucune partie active non terminée n'existe, le joueur peut commencer une partie sans avertissement destructif. Rejouer après une victoire ou une défaite ne remplace pas une partie active.
+6. **Résultats exclusifs :** une partie terminée reçoit au plus un résultat définitif parmi **victoire**, **défaite**, **abandon** ; un abandon ne peut ni déclencher un score officiel de victoire ni être compté comme défaite. Les victoires et défaites déjà confirmées ne sont jamais reclassées par l'interface.
+7. **Unicité et concurrence :** l'abandon confirmé et l'éventuelle création de nouvelle partie sont idempotents face aux doubles clics, aux deux onglets ouverts et aux reprises. Ne pas incrémenter deux fois les statistiques ; ne pas perdre silencieusement une partie à cause d'une course entre sauvegardes.
+8. **Navigation et interruptions :** quitter l'écran de jeu, changer de langue (GC-27), passer en arrière-plan, rafraîchir l'onglet ou fermer l'application ne consomme pas la partie. Prévoir la sauvegarde au fil des actions métier, sans dépendre uniquement de l'événement de fermeture du navigateur.
+9. **Actions non confirmées :** ouvrir une boîte de dialogue, la fermer, ou quitter pendant un choix d'As/Joker, une sélection de case ou une prévisualisation d'attaque ne valide jamais cette action. Reprendre dans un état cohérent sauvegardé.
+10. **Lisibilité et accessibilité :** distinguer explicitement « Reprendre », « Nouvelle partie », « Abandonner » et « Annuler », avec avertissement lisible en français/anglais pour le MVP et compatibilité clavier, tactile, lecteurs d'écran ; ne pas utiliser seulement une couleur pour signaler la conséquence irréversible.
+11. **Limite de cette décision :** pas d'historique navigable ni de restauration libre des parties remplacées (option C non retenue). Les statistiques globales et les résultats terminés restent conservés selon les exigences CardForge déjà validées.
+12. **Règles inchangées :** GC-32 gouverne le cycle de vie d'une partie numérique et non les conditions de victoire/défaite définies par la Version 2 de Tom Francis.
+
+**Exemples :** le joueur quitte la partie après un tir ; l'écran d'accueil propose de la reprendre, sans comptabiliser d'abandon. Il demande ensuite une nouvelle partie : « Annuler » restaure l'écran inchangé. « Confirmer » archive uniquement le **résultat d'abandon** dans les statistiques, remplace la sauvegarde active et crée une nouvelle distribution, sans double comptage.
+
+**Statut : GC-32 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire, aucun développement ni test exécuté.
+
+### 46.2. Scénarios de conformité — GC-32
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T344 | Retour au catalogue pendant partie active | Sauvegarde conservée, zéro abandon | Spécifié, non exécuté |
+| GC-V2-T345 | Fermeture puis réouverture après plusieurs actions | Reprise exacte, aucune pioche/action/statistique supplémentaire | Spécifié, non exécuté |
+| GC-V2-T346 | Abandon demandé puis annulé | Partie active et compteurs inchangés | Spécifié, non exécuté |
+| GC-V2-T347 | Abandon explicitement confirmé | Une clôture « abandon », reprise de cette partie impossible | Spécifié, non exécuté |
+| GC-V2-T348 | Nouvelle partie demandée durant une partie active, confirmation annulée | Ancienne partie et sa distribution conservées | Spécifié, non exécuté |
+| GC-V2-T349 | Nouvelle partie confirmée sur partie active | Ancienne partie comptée une seule fois en abandon, nouvelle partie valide créée | Spécifié, non exécuté |
+| GC-V2-T350 | Nouvelle partie alors qu'aucune partie active n'existe | Pas de confirmation destructrice inutile | Spécifié, non exécuté |
+| GC-V2-T351 | Nouvelle partie après victoire/défaite déjà enregistrée | Aucun abandon ni double comptage de résultat précédent | Spécifié, non exécuté |
+| GC-V2-T352 | Choix Joker ou prévisualisation GC-23 non confirmé puis fermeture | Aucun déplacement ni dépense lors de la reprise | Spécifié, non exécuté |
+| GC-V2-T353 | Double clic ou confirmation concurrente dans deux onglets | Une clôture et un seul incrément d'abandon | À vérifier en tests de concurrence, non exécuté |
+| GC-V2-T354 | Échec local de création de nouvelle partie après confirmation | Pas de perte silencieuse de l'état précédent ; état récupérable | Spécifié, non exécuté |
+| GC-V2-T355 | Modale d'abandon en FR/EN sur mobile et au clavier | Conséquence explicite, choix Annuler/Confirmer accessibles | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-33 / écran de fin de partie :** quelle richesse de récapitulatif montrer une fois la victoire ou la défaite définitivement confirmée ? Options : **A**, résultat seul avec commandes « Nouvelle partie » et « Catalogue » ; **B**, résultat et résumé compact (score officiel uniquement en cas de victoire, figures vaincues, actions spéciales restantes, cause éventuelle de défaite), sans révélation superflue des cartes cachées ; **C**, rapport détaillé de la partie et historique de tous les mouvements. Préserver le score officiel de la Version 2 et la distinction victoire/défaite/abandon de GC-32.
