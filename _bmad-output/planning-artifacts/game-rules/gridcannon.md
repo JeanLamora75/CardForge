@@ -1149,3 +1149,45 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T267 | Contrôle tactile/clavier, faible contraste et absence de son | Information complète compréhensible sans animation ni couleur seule | À vérifier en UX, non exécuté |
 
 **Prochain arbitrage proposé — GC-25 / ambiance sonore et retours audio :** définir la place du son dans les actions de jeu (pose, tir, figure vaincue, victoire/défaite), sans modifier les règles ni imposer l'audio. Options à étudier : **A** entièrement silencieux ; **B** effets sonores courts, discrets et facultatifs (désactivables, muets par défaut si contraintes navigateur) ; **C** ambiance musicale et effets immersifs continus, avec réglages séparés. Évaluer accessibilité, autonomie mobile, répétition et comportement des navigateurs.
+
+
+## 39. Décision UX Gridcannon V2 — GC-25 : effets sonores discrets et facultatifs
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Bastion Stellaire proposera des **effets sonores brefs, discrets et désactivables** associés aux événements importants (pose de carte, tir, figure vaincue, victoire, défaite). Il n'y aura **pas de musique d'ambiance continue** au titre de GC-25. **Le son sera coupé par défaut au premier lancement** et ne sera activé qu'à la demande du joueur. Les règles, les informations et les résultats de partie restent intégralement utilisables sans son.
+
+### 39.1. Contrat fonctionnel et UX
+
+1. **Événements sonorisables :** placement légal confirmé, attaque effectivement résolue (animation GC-24), figure vaincue, victoire et défaite. Ces effets sont des retours de présentation et non des actions métier.
+2. **Sobriété :** effets courts, volumes maîtrisés, sans bande sonore musicale permanente ni répétition agressive ; une séquence de deux tirs en coin ne doit pas empiler des sons incompréhensibles.
+3. **Paramètre de jeu :** proposer une commande accessible « Effets sonores : activés / désactivés », identifiable au clavier, au toucher et par lecteur d'écran. **Valeur initiale : désactivés** tant que l'utilisateur ne les a pas volontairement activés.
+4. **Persistance de préférence :** mémoriser localement le choix utilisateur selon les mécanismes de préférences de CardForge ; ne pas modifier ni polluer les sauvegardes du moteur. Une préférence absente ou non accessible revient au mode silencieux.
+5. **Contraintes navigateurs :** respecter les politiques de lecture audio (autorisation liée à une interaction utilisateur quand nécessaire) ; ne jamais forcer la lecture ni considérer le refus de lecture comme une erreur bloquante de jeu.
+6. **Silence garanti :** mode désactivé, onglet ou application mise en arrière-plan si la plateforme l'exige, perte de contexte audio, absence de périphérique ou impossibilité de lecture ne doivent jamais empêcher un tir, un placement, une victoire ni la poursuite de partie.
+7. **Accessibilité :** chaque événement important reste signifié visuellement et/ou textuellement (GC-22 à GC-24), sans dépendance exclusive au son. Un son de défaite ne remplace pas le message de résultat officiel.
+8. **Déclenchement après événement réel :** ne jouer un son qu'en réponse à un événement métier **confirmé** et effectivement présenté ; pas de son « tir réussi » sur une simple prévisualisation GC-23. Une annulation de placement ne doit pas déclencher de faux son d'attaque.
+9. **Unicité :** éviter les doubles sons causés par un double clic, une répétition de rendu, une reprise ou la fin d'une animation. Une reprise de sauvegarde n'a pas à rejouer les sons du passé.
+10. **Cohérence des terminaux :** les signaux de victoire et de défaite doivent être distincts et discrets. Quand un tir décisif termine une partie, prioriser un résultat clairement perceptible plutôt qu'une cascade bruyante d'effets.
+11. **Ressources et droits :** utiliser uniquement des ressources audio originales, licenciées pour la distribution prévue ou autrement autorisées ; documenter les crédits nécessaires. Ne pas présupposer la disponibilité d'une bibliothèque sonore.
+12. **Portée :** choix de design CardForge sans changement de règles de Gridcannon Version 2. Les sons et leur calendrier exact seront précisés au design UX, sans conditionner le fonctionnement du moteur.
+
+**Exemple :** le joueur active volontairement les effets sonores. Lorsqu'il confirme une pose en coin provoquant deux attaques, des retours sonores brefs accompagnent les impacts effectivement résolus, sans jouer de sons supplémentaires à chaque recalcul de l'interface. Si les effets sont désactivés, le même bilan chiffré et les mêmes animations visuelles sont disponibles et le résultat métier est strictement identique.
+
+**Statut : GC-25 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement : aucun fichier audio produit, aucune implémentation ni aucun test exécuté.
+
+### 39.2. Scénarios de conformité — GC-25
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T268 | Première ouverture sans préférence enregistrée | Effets sonores désactivés, aucune lecture spontanée | Spécifié, non exécuté |
+| GC-V2-T269 | Activation volontaire des effets | Préférence mémorisée localement, sons autorisés après interaction compatible navigateur | Spécifié, non exécuté |
+| GC-V2-T270 | Désactivation volontaire puis tir confirmé | Aucun son ; bilan visuel et état métier inchangés | Spécifié, non exécuté |
+| GC-V2-T271 | Pose légale et attaque confirmées, son activé | Effets brefs pertinents, non déclenchés avant confirmation | Spécifié, non exécuté |
+| GC-V2-T272 | Prévisualisation GC-23 annulée | Aucun effet de tir ni de victoire fictifs | Spécifié, non exécuté |
+| GC-V2-T273 | Deux attaques dans un coin | Retours compréhensibles, sans superposition sonore excessive | À vérifier en UX, non exécuté |
+| GC-V2-T274 | Refus de lecture automatique ou absence de sortie audio | Partie continuée sans erreur bloquante | Spécifié, non exécuté |
+| GC-V2-T275 | Rechargement de la partie après un tir | Aucun son ancien rejoué ni nouvel événement métier créé | Spécifié, non exécuté |
+| GC-V2-T276 | Victoire ou défaite confirmée | Retour sonore distinct si activé ; message textuel présent dans tous les cas | Spécifié, non exécuté |
+| GC-V2-T277 | Commande sonore sur mobile, au clavier ou avec lecteur d'écran | Contrôle accessible, état activé/désactivé explicite | À vérifier en UX, non exécuté |
+| GC-V2-T278 | Mode silencieux après changement de préférence et relancement | Préférence conservée, jeu utilisable entièrement sans son | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-26 / accompagnement des nouveaux joueurs :** comment expliquer les règles parfois complexes de la Version 2 (placement, attaques, As, Joker, armures et cas limites), sans automatiser des décisions à la place du joueur ni altérer les règles ? Options à comparer : **A** règlement consultable à tout moment ; **B** règlement structuré + conseils contextuels facultatifs sur les actions et les erreurs ; **C** tutoriel interactif guidé avec une partie d'apprentissage dédiée, en plus du règlement. Aucun des trois choix ne doit révéler la pioche future ni prendre de décision stratégique à la place du joueur.
