@@ -150,3 +150,20 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T47 | Défausse d'une carte puis rafraîchissement/reprise | Nombre de dégâts, état de la main et cartes engagées identiques ; pas de double dégât | Spécifié, non exécuté |
 
 **Question restante CTD-04 :** quelle suite lorsque la pioche contient moins de trois cartes ou est vide, avec des monstres ou des attaques partielles en cours ? CTD-03 ne décide pas cette règle.
+
+
+## Décision CTD-04 / CTD-ARB-04 — pioche finale de une ou deux cartes (22 novembre 2026)
+
+**Option A VALIDÉE :** la dernière main prend toutes les cartes disponibles, même moins de trois ; pas d'appoint depuis la pile de dégâts et pas de défaite automatique au seul instant où la pioche devient vide. La défaite finale est **CTD-05 à arbitrer**.
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T48 | Main précédente close, pioche contient 2 cartes | Prendre exactement 2 cartes en main ; pioche vide ; ordre inchangé | Spécifié, non exécuté |
+| CTD-T49 | Main précédente close, pioche contient 1 carte | Prendre exactement 1 carte en main ; pioche vide | Spécifié, non exécuté |
+| CTD-T50 | Dernière main de 2 cartes, une attaque partielle antérieure | Pouvoir jouer une carte pour compléter l'attaque si légale | Spécifié, non exécuté |
+| CTD-T51 | Pioche vide immédiatement après le tirage final, cartes encore en main | Partie non automatiquement terminée par le seul tirage ; cartes jouables | Spécifié, non exécuté |
+| CTD-T52 | Dernière main de 1 carte non utilisée, joueur choisit de la défausser | +1 dégât ; pas de recyclage ; fin du tour selon CTD-03 | Spécifié, non exécuté |
+| CTD-T53 | Pioche vide et main close, demander une nouvelle main | Aucune carte créée ni repiochée ; résultat terminal à définir en CTD-05 | Partiellement spécifié, non exécuté |
+| CTD-T54 | Sauvegarde puis reprise avec dernière main et pioche vide | Même main, mêmes cartes engagées, aucune nouvelle distribution | Spécifié, non exécuté |
+
+**Traçabilité :** CTD-T16 / CTD-T24 (anciens scénarios « à préciser ») doivent être réévalués à partir de cette décision ; l'incertitude restante porte sur le *déclenchement de la défaite*, non sur le droit de jouer une dernière main incomplète.
