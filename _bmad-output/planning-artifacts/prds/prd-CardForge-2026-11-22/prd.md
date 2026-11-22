@@ -279,3 +279,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A validée pour Clear the Dungeon :** une pioche autorisée prélève jusqu'à trois cartes, ou toutes les cartes restantes s'il en reste moins. Une dernière main à une ou deux cartes est jouable, notamment pour achever des attaques partielles. L'épuisement du paquet pendant le tirage ne termine pas prématurément cette main. Aucune carte n'est ajoutée depuis la pile de dégâts, aucune carte n'est inventée ou remélangée. Ce choix précise FR-05/FR-07/FR-16/FR-18 et est documenté dans les [règles](../../game-rules/clear-the-dungeon.md) et [tests](../../clear-the-dungeon-rule-test-matrix.md).
 
 **Statut : CTD-04 / CTD-ARB-04 clos.** La question CTD-05 (moment exact de la défaite lorsque la pioche est épuisée) reste à valider séparément.
+
+
+## Décision fonctionnelle CTD-ARB-05 — défaite à la clôture de la dernière main (22 novembre 2026)
+
+**Option A explicitement approuvée :** dans Clear the Dungeon, l'épuisement de la pioche n'entraîne pas de défaite tant que le joueur n'a pas terminé sa dernière main, même si celle-ci contient seulement une ou deux cartes. Dès qu'il clôture cette main, si la pioche est vide et qu'un monstre reste vivant, la **défaite par épuisement est automatique**. Si le douzième monstre est vaincu avant cela : **victoire immédiate**. Si le septième dégât survient avant la clôture : **défaite immédiate**. Le joueur n'a pas à demander inutilement une nouvelle pioche vide.
+
+**Traçabilité :** CTD-05 / CTD-ARB-05 fermé, FR-07/FR-08/FR-16/FR-22/FR-24 précisés ; le résultat de fin de partie n'est inscrit qu'une fois et doit supporter la sauvegarde/reprise. Voir [règles](../../game-rules/clear-the-dungeon.md) et [matrice](../../clear-the-dungeon-rule-test-matrix.md). **CTD-06** (séquence attaque/révélation) reste à valider.
