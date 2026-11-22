@@ -258,3 +258,23 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T93 | Première puissance autorisée puis seconde insuffisante | Première reste en place ; seconde refusée selon CTD-08 | Spécifié, non exécuté |
 
 **Prochaine décision CTD-10 :** rôle et enseigne du joker au moment du placement (ergonomie/moteur). Les cas CTD-T85 à CTD-T93 sont seulement **spécifiés**, pas exécutés.
+
+
+## Décision CTD-10 / CTD-ARB-10 — rôle et enseigne du joker selon l'emplacement (22 novembre 2026)
+
+**Option A VALIDÉE :** le joueur choisit où poser son joker (puissance 1, puissance 2 ou déclencheur), le moteur en déduit le rôle. Un joker employé en puissance vaut toujours **10** ; employé comme déclencheur il prend automatiquement l'enseigne du monstre. Aucun menu de rôle/enseigne, aucune sélection automatique du rôle par le moteur, aucune utilisation simultanée d'une même carte.
+
+| Test | Précondition / action | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T94 | Jouer un joker en première puissance contre un roi | Placement accepté en puissance de valeur **10** ; attaque encore incomplète | Spécifié, non exécuté |
+| CTD-T95 | Première puissance 5 contre roi 13 ; jouer un joker en deuxième puissance | 5 + 10 = 15, puissance validée ; déclencheur encore requis | Spécifié, non exécuté |
+| CTD-T96 | Deux puissances atteignent le seuil d'une dame de cœur ; poser joker sur déclencheur | Enseigne cœur déduite automatiquement ; dame vaincue immédiatement | Spécifié, non exécuté |
+| CTD-T97 | Essayer de poser joker en déclencheur avec une seule carte de puissance | Action refusée : ordre CTD-07 non satisfait ; joker conservé | Spécifié, non exécuté |
+| CTD-T98 | Poser joker comme puissance puis demander au moteur de l'utiliser également comme déclencheur | Interdit : une carte physique ne peut occuper deux rôles à la fois | Spécifié, non exécuté |
+| CTD-T99 | Jouer joker en puissance face à un monstre d'enseigne différente | Aucune restriction d'enseigne des cartes de puissance ; valeur 10 | Spécifié, non exécuté |
+| CTD-T100 | Sauvegarder puis reprendre pendant une main avec joker posé provisoirement | Même emplacement et même identifiant, possibilité de reprise selon CTD-02 conservée | Spécifié, non exécuté |
+| CTD-T101 | Modifier l'emplacement d'un joker posé dans la main courante, puis clôturer la main | Le rôle suit l'emplacement effectif et est ensuite verrouillé | Spécifié, non exécuté |
+| CTD-T102 | Poser joker déclencheur face à un roi de pique après puissance suffisante | Enseigne pique appliquée au rôle déclencheur sans modification permanente du joker | Spécifié, non exécuté |
+| CTD-T103 | Placement du joker refusé pour cause de rôle non autorisé | Joker demeure disponible, aucune mutation de main/plateau/dégâts | Spécifié, non exécuté |
+
+**Prochain point CTD-11 :** cumul éventuel des **deux jokers distincts** dans une attaque. Ne pas confondre cette question avec l'interdiction, déjà confirmée, de jouer **un seul et même joker** dans deux emplacements.
