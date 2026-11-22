@@ -88,3 +88,10 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 - **CTD-T23 à prévoir :** répartition de cartes entre plusieurs monstres et attaque partiellement posée : résultat à confirmer.
 - **CTD-T24 à prévoir :** fin de pioche avec une ou deux cartes en main : résultat à confirmer.
 - [Référentiel actualisé Clear the Dungeon](./game-rules/clear-the-dungeon.md). Aucun scénario ci-dessus n'est exécuté.
+
+## Nouveaux scénarios issus de l'approfondissement
+- **CTD-T25 :** attaque complète : **exactement trois** cartes, deux pour puissance et une seule pour déclenchement, dans cet ordre ; pas de quatrième carte nécessaire ou comptée.
+- **CTD-T26 :** dernier monstre de colonne vaincu : dévoiler immédiatement la carte nouvellement découverte (livret Classic reproduit).
+- **CTD-T27 :** deux attaques incomplètes préparées sur des monstres différents puis nouvelle main : **RÉSULTAT À PRÉCISER** en vérifiant le texte officiel.
+- **CTD-T28 :** joker de puissance utilisée à une valeur inférieure à 10 : **ATTENDU BLOQUÉ par CTD-J01** ; ne pas choisir arbitrairement 10 ou une valeur libre.
+- Le [rapport approfondi](./game-rules/recherche-approfondie-2026-11-22.md) distingue explicitement les formulations concurrentes sur le joker. L'accès au Google Docs original n'a pas été obtenu, et les règles secondaires ne suffisent pas à trancher.
