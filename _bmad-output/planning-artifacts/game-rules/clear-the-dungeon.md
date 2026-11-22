@@ -281,3 +281,21 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 - **À trancher en CTD-08 :** si une seconde carte de puissance fait une somme **inférieure** à la résistance du monstre, faut-il refuser immédiatement cette pose ou autoriser provisoirement deux cartes sous le seuil ? Aucune troisième carte de puissance et aucun déclencheur ne doivent être autorisés à contourner le critère officiel de victoire.
 
 **Statut : CTD-07 / CTD-ARB-07 CLOS.** Il s'agit de l'application explicite de la séquence documentée des « deux premières cartes de puissance » puis de la « troisième carte déclencheuse » au modèle de mains/attaques partielles choisi dans CardForge. Aucun test de moteur n'a été exécuté à l'occasion de cet arbitrage.
+
+
+## 19. Arbitrage CardForge CTD-08 / CTD-ARB-08 — refus d'une seconde puissance insuffisante
+
+**Décision du porteur du 22 novembre 2026 : OPTION A VALIDÉE.** Pour un monstre de résistance `R`, si une première carte de puissance `P1` est déjà posée, la seconde carte de puissance `P2` ne peut être placée que si `P1 + P2 >= R`. **Si la somme est inférieure à R, la pose de P2 est refusée**, sans modification de l'état du plateau, de la main, des cartes verrouillées ni de la pile de dégâts. Le joueur conserve P2 dans sa main et peut tenter un autre placement autorisé ou la défausser explicitement selon CTD-ARB-03.
+
+**Exemples exécutables :**
+- Valet de résistance 11, première puissance 5 : une seconde puissance 4 est **refusée** car 5 + 4 = 9 ; une seconde puissance 6 est **acceptée** car 5 + 6 = 11.
+- Roi de résistance 13, première puissance 5 : une seconde puissance 8 est **acceptée** ; une seconde puissance 7 est **refusée**.
+- Une somme **supérieure** au seuil est aussi recevable ; l'égalité stricte n'est pas requise.
+- Un joker employé comme puissance vaut **10 fixe** conformément à CTD-J01.
+- Aucune troisième carte de puissance ne peut compenser une deuxième carte insuffisante ; le rôle de troisième carte reste **déclencheur** après deux puissances suffisantes selon CTD-ARB-07.
+
+Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissance posée sur un monstre peut rester d'une main à l'autre et une carte posée pendant la main courante peut être reprise tant que sa main est ouverte.
+
+**Statut : CTD-08 / CTD-ARB-08 CLOS pour l'implémentation CardForge.** Ce rejet explicite des poses illégales est un arbitrage de comportement demandé par le porteur ; ne pas le présenter comme une règle formellement précisée par Mark S. Ball. Aucun test n'a été exécuté.
+
+**Prochaine question CTD-09 :** une *première* carte de puissance peut-elle être placée si, même accompagnée de la plus forte seconde puissance possible (10), elle ne peut jamais atteindre la résistance du monstre ?
