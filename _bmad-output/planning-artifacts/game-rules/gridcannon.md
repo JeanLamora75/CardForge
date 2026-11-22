@@ -1516,4 +1516,48 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T366 | Choix « Retour au catalogue » | Résultat conservé, aucune statistique supplémentaire | Spécifié, non exécuté |
 | GC-V2-T367 | Écran final FR/EN sur mobile et clavier | Motifs et chiffres lisibles, navigation accessible, sans couleur seule | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-34 / statistiques du jeu dans CardForge :** après un écran de fin compact, comment présenter les performances cumulées dans la fiche du jeu ? **A** uniquement victoires, défaites et abandons ; **B** ces trois totaux, nombre de parties achevées, taux de victoire et meilleur score officiel de victoire, sans classement ; **C** tableau d'analyse avancée avec historique par partie, durée, évolutions et graphiques. Le score officiel des défaites doit rester inexistant, les abandons étant distingués des parties gagnées ou perdues. Les définitions exactes des dénominateurs seront explicitées avant validation.
+**GC-34 : option B validée ultérieurement — statistiques cumulées compactes, définitions et tests ; voir §48.**
+
+
+## 48. Décision UX Gridcannon V2 — GC-34 : statistiques cumulées compactes du joueur
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** La fiche du jeu « Bastion Stellaire » présente un **tableau de bord compact** des statistiques locales du joueur : **victoires, défaites, abandons, parties achevées, taux de victoire et meilleur score officiel obtenu en cas de victoire**. Il n'intègre ni classement externe ni historique détaillé des mouvements ou des parties. Cette décision ne modifie pas les règles originales de Gridcannon Version 2.
+
+### 48.1. Définitions fonctionnelles
+
+1. **Victoire (V) :** nombre de parties distinctes clôturées avec le résultat définitif « victoire », conforme à GC-08 ; chaque partie contribue au plus une fois.
+2. **Défaite (D) :** nombre de parties distinctes clôturées avec le résultat définitif « défaite », incluant l'armure fatale et l'impasse confirmée (GC-20), sans y inclure les abandons.
+3. **Abandon (A) :** nombre de parties distinctes clôturées par abandon volontaire confirmé selon GC-32 ; une sortie du jeu ou une sauvegarde en cours ne constitue pas un abandon.
+4. **Parties achevées :** **V + D**, c'est-à-dire les parties ayant abouti à un résultat de victoire ou défaite. Les abandons sont exclus de cet indicateur mais demeurent affichés à part. Une partie active ne compte pas comme achevée.
+5. **Taux de victoire :** si **V + D > 0**, afficher **100 × V / (V + D)**, avec un arrondi de présentation cohérent et sans modifier les données exactes ; les abandons ne figurent pas au dénominateur. Si **V + D = 0**, afficher « — » / « Pas encore de partie achevée », **pas 0 %**, puisque le taux est indéfini.
+6. **Meilleur score officiel :** maximum des scores officiels enregistrés **sur les seules victoires** ; chaque score est le nombre d'actions spéciales non dépensées, de **0 à 6**. Si aucune victoire n'a été obtenue, afficher « — » et non un faux score de 0/6. Les défaites et abandons ne produisent aucun score officiel.
+7. **Présentation :** montrer distinctement V, D et A, puis « Parties achevées », « Taux de victoire » et « Meilleur score ». Sur mobile, utiliser une grille compacte adaptative, avec unités et libellés non ambigus. Aucun graphique ni historique détaillé n'est requis par cette option.
+8. **Cohérence et unicité :** le moteur/statistiques conserve un identifiant unique de résultat par partie ; rechargements, confirmations répétées, nouvelle partie et animations ne peuvent pas double-compter. Si les résultats sont conservés par agrégats, garantir une transition idempotente équivalente.
+9. **Persistance :** statistiques locales conservées lorsque le joueur ferme l'application ou reprend une partie. Une sauvegarde de partie en cours ne doit pas incrémenter les résultats ; suppression/remplacement d'une partie active n'affecte les statistiques qu'après l'abandon confirmé de GC-32.
+10. **Isolement des jeux :** statistiques propres à Gridcannon/Bastion Stellaire, sans mélange avec celles de Clear the Dungeon ou des autres jeux de CardForge. Un changement de titre public (GC-17) ne réinitialise pas les statistiques, car elles sont rattachées à l'identifiant stable du jeu.
+11. **Localisation/accessibilité :** libellés et formats en français et anglais dès le MVP (GC-28), lisibles au tactile et par lecteur d'écran, sans code couleur seul ; architecture extensible aux langues futures.
+12. **Portée :** tableau de bord d'information personnelle, sans classement, télémétrie externe ni modification des conditions de victoire. La politique de remise à zéro volontaire des statistiques est un arbitrage distinct **GC-35**.
+
+**Exemple :** 18 victoires, 12 défaites et 3 abandons donnent **30 parties achevées** (18 + 12), **60 % de victoires** (18 / 30) et **33 parties clôturées au total** (18 + 12 + 3 ; ce dernier total est explicatif et n'est pas imposé comme indicateur supplémentaire). Si le meilleur score enregistré sur une victoire est 5, afficher **5/6**. Avec seulement 3 abandons et aucune partie achevée, taux et meilleur score s'affichent « — ».
+
+**Statut : GC-34 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement : aucun développement, calcul de statistiques sur données réelles ni test exécuté.
+
+### 48.2. Scénarios de conformité — GC-34
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T368 | 18 victoires, 12 défaites, 3 abandons | V=18, D=12, A=3, parties achevées=30, taux=60 % | Spécifié, non exécuté |
+| GC-V2-T369 | Aucune partie achevée, aucun abandon | V=D=A=0, parties achevées=0, taux « — », meilleur score « — » | Spécifié, non exécuté |
+| GC-V2-T370 | Trois abandons sans victoire ni défaite | Parties achevées=0, taux « — », abandon=3 | Spécifié, non exécuté |
+| GC-V2-T371 | Dix victoires, aucune défaite, deux abandons | Parties achevées=10, taux=100 % | Spécifié, non exécuté |
+| GC-V2-T372 | Aucune victoire et quatre défaites | Taux=0 %, meilleur score « — » | Spécifié, non exécuté |
+| GC-V2-T373 | Victoires de scores officiels 2, 5 et 4 ; défaite avec ressources restantes | Meilleur score=5/6, défaite exclue du meilleur score | Spécifié, non exécuté |
+| GC-V2-T374 | Seule victoire avec score officiel 0 | Meilleur score=0/6, distinct de l'absence de victoire | Spécifié, non exécuté |
+| GC-V2-T375 | Quitter une partie en cours puis la reprendre | Aucun compteur ne change | Spécifié, non exécuté |
+| GC-V2-T376 | Abandon GC-32 confirmé | A augmente de 1 ; V, D et parties achevées inchangés | Spécifié, non exécuté |
+| GC-V2-T377 | Rechargements et événements de clôture répétés | Aucun double comptage, meilleur score stable | Spécifié, non exécuté |
+| GC-V2-T378 | Changement du titre public GC-17 | Statistiques conservées via identifiant de jeu stable | Spécifié, non exécuté |
+| GC-V2-T379 | Partie terminée dans un autre jeu CardForge | Statistiques Gridcannon inchangées | Spécifié, non exécuté |
+| GC-V2-T380 | Tableau de bord mobile, clavier, FR/EN et lecteur d'écran | Indicateurs lisibles et interprétables sans code couleur seul | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-35 / réinitialisation volontaire des statistiques :** faut-il permettre au joueur d'effacer ses statistiques locales Gridcannon ? Options : **A** aucune réinitialisation depuis l'interface ; **B** remise à zéro de toutes les statistiques du jeu uniquement après confirmation explicite, sans affecter la partie active ni les autres jeux ; **C** remise à zéro sélective de compteurs (victoires, défaites, abandons, score record) avec confirmation. Les règles de cohérence des agrégats et du meilleur score doivent être respectées.
