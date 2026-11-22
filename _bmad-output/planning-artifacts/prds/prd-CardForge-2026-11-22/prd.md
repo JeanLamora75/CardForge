@@ -251,3 +251,10 @@ Les [sources et contradictions documentées](../../game-rules/recherche-approfon
 ## Arbitrage de règle — Clear the Dungeon (22 novembre 2026)
 
 **Décision produit validée : pour CardForge, la puissance du joker est fixée à 10.** Pas de choix de puissance inférieure. L'enseigne est polyvalente dans les conditions officielles ; un joker peut servir de déclencheur selon les règles documentées. **CTD-J01 est fermé pour l'implémentation**, sans prétendre avoir levé la divergence entre les publications de l'auteur et le livret Classic reproduit. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md) et [matrice mise à jour](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision fonctionnelle CTD-ARB-01 — attaques partielles (22 novembre 2026)
+
+**Le porteur a validé l'option B pour Clear the Dungeon : plusieurs attaques partielles contre différents monstres peuvent rester sur le plateau entre les tours et les mains.** Cette règle complète FR-06/FR-07 et impose à FR-16/FR-18 de conserver et restaurer l'affectation des cartes à chaque monstre. Le résultat n'est déterminé qu'après une attaque complète valide. Décision de comportement CardForge ; la documentation historique reste prudente sur la formulation originale exacte. Le déplacement/rappel de cartes posées demeure **CTD-02 ouvert**.
+
+Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md) et [matrice de tests](../../clear-the-dungeon-rule-test-matrix.md).
