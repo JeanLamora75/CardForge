@@ -1560,4 +1560,46 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T379 | Partie terminée dans un autre jeu CardForge | Statistiques Gridcannon inchangées | Spécifié, non exécuté |
 | GC-V2-T380 | Tableau de bord mobile, clavier, FR/EN et lecteur d'écran | Indicateurs lisibles et interprétables sans code couleur seul | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-35 / réinitialisation volontaire des statistiques :** faut-il permettre au joueur d'effacer ses statistiques locales Gridcannon ? Options : **A** aucune réinitialisation depuis l'interface ; **B** remise à zéro de toutes les statistiques du jeu uniquement après confirmation explicite, sans affecter la partie active ni les autres jeux ; **C** remise à zéro sélective de compteurs (victoires, défaites, abandons, score record) avec confirmation. Les règles de cohérence des agrégats et du meilleur score doivent être respectées.
+**GC-35 : option B validée ultérieurement — remise à zéro complète après confirmation, sans toucher à la partie active ; voir §49.**
+
+
+## 49. Décision UX Gridcannon V2 — GC-35 : réinitialisation complète des statistiques avec confirmation
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Les paramètres de Bastion Stellaire proposent une commande **« Réinitialiser les statistiques »** qui remet à zéro l'ensemble des résultats cumulés **de ce jeu seulement**, après une **confirmation explicite** détaillant le caractère irréversible de l'opération. La réinitialisation ne touche **ni la partie active ni ses cartes, ni les réglages du joueur, ni les statistiques des autres jeux CardForge**.
+
+### 49.1. Contrat fonctionnel, données et UX
+
+1. **Accès :** placer la fonction dans les paramètres du jeu, à l'écart du tableau de bord statistique GC-34 afin d'éviter une activation accidentelle. L'accès à ce paramètre ne provoque aucune modification.
+2. **Confirmation explicite :** ouvrir une boîte de dialogue rappelant le jeu concerné, les données effacées (victoires, défaites, abandons, parties achevées, taux de victoire et meilleur score) et le caractère non récupérable sans sauvegarde externe. Proposer « Annuler » et « Réinitialiser les statistiques » comme actions distinctes ; ne jamais lancer l'effacement sur la seule ouverture de la modale.
+3. **Périmètre atomique :** remettre à zéro les résultats de toutes les parties déjà **clôturées** pris en compte pour ce jeu : **V=0, D=0, A=0**, donc **parties achevées=0**, **taux de victoire=« — »** et **meilleur score=« — »** (pas 0/6). Si les statistiques sont dérivées de résultats par partie, mettre également à jour/supprimer leur contribution agrégée pour éviter une reconstitution des anciens chiffres.
+4. **Partie en cours :** ne pas modifier la sauvegarde de la partie active, la pioche, les piles, les figures, As/Jokers, la phase ni les ressources. Si cette partie se termine **après** la remise à zéro, son résultat est enregistré normalement comme un **nouveau** résultat.
+5. **Isolation par jeu :** effacer seulement les données identifiées par l'identifiant stable de Gridcannon/Bastion Stellaire, sans conséquence pour Clear the Dungeon ni les futurs jeux.
+6. **Réglages indépendants :** ne pas réinitialiser préférences de langue GC-27/28, volume GC-25, aides GC-26 ni autres paramètres personnels ; la commande porte uniquement sur les statistiques.
+7. **Annulation :** « Annuler », fermeture de la modale, touche Échap ou retour arrière (selon plateforme) ne modifient aucune donnée.
+8. **Résistance aux répétitions :** une seule opération logique en cas de clic répété, de requêtes concurrentes ou de rafraîchissement. Ne pas laisser d'agrégats partiellement réinitialisés, incohérents avec GC-34.
+9. **Persistance :** le zéro statistique confirmé demeure après rechargement et reprise. Un ancien écran déjà ouvert ne doit pas réinjecter silencieusement les statistiques précédentes.
+10. **Pas de choix partiel :** aucune réinitialisation sélective de compteurs, pour éviter taux de victoire et meilleur score non cohérents (option C écartée).
+11. **Accessibilité et i18n :** libellés de confirmation compréhensibles en français et anglais dès le MVP (GC-28), action destructive identifiable autrement que par la couleur seule, commandes accessibles au clavier et au tactile et retour de succès accessible au lecteur d'écran.
+12. **Respect des règles :** il s'agit d'une opération de données locales CardForge ; elle ne modifie pas le moteur ni les règles originales de Gridcannon Version 2.
+
+**Exemple :** les statistiques indiquent 18 victoires, 12 défaites, 3 abandons et un meilleur score de 5/6. Le joueur ouvre les paramètres et annule : tous les chiffres restent identiques. Il confirme ensuite la réinitialisation : V=D=A=0, taux et meilleur score affichent « — ». Sa partie en cours reste reprenable et les statistiques de Clear the Dungeon restent inchangées.
+
+**Statut : GC-35 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation uniquement ; ni implémentation, ni migration des statistiques, ni tests exécutés.
+
+### 49.2. Scénarios de conformité — GC-35
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T381 | Ouverture des paramètres/statistiques | Aucune donnée modifiée | Spécifié, non exécuté |
+| GC-V2-T382 | Ouverture puis annulation de la confirmation | Compteurs et meilleur score inchangés | Spécifié, non exécuté |
+| GC-V2-T383 | Confirmation avec V=18, D=12, A=3, meilleur=5/6 | V=D=A=0, achevées=0, taux et meilleur « — » | Spécifié, non exécuté |
+| GC-V2-T384 | Réinitialisation avec partie active | Partie, ordre de pioche et actions spéciales inchangés | Spécifié, non exécuté |
+| GC-V2-T385 | Partie active gagnée après la réinitialisation | Une nouvelle victoire comptée, score record mis à jour | Spécifié, non exécuté |
+| GC-V2-T386 | Réinitialisation Gridcannon avec statistiques Clear the Dungeon | Autres jeux intégralement inchangés | Spécifié, non exécuté |
+| GC-V2-T387 | Préférences son et langue personnalisées | Préférences conservées après remise à zéro | Spécifié, non exécuté |
+| GC-V2-T388 | Rechargement après réinitialisation | Zéros persistants, pas de restauration des anciens agrégats | Spécifié, non exécuté |
+| GC-V2-T389 | Double clic / deux onglets déclenchant la même remise à zéro | Résultat idempotent, pas de corruption ni état partiel | À vérifier en tests de concurrence, non exécuté |
+| GC-V2-T390 | Ancien résultat clos encore disponible dans un historique technique | Aucune réinjection des valeurs d'avant remise à zéro | Spécifié, non exécuté |
+| GC-V2-T391 | Confirmation sur mobile et au clavier en FR/EN | Impact explicite, annulation et validation accessibles | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-36 / inspection des cartes illustrées :** l'interface utilise des cartes fantasy détaillées dont les éléments peuvent être difficiles à lire sur mobile. Comment permettre de les examiner sans déclencher une action involontaire ? **A** aucun agrandissement, informations lisibles uniquement sur le plateau ; **B** agrandissement facultatif dans une vue détaillée, distincte du geste d'action/placement, avec fermeture simple ; **C** agrandissement systématique au toucher d'une carte, avant toute autre action. Protéger l'accessibilité, les choix de déplacement, les cartes cachées et la stabilité du moteur.
