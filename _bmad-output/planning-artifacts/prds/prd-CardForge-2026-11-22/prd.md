@@ -328,3 +328,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A validée :** dans Clear the Dungeon, les deux jokers physiques peuvent être utilisés **dans une même attaque**, chacun avec son emplacement indépendant (deux puissances de 10, ou une puissance de 10 et un déclencheur à l'enseigne du monstre). Aucune limitation d'un seul joker par attaque ou par main. La séquence de trois cartes distinctes et les conditions de seuil sont inchangées. Identifiants, rôle, cible et état des deux jokers doivent survivre sans duplication à la sauvegarde/reprise. **CTD-11 / CTD-ARB-11 CLOS.**
 
 **Prochain arbitrage : CTD-12**, calcul de score quand la victoire survient avec des cartes encore en main. [Règles CTD](../../game-rules/clear-the-dungeon.md) · [matrice CTD-T104 à CTD-T113](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision CTD-ARB-12 — score officiel de victoire (22 novembre 2026)
+
+**Option A validée par le porteur :** le score officiel de Clear the Dungeon est uniquement le nombre de cartes **encore présentes dans la pioche de puissance au moment de la victoire**. Les cartes non utilisées de la main, les cartes engagées dans d'autres attaques et les dégâts en sont exclus. Une victoire avec pioche vide obtient un score **0** ; une défaite ou un abandon n'a pas de score officiel de victoire. La victoire et son score sont enregistrés **une seule fois** à l'élimination du douzième monstre, sans clôture artificielle de main ni bonus maison ; les statistiques communes CardForge sont présentées séparément.
+
+**Statut : CTD-12 / CTD-ARB-12 CLOS**, conformément au calcul du score original documenté. Tests CTD-T114 à CTD-T121 spécifiés, non exécutés. **CTD-13 à examiner :** ordre et permissions des phases Attaque / Défausse (défausse explicite CTD-03 déjà validée). [Référentiel du jeu](../../game-rules/clear-the-dungeon.md) · [matrice](../../clear-the-dungeon-rule-test-matrix.md).
