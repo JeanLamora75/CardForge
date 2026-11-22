@@ -293,3 +293,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A validée :** lorsque trois cartes forment une attaque valide contre un monstre visible dans Clear the Dungeon, les trois cartes d'attaque et le monstre sont retirés du jeu immédiatement ; le suivant de sa colonne est révélé immédiatement s'il existe, **sans attendre la fin de main et sans bouton de révélation**. Les attaques partielles des autres monstres restent intactes, les cartes restantes en main sont toujours jouables, et l'élimination du douzième monstre déclenche instantanément la victoire. Aucune de ces cartes ne rejoint la pile de dégâts. FR-06/FR-07/FR-08/FR-16/FR-18/FR-24 sont précisés.
 
 **CTD-06 / CTD-ARB-06 clos** ; **CTD-07** à examiner : ordre de placement des cartes de puissance et du déclencheur. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md) et [matrice](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision CTD-ARB-07 — ordre des trois cartes d'une attaque (22 novembre 2026)
+
+**Option A validée :** Clear the Dungeon exige deux cartes de puissance posées avant la carte déclencheuse, laquelle doit correspondre à l'enseigne du monstre (ou être un joker valide). Une carte déclencheuse ne peut pas être posée/réservée à l'avance, et le moteur ne reconstruit pas automatiquement une combinaison de trois cartes placées sans ordre. Les deux puissances peuvent être placées sur des mains différentes selon CTD-ARB-01 ; la modification des cartes de la main courante est permise selon CTD-ARB-02. La troisième carte valide résout immédiatement la victoire locale selon CTD-ARB-06. Traçabilité : FR-06/FR-07, [référentiel](../../game-rules/clear-the-dungeon.md), [matrice CTD-T69 à CTD-T77](../../clear-the-dungeon-rule-test-matrix.md).
+
+**CTD-07 / CTD-ARB-07 est clos pour CardForge.** CTD-08 reste ouvert concernant le placement d'une seconde carte de puissance **insuffisante**. Aucun changement de règle Gridcannon ni de portée de la V1.
