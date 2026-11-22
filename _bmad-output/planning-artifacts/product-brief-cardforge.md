@@ -145,3 +145,12 @@ Référence à jour : [PRD CardForge v0.2](./prds/prd-CardForge-2026-11-22/prd.m
 ## Gridcannon — version de règles validée (22 novembre 2026)
 - **Version 2 confirmée pour CardForge**, à l'exclusion de l'ancienne v1. Voir [référentiel BMAD du jeu](./game-rules/gridcannon.md).
 - Les mécaniques principales ont été documentées à partir de l'article de Tom Francis ; demeurent ouverts les cas limites G-01 à G-05, le nom public et les crédits G-06. Les anciennes réserves sur l'identification de la version sont désormais levées.
+
+
+## Exigence transversale multilingue — décision du 22 novembre 2026
+
+**Décision confirmée par le porteur : CardForge et chacun de ses jeux doivent fonctionner dans au moins dix langues.** L'exigence s'applique à la plateforme commune et à ses jeux (dont Clear the Dungeon et Gridcannon V2), règles, aides contextuelles, éventuels tutoriels, paramètres, messages d'erreur et retours de partie. Elle doit être portée dans l'architecture i18n, la qualité de traduction et les tests de bout en bout, y compris en mode hors ligne lorsque celui-ci est prévu.
+
+**Gridcannon V2 — GC-26 : option B validée**, règlement complet et aide contextuelle facultative, sans automatisation des décisions du joueur. Référence : [GC-26, référentiel Gridcannon](./game-rules/gridcannon.md).
+
+**Restent à arbitrer :** liste précise des langues, leur priorisation, mécanisme de sélection (GC-27), organisation des ressources et stratégie de traduction. La mention antérieure de tutoriels facultatifs dans le MVP demeure une décision de périmètre distincte à harmoniser avec John ; GC-26 ne la supprime pas silencieusement.
