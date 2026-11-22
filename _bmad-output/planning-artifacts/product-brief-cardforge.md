@@ -9,7 +9,7 @@
 
 CardForge est une collection numérique de jeux de cartes solo reposant sur des mécaniques de jeux existants, présentées dans des univers artistiques originaux. Chaque jeu garde ses règles, ses probabilités et ses conditions de victoire et de défaite ; l'habillage visuel transforme les cartes traditionnelles en cartes illustrées présentant personnage, faction et puissance. Une application commune réunit le catalogue, les tutoriels, les sauvegardes, les statistiques et les paramètres.
 
-Le positionnement est volontairement simple : application gratuite et sans publicité, accessible aux débutants sans sacrifier la profondeur des décisions stratégiques attendue par les amateurs de jeux de cartes. La première plateforme est le Web responsive ; une PWA puis une adaptation Android via Capacitor sont envisagées. La priorité est le jeu solo hors ligne sans compte utilisateur.
+Le positionnement est volontairement simple : application gratuite et sans publicité, accessible aux débutants sans sacrifier la profondeur des décisions stratégiques attendue par les amateurs de jeux de cartes. La première plateforme est le Web responsive ; une PWA puis des adaptations Android et iOS sont envisagées (Capacitor à évaluer). La priorité est le jeu solo hors ligne sans compte utilisateur.
 
 **Attention :** le prototype technique existant est un catalogue, pas encore un jeu fonctionnel. La publication des adaptations dépend de la vérification des règles primaires et des droits associés à chaque titre.
 
@@ -59,7 +59,7 @@ Le même jeu sert ces deux publics. La progression se fait par l'accompagnement 
 - Skins, personnalisation des cartes, récompenses, trophées, défis quotidiens et classements.
 - Historique exhaustif des coups et analyse automatique des choix.
 - Multijoueur.
-- Déploiement Android dans le tout premier incrément Web (cible ultérieure).
+- Déploiements Android et iOS dans le tout premier incrément Web (cibles ultérieures).
 
 ## Règles de gestion transversales
 
@@ -128,4 +128,8 @@ Ce sont des critères d'acceptation qualitatifs : les objectifs de performance c
 
 ## Vision d'évolution
 
-Une collection de jeux solo aux identités visuelles marquées, dotée d'un moteur et d'une expérience cohérents, pourra accueillir de nouveaux univers sans multiplier les bases techniques. Android et de nouveaux jeux seront ajoutés après stabilisation de la version web. Les fonctions communautaires ou économiques ne sont pas décidées à ce stade.
+Une collection de jeux solo aux identités visuelles marquées, dotée d'un moteur et d'une expérience cohérents, pourra accueillir de nouveaux univers sans multiplier les bases techniques. Android, iOS et de nouveaux jeux seront ajoutés après stabilisation de la version web, selon un calendrier de livraison distinct. Les fonctions communautaires ou économiques ne sont pas décidées à ce stade.
+
+## Contrainte d'architecture multiplateforme — 22 novembre 2026
+
+**Décision confirmée :** une application Web responsive en premier, mais conçue dès l'origine pour un portage **Android et iOS** sans réécriture du moteur de jeu ni divergence des règles. Les règles et l'état métier sont indépendants des vues et des API propres aux plateformes. Le stockage et le cycle de vie sont abstraits derrière des adaptateurs ; la validation des sorties natives est spécifique à chaque plateforme. **Capacitor est une option technique à évaluer, non une décision définitive.** Les prérequis de compilation et publication iOS restent à étudier compte tenu de l'environnement Windows de développement.
