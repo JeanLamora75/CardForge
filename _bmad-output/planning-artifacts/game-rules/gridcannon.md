@@ -1903,4 +1903,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T474 | Plateau en portrait et paysage, avec zoom | Aucun chevauchement bloquant ; badge et carte du dessus lisibles | À vérifier en UX, non exécuté |
 | GC-V2-T475 | Clavier, lecteur d'écran et traduction FR/EN | Hauteur exacte et carte supérieure accessibles sans profondeur visuelle seule | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-43 / consultation des cartes sous une pile :** une pile compacte présente seulement sa carte supérieure ; faut-il permettre d'examiner les cartes inférieures **déjà connues du joueur** sans les rendre jouables ? **A** non, la hauteur et la carte supérieure suffisent ; **B** consultation facultative, en lecture seule, de la composition connue de la pile dans une vue détaillée ; **C** déploiement automatique en éventail de la pile sur sélection. Préserver la confidentialité des cartes réellement cachées et le fonctionnement de l'Extraction par As et du Joker.
+**GC-43 : option B validée ultérieurement — inspection facultative et en lecture seule de la composition connue d'une pile ; voir §57.**
+
+
+## 57. Décision UX Gridcannon V2 — GC-43 : inspection facultative des cartes connues sous une pile
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Chaque pile de cartes numériques de la grille peut être examinée grâce à une **commande spécifique « Consulter la pile »**, qui ouvre une **vue détaillée en lecture seule**. La vue présente, dans l'ordre physique de la pile, **uniquement les cartes déjà connues du joueur**. Aucune carte inférieure ne devient sélectionnable ou jouable : les règles de déplacement, de Réaffectation par Joker et d'Extraction par As ne changent pas.
+
+### 57.1. Contrat fonctionnel et UX
+
+1. **Accès explicite :** une commande d'inspection distincte des gestes de placement GC-37 et de l'agrandissement d'une carte individuelle GC-36 ouvre les détails de la pile sélectionnée. La simple sélection d'une pile pour un coup ne déclenche pas systématiquement cette vue.
+2. **Composition et ordre :** présenter les cartes dont les faces sont **publiquement connues**, en respectant strictement leur ordre courant du dessus vers le fond. Étiqueter « Carte supérieure », les niveaux intermédiaires et le fond lorsque leur visibilité est autorisée.
+3. **Visibilité et information cachée :** l'interface ne révèle jamais les caractéristiques d'une carte dont la face doit rester cachée selon l'état métier ou les règles. En cas de carte réellement inconnue, conserver son emplacement et un libellé neutre « Carte cachée », sans fuite de valeur, d'enseigne ou d'illustration de face.
+4. **Source de vérité :** utiliser la composition et les attributs de visibilité **du moteur**, sans inférence depuis l'historique des coups ni recomposition approximative. Une carte précédemment visible qui change de place ne peut pas être présentée dans son ancien emplacement.
+5. **Lecture seule stricte :** aucune carte de la vue détaillée ne peut être déplacée, extraite, glissée, dépensée ou utilisée comme cible. Le déplacement par Joker reste limité à la carte supérieure de la pile dans la phase autorisée ; l'Extraction par As affecte la pile entière via la commande métier habituelle.
+6. **Cohérence avec GC-42 :** l'écran principal conserve sa pile compacte, ses bords décalés et son compteur exact. Ouvrir l'inspection ne modifie pas les éléments du plateau et ne déploie pas automatiquement les cartes en éventail sur la grille.
+7. **Consultation et retour :** permettre de faire défiler les cartes connues lorsque la pile est haute ; fermeture par bouton explicite et Escape sur clavier, avec restitution du focus et de la sélection avant ouverture. Une fermeture ne confirme jamais un coup.
+8. **Rafraîchissement :** si la pile est modifiée par une action réellement confirmée pendant que la vue est affichée, actualiser à partir du nouvel état ou fermer proprement la vue ; ne jamais afficher une composition périmée comme actuelle.
+9. **Mobile et orientation :** fenêtre adaptée aux petits écrans, portrait et paysage GC-41, compatible avec le zoom général GC-40 sans interférer avec la navigation et les commandes essentielles.
+10. **Accessibilité et internationalisation :** indications de niveau, nombre de cartes et informations publiques disponibles sous forme textuelle, accessibles au clavier et aux lecteurs d'écran. Traductions françaises et anglaises au MVP (GC-28), extensibles aux langues suivantes.
+11. **Sauvegarde et intégrité :** l'inspection est un état d'interface éphémère ; elle ne modifie ni la sauvegarde du moteur ni les statistiques. Le rechargement ne doit pas déplacer les cartes ni révéler des cartes cachées.
+12. **Portée :** aide de lecture destinée à limiter la mémorisation des informations **déjà accessibles** au joueur, sans apporter d'informations stratégiques inédites ni modifier les règles originales.
+
+**Exemple :** une pile contient trois cartes dont les faces sont connues : 8 au-dessus, puis 5, puis 3 au fond. Le joueur ouvre « Consulter la pile », voit 8 → 5 → 3 avec leurs illustrations et ferme la vue : le plateau et les cartes restent identiques. Seule la carte 8 demeure susceptible d'être déplacée par Joker, si les règles autorisent ce mouvement.
+
+**Statut : GC-43 CLOS pour CardForge — option B validée le 22 novembre 2026.** Décision documentaire uniquement, sans développement ni tests exécutés.
+
+### 57.2. Scénarios de conformité — GC-43
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T476 | Pile de trois cartes connues (8, 5, 3) | Vue du dessus vers le fond, sans modifier la pile | Spécifié, non exécuté |
+| GC-V2-T477 | Pile de neuf cartes connues | Affichage consultable/défilable, ordre et compteur exacts | Spécifié, non exécuté |
+| GC-V2-T478 | Pile contenant une carte réellement cachée | Emplacement neutre, aucune révélation de valeur ni d'enseigne | Spécifié, non exécuté |
+| GC-V2-T479 | Consultation puis fermeture de la fenêtre | État métier, pioche, score et ressources inchangés | Spécifié, non exécuté |
+| GC-V2-T480 | Tentative de glisser la deuxième carte depuis l'inspection | Aucun déplacement ou coup autorisé | Spécifié, non exécuté |
+| GC-V2-T481 | Consultation d'une pile avec Joker disponible | Joker non dépensé ; manipulation seulement via flux métier GC-30 | Spécifié, non exécuté |
+| GC-V2-T482 | Extraction d'une pile par As en dehors de l'inspection | Moteur extrait la pile entière ; inspection n'ajoute aucune action | Spécifié, non exécuté |
+| GC-V2-T483 | Changement de composition de pile après coup confirmé | Consultation suivante conforme à l'ordre courant | Spécifié, non exécuté |
+| GC-V2-T484 | Inspection ouverte pendant prévisualisation GC-23 | Aucun coup confirmé ni valeur de prévisualisation transformée | Spécifié, non exécuté |
+| GC-V2-T485 | Reprise après rafraîchissement pendant inspection | Partie intacte, aucune carte cachée révélée | Spécifié, non exécuté |
+| GC-V2-T486 | Fenêtre inspection en portrait/paysage et sur petit écran | Cartes lisibles, défilement et fermeture accessibles | À vérifier en UX, non exécuté |
+| GC-V2-T487 | Parcours clavier/lecteur d'écran, français et anglais | Composition connue annoncée dans l'ordre, aucune action cachée disponible | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-44 / présentation des figures en attente de découverte :** comment représenter sur le plateau les emplacements périphériques de figures qui ne sont pas encore révélées, tout en conservant leur identité cachée ? Options : **A** emplacements vides sans marqueur ; **B** silhouettes ou emplacements neutres clairement identifiés comme « Figure non révélée », sans valeur ni enseigne ; **C** silhouettes mystères personnalisées par type ou famille, au risque de dévoiler des informations cachées. Le plateau doit rester lisible dans les deux orientations, sans présenter une figure non révélée comme vaincue.
