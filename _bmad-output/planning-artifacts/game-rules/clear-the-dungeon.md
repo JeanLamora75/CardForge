@@ -357,3 +357,21 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-11 / CTD-ARB-11 CLOS pour CardForge.** Arbitrage explicite compatible avec les rôles des jokers définis, mais aucune restriction ou permission spécifique aux deux jokers n'a été explicitement confirmée par l'auteur dans le texte officiel intégral inaccessible ; ne pas présenter la décision comme une citation d'auteur. Scénarios spécifiés mais non exécutés.
 
 **Prochain point CTD-12 :** calcul du score officiel en cas de victoire **avec des cartes restant dans la main**, distinct de la réussite elle-même.
+
+
+## 23. Décision fonctionnelle CTD-12 / CTD-ARB-12 — calcul officiel du score de victoire
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026 :** le **score de victoire** de Clear the Dungeon correspond **exclusivement au nombre de cartes encore présentes dans la pioche de puissance au moment exact où le douzième monstre est vaincu**. Les cartes en main ne sont pas ajoutées ; les cartes engagées sur d'autres monstres, déjà sorties du jeu ou versées aux dégâts n'entrent pas davantage dans ce score.
+
+**Règles déterministes et traçabilité :**
+- À l'événement de victoire (CTD-ARB-05/06), calculer `victoryScore = drawPile.length` avant toute action complémentaire, et **figer** ce résultat ; la victoire n'exige ni de clôturer la main ni de défausser les cartes restant en main.
+- **Exemple :** 5 cartes en pioche, 2 cartes encore en main, douzième monstre vaincu → **score officiel 5**, pas 7.
+- Une victoire lorsque la pioche est vide donne un **score de 0**, qui demeure une victoire, pas une défaite par épuisement.
+- La défaite par sept dégâts ou par épuisement **n'a pas de score de victoire** ; ne pas créer de faux score officiel 0 pour les défaites. Les résultats `win/loss/abandon` et statistiques transversales CardForge sont consignés séparément, avec le score optionnel uniquement en cas de victoire.
+- Ne pas attribuer de bonus pour la main, les jokers, les dégâts évités, la durée, les illustrations ou les animations. Si des indicateurs dérivés existent, ils sont explicitement étiquetés **statistiques CardForge**, jamais « score officiel ».
+- Sauvegarder le score officiel et le résultat **une seule fois** ; une reprise ou un double événement de fin ne doit pas recalculer ni dupliquer la partie.
+- La règle est conforme aux sources documentées : score = cartes restant dans la pioche, **main exclue**.
+
+**Statut : CTD-12 / CTD-ARB-12 CLOS pour CardForge.** Décision du porteur conforme au score classique référencé. Aucun test logiciel n'a été exécuté pendant cette revue.
+
+**Prochaine question CTD-13 :** organisation des phases Attaque / Défausse — le joueur peut-il défausser une carte au milieu d'une main, puis reprendre ses placements, ou passe-t-il explicitement à une phase de défausse sans retour ? Ce point n'a pas été décidé par CTD-ARB-03 (qui exige une défausse explicite avant de piocher).
