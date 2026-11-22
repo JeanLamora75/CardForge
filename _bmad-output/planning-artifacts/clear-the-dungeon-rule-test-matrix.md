@@ -95,3 +95,11 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 - **CTD-T27 :** deux attaques incomplètes préparées sur des monstres différents puis nouvelle main : **RÉSULTAT À PRÉCISER** en vérifiant le texte officiel.
 - **CTD-T28 :** joker de puissance utilisée à une valeur inférieure à 10 : **ATTENDU BLOQUÉ par CTD-J01** ; ne pas choisir arbitrairement 10 ou une valeur libre.
 - Le [rapport approfondi](./game-rules/recherche-approfondie-2026-11-22.md) distingue explicitement les formulations concurrentes sur le joker. L'accès au Google Docs original n'a pas été obtenu, et les règles secondaires ne suffisent pas à trancher.
+
+## Décision de test — joker fixe 10 (22 novembre 2026)
+
+- **CTD-J01 — Fermé pour CardForge :** décision explicite du porteur de fixer la puissance de chaque joker à **10** ; enseigne libre selon le contexte de la règle. Cette décision n'efface pas le désaccord entre les sources originales, conservé dans les sections historiques.
+- **T-09, T-28, CTD-T28 :** attendu désormais **joker puissance 10** ; aucun scénario de sélection de valeur inférieure n'est recevable comme comportement CardForge.
+- **CTD-T29 à implémenter :** deux jokers ont chacun valeur 10 dans un rôle de puissance si leur usage simultané est autorisé par les règles ; les contraintes de disponibilité et la séquence exacte restent à confirmer.
+- **CTD-T30 à implémenter :** joker déclencheur peut prendre l'enseigne du monstre, sans changer la valeur de puissance fixée (10) ; respecter les conditions officielles de combinaison.
+- La source Web évoquant une valeur variable ne doit plus introduire de sélection libre dans l'implémentation CardForge.
