@@ -154,3 +154,11 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 - **CTD-P02 :** le texte du livret reproduit indique de dévoiler **immédiatement** une carte de monstre quand elle est entièrement découverte ; ce principe peut devenir un test, sans inventer le déroulement d'une attaque simultanée.
 - **CTD-D01 :** le jeu se termine **immédiatement au septième dégât**. L'épuisement de la pioche avec une main non vide reste une question distincte.
 - **Interdiction de mélange des variantes :** les variantes proposées sur des sites secondaires (Boomer-Ace, Power Reserve, aptitudes des rois, agencements alternatifs) ne font pas partie de la configuration Classic 1.1.0 retenue.
+
+## 11. Arbitrage CardForge du 22 novembre 2026 — CTD-J01 clos pour l'implémentation
+
+**Décision explicite du porteur : un joker a une valeur de puissance fixe de 10.** Il peut adopter l'enseigne requise, y compris lorsqu'il sert de déclencheur si cette fonction est admise par la règle de la version retenue. **Aucune sélection de valeur 1–9** n'est proposée au joueur.
+
+- **Statut d'implémentation : CTD-J01 FERMÉ par décision CardForge.** Le référentiel Classic 1.1.0 reproduit donne également une valeur 10, mais la présentation Web de l'auteur mentionne une valeur choisie jusqu'à 10 ; cette divergence documentaire est conservée ci-dessus comme historique de recherche et **n'est pas réputée résolue officiellement par l'auteur**.
+- Tester un joker comme carte de puissance = **10**, et comme déclencheur de toute enseigne autorisée ; tester que la valeur ne dépend ni des illustrations ni d'un choix utilisateur.
+- **Toujours ouverts :** O-CTD-01/03 (attaques incomplètes et leur durée), O-CTD-02 (épuisement de pioche et main), O-CTD-05 (ordre de fin de partie dans les cas limites). Le déroulement des défausses exactes demeure à valider.
