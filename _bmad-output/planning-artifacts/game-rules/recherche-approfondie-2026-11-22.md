@@ -134,3 +134,8 @@
 ## 14. Décision CardForge CTD-ARB-07 — ordre des cartes d'attaque (22 novembre 2026)
 
 **Option A validée par le porteur :** deux cartes de puissance **avant** une troisième carte déclencheuse ; aucun déclencheur anticipé, aucun tri automatique des cartes pour construire a posteriori une attaque complète. Les cartes de puissance peuvent venir de mains successives selon CTD-ARB-01 et CTD-ARB-02. Une attaque complète et légale est résolue selon CTD-ARB-06. Les tests CTD-T69 à CTD-T77 sont spécifiés, non exécutés. **CTD-07 est clos ; CTD-08** (seconde puissance sous le seuil) reste à trancher. Cette décision ne résout pas d'autres incertitudes concernant l'auteur.
+
+
+## 15. Arbitrage CardForge CTD-ARB-08 — seconde puissance insuffisante (22 novembre 2026)
+
+**Option A validée par le porteur :** refuser sans mutation l'ajout de la seconde carte de puissance lorsqu'elle ferait une somme inférieure à la résistance du monstre ; la carte reste en main, aucune pénalité de dégâts. Une somme égale ou supérieure au seuil est valide et le déclencheur reste obligatoire. Scénarios CTD-T78 à CTD-T84 spécifiés mais non exécutés. **CTD-08 clos ; CTD-09 (première puissance mathématiquement non complétable) reste à décider.** Il s'agit d'un arbitrage produit documenté, non d'une nouvelle citation de l'auteur.
