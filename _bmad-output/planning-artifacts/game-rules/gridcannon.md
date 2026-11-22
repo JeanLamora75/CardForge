@@ -1602,4 +1602,46 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T390 | Ancien résultat clos encore disponible dans un historique technique | Aucune réinjection des valeurs d'avant remise à zéro | Spécifié, non exécuté |
 | GC-V2-T391 | Confirmation sur mobile et au clavier en FR/EN | Impact explicite, annulation et validation accessibles | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-36 / inspection des cartes illustrées :** l'interface utilise des cartes fantasy détaillées dont les éléments peuvent être difficiles à lire sur mobile. Comment permettre de les examiner sans déclencher une action involontaire ? **A** aucun agrandissement, informations lisibles uniquement sur le plateau ; **B** agrandissement facultatif dans une vue détaillée, distincte du geste d'action/placement, avec fermeture simple ; **C** agrandissement systématique au toucher d'une carte, avant toute autre action. Protéger l'accessibilité, les choix de déplacement, les cartes cachées et la stabilité du moteur.
+**GC-36 : option B validée ultérieurement — agrandissement facultatif et purement consultatif des cartes révélées ; voir §50.**
+
+
+## 50. Décision UX Gridcannon V2 — GC-36 : agrandissement facultatif des cartes illustrées
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Chaque **carte déjà visible pour le joueur** peut être consultée en grand format au moyen d'une commande explicite, distincte des gestes de sélection, de placement ou d'activation. Cette inspection est **facultative et purement consultative** : aucune action de jeu ne peut être confirmée depuis la vue agrandie. Le comportement doit être cohérent entre Gridcannon V2 et les autres jeux CardForge, dans la mesure où leurs cartes disposent d'une identité graphique propre.
+
+### 50.1. Contrat fonctionnel et UX
+
+1. **Déclencheur distinct :** une icône « Agrandir »/« Examiner la carte » ou une commande équivalente ouvre un panneau ou une modale de consultation. Le toucher ou clic habituel destiné à jouer/sélectionner la carte ne doit pas forcer l'agrandissement.
+2. **Cartes admissibles :** seules les cartes effectivement révélées et consultables dans l'état de partie peuvent être agrandies : cartes numériques visibles, figures révélées, cartes spéciales découvertes, cartes déjà posées et cartes de l'aire temporaire si leurs faces sont effectivement exposées. Une carte face cachée n'affiche jamais son identité, sa valeur, son enseigne ni son illustration de face.
+3. **Affichage :** privilégier l'illustration en grand et afficher les informations visibles et utiles (nom, type, valeur/puissance, enseigne, éventuelles informations de résistance et d'armure déjà publiques), avec terminologie conforme aux décisions de jeu ; ne pas introduire de valeur cachée ou d'anticipation de la pioche.
+4. **Aucune mutation :** ouvrir, zoomer, feuilleter les détails ou fermer la vue agrandie ne tire, ne place, ne déplace et ne retourne aucune carte ; ne consomme jamais As/Joker, ne déclenche pas tir, score ou statistique, et ne confirme aucune sélection métier en attente.
+5. **Isolement des commandes :** les boutons de confirmation de pose, d'attaque ou d'action spéciale sont **absents ou inactifs** dans la vue de consultation ; le joueur doit revenir à l'écran de jeu pour jouer.
+6. **Fermeture :** bouton « Fermer » explicite, Escape au clavier, et gestes de fermeture accessibles sur mobile. Restaurer à la fermeture l'état visuel pertinent (focus, sélection en cours, scroll) sans changer les règles ni produire d'action involontaire.
+7. **Mise en page responsive :** utiliser un panneau/modale dimensionné selon l'écran, permettant de voir l'illustration sans couper les informations essentielles ; sur smartphone, défilement si nécessaire plutôt que microtexte.
+8. **Accessibilité :** focus géré dans la modale, retour au déclencheur, textes accessibles aux lecteurs d'écran, alternative textuelle aux détails graphiques ; la consultation ne dépend pas du seul survol ni d'une interaction impossible au clavier.
+9. **Localisation :** titres, labels, explications et commande de fermeture disponibles en français et anglais dès le MVP (GC-28), extensibles aux langues futures.
+10. **Séparation avec les aides :** GC-26 reste l'entrée pour les règles contextuelles ; la vue agrandie montre d'abord la carte et ses données visibles et peut, si pertinent, proposer un accès au règlement sans jouer de coup.
+11. **Réutilisation plateforme :** standardiser un composant d'inspection réutilisable pour tous les jeux CardForge ; adapter uniquement les champs propres à chaque jeu et les illustrations de son univers, sans uniformiser artificiellement les règles.
+12. **Portée :** aucun changement de moteur ni de règles de Gridcannon Version 2 ; pas d'obligation de zoom systématique ni de révélation de cartes cachées.
+
+**Exemple :** le joueur est sur smartphone et veut admirer une Dame révélée entourée de cartes d'armure. Il appuie sur « Examiner », voit son illustration et les seules caractéristiques publiques en grand, ferme la modale et retrouve la même sélection. Une carte cachée dans la pioche ne révèle jamais son illustration de face par ce mécanisme.
+
+**Statut : GC-36 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire seulement ; aucune interface développée ni test exécuté.
+
+### 50.2. Scénarios de conformité — GC-36
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T392 | Carte numérique visible agrandie par commande dédiée | Illustration/données publiques lisibles, aucune pose | Spécifié, non exécuté |
+| GC-V2-T393 | Figure révélée et armures publiques inspectées | Valeur, enseigne, résistance cohérentes avec le plateau | Spécifié, non exécuté |
+| GC-V2-T394 | Carte spéciale découverte et disponible inspectée | Ressource inchangée ; aucun As/Joker dépensé | Spécifié, non exécuté |
+| GC-V2-T395 | Carte cachée de la pioche touchée | Face, valeur, identité et ordre restent inconnus | Spécifié, non exécuté |
+| GC-V2-T396 | Carte révélée de la zone temporaire GC-19 inspectée | Face visible inspectable, aucune réinsertion ni tirage | Spécifié, non exécuté |
+| GC-V2-T397 | Ouverture/fermeture durant prévisualisation GC-23 | Aucun tir confirmé ; prévisualisation cohérente | Spécifié, non exécuté |
+| GC-V2-T398 | Fermeture par bouton ou Escape après choix en cours | Sélection et focus restaurés sans mutation métier | À vérifier en UX, non exécuté |
+| GC-V2-T399 | Mobile avec petit écran | Image consultable et champs lisibles sans microtexte ni perte d'information | À vérifier en UX, non exécuté |
+| GC-V2-T400 | Lecteur d'écran, clavier et labels FR/EN | Consultation et fermeture accessibles, sans survol obligatoire | À vérifier en UX, non exécuté |
+| GC-V2-T401 | Accès à l'inspection dans un autre jeu CardForge | Comportement uniforme, données propres au jeu, aucune action déclenchée | À vérifier en intégration, non exécuté |
+| GC-V2-T402 | Reprise/rafraîchissement pendant inspection | Partie intacte, aucune carte jouée automatiquement | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-37 / interactions de déplacement des cartes :** comment permettre au joueur de placer ou déplacer une carte sur ordinateur et mobile ? Options : **A** sélection par clic/toucher puis choix de destination uniquement ; **B** glisser-déposer facultatif accompagné **obligatoirement** du parcours clic/toucher puis destination, accessible au clavier ; **C** glisser-déposer comme interaction principale exclusive. Le moteur reste seul juge de la légalité, les prévisualisations GC-23 et confirmations GC-32/30 restent cohérentes, et l'inspection GC-36 ne doit pas entrer en conflit avec le déplacement.
