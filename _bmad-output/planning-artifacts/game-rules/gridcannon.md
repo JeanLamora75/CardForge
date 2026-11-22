@@ -3,7 +3,7 @@
 **Responsable :** Mary — Business Analyst BMAD  
 **Étude :** 22 novembre 2026  
 **Version de référence validée par le porteur :** **Version 2 révisée** publiée par Tom Francis (et non la v1 historique), décision du 22 novembre 2026  
-**Statut :** choix de Version 2 **validé** ; règles principales documentées d'après la source primaire précédemment étudiée ; cas limites et choix de nom à valider avant publication  
+**Statut actuel (audit final §68) :** **cadrage documentaire des règles terminé** ; GC-01 à GC-21 consolidés ; les limites de fidélité à la source et les tests non exécutés restent explicitement signalés. Les mentions historiques « ouverts » des premières sections ne reflètent pas le statut actuel.  
 **Usage :** documentation fonctionnelle propre à Gridcannon, indépendante de la direction artistique « guerre spatiale » de CardForge.
 
 ## 1. Source primaire, version et provenance
@@ -2402,4 +2402,61 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T617 | Zoom, rotation et plein écran avec animations réduites | Rendu utilisable, aucune manipulation involontaire | À vérifier en UX, non exécuté |
 | GC-V2-T618 | Navigation clavier, lecteur d'écran, FR/EN | Modes sélectionnables et états explicites | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-54 / compatibilité des sauvegardes lors d'une mise à jour :** une mise à jour de CardForge peut faire évoluer le format de sauvegarde locale sans changer les règles de Gridcannon. Quelle conduite adopter face à une sauvegarde créée par une version antérieure ? **A** réinitialiser automatiquement les sauvegardes incompatibles et demander une nouvelle partie ; **B** prévoir une **migration automatique sûre lorsque possible**, avec sauvegarde de protection, vérification d'intégrité et information explicite en cas d'échec sans effacement silencieux ; **C** refuser toute mise à jour tant qu'une partie active existe. Conserver l'identité du jeu, l'ordre des cartes, les statistiques et la lisibilité hors ligne.
+**GC-54 / compatibilité des sauvegardes : proposition technique suspendue lors de la clôture des règles ; non arbitrée. À reprendre avec Winston/Amelia si nécessaire, hors cadrage métier Mary.**
+
+
+## 68. Audit final de complétude des règles — clôture du cadrage métier Mary
+
+**Audit documentaire effectué le 22 novembre 2026 sur la version GitHub de ce référentiel.** Cet audit porte **uniquement sur les règles et leurs conditions limites**, et non sur les arbitrages UX ultérieurs GC-22 à GC-53. Il ne constitue **ni une exécution de tests, ni une vérification du moteur, ni une nouvelle confrontation ligne par ligne avec la publication originale** ; les références à Tom Francis sont celles déjà documentées dans le présent dossier. **GC-54 est suspendu et renvoyé au travail technique ultérieur** : aucune nouvelle décision de confort ou de plateforme n'est demandée dans le cadre du cadrage des règles.
+
+### 68.1. Résultat de l'audit de couverture
+
+| Domaine de règles | Couverture documentaire | Références | Bilan |
+| --- | --- | --- | --- |
+| Version de référence et limites v1/v2 | Version 2 retenue, mécanismes de v1 exclus | §1, §2, §9, G-00 | Couvert |
+| Objectif, 54 cartes et préparation de la grille 3×3 | Neuf numériques, figures et actions mises en réserve, remplacement initial facultatif et fermeture de préparation | §2, GC-14/15/16 | Couvert |
+| Placement et positionnement des douze figures | Priorités de similitude, exclusion du centre, cases occupées, égalités et secours lorsqu'aucune destination normale n'existe | §3, GC-01/02/13 | Couvert ; secours = arbitrage CardForge |
+| Pose normale des cartes et cases vides | Comparaison aux sommets, valeurs égales admises, case extraite vide admissible | §4, GC-03 | Couvert ; valeur 0 = convention CardForge pour la pose uniquement |
+| Calcul des tirs et conditions propres à J/Q/K | Deux intermédiaires, résistance/armure, couleur/enseigne, coin simultané, centre sans attaque | §5, GC-04 | Couvert ; simultanéité = précision CardForge |
+| As / Extraction | Retrait d'une pile entière, cases vides, ordre de réinsertion au bas de pioche, coût unique | §6, GC-03/05/16 | Couvert ; ordre exact = convention CardForge |
+| Joker / Réaffectation | Déplacement du sommet vers une destination légale, tir éventuel, coût unique | §6, GC-07/11/16 | Couvert |
+| Carte impossible à poser et armure | Recours spéciaux utiles, cible vivante, priorité inverse, égalités, cumul, seuils J/Q 20+ et K 19+ | §7, GC-07/21 | Couvert |
+| Recherche de nouvelle figure | Déclenchement sans figure vivante, tirage unitaire, numériques écartées, As/Jokers en réserve, ordre de retour et usage des actions | §8, GC-06/09/10/11/18/19 | Couvert ; détails de séquencement = conventions CardForge |
+| Pioche épuisée et états anormaux | Recours réellement utiles avant défaite ; contrôle de cohérence si figure manquante pendant la recherche | GC-12/20 | Couvert ; à éprouver par tests de cas limites |
+| Victoire, défaite et score | Douze figures vaincues ; impasse/armure terminale ; score = As/Jokers non dépensés, même après réapprovisionnement | §8, GC-04/08/12/20 | Couvert |
+| Intégrité et reproductibilité | Identité des 54 cartes, ordre de pioche, phases provisoires, opérations atomiques, reprise sans duplication | GC-05/10/12/14/16 et sauvegarde GC-32 | Exigences définies ; implémentation non vérifiée |
+
+**Conclusion de couverture :** les **21 décisions de mécanique et de précision GC-01 à GC-16 et GC-18 à GC-21** sont documentées et validées ; **GC-17** concerne le titre/crédit, non une règle. Le corpus décrit l'ensemble des **phases métier essentielles et des cas limites identifiés**. **Aucun nouvel arbitrage de règle n'est identifié comme nécessaire à ce stade**. Ne pas confondre cette conclusion documentaire avec la conformité prouvée d'un moteur exécutable.
+
+### 68.2. Traçabilité des anciens points ouverts
+
+La table §12 et certaines formules des §1–14 et des premiers GC conservent **leur statut historique au moment de leur rédaction**. Elles **ne font plus foi pour l'état actuel** lorsque des décisions postérieures les ont closes :
+
+| Point historique | Décision actuelle |
+| --- | --- |
+| G-00 — version cible | Version 2 validée |
+| G-01a — centre | GC-01 : centre exclu de l'attraction |
+| G-01b — meilleure place occupée | GC-02 : candidat périphérique suivant disponible |
+| G-02 — case vide après Extraction | GC-03 : libre pour toute numérique, sans carte fictive |
+| G-03 — double attaque | GC-04 : deux axes sur un même instantané, application simultanée |
+| G-04 — ordre de pile extraite | GC-05 : sommet vers fond ajouté à la fin de l'ordre de pioche |
+| G-05 — recherche/impasses | GC-06/09/10/11/12/18/20 : enchaînement, ressources, anomalie et impasse |
+| G-07 — action spéciale inutilisable | GC-07 : rechercher seulement les recours légalement utiles |
+| G-08 — score après réapprovisionnement | GC-08 : score habituel des actions non dépensées |
+| Égalité des figures recevant une armure | GC-21 : choix explicite du joueur |
+| G-06 — nom et attribution | GC-17 : « Bastion Stellaire » titre de travail ; attribution à Tom Francis ; disponibilité du nom à vérifier avant publication |
+
+**Aucune de ces anciennes questions n'est encore à faire arbitrer par le porteur pour clore le cadrage des règles.**
+
+### 68.3. Réserves à ne pas masquer
+
+1. **Fidélité à la source :** plusieurs décisions marquées expressément « arbitrage CardForge » précisent des silences de la Version 2 publiée : exclusion du centre (GC-01), repli et secours (GC-02/13), valeur technique de case vide (GC-03), simultanéité de coin (GC-04), ordres de réinsertion (GC-05/10), modalités de préparation (GC-14/15/16) et certains cas d'impasse. Elles sont **fonctionnellement décidées pour l'adaptation** ; elles ne doivent **pas être présentées comme des citations ou confirmations de Tom Francis**. Une validation de stricte fidélité à la source originale reste distincte de la clôture du présent cadrage.
+2. **Conformité non exécutée :** les scénarios de tests définis dans le dossier sont des **spécifications**, pas des preuves de réussite. Avant livraison, Winston/Amelia/Murat devront implémenter et tester les règles, transitions, seuils, invariants de 54 cartes et déterminisme de reprise, notamment en cas de course, de pioche vide ou de double tir.
+3. **Documents historiques :** les introductions et formulations « à trancher » antérieures gardent une valeur d'historique ; utiliser ce §68 et la dernière décision GC pertinente comme **statut normatif courant** plutôt que d'interpréter ces notes anciennes comme une liste de blocages.
+4. **Titre/droits :** « Bastion Stellaire » reste provisoire. La vérification du titre et des conditions de diffusion n'est **pas une règle de jeu** et ne bloque pas la clôture du travail métier de Mary ; elle reste à traiter avant publication.
+
+### 68.4. Décision de clôture du cadrage métier
+
+**Cadrage des règles Gridcannon Version 2 : TERMINÉ sur le plan documentaire.** Le produit possède une spécification exploitable par les équipes d'architecture, développement et qualité. **Aucune nouvelle décision GC de règle n'est demandée à ce jour.** Les sujets UI/accessibilité/sauvegarde et la proposition GC-54 relèvent des travaux ultérieurs avec Sally, Winston et Amelia, sans prolonger artificiellement la série des arbitrages Mary.
+
+**Sources de vérification :** [publication originale Version 2 par Tom Francis](https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/) ; décisions et cas de test : présent document. **Niveau de confiance de l'audit documentaire : élevé pour la couverture interne ; modéré pour la fidélité absolue des conventions CardForge non attestées par la source.**
