@@ -22,7 +22,7 @@ sources:
 
 Ce PRD aligne John, Mary, Sally, Winston, Amelia, Murat et Camille sur le périmètre de la collection de jeux de cartes solo et sur les deux premiers jeux jouables. Il sert d'entrée au découpage en Epics et User Stories après validation fonctionnelle. Il ne remplace ni les règles primaires de Clear the Dungeon ou de Gridcannon, ni les autorisations nécessaires à leur diffusion.
 
-**Référentiels de règles par Jeu :** [Clear the Dungeon Classic 1.1.0](../../game-rules/clear-the-dungeon.md) et [Gridcannon, Version 2 proposée](../../game-rules/gridcannon.md). Leurs points ouverts et statuts de validation priment sur toute description simplifiée de mécanique ci-dessous.
+**Référentiels de règles par Jeu :** [Clear the Dungeon Classic 1.1.0](../../game-rules/clear-the-dungeon.md) et [Gridcannon, Version 2 validée](../../game-rules/gridcannon.md). Leurs points ouverts et statuts de validation priment sur toute description simplifiée de mécanique ci-dessous.
 
 Sources internes : [cadrage](../../../../docs/cadrage.md), [Product Brief](../../product-brief-cardforge.md), [architecture](../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md), [matrice de conformité du jeu](../../clear-the-dungeon-rule-test-matrix.md), [étude des droits](../../clear-the-dungeon-rules-rights-study.md).
 
@@ -87,7 +87,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 ### 4.2 Partie et conformité des règles
 
-**Deux Jeux jouables dès la V1 : Clear the Dungeon Classic 1.1.0 (sans réserve facultative et avec jokers) et Gridcannon (version de règles à établir).** Chacun doit disposer de son moteur indépendant et satisfaire les mêmes fonctions transversales. Réalise UJ-1, UJ-2, UJ-3.
+**Deux Jeux jouables dès la V1 : Clear the Dungeon Classic 1.1.0 (sans réserve facultative et avec jokers) et Gridcannon (Version 2 validée le 22 novembre 2026).** Chacun doit disposer de son moteur indépendant et satisfaire les mêmes fonctions transversales. Réalise UJ-1, UJ-2, UJ-3.
 
 **FR-05 — Créer une Partie réglementaire.** Pour chacun des deux Jeux, une nouvelle Partie utilise la configuration et les conditions conformes aux règles originales retenues. **[BLOQUANT RÈGLES]** Les matrices de conformité de Clear the Dungeon et Gridcannon doivent être rapprochées de leurs sources primaires avant acceptation de leurs moteurs respectifs.
 
@@ -99,7 +99,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 **FR-09 — Configurer Clear the Dungeon Classic sans réserve.** Pour Clear the Dungeon uniquement, la variante facultative de réserve est désactivée dans le MVP, sans supprimer la pile de dégâts ni les jokers. Advanced 1.2.0 n'est pas une option V1. Cette contrainte n'est pas appliquée à Gridcannon.
 
-**FR-33 — Garantir Gridcannon entièrement jouable en V1.** Le joueur doit pouvoir démarrer, jouer jusqu'à une issue et recommencer une Partie de Gridcannon, en appliquant ses règles originales sans transposer celles de Clear the Dungeon. La création d'une matrice de règles, la définition des situations limites et des tests exécutables sont des prérequis bloquants ; **aucune règle précise de Gridcannon n'est présumée à ce stade**. L'interface, les graphismes et le Tutoriel propres à Gridcannon suivent les mêmes obligations que Clear the Dungeon.
+**FR-33 — Garantir Gridcannon entièrement jouable en V1.** Le joueur doit pouvoir démarrer, jouer jusqu'à une issue et recommencer une Partie de Gridcannon, en appliquant ses règles originales sans transposer celles de Clear the Dungeon. La création d'une matrice de règles, la définition des situations limites et des tests exécutables sont des prérequis bloquants ; les mécaniques publiées dans le référentiel Gridcannon Version 2 sont documentées, mais les cas limites restants ne sont pas inventés. L'interface, les graphismes et le Tutoriel propres à Gridcannon suivent les mêmes obligations que Clear the Dungeon.
 
 ### 4.3 Cartes illustrées et immersion
 
@@ -177,7 +177,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 ### 6.1 MVP Web/PWA — inclus
 
-Catalogue immersif, **fiches et Parties complètes pour Clear the Dungeon et Gridcannon**, moteurs distincts, Classic 1.1.0 sans réserve pour Clear the Dungeon, **règles officielles de Gridcannon à confirmer avant le développement**, illustrations fixes propres aux deux univers, tutoriels facultatifs propres à chacun, règles, aide, Sauvegardes et Statistiques indépendantes par Jeu, préférences FR/EN, Ressources embarquées et hors ligne PWA, gestion des incidents et tests de conformité des deux moteurs.
+Catalogue immersif, **fiches et Parties complètes pour Clear the Dungeon et Gridcannon**, moteurs distincts, Classic 1.1.0 sans réserve pour Clear the Dungeon, **Gridcannon Version 2 retenue ; ses cas limites à confirmer avant le développement complet**, illustrations fixes propres aux deux univers, tutoriels facultatifs propres à chacun, règles, aide, Sauvegardes et Statistiques indépendantes par Jeu, préférences FR/EN, Ressources embarquées et hors ligne PWA, gestion des incidents et tests de conformité des deux moteurs.
 
 ### 6.2 Exclusions V1
 
@@ -205,7 +205,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 | Sujet | Dépendance / contrôle |
 | --- | --- |
 | Règles Classic 1.1.0 | Mary doit confirmer ordre des phases, jokers, épuisement de pioche et cas limites ; sans cela, pas d'acceptation du moteur complet |
-| Règles Gridcannon | Source primaire de Tom Francis identifiée et Version 2 documentée dans le référentiel Mary ; **validation du choix Version 2, cas limites et titre/crédits publics restent bloquants** avant d'affirmer la conformité et la diffusion |
+| Règles Gridcannon | Source primaire de Tom Francis identifiée et Version 2 documentée dans le référentiel Mary ; **cas limites G-01 à G-05 et titre/crédits publics G-06 restent bloquants ; Version 2 validée** avant d'affirmer la conformité et la diffusion |
 | Livraison à deux jeux | Deux moteurs, deux tutoriels et deux univers d'illustrations augmentent le périmètre ; les composants communs doivent être utilisables par les deux sans rapprocher artificiellement leurs règles |
 | Autorisation | Accord de l'auteur annoncé par le porteur du projet, sous condition de gratuité ; conserver/clarifier sa portée exacte et l'attribution avant diffusion |
 | Créations | Vérifier droits des illustrations, sons, polices et autres Ressources avant distribution |
@@ -219,7 +219,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 - **Q-01 [bloquante pour le moteur] :** texte primaire intégral et résolution des cas limites de Clear the Dungeon Classic 1.1.0.
 - **Q-02 [bloquante pour publication] :** formulation conservable de l'accord de Mark S. Ball et périmètre précis (nom, Web, Android, iOS, crédits, territoires).
-- **Q-08 [bloquante pour Gridcannon] :** les règles originales **Version 2** ont été retrouvées dans la publication primaire de Tom Francis et étudiées par Mary ; confirmer leur adoption et arbitrer les cas limites G-00 à G-06 documentés, ainsi que le **nom public distinct** et les crédits de l'adaptation avant diffusion.
+- **Q-08 [bloquante pour Gridcannon] :** les règles originales **Version 2** ont été retrouvées dans la publication primaire de Tom Francis et étudiées par Mary ; adoption de la Version 2 validée le 22 novembre 2026 ; arbitrer les cas limites G-01 à G-05 documentés, ainsi que le **nom public distinct** et les crédits de l'adaptation avant diffusion.
 - **Q-09 :** préciser le périmètre minimum des deux tutoriels et de leurs ressources illustrées pour une V1 à deux Jeux, sans supprimer les fonctions validées.
 - **Q-03 :** valeurs cibles concrètes de fluidité, démarrage et tailles d'écran à tester.
 - **Q-04 :** granularité souhaitée de suppression des données locales.
@@ -237,5 +237,5 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 - **Validé :** orientation produit et décisions architecturales AD-01 à AD-12.
 - **Rédigé, à approuver :** ce PRD comme périmètre de référence.
-- **Non validé :** règles complètes de Clear the Dungeon, règles et droits de Gridcannon, portée documentée de la permission de Clear the Dungeon, performance et appareils cibles.
+- **Non validé :** règles complètes de Clear the Dungeon, cas limites de Gridcannon et conditions de son nom public/crédits, portée documentée de la permission de Clear the Dungeon, performance et appareils cibles.
 - **Prochaine étape :** validation fonctionnelle du PRD, puis découpage BMAD en Epics et User Stories petites et testables ; aucune création Jira sans autorisation explicite.
