@@ -321,3 +321,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A approuvée :** dans Clear the Dungeon, le joueur affecte son joker à un emplacement « puissance 1 », « puissance 2 » ou « déclencheur ». Le moteur déduit automatiquement le rôle depuis l'emplacement, sans menu supplémentaire. En puissance : valeur fixe 10 ; en déclencheur : enseigne automatiquement adaptée à celle du monstre ciblé, autorisé uniquement après deux puissances suffisantes. Le moteur ne décide pas automatiquement du rôle à la place du joueur. Chacun des deux jokers conserve un identifiant distinct ; un même joker n'est jamais utilisable simultanément sur deux emplacements. Les droits de modification de la main courante (CTD-ARB-02) et la sauvegarde/reprise doivent préserver ces informations.
 
 **Statut : CTD-10 / CTD-ARB-10 CLOS.** Cas CTD-T94 à CTD-T103 spécifiés mais non exécutés. **CTD-11** à traiter : usage éventuel des **deux jokers différents** au cours de la même attaque. Références : [règles CTD](../../game-rules/clear-the-dungeon.md), [matrice](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision fonctionnelle CTD-ARB-11 — deux jokers dans la même attaque (22 novembre 2026)
+
+**Option A validée :** dans Clear the Dungeon, les deux jokers physiques peuvent être utilisés **dans une même attaque**, chacun avec son emplacement indépendant (deux puissances de 10, ou une puissance de 10 et un déclencheur à l'enseigne du monstre). Aucune limitation d'un seul joker par attaque ou par main. La séquence de trois cartes distinctes et les conditions de seuil sont inchangées. Identifiants, rôle, cible et état des deux jokers doivent survivre sans duplication à la sauvegarde/reprise. **CTD-11 / CTD-ARB-11 CLOS.**
+
+**Prochain arbitrage : CTD-12**, calcul de score quand la victoire survient avec des cartes encore en main. [Règles CTD](../../game-rules/clear-the-dungeon.md) · [matrice CTD-T104 à CTD-T113](../../clear-the-dungeon-rule-test-matrix.md).
