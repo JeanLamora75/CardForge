@@ -1025,3 +1025,42 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T233 | Candidats ex æquo sur mobile et au clavier | Choix accessible, résistance et impact visibles avant validation | À vérifier en UX, non exécuté |
 
 **Prochain arbitrage proposé — GC-22 / lisibilité des armures :** comment représenter au joueur la **résistance actuelle** de chaque figure (base + armures cumulées) et les cartes d'armure attribuées, afin de permettre des décisions éclairées sans modifier les règles ? Les options d'affichage devront rester adaptées au mobile et préserver la visibilité des seuils de défaite.
+
+
+## 36. Décision d'ergonomie Gridcannon V2 — GC-22 : résistance et armures — affichage hybride
+
+**Option C VALIDÉE par le porteur le 22 novembre 2026.** Sur chaque figure, afficher de façon permanente sa **résistance actuelle totale** ainsi que le **bonus d'armure cumulé**. Sur action volontaire du joueur (clic, toucher ou activation clavier), ouvrir une vue détaillant les **cartes d'armure réellement attribuées** à cette figure. Ce dispositif est purement informatif et ne change ni la mécanique des armures ni leurs seuils de défaite. Les figures vaincues conservent leur emplacement conformément aux règles déjà validées.
+
+### 36.1. Contrat fonctionnel et UX
+
+1. **Affichage permanent :** pour toute figure vivante, présenter une valeur de résistance lisible et le supplément d'armure cumulé (ex. « Résistance 17 », « Armure +6 »). La résistance totale est calculée à partir de la résistance de base (Valet 11, Dame 12, Roi 13) et des seules cartes d'armure effectivement attribuées ; ne pas maintenir un total d'interface susceptible de diverger du moteur.
+2. **Sans armure :** afficher la résistance de base et un état explicite « Armure +0 », ou un indicateur d'absence d'armure équivalent accessible ; ne pas masquer la résistance initiale.
+3. **Détail sur demande :** l'activation d'une figure dévoile dans une fiche/panneau accessible l'identité (valeur et enseigne) de chacune de ses cartes d'armure, dans l'ordre de leur attribution si cet ordre est connu du moteur, ainsi que base, somme d'armures et résistance totale. La vue est en lecture seule : aucune suppression, redistribution, dépense ou réorganisation n'y est possible.
+4. **Mobile et bureau :** le détail s'ouvre au toucher/clic et au clavier, sans dépendance au survol. Fermer/revenir au plateau sans déclencher de mouvement, tir, pioche ni altérer une sélection en cours. Ne pas encombrer les douze emplacements périphériques avec les cartes d'armure ouvertes simultanément.
+5. **Seuil de défaite :** indiquer clairement le seuil applicable, **20 pour Valet/Dame, 19 pour Roi**, et l'approche de ce seuil sans changer la condition de défaite ; ne jamais présenter un état de résistance au-delà du seuil comme encore jouable si le moteur a déjà prononcé la défaite. Éviter de ne différencier les états que par la couleur.
+6. **Actualisation :** lorsqu'une armure est attribuée selon GC-07/21, actualiser immédiatement la figure concernée, son total et son détail après la confirmation unique de l'action. Les autres figures conservent leurs valeurs.
+7. **Choix d'armure GC-21 :** pendant la sélection entre figures ex æquo, montrer à titre de prévisualisation **avant validation** l'effet envisagé sur résistance et seuil, sans le comptabiliser ni modifier le détail réel. Ne confirmer et sauvegarder l'armure que sur le choix final.
+8. **Figures vaincues :** conserver la place de la figure vaincue, clairement différencier son état de celui d'une figure vivante ; une éventuelle consultation historique ne doit pas restaurer son statut ni rendre sa position réutilisable.
+9. **Reprise et intégrité :** reconstituer les valeurs et les détails à partir de l'état métier sauvegardé. Après rechargement, le même jeu de cartes d'armure doit produire les mêmes résistances ; aucune carte dupliquée ou perdue.
+10. **Portée :** GC-22 est une **décision d'ergonomie CardForge**, non une modification des règles originales de Gridcannon Version 2. La conception graphique détaillée peut être confiée à Sally sans remettre en cause ce contrat.
+
+**Exemple :** un Valet a reçu une armure 2♣ puis une armure 4♥. Sa carte affiche en permanence « Résistance 17 » et « Armure +6 ». Le détail affiche « Base 11 + 2♣ + 4♥ = 17 » et « Défaite à 20 ». Une nouvelle armure 3♦ amènerait la résistance à 20 et déclencherait la défaite selon la règle existante, sans protection spéciale créée par l'affichage.
+
+**Statut : GC-22 CLOS pour CardForge par validation de l'option C le 22 novembre 2026.** Spécification documentaire : aucun rendu UX ni test logiciel n'a été exécuté.
+
+### 36.2. Scénarios de conformité — GC-22
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T234 | Valet vivant sans armure | Résistance 11 visible ; armure nulle explicite ou équivalent accessible | Spécifié, non exécuté |
+| GC-V2-T235 | Dame avec armures 2 et 4 | Résistance 18, Armure +6 ; total cohérent avec la base 12 | Spécifié, non exécuté |
+| GC-V2-T236 | Ouverture du détail d'une figure | Identité de chaque armure, base, somme, total et seuil affichés | Spécifié, non exécuté |
+| GC-V2-T237 | Fermeture du détail | Aucun changement de carte, de pioche, de tour ou d'état de partie | Spécifié, non exécuté |
+| GC-V2-T238 | Attribution confirmée à une seule cible ex æquo GC-21 | Une seule figure change de résistance ; détails cohérents ; pas de duplication | Spécifié, non exécuté |
+| GC-V2-T239 | Prévisualisation d'une armure en attente GC-21 | Impact visible mais résistance métier inchangée jusqu'à confirmation | Spécifié, non exécuté |
+| GC-V2-T240 | Valet/Dame atteint 20 ou Roi atteint 19 | Défaite selon règle préexistante ; pas d'état jouable trompeur | Spécifié, non exécuté |
+| GC-V2-T241 | Figure vaincue toujours en périphérie | État vaincu distinct ; position conservée, pas de cible d'armure active | Spécifié, non exécuté |
+| GC-V2-T242 | Sauvegarde puis reprise avec deux armures | Mêmes cartes détaillées et même résistance totale ; aucun double ajout | Spécifié, non exécuté |
+| GC-V2-T243 | Consultation sur mobile et clavier sans survol | Détail ouvrable/fermable et lisible, seuil compréhensible sans seule couleur | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-23 / aide à la lecture des tirs :** lorsqu'un joueur sélectionne une position de grille pour poser ou déplacer une carte, quel niveau de visualisation fournir pour les **attaques possibles** vers les figures (axes concernés, puissance réellement compatible avec Valet/Dame/Roi, résistance à atteindre) ? Étudier trois niveaux : (A) aucun aperçu avant action, bilan après la pose ; (B) mise en évidence des axes et cibles avant confirmation ; (C) aperçu complet de la puissance et du résultat potentiel, sans effectuer le tir avant validation. Il s'agit d'une décision d'assistance UX, pas d'un changement de mécanique ni d'un calcul d'attaque automatique supplémentaire.
