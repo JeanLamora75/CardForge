@@ -314,3 +314,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A validée pour Clear the Dungeon :** une première carte de puissance `P1` est admissible contre un monstre de résistance `R` seulement si `P1 + 10 >= R`. Première puissance minimale : Valet 1, Dame 2, Roi 3. Une pose impossible est refusée avant toute mutation ; la carte reste en main sans dégât. Le moteur ne vérifie **que la possibilité mathématique**, sans consulter les cartes cachées de la pioche. Le contrôle de la seconde puissance et de la troisième carte déclencheuse reste distinct. Ce choix complète FR-06/07, sauvegardes FR-16/18 et tests de non-mutation.
 
 **CTD-09 / CTD-ARB-09 clos**, CTD-10 restant à cadrer sur l'utilisation contextuelle du joker comme carte de puissance ou déclencheur. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md), [scénarios CTD-T85 à CTD-T93](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision fonctionnelle CTD-ARB-10 — rôle du joker par emplacement (22 novembre 2026)
+
+**Option A approuvée :** dans Clear the Dungeon, le joueur affecte son joker à un emplacement « puissance 1 », « puissance 2 » ou « déclencheur ». Le moteur déduit automatiquement le rôle depuis l'emplacement, sans menu supplémentaire. En puissance : valeur fixe 10 ; en déclencheur : enseigne automatiquement adaptée à celle du monstre ciblé, autorisé uniquement après deux puissances suffisantes. Le moteur ne décide pas automatiquement du rôle à la place du joueur. Chacun des deux jokers conserve un identifiant distinct ; un même joker n'est jamais utilisable simultanément sur deux emplacements. Les droits de modification de la main courante (CTD-ARB-02) et la sauvegarde/reprise doivent préserver ces informations.
+
+**Statut : CTD-10 / CTD-ARB-10 CLOS.** Cas CTD-T94 à CTD-T103 spécifiés mais non exécutés. **CTD-11** à traiter : usage éventuel des **deux jokers différents** au cours de la même attaque. Références : [règles CTD](../../game-rules/clear-the-dungeon.md), [matrice](../../clear-the-dungeon-rule-test-matrix.md).
