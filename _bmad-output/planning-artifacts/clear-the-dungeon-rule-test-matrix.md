@@ -220,3 +220,22 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T77 | Deux puissances déjà posées totalisent **moins** que la résistance | **Attendu incomplet : CTD-08 doit décider** si la seconde pose est rejetée ou conservée sans déclencheur | En attente de décision |
 
 **Prochain arbitrage CTD-08 :** comportement lorsqu'une seconde carte de puissance produit un total insuffisant ; le rejet d'un déclencheur insuffisant est acquis, le sort de la seconde carte insuffisante ne l'est pas.
+
+
+## Arbitrage CTD-08 / CTD-ARB-08 — rejet de la seconde carte insuffisante (22 novembre 2026)
+
+**Option A VALIDÉE :** avec la première puissance `P1` posée, le moteur refuse toute seconde puissance `P2` lorsque `P1 + P2 < résistance`. La deuxième carte reste en main ; aucune modification d'état ni dégât automatique. Les puissances égales ou supérieures au seuil sont valides. La troisième carte reste exclusivement un déclencheur.
+
+**Révision de CTD-T77 :** attendu désormais **refus de la seconde puissance, état inchangé** (CTD-08 tranchée).
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T78 | Valet J11, 5 déjà engagé, tenter d'ajouter 4 | Refus de pose, 4 conservé en main, 5 maintenu | Spécifié, non exécuté |
+| CTD-T79 | Valet J11, 5 déjà engagé, ajouter 6 | Pose acceptée : 5 + 6 = 11 ; attendre déclencheur | Spécifié, non exécuté |
+| CTD-T80 | Valet J11, 8 déjà engagé, ajouter 6 | Pose acceptée : 14 ≥ 11 ; égalité stricte non exigée | Spécifié, non exécuté |
+| CTD-T81 | Roi K13, 5 posé, jouer un joker puissance 10 | Pose acceptée : 15 ≥ 13 ; aucune valeur choisie | Spécifié, non exécuté |
+| CTD-T82 | Roi K13, 5 posé, ajouter 7 | Refus de pose : 12 < 13 ; aucun dégât, aucun changement de paquet | Spécifié, non exécuté |
+| CTD-T83 | Rejeter une seconde puissance insuffisante puis sauvegarder/reprendre | Même première puissance, seconde carte toujours en main ; aucune mutation cachée | Spécifié, non exécuté |
+| CTD-T84 | Deux puissances insuffisantes ; essayer une troisième puissance comme rattrapage | Aucun emplacement « troisième puissance » autorisé : la troisième place est réservée au déclencheur après deux puissances suffisantes | Spécifié, non exécuté |
+
+**Prochain arbitrage : CTD-09**, validité d'une première carte de puissance qui ne pourrait atteindre le seuil avec aucune deuxième carte de valeur maximale 10.
