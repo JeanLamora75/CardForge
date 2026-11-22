@@ -666,3 +666,44 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T129 | Répétition du même contrôle d'intégrité sur une partie incohérente | Résultat stable, pas de nouvelle mutation, score et statistiques inchangés | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-13 / interaction G-01b–G-02 :** si une **figure doit apparaître** mais que les seuls emplacements extérieurs libres sont adjacents à des **cases périphériques vides après Extraction**, toutes les cartes périphériques réellement visibles ont leurs emplacements adjacents occupés. GC-01/GC-02 excluent les cases vides des candidats ; **aucun placement admissible n'est alors défini**, bien que des places extérieures restent disponibles. Il s'agit d'une **impasse légale potentiellement atteignable**, à distinguer de la corruption GC-12.
+
+
+## 27. Décision fonctionnelle Gridcannon V2 — GC-13 / interaction G-01b–G-02 : placement de secours d'une figure
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Si une nouvelle figure doit être placée autour de la grille, le moteur applique **d'abord intégralement GC-01 et GC-02** : recherche parmi les **cartes visibles des huit cases périphériques** et choix du meilleur rang de similitude **disposant d'au moins une place extérieure adjacente libre**. **Uniquement si aucune de ces candidates ne possède de destination admissible**, alors qu'**au moins un emplacement extérieur reste libre**, CardForge autorise **en dernier recours** le placement de la figure dans **n'importe quelle place extérieure encore libre**, au **choix du joueur**, même si cette place ne jouxte qu'une case périphérique vide à la suite d'une Extraction.
+
+**Contrat métier et périmètre :**
+1. Une figure nouvellement apparue reste une **carte physique unique** : ne pas la laisser occuper plusieurs emplacements ; conserver sa valeur, son enseigne, son armure initiale et son identité.
+2. Calculer les placements normaux sans changer les priorités **même enseigne → même couleur → valeur supérieure**, ni le périmètre **huit cases périphériques** (GC-01). Une carte du centre ne devient jamais attractive ; une case périphérique vide après Extraction n'est **pas** transformée en carte fictive de valeur zéro (GC-03).
+3. Exclure des destinations disponibles toutes les places extérieures déjà occupées, y compris par des **figures vaincues face cachée** ; ne jamais déplacer automatiquement une figure déjà placée (GC-02).
+4. **Si au moins une destination normale existe**, même chez une carte moins semblable que d'autres candidates bloquées, **appliquer exclusivement GC-02** : l'exception de secours **reste interdite**.
+5. **Si aucune destination normale n'existe**, mais qu'au moins une des **douze places extérieures** est libre, activer le **mode de placement de secours**. Proposer au joueur **l'ensemble des places extérieures réellement libres**, sans leur attribuer de rang fictif de couleur/enseigne/valeur ; aucune place occupée n'est proposée.
+6. En cas de plusieurs places extérieures libres, **laisser le joueur choisir** : ne pas imposer le premier emplacement dans un ordre technique, ne pas proposer de tirage aléatoire et ne pas déplacer automatiquement la figure vers une autre case.
+7. Une fois le choix validé, la figure occupe cette place et reste là pour le reste de la partie, y compris après défaite. Son comportement de résistance, d'armure, de tir et de victoire reste **inchangé**. La provenance « secours » peut être enregistrée à titre de diagnostic, mais elle n'ajoute aucune capacité à la carte.
+8. Cette exception peut intervenir **à la mise en place** ou lors des apparitions ultérieures si son prédicat est satisfait, sans exiger que la cause soit forcément une Extraction ; les cas classiques avec grille complète continuent à privilégier les candidats normaux.
+9. Si **aucune place extérieure n'est libre**, ne pas forcer la figure sur une position occupée. Un tel état avant placement des douze figures nécessite une **vérification de cohérence/transaction**, sans lui attribuer automatiquement une condition de défaite ; ce sous-cas n'est pas décidé par GC-13.
+10. La phase de choix doit être **sauvegardable** : conserver la figure en cours, l'ensemble déterministe des emplacements libres, le fait que le mode secours a été déclenché et la destination validée. Une reprise ou un double clic ne doit ni replacer ni dupliquer la figure ni déclencher deux fois la même action.
+11. **Statut de provenance :** cette exception de dernier recours est une **décision fonctionnelle CardForge**, et **non** une règle explicitement confirmée par Tom Francis dans la Version 2. Elle ne doit jamais être généralisée à un choix libre en présence d'une destination de similitude valable.
+
+**Exemple :** onze emplacements extérieurs sont occupés (les figures vaincues les occupent toujours) ; seul un emplacement extérieur reste libre, mais il est adjacent à une **case périphérique vide** dont la pile a été extraite. Toutes les cartes périphériques visibles n'ont plus de place adjacente libre. La figure nouvellement révélée est alors placée **dans la dernière place libre** par l'exception GC-13, sans carte attractive inventée et sans défaite artificielle.
+
+**Statut : GC-13 / G-01b–G-02 CLOS pour CardForge.** Test de conformité du moteur **non exécuté** ; l'implémentation et la compatibilité complète avec la conception graphique restent à valider.
+
+### 27.1. Scénarios de conformité — GC-13
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T130 | Onze emplacements extérieurs occupés ; seule place libre adjacente à une case périphérique vidée par Extraction | Placement de secours dans cette place, **sans défaite** | Spécifié, non exécuté |
+| GC-V2-T131 | Aucune candidate périphérique visible avec voisin extérieur libre ; deux places extérieures libres | Joueur choisit **l'une des deux places réellement libres** | Spécifié, non exécuté |
+| GC-V2-T132 | Meilleure candidate périphérique bloquée ; seconde candidate visible avec voisin libre | **GC-02 s'applique**, pas de placement de secours | Spécifié, non exécuté |
+| GC-V2-T133 | Candidate visible moins semblable avec place libre ; place extérieure ailleurs uniquement adjacente à une pile vide | Utiliser la candidate visible disponible, exception refusée | Spécifié, non exécuté |
+| GC-V2-T134 | Centre occupé par carte parfaitement similaire ; périphérie sans destination normale | Le centre ne devient pas attractif ; secours sur une place extérieure libre | Spécifié, non exécuté |
+| GC-V2-T135 | Place extérieure bloquée par une figure vaincue face cachée | Ne jamais proposer cette place parmi les choix de secours | Spécifié, non exécuté |
+| GC-V2-T136 | Plusieurs places libres en mode secours, aucune préférence exprimée | Aucune place choisie automatiquement, aucune figure aléatoire | Spécifié, non exécuté |
+| GC-V2-T137 | Figure placée en secours puis vaincue par un tir ultérieur | Figure reste définitivement dans son emplacement, comme toute autre figure | Spécifié, non exécuté |
+| GC-V2-T138 | Cas de secours pendant la mise en place où aucune destination normale n'existe, mais une place extérieure est libre | Même dernier recours, sans activer l'exception s'il existe un candidat normal | Spécifié, non exécuté |
+| GC-V2-T139 | Figure en attente, douze places extérieures déjà occupées | **Pas de chevauchement** ; signaler l'impasse pour analyse d'intégrité/transaction, sans défaite inventée | Spécifié, non exécuté |
+| GC-V2-T140 | Sauvegarde en cours de choix de secours puis reprise | Même figure et même liste de places légales ; un seul placement définitif | Spécifié, non exécuté |
+| GC-V2-T141 | Figure nouvellement révélée, puis action répétée ou double clic sur une place de secours | Aucun doublon de figure ou de position, statistiques inchangées | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé GC-14 :** la **faculté de remplacer une carte de la grille immédiatement après la mise en place initiale**, documentée au §2, n'a pas encore un contrat de traitement complet. Si le joueur choisit de remplacer l'une des neuf cartes et pioche d'abord une **figure, un As ou un Joker**, faut-il continuer jusqu'à une **carte numérique de remplacement**, traiter les cartes intermédiaires comme pendant la mise en place, ou annuler l'échange ? Le remplacement initial facultatif et son séquencement doivent être précisés sans ajout de capacités tactiques nouvelles.
