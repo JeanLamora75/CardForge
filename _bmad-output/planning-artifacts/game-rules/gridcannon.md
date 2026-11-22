@@ -1108,3 +1108,44 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T256 | Usage mobile, clavier et contraste réduit | Axes, valeurs et résultats compréhensibles sans survol ni couleur seule | À vérifier en UX, non exécuté |
 
 **Prochain arbitrage proposé — GC-24 / restitution visuelle d'un tir confirmé :** après validation du placement et résolution des attaques, comment montrer au joueur les tirs effectivement produits et leur résultat ? Trois options sont à comparer : **A** résultat instantané sans animation ; **B** animation courte, lisible et non bloquante, avec bilan textuel ; **C** séquence cinématique détaillée (effets plus riches, successifs) avec possibilité de passer l'animation. Il s'agit d'une décision de présentation ; le moteur doit déterminer et enregistrer le résultat indépendamment de toute animation.
+
+
+## 38. Décision UX Gridcannon V2 — GC-24 : animation courte et restitution des tirs confirmés
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Chaque attaque déclenchée par un placement confirmé dispose d'une **animation courte et lisible**, avec un faisceau/trait d'énergie entre la ligne d'attaque et la figure ciblée, un retour visuel distinct selon la réussite ou l'échec du tir et un bilan textuel explicite. Cette présentation convient à l'univers de guerre spatiale « Bastion Stellaire » sans ajouter de nouvelle mécanique. Les animations doivent être **désactivables**, non bloquantes et adaptées au mobile.
+
+### 38.1. Contrat fonctionnel et UX
+
+1. **Séparation moteur / présentation :** la confirmation du placement légal déclenche une **unique transition métier atomique**, qui calcule et sauvegarde immédiatement les tirs, les figures vaincues, le score et le résultat de partie applicable. L'animation ne calcule pas de nouveaux tirs, ne retarde pas le verdict métier et ne gouverne jamais les sauvegardes.
+2. **Animation courte :** représenter l'attaque par un signal visuel bref (par exemple trait d'énergie et impact), sans cinématique longue ni attente imposée au joueur. Les durées et effets précis seront harmonisés par Sally lors de la conception UX, sans dépendance de la logique de jeu à leur achèvement.
+3. **Retour d'impact :** distinguer clairement un tir qui vainc la figure d'un tir insuffisant ou incompatible ; accompagner l'effet de textes et valeurs tels que « Attaque 13 / Résistance 12 — Figure vaincue » ou « Attaque 7 / Résistance 12 — Figure résistante ».
+4. **Double tir GC-04/23 :** lors d'une pose en coin, **représenter les deux attaques effectivement résolues**, même si une seule détruit sa cible. Une restitution très brève successive ou simultanée est acceptable si elle reste compréhensible ; l'ordre de rendu ne doit pas modifier le résultat calculé par le moteur.
+5. **État final fiable :** après résolution, les figures vaincues sont retournées et restent à leur position (GC-03), les résistances/armures sont celles de l'état réel (GC-22) et les verdicts victoire/défaite sont ceux déjà établis, indépendamment de l'animation.
+6. **Paramètre utilisateur :** proposer une préférence permettant de **désactiver les animations de tirs**. Dans ce cas, afficher immédiatement l'état final et un bilan textuel équivalent à celui du mode animé ; la préférence est sans effet sur la partie ou les tirages.
+7. **Accessibilité :** respecter la préférence système de réduction des mouvements lorsque détectable ; permettre la compréhension du résultat sans mouvement ni code couleur seul. Les textes doivent être consultables sur mobile et au clavier. Ne pas rendre l'expérience dépendante du son.
+8. **Pas de blocage ni de doublon :** l'utilisateur peut passer l'effet visuel ou continuer dès que l'état métier le permet ; cela ne doit ni lancer une seconde attaque ni permettre de rejouer le mouvement. Les interactions répétées et les rafraîchissements ne créent pas de nouveaux événements.
+9. **Reprise :** une sauvegarde/reprise au cours d'une animation restitue l'état métier **déjà confirmé** et ne rejoue pas le tir ; une animation peut être omise après reprise. Aucun score ni résultat de partie ne peut être enregistré une deuxième fois.
+10. **Couverture des mouvements :** même restitution pour les tirs déclenchés par la pose d'une carte piochée et par une Réaffectation légale via Joker. Les mouvements ne déclenchant aucun tir ne génèrent aucune attaque fictive.
+11. **Périmètre :** l'animation est un **habillage propre à CardForge**, pas une règle supplémentaire attribuée à Tom Francis. Les visuels et paramètres ne modifient pas la Version 2.
+
+**Exemple :** une carte est posée légalement dans un coin et le moteur constate un tir victorieux sur un Valet ainsi qu'un tir insuffisant sur une Dame. L'état final est sauvegardé une seule fois. L'interface montre brièvement les deux axes, un impact sur chaque cible et leurs bilans distincts ; le Valet est retourné face cachée à sa place, la Dame reste vivante. Sans animation, les mêmes états et bilans apparaissent immédiatement.
+
+**Statut : GC-24 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation fonctionnelle uniquement ; aucune implémentation ni test logiciel ou UX n'a été exécuté.
+
+### 38.2. Scénarios de conformité — GC-24
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T257 | Attaque confirmée contre figure vaincue | Effet bref, bilan chiffré, figure retournée à son emplacement | Spécifié, non exécuté |
+| GC-V2-T258 | Tir confirmé de puissance insuffisante | Impact et texte distincts, cible reste vivante | Spécifié, non exécuté |
+| GC-V2-T259 | Pose en coin déclenchant deux tirs | Deux résultats représentés, sans dépendance de l'ordre visuel | Spécifié, non exécuté |
+| GC-V2-T260 | Animation désactivée dans les préférences | Résultat immédiat, bilan textuel complet, état métier identique | Spécifié, non exécuté |
+| GC-V2-T261 | Préférence de mouvement réduit active | Animation évitée ou fortement réduite, résultat lisible | À vérifier en UX, non exécuté |
+| GC-V2-T262 | Fermeture/rechargement pendant une animation | État final restauré, aucune deuxième attaque ni double statistique | Spécifié, non exécuté |
+| GC-V2-T263 | Confirmation répétée rapidement ou effet visuel passé | Une transition métier et une seule dépense de ressources | Spécifié, non exécuté |
+| GC-V2-T264 | Joker déclenche un tir normal | Même restitution que pour carte piochée, dépense du Joker unique | Spécifié, non exécuté |
+| GC-V2-T265 | Pose ne déclenchant aucun tir | Aucun faisceau fictif ni fausse cible vaincue | Spécifié, non exécuté |
+| GC-V2-T266 | Attaque terminant la partie | Résultat officiel prioritaire, animation sans délai de validation métier | Spécifié, non exécuté |
+| GC-V2-T267 | Contrôle tactile/clavier, faible contraste et absence de son | Information complète compréhensible sans animation ni couleur seule | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-25 / ambiance sonore et retours audio :** définir la place du son dans les actions de jeu (pose, tir, figure vaincue, victoire/défaite), sans modifier les règles ni imposer l'audio. Options à étudier : **A** entièrement silencieux ; **B** effets sonores courts, discrets et facultatifs (désactivables, muets par défaut si contraintes navigateur) ; **C** ambiance musicale et effets immersifs continus, avec réglages séparés. Évaluer accessibilité, autonomie mobile, répétition et comportement des navigateurs.
