@@ -477,3 +477,37 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T72 | Sauvegarde/reprise au moment de choisir le recours ou après une attribution d'armure | Carte en attente, ressources, armures et seuils conservés sans double effet | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-08 / G-08 :** si la pioche a été vide puis réapprovisionnée par une Extraction et qu'une victoire survient, **le score doit-il rester le nombre d'actions spéciales non dépensées à la victoire**, ou faut-il distinguer/majorer/pénaliser ce cas ? La règle générale Version 2 fixe le score sur les actions spéciales restantes ; aucune exception explicite en cas d'épuisement temporaire n'a été documentée.
+
+
+## 22. Décision fonctionnelle Gridcannon V2 — GC-08 / G-08 : score après épuisement puis réapprovisionnement de la pioche
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Une victoire obtenue après que la pioche a été **temporairement vide** puis **réapprovisionnée par une Extraction** se calcule **exactement comme toute autre victoire de Gridcannon Version 2** : le score officiel est le **nombre d'actions spéciales (As et Jokers) non dépensées au moment où les douze figures sont vaincues**. Aucune pénalité, majoration, catégorie de victoire différente ni suppression du score n'est appliquée en raison d'un épuisement antérieur de la pioche.
+
+**Contrat fonctionnel CardForge :**
+1. Au moment exact où la douzième figure est vaincue, capturer un état terminal **victoire** et calculer **une seule fois** `scoreOfficiel = nombre d'As non dépensés + nombre de Jokers non dépensés`, selon l'état réel des cartes de la partie, avec **0 ≤ scoreOfficiel ≤ 6** (quatre As et deux Jokers).
+2. Toute action spéciale **déjà utilisée**, notamment l'As d'Extraction ayant réapprovisionné la pioche, **ne compte plus** ; une action non dépensée conserve son statut et est comptée conformément à la règle normale de score.
+3. Le fait que la pioche ait atteint zéro **n'est pas en soi une condition de défaite permanente** et ne modifie pas l'issue d'une victoire légale rendue possible par des actions spéciales. Cette décision n'autorise pas à contourner une défaite déjà prononcée pour une autre cause selon les règles existantes.
+4. **Exemple :** la pioche devient vide ; un As est consommé pour extraire une pile, puis le joueur élimine les douze figures avec **trois actions spéciales non dépensées** : **victoire, score officiel 3**, ni 0, ni un score augmenté d'un bonus de reprise.
+5. Une **victoire avec zéro action spéciale restante** a bien un score officiel de **0** ; en revanche **une défaite ou un abandon n'a pas de score officiel de victoire** (ne pas créer artificiellement une victoire de score zéro pour une défaite).
+6. Des indicateurs de suivi CardForge tels que « nombre de réapprovisionnements » ou « pioche déjà épuisée » peuvent, s'ils sont décidés ultérieurement, être conservés **séparément** du score officiel et ne jamais l'altérer.
+7. La sauvegarde/reprise et l'historique de partie conservent l'état des As et des Jokers, le résultat et le score **figés** ; un double événement de victoire, un double clic ou une reprise ne doit ni recomputer un autre score ni enregistrer deux résultats.
+8. Cette décision ne tranche **pas** les impasses G-05 lorsque la pioche s'épuise sans figure trouvée, ni la manière de traiter les As/Jokers rencontrés pendant la recherche d'une nouvelle figure (point ouvert annoncé en **GC-09**).
+
+**Statut : GC-08 / G-08 CLOS pour CardForge.** La règle de score fondée sur les actions spéciales restantes est documentée dans la Version 2. Le traitement **sans exception liée à un épuisement temporaire** est un arbitrage de précision approuvé, sans revendiquer une formulation spécifique de ce cas limite par Tom Francis. Aucun test de moteur n'a été exécuté.
+
+### 22.1. Scénarios de conformité — GC-08 / G-08
+
+| Test | Précondition / action | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T73 | Pioche épuisée une fois, un As utilisé pour la reconstituer ; 3 actions spéciales non dépensées à la victoire | Victoire, **score officiel 3** | Spécifié, non exécuté |
+| GC-V2-T74 | Victoire sans épuisement de pioche ; 3 actions spéciales non dépensées | Même score officiel **3** que T73 | Spécifié, non exécuté |
+| GC-V2-T75 | Plusieurs épuisements puis Extractions, victoire avec une action spéciale non dépensée | Score officiel **1**, aucun malus supplémentaire | Spécifié, non exécuté |
+| GC-V2-T76 | Victoire après reprise, aucune action spéciale non dépensée | Victoire valide avec score **0** | Spécifié, non exécuté |
+| GC-V2-T77 | Pioche épuisée puis défaite selon une condition de défaite existante | Défaite, **aucun score officiel de victoire**, même si des actions restent | Spécifié, non exécuté |
+| GC-V2-T78 | Victoire puis affichage des statistiques de réapprovisionnement | Indicateurs complémentaires éventuels séparés, score officiel inchangé | Spécifié, non exécuté |
+| GC-V2-T79 | Sauvegarde juste avant le dernier tir après une Extraction et reprise | Même comptage des As/Jokers non dépensés et même score de victoire | Spécifié, non exécuté |
+| GC-V2-T80 | Double résolution de victoire ou rechargement après une victoire | Un seul résultat et un seul score figé | Spécifié, non exécuté |
+| GC-V2-T81 | Victoire avec toutes les six actions spéciales non dépensées | Score maximum **6** sans bonus de pioche | Spécifié, non exécuté |
+| GC-V2-T82 | Tentative d'ajouter l'As utilisé pour réapprovisionner au compteur des actions non dépensées | As **exclu**, sans remboursement ni bonus | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-09 / sous-cas G-05 :** pendant la recherche de la prochaine figure, lorsqu'aucune figure n'est vivante (GC-06), comment traiter **un As ou un Joker pioché** ? Les cartes numériques de cette phase sont déjà traitées par GC-06 ; les cartes spéciales demeurent un cas explicitement ouvert (GC-V2-T59).
