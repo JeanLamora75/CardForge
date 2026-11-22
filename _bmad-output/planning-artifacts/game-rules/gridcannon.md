@@ -1644,4 +1644,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T401 | Accès à l'inspection dans un autre jeu CardForge | Comportement uniforme, données propres au jeu, aucune action déclenchée | À vérifier en intégration, non exécuté |
 | GC-V2-T402 | Reprise/rafraîchissement pendant inspection | Partie intacte, aucune carte jouée automatiquement | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-37 / interactions de déplacement des cartes :** comment permettre au joueur de placer ou déplacer une carte sur ordinateur et mobile ? Options : **A** sélection par clic/toucher puis choix de destination uniquement ; **B** glisser-déposer facultatif accompagné **obligatoirement** du parcours clic/toucher puis destination, accessible au clavier ; **C** glisser-déposer comme interaction principale exclusive. Le moteur reste seul juge de la légalité, les prévisualisations GC-23 et confirmations GC-32/30 restent cohérentes, et l'inspection GC-36 ne doit pas entrer en conflit avec le déplacement.
+**GC-37 : option B validée ultérieurement — glisser-déposer facultatif et sélection classique équivalente, voir §51.**
+
+
+## 51. Décision UX Gridcannon V2 — GC-37 : glisser-déposer facultatif et sélection classique
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Les cartes de Gridcannon V2 peuvent être manipulées par **glisser-déposer** sur ordinateur et appareil tactile, **avec une alternative permanente équivalente** : sélectionner la carte par clic/toucher ou clavier, puis choisir sa destination. Aucun joueur ne doit être obligé de réaliser un geste de glissement pour accomplir une action légale. Les deux chemins utilisent les **mêmes validations du moteur** et aboutissent aux mêmes résultats ; GC-37 ne change aucune règle du jeu.
+
+### 51.1. Contrat fonctionnel et UX
+
+1. **Deux parcours équivalents :** (a) prendre la carte autorisée et la déposer sur une case/destination ; (b) sélectionner la carte puis sélectionner la destination. Le clavier doit offrir un moyen déterministe d'atteindre et d'activer les mêmes sélections et confirmations.
+2. **Règles communes :** le moteur valide source, destination, phase et ressources à la confirmation. Le composant de glisser-déposer ne détient jamais sa propre règle divergente de celles du moteur Gridcannon V2.
+3. **Aucun effet pendant le mouvement :** survoler une case, démarrer un glissement ou viser une destination ne modifie pas l'état canonique, ne dépense pas de Joker/As, ne pioche pas et ne déclenche pas d'attaque.
+4. **Destination illégale :** refuser le coup sans modifier la partie ; présenter un retour compréhensible et la raison accessible via l'aide contextuelle GC-26. La carte revient visuellement à son emplacement d'origine ou la sélection reste maîtrisée.
+5. **Annulation et gestes interrompus :** lâcher hors d'une zone admissible, annuler la sélection, presser Échap ou interrompre le geste tactile n'effectue aucun coup. Une reprise après interruption ne doit pas transformer un glissement inachevé en coup.
+6. **Confirmation et prévisualisation :** lorsque l'action exige de confirmer son effet, les deux parcours aboutissent au **même écran de prévisualisation GC-23** et à la même validation finale ; un dépôt ne court-circuite pas les choix ou arbitrages GC-21 ni la confirmation des actions spéciales GC-30.
+7. **Sources autorisées seulement :** ne déplacer que les cartes déplaçables dans la phase courante : carte à jouer, carte supérieure de pile via Joker, ou autre source expressément autorisée par les règles. Les figures, armures et cartes cachées ne deviennent pas déplaçables par défaut.
+8. **Ergonomie tactile :** éviter la confusion entre défilement de la page, glissement d'une carte, zoom/inspection GC-36 et simple sélection. Prévoir une zone de prise en main claire et un seuil de geste adapté, sans imposer un maintien prolongé.
+9. **Lisibilité et orientation :** indiquer la carte en cours de manipulation et la destination visée sans masquer l'état de la grille, les résistances ni les compteurs GC-29/31. Une indication visuelle des destinations légales sera arbitrée séparément en GC-38.
+10. **Accessibilité :** focus et libellés accessibles, parcours complet sans drag-and-drop, retours d'erreur disponibles au lecteur d'écran, sans code couleur seul. Fonctionnement sur écran tactile et au clavier, en français et anglais dès le MVP (GC-28).
+11. **Concurrence et atomicité :** une seule action de jeu est exécutée en cas de double événement pointer/touch/click, de deux validations rapides ou de changement de phase pendant un geste. Le résultat reste idempotent selon la gestion de transaction de partie.
+12. **Plateforme :** rechercher une convention d'interaction commune aux jeux CardForge tout en n'autorisant dans chacun que ses propres mouvements légaux, sans affecter son moteur métier.
+
+**Exemple :** le joueur glisse une carte numérique sur une case libre admissible ; l'interface présente la prévisualisation du tir puis attend la confirmation lorsque requis. Il annule : carte et grille sont intactes. Le même placement réalisé en sélectionnant la carte puis la case donne exactement la même prévisualisation, et une destination illégale n'exécute jamais de coup.
+
+**Statut : GC-37 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation uniquement : aucune interaction implémentée et aucun test exécuté.
+
+### 51.2. Scénarios de conformité — GC-37
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T403 | Carte et destination légales par clic puis clic | Coup identique à la voie glisser-déposer après confirmation | Spécifié, non exécuté |
+| GC-V2-T404 | Carte et destination légales par glisser-déposer | Même prévisualisation et effet métier que sélection classique | Spécifié, non exécuté |
+| GC-V2-T405 | Glissement au-dessus d'une case avant dépôt | Aucune mutation de partie ni dépense spéciale | Spécifié, non exécuté |
+| GC-V2-T406 | Dépôt sur destination illégale | Refus expliqué, carte revenue à sa source, état intact | Spécifié, non exécuté |
+| GC-V2-T407 | Dépôt hors plateau ou geste interrompu | Aucun mouvement métier ni pioche | Spécifié, non exécuté |
+| GC-V2-T408 | Confirmation GC-23 annulée après dépôt | Carte non placée et ressources inchangées | Spécifié, non exécuté |
+| GC-V2-T409 | Joker utilisé par sélection puis destination | Choix et confirmation GC-30 respectés, un seul Joker consommé | Spécifié, non exécuté |
+| GC-V2-T410 | Figure, armure ou carte face cachée glissée | Aucune action non autorisée déclenchée | Spécifié, non exécuté |
+| GC-V2-T411 | Double événement pointer/click lors du même dépôt | Une seule transition métier ; aucun double tir | Spécifié, non exécuté |
+| GC-V2-T412 | Zoom GC-36 sollicité pendant interaction | Inspection indépendante, aucun placement involontaire | À vérifier en UX, non exécuté |
+| GC-V2-T413 | Jeu sur smartphone avec défilement tactile | Glisser-déposer et navigation tactile sans conflit majeur | À vérifier en UX, non exécuté |
+| GC-V2-T414 | Jeu clavier seul / lecteur d'écran, FR/EN | Toutes les destinations et confirmations accessibles sans glisser | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-38 / indication des destinations légales :** lors de la sélection ou du glissement d'une carte, faut-il mettre en évidence les destinations autorisées ? **A** aucune indication préalable, seulement retour après tentative ; **B** surbrillance discrète des destinations légalement disponibles, sans jouer à la place du joueur et sans révéler de cartes cachées ; **C** surbrillance assortie d'un classement ou d'un conseil stratégique pour chaque destination. L'indication doit rester cohérente avec la phase, les actions spéciales et la prévisualisation GC-23.
