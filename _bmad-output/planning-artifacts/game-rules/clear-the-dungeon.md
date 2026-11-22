@@ -181,3 +181,19 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Statut :** CTD-01 (nom de l'arbitrage utilisateur) = **validé**. Pour éviter la collision avec le code de contrôle documentaire « CTD-01 — composition du paquet », cette décision est tracée techniquement sous **CTD-ARB-01**. Les anciens paragraphes notant O-CTD-01/03 « ouverts » constituent l'historique antérieur ; ce point précis est maintenant résolu pour CardForge.
 
 **Provenance :** arbitrage explicite du porteur, cohérent avec la possibilité de poser des cartes contre différents monstres dans la documentation précédente, mais persistance entre mains non attestée indépendamment dans la version originale intégrale. Ne pas attribuer cette clarification à Mark S. Ball.
+
+
+## 13. Décision fonctionnelle CTD-02 / CTD-ARB-02 — réaffectation pendant la main actuelle
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Pour CardForge, le joueur peut reprendre dans sa main ou déplacer vers un autre monstre une carte qu'il a placée **pendant la main actuelle**, tant que cette main n'est pas clôturée. Les cartes qui étaient déjà placées avant l'ouverture de cette main sont **définitivement engagées** et non récupérables/réaffectables.
+
+**Conséquences fonctionnelles :**
+- Une carte déposée sur un monstre durant la main courante est marquée comme « placement courant provisoire » et peut être reprise ou réaffectée à un autre monstre tant que la main est ouverte et que l'attaque concernée n'a pas été entièrement résolue. Reprendre une carte la remet dans la main courante sans augmenter le nombre total de cartes détenues.
+- Clore la main confirme les placements encore provisoires ; ils deviennent **verrouillés** pour toutes les mains suivantes. La pioche d'une nouvelle main ne déverrouille jamais les cartes anciennes, conformément à CTD-ARB-01.
+- **Une attaque déjà résolue et un monstre vaincu ne sont pas annulés** par le déplacement d'une carte ; les choix de retour en arrière sur une action terminée ou d'annulation de tour ne sont pas ouverts par cette décision.
+- La sauvegarde/reprise restitue, en plus des cartes par monstre, la distinction entre cartes verrouillées et cartes modifiables de la main courante ainsi que la phase en cours.
+- La validation de la fin de main est le **point de verrouillage** ; l'interface doit permettre au joueur de comprendre la conséquence avant de continuer.
+
+**Portée :** décision de comportement CardForge sur une ambiguïté documentaire, **non présentée comme une confirmation de l'auteur**. CTD-02 / CTD-ARB-02 est **CLOS pour l'implémentation**.
+
+**Prochaine question CTD-03 :** clôture de main et traitement des cartes restant non placées (défausse et dégâts).
