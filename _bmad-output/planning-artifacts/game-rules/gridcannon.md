@@ -438,3 +438,42 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T60 | Fin de phase après passage de plusieurs numériques | Le total physique de cartes est conservé ; aucune carte numérique traversée ne devient une armure | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-07 / G-07 :** lorsqu'une carte numérique est **impossible à poser alors qu'une figure vivante existe**, une **action spéciale encore disponible mais incapable de rendre la carte posable** bloque-t-elle l'attribution d'armure ? Ce cas est distinct de la recherche de figure GC-06 et des règles d'Extraction d'As (GC-03/05).
+
+
+## 21. Décision fonctionnelle Gridcannon V2 — GC-07 / G-07 : action spéciale disponible mais inutile pour la pose
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'**au moins une figure vivante** est présente et qu'une carte numérique (2 à 10) en cours de traitement ne peut être posée **sur aucune des neuf cases** de la grille, la simple existence d'un **As ou d'un Joker non dépensé** ne bloque pas automatiquement l'attribution d'une **armure**. Le moteur doit vérifier si les **actions spéciales légalement réalisables** sont **effectivement capables de rendre la carte numérique en attente posable**. Si aucune action utile n'existe, cette carte peut devenir une armure conformément à la règle normale de Gridcannon Version 2.
+
+**Contrat d'acceptation :**
+1. **Périmètre :** appliquer ce contrôle seulement en présence d'au moins **une figure vivante**. En l'absence de cible vivante, le comportement de recherche **GC-06** reste prioritaire.
+2. **Pose directe d'abord :** si la carte est déjà posable sur une pile de sommet inférieur/égal ou sur une case vide (**GC-03**), le joueur la joue normalement : il n'y a **aucun motif de l'envoyer en armure**.
+3. En cas d'impossibilité de pose, évaluer les **recours effectifs** des As (Extraction) et Jokers (Réaffectation), selon leur légalité et l'état réel visible du plateau. Un recours est « utile » uniquement s'il **permet concrètement de débloquer une destination pour la carte en attente**, sans tirage additionnel ni information cachée. Si plusieurs opérations légales successives sont nécessaires, ne pas les présumer impossibles au seul motif qu'une action isolée ne débloque pas directement ; les règles d'évaluation exhaustive/optimisation appartiennent au moteur et doivent être testées sur des scénarios bornés.
+4. **As :** une Extraction légale d'une pile **non vide** libère sa case ; selon **GC-03**, cette case devient admissible à toute carte numérique 2–10. Un As ainsi jouable est donc un **recours utile**. Il n'est pas permis de consommer un As sur une case déjà vide (**GC-05**).
+5. **Joker :** une Réaffectation doit déplacer une carte supérieure vers une destination **légale**, conformément à la mécanique de la Version 2. Le Joker n'est utile au blocage que si une **suite d'actions effectivement légales** crée une destination compatible pour la carte en attente ; un Joker restant sans solution utile **ne bloque pas** l'armure.
+6. **Recours utile présent :** le joueur peut choisir parmi les **actions spéciales réellement utiles**, sans gaspillage imposé d'une autre action. La carte en attente n'est **pas convertie en armure** tant qu'une solution utile effectivement réalisable existe ; l'application ne choisit pas automatiquement une action à la place du joueur.
+7. **Aucun recours utile :** la carte devient une **armure attribuée à une figure vivante** par les priorités inverses documentées : même enseigne puis valeur de figure la plus basse ; sinon même couleur puis valeur la plus basse ; sinon figure de valeur la plus basse. La **valeur numérique de la carte** augmente la résistance actuelle ; vérifier immédiatement les seuils de défaite **J/Q ≥ 20, K ≥ 19**.
+8. **Une action spéciale inutilisée reste disponible** et continue de compter dans le score officiel éventuel de victoire. Ne pas la marquer consommée, ne pas l'obliger à être jouée et ne pas modifier artificiellement les probabilités.
+9. **Déterminisme et persistance :** sauvegarder l'état de la carte en attente, les actions consommées, la figure armurée et les nouveaux seuils. Les refus d'action illégale et la vérification de recours n'ajoutent **aucune mutation de cartes** ; éviter les consommations en double à la reprise.
+
+**Exemple :** une carte 2♠ est en attente ; toutes les cases portent des sommets supérieurs à 2 et **aucun Joker disponible ne peut réaliser une séquence légale libérant une destination** ; il n'y a pas d'As utile. Même si un Joker non consommé subsiste, le 2♠ devient une armure sur une figure vivante selon les critères inversés. En revanche, si un As peut extraire une pile, la case vide permet de jouer 2♠ : l'armure est bloquée tant que cette solution existe.
+
+**Statut : GC-07 / G-07 CLOS pour CardForge.** L'utilité **réelle**, et non la simple disponibilité, est un arbitrage explicite du porteur : la formulation de la Version 2 par Tom Francis ne résout pas sans ambiguïté ce cas, et une source secondaire le présente différemment. Aucun test du moteur ou calcul d'accessibilité des séquences n'a été exécuté.
+
+### 21.1. Scénarios de conformité — GC-07 / G-07
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T61 | Figure vivante, carte numérique non posable, aucun As/Joker disponible | Conversion en armure selon sélection inverse et contrôle de seuil | Spécifié, non exécuté |
+| GC-V2-T62 | Figure vivante, carte non posable, Joker restant mais aucune Réaffectation légale utile | Conversion en armure **autorisée**, Joker non consommé | Spécifié, non exécuté |
+| GC-V2-T63 | Figure vivante, carte non posable, As disponible et pile non vide | Extraction utile créant une case vide ; armure non autorisée tant que ce recours reste possible | Spécifié, non exécuté |
+| GC-V2-T64 | Figure vivante, carte numérique déjà posable sur case vide après Extraction | Pose ordinaire ; aucun passage en armure | Spécifié, non exécuté |
+| GC-V2-T65 | Figure vivante, carte non posable, Joker légal permettant de déplacer une carte puis de libérer une case à faible sommet | Recours utile ; permettre l'action avant la pose, sans armure forcée | Spécifié, non exécuté |
+| GC-V2-T66 | Plusieurs Jokers/As disponibles, un seul recours utile | Présenter les actions utiles, ne pas imposer de dépenser une action inutile | Spécifié, non exécuté |
+| GC-V2-T67 | Plusieurs actions spéciales légalement enchaînables, chacune isolément sans solution immédiate, mais combinaison débloquant la carte | Recours global utile ; ne pas conclure trop tôt à l'armure | Spécifié, non exécuté |
+| GC-V2-T68 | Figure vivante, aucune action utile, carte convertie en armure faisant atteindre seuil J/Q 20 ou K 19 | Défaite immédiate selon résistance actuelle | Spécifié, non exécuté |
+| GC-V2-T69 | Deux figures vivantes compatibles pour l'armure, une de même enseigne et une de même couleur | Même enseigne et valeur minimale prioritaires selon la règle inverse | Spécifié, non exécuté |
+| GC-V2-T70 | Joker restant inutilisé après attribution d'armure, puis victoire ultérieure | Joker conserve son statut disponible et contribue au score final | Spécifié, non exécuté |
+| GC-V2-T71 | Aucune figure vivante, carte numérique non posable avec Joker inutilisable | **GC-06** prioritaire : numérique mise de côté, pas d'armure | Spécifié, non exécuté |
+| GC-V2-T72 | Sauvegarde/reprise au moment de choisir le recours ou après une attribution d'armure | Carte en attente, ressources, armures et seuils conservés sans double effet | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-08 / G-08 :** si la pioche a été vide puis réapprovisionnée par une Extraction et qu'une victoire survient, **le score doit-il rester le nombre d'actions spéciales non dépensées à la victoire**, ou faut-il distinguer/majorer/pénaliser ce cas ? La règle générale Version 2 fixe le score sur les actions spéciales restantes ; aucune exception explicite en cas d'épuisement temporaire n'a été documentée.
