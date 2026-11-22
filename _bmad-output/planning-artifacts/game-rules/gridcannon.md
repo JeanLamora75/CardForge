@@ -1687,4 +1687,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T413 | Jeu sur smartphone avec défilement tactile | Glisser-déposer et navigation tactile sans conflit majeur | À vérifier en UX, non exécuté |
 | GC-V2-T414 | Jeu clavier seul / lecteur d'écran, FR/EN | Toutes les destinations et confirmations accessibles sans glisser | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-38 / indication des destinations légales :** lors de la sélection ou du glissement d'une carte, faut-il mettre en évidence les destinations autorisées ? **A** aucune indication préalable, seulement retour après tentative ; **B** surbrillance discrète des destinations légalement disponibles, sans jouer à la place du joueur et sans révéler de cartes cachées ; **C** surbrillance assortie d'un classement ou d'un conseil stratégique pour chaque destination. L'indication doit rester cohérente avec la phase, les actions spéciales et la prévisualisation GC-23.
+**GC-38 : option B validée ultérieurement — surbrillance discrète des seules destinations légales, voir §52.**
+
+
+## 52. Décision UX Gridcannon V2 — GC-38 : surbrillance discrète des destinations légales
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'une carte déplaçable est sélectionnée ou commence un glisser-déposer (GC-37), CardForge **met discrètement en évidence les seules destinations actuellement légales** selon les règles de Gridcannon Version 2 et la phase réelle de la partie. Le dispositif informe sur la **légalité** d'un coup et non sur son intérêt stratégique : ni classement, ni conseil « meilleur coup », ni automatisation des choix du joueur.
+
+### 52.1. Contrat fonctionnel et UX
+
+1. **Calcul de légalité :** utiliser les capacités de validation du **moteur métier comme source de vérité** ; les destinations mises en évidence respectent les piles, la phase de jeu, la nature de la carte, les contraintes de placement et les décisions GC-01 à GC-37. Ne pas conserver une seconde matrice de règles propre à l'interface.
+2. **Déclenchement :** afficher les destinations autorisées après sélection de la source par clic/toucher/clavier ou au démarrage d'un glissement. Sans source sélectionnée, aucune suggestion permanente ne doit surcharger le plateau.
+3. **Non-mutant :** calcul, affichage, survol, déplacement du doigt et retrait de la surbrillance ne modifient ni carte, ni pioche, ni figure, ni armure, ni As/Joker, ni score. Aucun tir n'est déclenché sans confirmation métier.
+4. **Portée stricte :** montrer uniquement les destinations légales **à cet instant** ; les zones « possibles après un autre mouvement » ne doivent pas apparaître comme déjà accessibles.
+5. **Aucune révélation cachée :** ne pas consulter la face ou l'ordre des cartes non révélées pour calculer la surbrillance. Le nombre de cases surlignées ne doit pas dépendre d'une information cachée indisponible au joueur.
+6. **Actions spéciales :** lorsque le joueur prépare une Réaffectation par Joker GC-30, les destinations surlignées sont celles autorisées pour la **carte supérieure concernée**, selon les conditions d'activation réelles. La surbrillance ne consomme pas le Joker. Pour un As, indiquer uniquement les piles pouvant légalement être extraites, sans prétendre qu'il s'agit de destinations de pose.
+7. **Choix ambigu :** pour les actions exigeant un arbitrage (ex. GC-21), ne pas sélectionner automatiquement une cible ou une figure. Le surlignage ne décide pas d'un tir ni de son issue.
+8. **Prévisualisation GC-23 :** une destination peut être légalement sélectionnable mais entraîner une attaque défavorable : elle reste indiquée comme **légale**, sans code couleur suggérant une recommandation stratégique. Les valeurs de combat et résultats prévus relèvent de la prévisualisation distincte.
+9. **Fin de sélection :** retirer les marqueurs quand le joueur annule, ferme la partie, inspecte éventuellement une carte GC-36 puis revient sans source active, confirme un mouvement, ou change de phase. Si l'inspection conserve une sélection active, restaurer uniquement les marqueurs toujours valides après fermeture.
+10. **État mis à jour :** recalculer quand le plateau, les ressources spéciales ou la phase changent ; éviter les marqueurs obsolètes lors d'une reprise de sauvegarde ou d'actions rapides dans plusieurs onglets. La confirmation du moteur reste déterminante, même si la visualisation est périmée.
+11. **Lisibilité et accessibilité :** surbrillance discrète visible en clair/sombre et sur mobile, sans masquer les illustrations ni la grille, et complétée par une alternative non fondée sur la seule couleur (bordure, icône ou annonce textuelle). Au clavier/lecteur d'écran, les destinations permises sont identifiables et parcourables ; messages en français et anglais au MVP (GC-28).
+12. **Aucune obligation d'utiliser les marqueurs :** les joueurs peuvent encore choisir une destination et recevoir un message d'erreur en cas d'illégalité ; l'assistance GC-26 demeure facultative. L'absence de destination légale n'invente ni mouvement ni défaite, lesquelles sont évaluées par le moteur (GC-20).
+
+**Exemple :** le joueur sélectionne une carte numérique et voit deux cases surlignées. Il choisit la seconde : GC-23 affiche le résultat du tir, sans aucun bonus stratégique. S'il annule, les cartes restent en place. Après un déplacement confirmé, les destinations sont recalculées selon la nouvelle grille.
+
+**Statut : GC-38 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucune interface développée ni test exécuté.
+
+### 52.2. Scénarios de conformité — GC-38
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T415 | Sélection de carte avec deux destinations légales | Seules ces destinations sont mises en évidence | Spécifié, non exécuté |
+| GC-V2-T416 | Glisser-déposer sur mobile depuis une source autorisée | Même ensemble de cases légales que la sélection classique GC-37 | Spécifié, non exécuté |
+| GC-V2-T417 | Survol ou sélection sans confirmation | État du moteur, ressources et compteur de pioche inchangés | Spécifié, non exécuté |
+| GC-V2-T418 | Destination légale provoquant une attaque insuffisante | Destination indiquée comme légale, sans conseil de qualité du coup | Spécifié, non exécuté |
+| GC-V2-T419 | Source non déplaçable dans cette phase | Aucune destination proposée, aucune action autorisée | Spécifié, non exécuté |
+| GC-V2-T420 | Joker en cours de sélection | Destinations légales de réaffectation visibles, Joker non dépensé | Spécifié, non exécuté |
+| GC-V2-T421 | As prêt à extraire une pile | Seules les piles extractibles sont signalées, sans dépense avant confirmation | Spécifié, non exécuté |
+| GC-V2-T422 | Annulation ou fin de sélection | Surbrillance retirée sans mutation de la partie | Spécifié, non exécuté |
+| GC-V2-T423 | Changement de plateau, de phase ou reprise | Marqueurs recalculés selon l'état courant | Spécifié, non exécuté |
+| GC-V2-T424 | Pioche cachée non révélée | Surbrillance indépendante de son identité ou ordre | Spécifié, non exécuté |
+| GC-V2-T425 | Clic après marqueur devenu obsolète | Moteur rejette le coup illégal sans effet métier | Spécifié, non exécuté |
+| GC-V2-T426 | Navigation au clavier ou lecteur d'écran FR/EN | Destinations légales identifiables sans couleur seule | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-39 / présentation de la dernière action :** comment aider le joueur à comprendre ce qui vient de se produire après un placement, une attaque ou l'utilisation d'un As/Joker, sans créer d'historique complet ? **A** aucun rappel au-delà des animations et valeurs du plateau ; **B** bref message récapitulatif de la dernière action confirmée, consultable ou masquable, distinct du moteur ; **C** journal chronologique complet des actions de la partie. Le récapitulatif ne doit jamais inventer de tir ni révéler la pioche, et doit rester localisable FR/EN.
