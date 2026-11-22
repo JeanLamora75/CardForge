@@ -746,3 +746,40 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T153 | Pioche épuisée avant qu'une numérique ne remplisse la case | Cas limite signalé sans création artificielle de carte, défaite ajoutée ou réinitialisation tacite du remplacement | À vérifier par invariant, non exécuté |
 
 **Prochaine décision GC-15 :** la carte numérique **posée comme remplacement initial** peut se trouver en bordure, face à une figure déjà présente. Doit-elle **déclencher des tirs comme une pose ordinaire** (avec éventuellement les deux axes d'un coin), ou le remplacement reste-t-il une opération de préparation **sans attaque** ? Le référentiel documente la faculté de remplacement mais ne confirme pas explicitement l'application des tirs à cette sous-phase.
+
+
+## 29. Décision fonctionnelle Gridcannon V2 — GC-15 : absence de tir pendant le remplacement initial
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Le **remplacement facultatif d'une carte de la grille pendant la mise en place** défini par **GC-14** est une opération de **préparation** : la carte numérique de remplacement est posée dans sa case **sans déclencher de tir**, même si elle se trouve en bordure ou dans un coin et que des figures ennemies ont déjà été placées aux extrémités de la ligne ou de la colonne. La règle de double tir simultané **GC-04** ne s'applique qu'aux **poses de jeu susceptibles de tirer** ; la simple complétion du remplacement préparatoire ne constitue pas une attaque.
+
+**Contrat fonctionnel CardForge :**
+1. **Phase :** le drapeau de préparation reste actif depuis l'offre de remplacement initial jusqu'au **refus explicite** du remplacement ou à sa **complétion entière** (case numérique reconstituée, puis figures temporairement mises en attente placées conformément à GC-14). La prise d'une nouvelle carte pendant cette sous-phase n'est pas une pose ordinaire d'un tour de jeu.
+2. **Pose de remplacement sans tir :** lorsqu'une carte numérique est obtenue après les tirages intermédiaires de GC-14, elle prend la place de la carte retirée ; son insertion ne déclenche **aucun calcul de puissance, aucune attaque horizontale ou verticale et aucune élimination**, quelle que soit la case (coin, bordure ou centre).
+3. **Figures initiales déjà présentes :** une figure éventuellement alignée et vulnérable demeure **vivante et inchangée** ; la carte de remplacement seule ne peut pas la vaincre. Les chiffres de résistance, armure et compteurs de figures vaincues ne sont pas modifiés par cette substitution.
+4. **Figures révélées durant le remplacement :** les placer **après reconstitution de la grille**, dans l'ordre prévu par GC-14, avec les règles de position GC-01/02 et secours GC-13 ; leur placement ne déclenche pas rétroactivement un tir de la carte de remplacement contre une figure nouvellement installée.
+5. **Fin de préparation :** lorsque l'opération facultative est entièrement résolue (ou refusée), le moteur passe au **cycle normal**. Les poses numériques **ultérieures** doivent alors déclencher les attaques légales, et en coin les deux axes calculés selon GC-04 ; aucun tour d'attaque supplémentaire n'est offert gratuitement lors de la transition.
+6. La dispense de tir **ne s'étend pas aux actions normales du joueur une fois la partie commencée**, même si elles ont lieu immédiatement après le remplacement. Cette décision ne change aucune condition de victoire, défaite, score, figure ou armure.
+7. Les As et Jokers éventuellement **révélés pendant GC-14** rejoignent la réserve, mais le **droit de les activer volontairement au cours de la préparation encore inachevée** reste explicitement **ouvert sous GC-16**. GC-15 n'invente pas une permission ni une interdiction de Réaffectation pendant cette sous-phase.
+8. **Sauvegarde/reprise :** conserver le statut préparatoire, la carte numérique posée, la file éventuelle des figures à placer et le fait que **l'événement de tir est désactivé pour la pose de remplacement**. Ne jamais produire une attaque différée ou rejouer une élimination à la reprise.
+
+**Exemple :** une case en coin contient une carte remplacée ; une figure vivante est déjà située en face sur l'axe horizontal, une autre peut être présente sur l'axe vertical. Le joueur remplace cette carte par **9♦** et les deux sommets intermédiaires seraient normalement assez puissants pour vaincre les figures. **Aucune figure n'est attaquée**, car il s'agit d'un remplacement de préparation. Une **pose ordinaire ultérieure** sur une position d'extrémité déclenche de nouveau les tirs réglementaires.
+
+**Statut : GC-15 CLOS pour CardForge.** L'interdiction des tirs pendant ce remplacement est un **arbitrage de phase approuvé par le porteur**, pas une précision explicitement confirmée du règlement publié par Tom Francis. Tests documentés ci-dessous, **non exécutés**.
+
+### 29.1. Scénarios de conformité — GC-15
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T154 | Remplacement initial en bordure, tir théoriquement suffisant contre figure vivante | Aucun tir, aucune figure vaincue | Spécifié, non exécuté |
+| GC-V2-T155 | Remplacement initial dans un coin, deux tirs théoriquement suffisants | Aucun tir horizontal ni vertical ; pas de double attaque GC-04 | Spécifié, non exécuté |
+| GC-V2-T156 | Remplacement initial au centre de la grille | Pose préparatoire sans tir, comme ailleurs | Spécifié, non exécuté |
+| GC-V2-T157 | Remplacement initial avec puissance insuffisante | Aucune évaluation de tir ; nouvelle carte conservée | Spécifié, non exécuté |
+| GC-V2-T158 | Figure Q♣ rencontrée pendant tirage de remplacement puis placée après la nouvelle numérique | Pas de tir rétroactif de la nouvelle carte contre Q♣ | Spécifié, non exécuté |
+| GC-V2-T159 | Deux figures retenues pendant l'opération initiale puis placées | Figures restent vivantes ; pas d'attaque de préparation sur aucun axe | Spécifié, non exécuté |
+| GC-V2-T160 | Joueur refuse le remplacement initial, puis effectue une pose numérique normale en bordure | Tirs normaux actifs à partir du jeu réel | Spécifié, non exécuté |
+| GC-V2-T161 | Joueur valide le remplacement puis pioche une numérique au premier tour | La **pose de jeu ultérieure** peut tirer selon les règles habituelles | Spécifié, non exécuté |
+| GC-V2-T162 | Sauvegarde pendant l'attente d'une numérique de remplacement puis reprise | Phase préparatoire rétablie ; pas d'attaque sur insertion de la numérique | Spécifié, non exécuté |
+| GC-V2-T163 | Sauvegarde après insertion de la nouvelle carte mais avant placement des figures en attente | Aucune attaque différée ; reprise des placements de figures uniquement | Spécifié, non exécuté |
+| GC-V2-T164 | Dernière figure initiale placée et sortie de préparation | Aucun tir rétroactif ni victoire artificielle à la transition | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-16 :** si un As ou un Joker a été révélé et mis en réserve pendant la mise en place ou pendant le **remplacement facultatif GC-14**, peut-on **activer volontairement une action spéciale alors que ce remplacement n'est pas encore terminé** (case provisoirement vide, figures en attente) ? Distinguer cette sous-phase préparatoire du droit déjà validé en **GC-11** d'utiliser des actions pendant la recherche d'une nouvelle figure **en cours de partie**.
