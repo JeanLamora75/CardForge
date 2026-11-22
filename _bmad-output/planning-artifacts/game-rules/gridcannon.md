@@ -2217,4 +2217,51 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T563 | Tutoriel avec mode lisibilité GC-48 et sons coupés | Compréhensible sans dépendre de l'audio ni d'une animation | À vérifier en UX, non exécuté |
 | GC-V2-T564 | Tutoriel sur mobile, clavier, lecteur d'écran en FR/EN | Étapes, choix de sortie et guidage accessibles | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-50 / adaptation du niveau d'accompagnement après le tutoriel :** comment aider un joueur qui connaît les règles sans alourdir la partie ? **A** conserver les aides GC-26 manuellement accessibles uniquement ; **B** proposer des **conseils contextuels de règles**, facultatifs et désactivables, uniquement lorsqu'un joueur tente une action illégale ou rencontre pour la première fois une mécanique, sans recommandations stratégiques ; **C** afficher en permanence des conseils de jeu et de stratégie. Le mécanisme doit respecter les règles originales, la confidentialité des cartes cachées, les préférences d'accessibilité et la distinction entre assistance aux règles et suggestion de « meilleur coup ».
+**GC-50 : option B validée ultérieurement — conseils contextuels de règles facultatifs et non stratégiques ; voir §64.**
+
+
+## 64. Décision UX Gridcannon V2 — GC-50 : conseils contextuels de règles facultatifs
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** CardForge peut présenter de **brefs conseils contextuels facultatifs** lorsqu'un joueur tente une action illégale ou découvre **pour la première fois** une mécanique pertinente. Ces conseils expliquent les **règles applicables**, sans conseiller un mouvement supérieur, anticiper l'avenir, classer des destinations ni remplacer la liberté de décision. Le joueur peut les désactiver facilement et accéder à l'aide officielle GC-26.
+
+### 64.1. Contrat fonctionnel et UX
+
+1. **Conditions de déclenchement :** afficher un conseil uniquement après une tentative d'action déclarée illégale par le moteur, ou à la première rencontre d'une mécanique identifiée (placement, attaque, As, Joker, armure, etc.) dans un contexte où une explication est utile. Une simple animation, ouverture d'inspection ou sélection légale ne doit pas déclencher d'interruption répétitive.
+2. **Explication fidèle :** chaque conseil cite une contrainte ou un mécanisme réellement applicable à l'état public courant et peut renvoyer au passage correspondant de GC-26. L'interface n'invente aucune condition ni exception à Gridcannon V2.
+3. **Aucune stratégie :** exclure « meilleur coup », scores d'opportunité, prévision de cartes à venir, classement de cases, analyse de chances ou recommandation de sacrifier une carte ; distinguer explicitement **légalité du coup** et **qualité du coup**.
+4. **Aucune révélation cachée :** ne jamais exploiter ou divulguer la valeur, l'enseigne, le rang, la couleur ou la position future de cartes cachées. Le conseil n'utilise que les informations autorisées au joueur.
+5. **Activation adaptée :** proposer les conseils lors des premiers usages du jeu, activés par défaut pour les joueurs débutants, avec désactivation depuis la zone de conseil et depuis les paramètres. Après désactivation, seuls les retours essentiels d'erreur de validation restent affichés.
+6. **Consentement et discrétion :** afficher des messages compacts, non modaux en usage ordinaire, non bloquants, n'empêchant pas l'accès à la grille ni le glisser-déposer GC-37. Les conseils d'introduction à une mécanique ne sont pas répétés à chaque partie.
+7. **Gestion des répétitions :** mémoriser localement l'affichage d'un conseil de découverte par mécanisme, avec identifiant stable. Les messages liés à un coup illégal peuvent rester disponibles, mais doivent éviter la répétition intempestive lors de gestes identiques rapprochés.
+8. **Retours d'erreur toujours disponibles :** même si l'option est désactivée, le rejet d'une action illégale doit rester compréhensible et accessible (GC-37) ; seul le supplément pédagogique facultatif est masqué.
+9. **Préférence indépendante :** persister localement le choix d'affichage, distinct des sauvegardes GC-32/46, de la réussite du tutoriel GC-49, des statistiques GC-34/35 et du mode de lisibilité GC-48.
+10. **Intégration avec le tutoriel :** le joueur qui a suivi le tutoriel GC-49 peut encore recevoir des conseils utiles sur des mécanismes non vus ; le tutoriel ne conditionne pas l'accès aux conseils ni leur désactivation.
+11. **Différence avec GC-23/38/39 :** l'aide explique une règle au besoin ; la prévisualisation GC-23 montre un résultat avant confirmation, GC-38 indique les destinations légales et GC-39 résume une action **déjà confirmée**. Les contenus ne doivent pas se substituer les uns aux autres.
+12. **Aucune mutation :** apparition, fermeture, changement de préférence et consultation d'un conseil ne jouent pas de carte, ne piochent pas, ne consomment ni As ni Joker et n'affectent pas le score, la sauvegarde métier ou les statistiques.
+13. **Accessibilité et langue :** messages lisibles en français et anglais dès le MVP GC-28, extensibles aux futures langues, accessibles clavier/lecteur d'écran ; aucun message important ne dépend uniquement de la couleur ou du son. Compatibilité avec orientations GC-41, plein écran GC-45 et lisibilité renforcée GC-48.
+14. **Portée transverse :** mutualiser le composant visuel et les préférences à l'échelle CardForge, mais conserver les déclencheurs et textes de règles propres à chaque jeu, sans transférer des règles de Gridcannon aux autres titres.
+
+**Exemple :** le joueur essaie une destination interdite. Le moteur refuse le déplacement ; un message explique brièvement la contrainte pertinente et renvoie aux règles. Si le joueur désactive les conseils, le rejet de l'action reste visible mais le développement pédagogique ne réapparaît plus. La tentative ne modifie ni la partie ni la pioche.
+
+**Statut : GC-50 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire seulement ; aucune fonctionnalité implémentée ni tests exécutés.
+
+### 64.2. Scénarios de conformité — GC-50
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T565 | Premier essai de placement illégal | Rejet du moteur et explication de règle pertinente | Spécifié, non exécuté |
+| GC-V2-T566 | Tentative refusée avec conseils désactivés | Retour essentiel d'erreur maintenu, sans conseil pédagogique | Spécifié, non exécuté |
+| GC-V2-T567 | Première rencontre d'une mécanique inconnue | Conseil bref contextualisé, non bloquant | Spécifié, non exécuté |
+| GC-V2-T568 | Nouvelle rencontre de la même mécanique | Pas de répétition automatique systématique du conseil de découverte | Spécifié, non exécuté |
+| GC-V2-T569 | Déplacement légal, sélection ou inspection simple | Pas de conseil intempestif ni d'interruption | Spécifié, non exécuté |
+| GC-V2-T570 | Conseil de figure avec cartes futures cachées | Aucune information sur les cartes non révélées | Spécifié, non exécuté |
+| GC-V2-T571 | Plusieurs destinations légales de qualité stratégique différente | Aucun classement ou « meilleur coup » proposé | Spécifié, non exécuté |
+| GC-V2-T572 | Désactivation depuis un conseil affiché | Conseils pédagogiques masqués et préférence mémorisée | Spécifié, non exécuté |
+| GC-V2-T573 | Réactivation depuis paramètres après plusieurs parties | Conseils disponibles sans changement de sauvegarde ni statistiques | Spécifié, non exécuté |
+| GC-V2-T574 | Tutoriel GC-49 ignoré ou achevé | Conseils accessibles indépendamment de l'état du tutoriel | Spécifié, non exécuté |
+| GC-V2-T575 | Fermeture d'un conseil pendant une prévisualisation GC-23 | Aucun mouvement ou tir confirmé | Spécifié, non exécuté |
+| GC-V2-T576 | Rafraîchissement, changement de langue ou reset GC-35 | Préférence sauvegardée ; traductions à jour ; statistiques indépendantes | Spécifié, non exécuté |
+| GC-V2-T577 | Conseils en plein écran, portrait et paysage, mode lisibilité GC-48 | Plateau accessible et message lisible | À vérifier en UX, non exécuté |
+| GC-V2-T578 | Clavier et lecteur d'écran, FR/EN | Conseil et action de désactivation accessibles sans code couleur seul | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-51 / raccourcis clavier facultatifs :** comment accélérer l'utilisation de Gridcannon sur ordinateur sans compromettre les interactions tactiles et l'accessibilité ? **A** navigation et activation au clavier standard uniquement, sans raccourcis dédiés ; **B** quelques **raccourcis clavier facultatifs, affichés dans l'aide**, pour les fonctions fréquentes (annuler une sélection, inspecter, recentrer le plateau, ouvrir l'aide), sans jamais jouer de coup sans les confirmations prévues ; **C** système complet de raccourcis personnalisables par action, avec éditeur de touches. Préserver les commandes accessibles sans raccourci et éviter toute collision avec les raccourcis navigateur et les champs de saisie.
