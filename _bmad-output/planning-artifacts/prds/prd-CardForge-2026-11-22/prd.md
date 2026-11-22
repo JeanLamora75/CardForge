@@ -258,3 +258,10 @@ Les [sources et contradictions documentées](../../game-rules/recherche-approfon
 **Le porteur a validé l'option B pour Clear the Dungeon : plusieurs attaques partielles contre différents monstres peuvent rester sur le plateau entre les tours et les mains.** Cette règle complète FR-06/FR-07 et impose à FR-16/FR-18 de conserver et restaurer l'affectation des cartes à chaque monstre. Le résultat n'est déterminé qu'après une attaque complète valide. Décision de comportement CardForge ; la documentation historique reste prudente sur la formulation originale exacte. Le déplacement/rappel de cartes posées demeure **CTD-02 ouvert**.
 
 Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md) et [matrice de tests](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision fonctionnelle CTD-ARB-02 — réaffectation pendant la main actuelle (22 novembre 2026)
+
+**Option B validée pour Clear the Dungeon :** toute carte posée pendant la main actuelle peut être récupérée dans cette main ou déplacée sur un autre monstre jusqu'à la clôture de la main, tant que l'attaque concernée n'est pas résolue. Les cartes déposées au cours des mains précédentes sont irréversiblement engagées ; les attaques déjà résolues restent définitives. Les FR-06, FR-07, FR-16 et FR-18 doivent respecter cette distinction, y compris après sauvegarde et reprise.
+
+**Statut :** CTD-02 / CTD-ARB-02 **validé**. La prochaine décision est CTD-03 (clôture de main et cartes non utilisées). [Règles Clear the Dungeon](../../game-rules/clear-the-dungeon.md).
