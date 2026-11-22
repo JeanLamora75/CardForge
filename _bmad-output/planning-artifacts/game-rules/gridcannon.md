@@ -401,3 +401,40 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T49 | Animation de retournement d'un groupe extrait face cachée | L'animation ne modifie jamais l'ordre de tirage prévu | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-06 / G-05 :** lorsqu'aucune figure vivante n'est actuellement présente (moins de douze vaincues), comment traiter une carte numérique qui ne peut être posée pendant la recherche d'une nouvelle figure, alors qu'aucune cible vivante ne pourrait recevoir l'armure ? L'existence du cycle d'attente des figures est documentée ; ses détails en situation d'impasse sont à préciser.
+
+
+## 20. Décision fonctionnelle Gridcannon V2 — GC-06 / G-05 : recherche d'une nouvelle figure en l'absence de cible vivante
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'**aucune figure vivante n'est présente** et que **moins de douze figures sont vaincues**, le jeu entre dans la **recherche de la prochaine figure**. Les **cartes numériques 2 à 10 rencontrées** pendant cette recherche sont **temporairement écartées**, qu'elles soient normalement posables sur une pile ou non. Elles ne sont ni posées sur la grille, ni attribuées comme armure, ni consommées. Lorsqu'une nouvelle figure apparaît, les cartes numériques écartées sont réintroduites **sous la pioche**, sans mélange, conformément au mécanisme de recherche de figure décrit par la Version 2.
+
+**Contrat métier CardForge :**
+1. **Déclencheur :** nombre de figures **vivantes = 0** et nombre de figures **vaincues < 12**. Si les douze figures sont vaincues, la **victoire immédiate** prévaut ; aucune recherche supplémentaire.
+2. Tant que la recherche est active, une carte numérique révélée est **mise en attente temporaire** sans consulter la règle normale de pose `carte tirée ≥ sommet de pile` ni la convertir en armure. Le fait qu'une carte soit posable ou impossible à poser est **sans effet** sur cette décision.
+3. Au premier tirage d'une **nouvelle figure (J, Q, K)**, le moteur traite cette apparition avec les règles de placement de figures **GC-01 et GC-02**, puis remet les cartes numériques mises de côté **sous la pioche sans remélange** ; le moteur reprend le cycle ordinaire une fois la figure apparue. Les cartes temporairement retenues ne sont pas comptées deux fois et conservent leur identité. Les détails d'ordre fin du lot de cartes traversées seront consignés dans le contrat de pioche, sans réutiliser à tort la décision spécifique **GC-05** à l'Extraction des piles.
+4. **Aucune armure ne peut être attribuée** lorsqu'il n'y a aucune figure vivante. Cela ne crée aucune nouvelle condition de défaite ; le joueur n'est pas contraint de dépenser une action spéciale uniquement parce qu'une carte numérique rencontrerait une grille non compatible.
+5. **As et jokers rencontrés durant cette phase :** leur traitement précis (mise en réserve d'action spéciale ou autre disposition), ainsi que l'usage volontaire d'actions déjà disponibles, **ne sont pas déterminés par GC-06**. Ne pas généraliser sans validation le mécanisme d'attente des cartes numériques à ces cartes spéciales.
+6. **Pioche épuisée avant l'apparition d'une nouvelle figure :** état limite **non clos** ; ne pas inventer une défaite automatique, un remélange ou une nouvelle carte. À examiner dans l'analyse des impasses **G-05**.
+7. Une sauvegarde pendant la recherche doit conserver **le mode de recherche, la pioche restante et la zone temporaire de cartes numériques** sans duplication, perte, classement nouveau ou attribution d'armure au rechargement.
+8. Le comportement ne modifie **pas** GC-01/02 (attraction et cases occupées), GC-03 (case vide après Extraction), GC-04 (double tir), GC-05 (ordre de piles extraites) ni les règles normales d'armure **lorsqu'une figure vivante est présente**.
+
+**Exemple :** sept figures déjà vaincues sur douze, aucune vivante, grille dont tous les sommets valent au moins 5. Le joueur traverse successivement `4♠`, `8♦`, puis `Q♥`. Les cartes `4♠` et `8♦` sont **retenues temporairement sans pose ni armure**, même si `8♦` aurait pu être placée ; `Q♥` est placée légalement autour de la grille et les deux numériques sont réinsérées sous la pioche sans être jouées.
+
+**Statut : GC-06 / G-05 (sous-cas sans figure vivante) CLOS pour CardForge.** Le parcours de pioche en l'absence de figure vivante est documenté dans la Version 2 ; sa formalisation explicite sur les cartes numériques est approuvée. **Les autres situations d'impasse G-05 restent ouvertes.** Aucun test logiciel n'a été exécuté.
+
+### 20.1. Scénarios de conformité — GC-06 / G-05
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T50 | 7 figures vaincues, 0 vivante, pioche 4♠ non posable sur une grille de sommets ≥ 5 | 4♠ retenue temporairement ; **aucune armure, aucune défaite** | Spécifié, non exécuté |
+| GC-V2-T51 | Même situation, pioche une carte 8♦ qui serait normalement posable | Carte 8♦ **également retenue**, pas de pose tactique durant la recherche | Spécifié, non exécuté |
+| GC-V2-T52 | Deux cartes numériques tirées avant la prochaine figure | Deux cartes identifiées dans la zone temporaire, sans double consommation | Spécifié, non exécuté |
+| GC-V2-T53 | Après des numériques écartées, apparition d'une Dame de cœur | Figure placée suivant GC-01/02, numériques réintroduites sous la pioche sans mélange | Spécifié, non exécuté |
+| GC-V2-T54 | Aucun ennemi vivant et une carte numérique non posable alors qu'une action spéciale est disponible | La carte suit **la recherche de figure**, sans obligation de dépenser l'action ni recevoir l'armure | Spécifié, non exécuté |
+| GC-V2-T55 | 12 figures déjà vaincues, aucune figure vivante | **Victoire**, aucune recherche de figure ni carte supplémentaire tirée | Spécifié, non exécuté |
+| GC-V2-T56 | Sauvegarde avec 2 cartes numériques temporairement écartées puis reprise | Même phase et mêmes identités de cartes ; aucun tirage, dégât ou armure fantôme | Spécifié, non exécuté |
+| GC-V2-T57 | Aucune figure vivante, pioche numérique traversée puis apparition normale d'une figure, retour au cycle de jeu | Cycle normal repris après placement de la figure et réintroduction des cartes numériques | Spécifié, non exécuté |
+| GC-V2-T58 | Dernière carte numérique tirée alors qu'aucune figure n'est vivante, moins de 12 vaincues | **Cas explicitement non tranché** : aucun remélange ni verdict de défaite inventé sous GC-06 ; à arbitrer avec G-05 | En attente d'arbitrage G-05 |
+| GC-V2-T59 | Tirage d'un As ou Joker pendant la recherche | **Cas explicitement non tranché** pour GC-06 ; à préciser séparément, sans supposer que le comportement numérique s'applique | En attente d'arbitrage |
+| GC-V2-T60 | Fin de phase après passage de plusieurs numériques | Le total physique de cartes est conservé ; aucune carte numérique traversée ne devient une armure | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-07 / G-07 :** lorsqu'une carte numérique est **impossible à poser alors qu'une figure vivante existe**, une **action spéciale encore disponible mais incapable de rendre la carte posable** bloque-t-elle l'attribution d'armure ? Ce cas est distinct de la recherche de figure GC-06 et des règles d'Extraction d'As (GC-03/05).
