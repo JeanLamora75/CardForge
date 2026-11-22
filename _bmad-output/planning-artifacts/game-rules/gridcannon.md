@@ -2310,4 +2310,51 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T590 | Clavier seul, écran tactile, lecteur d'écran | Commandes accessibles sans raccourci et focus correct | À vérifier en accessibilité, non exécuté |
 | GC-V2-T591 | Orientation mobile et plein écran | Comportement compatible, aucune commande de jeu involontaire | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-52 / confirmation des actions irréversibles ordinaires :** faut-il demander confirmation pour chaque coup de jeu afin d'éviter les erreurs de manipulation, ou s'appuyer sur la prévisualisation et les garde-fous déjà décidés ? **A** chaque coup légal est exécuté immédiatement après choix de la destination, sous réserve des confirmations spécifiques déjà prévues ; **B** confirmation systématique de chaque placement et déplacement, même simple ; **C** confirmation configurable, désactivable pour les coups ordinaires, mais toujours obligatoire pour les actions explicitement sensibles. Attention : les confirmations spécifiques des attaques GC-23, des As/Jokers GC-30 et des abandons GC-32 **restent inchangées** quelle que soit l'option.
+**GC-52 : option C validée ultérieurement — confirmation configurable des coups ordinaires, sans toucher aux confirmations spécifiques ; voir §66.**
+
+
+## 66. Décision UX Gridcannon V2 — GC-52 : confirmation facultative et configurable des coups ordinaires
+
+**Option C VALIDÉE par le porteur le 22 novembre 2026.** Le joueur dispose dans les paramètres de Gridcannon V2 d'une préférence **« Confirmer les coups ordinaires »**, **désactivée par défaut**. Lorsqu'elle est activée, chaque placement ou déplacement ordinaire légal qui ne relève pas déjà d'un parcours de confirmation spécifique attend un accord explicite du joueur avant de modifier la partie. Les confirmations **déjà exigées** par les décisions antérieures, notamment la prévisualisation/confirmation des attaques GC-23, les activations d'As/Joker GC-30 et l'abandon ou le recommencement GC-32, **demeurent obligatoires dans les deux modes** et ne sont jamais remplacées ni doublées inutilement.
+
+### 66.1. Contrat fonctionnel et UX
+
+1. **Préférence dédiée :** proposer une option identifiable « Confirmer les coups ordinaires », désactivée par défaut pour préserver la fluidité. L'activation ou la désactivation est volontaire et indépendante des autres préférences CardForge.
+2. **Portée des coups ordinaires :** le choix concerne les placements et déplacements autorisés par le moteur **qui ne disposent d'aucune confirmation imposée par un autre mécanisme**. Il n'autorise jamais l'omission d'une prévisualisation ou confirmation spécifique existante.
+3. **Sans confirmation supplémentaire, mode par défaut :** si l'action est légale et qu'aucun flux GC-23/30/32 ne requiert confirmation, le moteur peut appliquer le coup après choix valide de source/destination. Si une confirmation spécifique est requise, elle demeure obligatoire même avec cette préférence désactivée.
+4. **Avec confirmation activée :** pour un coup ordinaire légal, afficher un récapitulatif succinct de la carte et de la destination choisies, avec « Annuler » et « Confirmer ». Le choix reste purement provisoire jusqu'à confirmation ; annuler ne change ni pile, ni pioche, ni ressources.
+5. **Aucune double confirmation :** lorsque le coup déclenche déjà la prévisualisation/confirmation GC-23 ou relève d'une action spéciale GC-30, conserver le **parcours existant** plutôt que d'empiler deux modales demandant le même accord. Les confirmations destructrices GC-32 restent spécifiques.
+6. **Validation métier finale :** vérifier à nouveau les règles et la révision de la partie lors de la confirmation, y compris si l'état a évolué entre sélection et clic final, sous la coordination multi-onglets GC-47. Refuser proprement un coup devenu illégal.
+7. **Deux interfaces équivalentes :** la préférence s'applique uniformément au glisser-déposer et à la sélection puis destination GC-37 ; une dépose n'équivaut pas à une confirmation finale lorsque celle-ci est exigée.
+8. **Prévisualisation distincte :** les informations de combat GC-23 restent exactes, complètes et antérieures à l'action confirmée. L'option GC-52 ne transforme jamais un aperçu en tir automatique ni ne permet d'ignorer la prévisualisation.
+9. **Accessibilité :** commandes « Annuler » et « Confirmer » explicites, accessibles à la souris, au tactile, au clavier et au lecteur d'écran, avec focus prévisible. Les raccourcis GC-51 ne déclenchent pas une validation sans le parcours de confirmation prévu.
+10. **Désactivation mémorisée :** conserver localement cette préférence entre parties et rechargements ; elle ne disparaît pas après remise à zéro des statistiques GC-35 et ne modifie ni tutoriel GC-49 ni mode de lisibilité GC-48.
+11. **Changement en cours de partie :** autoriser la modification depuis les paramètres sans changer le moteur ni consommer une action ; si un coup provisoire attend confirmation, le terminer ou l'annuler proprement avant d'appliquer le nouveau réglage.
+12. **Retours et sauvegarde :** seul un coup effectivement confirmé met à jour la dernière action GC-39 et déclenche la sauvegarde GC-32/46. Les ouvertures/annulations de la demande de confirmation n'ajoutent aucune action.
+13. **Localisation et responsive :** texte et bouton traduits en français et anglais dès le MVP GC-28 ; modale compacte et non bloquée par l'orientation GC-41, le zoom GC-40 ou le plein écran GC-45.
+14. **Règles intactes :** l'option est un garde-fou d'interface et ne crée ni action de jeu, ni annulation rétroactive, ni exception aux règles de Gridcannon V2.
+
+**Exemple :** si une pose simple ne nécessite aucune confirmation spécifique, elle s'exécute directement avec le réglage par défaut ; lorsque le joueur active « Confirmer les coups ordinaires », la même pose attend son accord. En revanche, une pose entraînant la prévisualisation obligatoire d'une attaque GC-23 conserve toujours cette prévisualisation et son accord propre, quel que soit le réglage, sans deuxième demande redondante.
+
+**Statut : GC-52 CLOS pour CardForge — option C validée le 22 novembre 2026.** Décision documentaire uniquement ; aucun développement ni test exécuté.
+
+### 66.2. Scénarios de conformité — GC-52
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T592 | Nouvelle partie avec paramètres par défaut | Confirmation des coups ordinaires désactivée | Spécifié, non exécuté |
+| GC-V2-T593 | Pose ordinaire légale sans confirmation spécifique, option désactivée | Coup appliqué directement après sélection/destination | Spécifié, non exécuté |
+| GC-V2-T594 | Même pose avec option activée | Résumé et choix Annuler/Confirmer avant toute mutation | Spécifié, non exécuté |
+| GC-V2-T595 | Annulation de la confirmation d'un coup ordinaire | Carte, piles, ressources et sauvegarde métier inchangées | Spécifié, non exécuté |
+| GC-V2-T596 | Confirmation de coup ordinaire après activation | Une seule transition métier et une seule sauvegarde correspondante | Spécifié, non exécuté |
+| GC-V2-T597 | Coup soumis au parcours de prévisualisation GC-23, option désactivée | Prévisualisation et confirmation spécifique maintenues | Spécifié, non exécuté |
+| GC-V2-T598 | Même coup soumis à GC-23, option activée | Pas de deuxième confirmation redondante, accord spécifique respecté | Spécifié, non exécuté |
+| GC-V2-T599 | Utilisation d'As ou Joker avec option désactivée | Confirmation GC-30 toujours obligatoire | Spécifié, non exécuté |
+| GC-V2-T600 | Abandon ou nouvelle partie avec option désactivée | Confirmation GC-32 toujours obligatoire | Spécifié, non exécuté |
+| GC-V2-T601 | Glisser-déposer versus sélection classique GC-37 | Comportement de confirmation identique | Spécifié, non exécuté |
+| GC-V2-T602 | État ou propriétaire d'onglet modifié avant confirmation | Revalidation finale, coup obsolète refusé | Spécifié, non exécuté |
+| GC-V2-T603 | Changement de préférence puis rechargement | Choix local conservé sans modification de partie | Spécifié, non exécuté |
+| GC-V2-T604 | Annulation ou fermeture de modale, vérification GC-39/46 | Aucun faux dernier coup ni fausse sauvegarde annoncée | Spécifié, non exécuté |
+| GC-V2-T605 | Smartphone portrait/paysage, plein écran, clavier, lecteur d'écran FR/EN | Confirmation exploitable, focus correct, textes accessibles | À vérifier en UX et accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-53 / préférence de réduction des animations :** GC-24 prévoit déjà des animations courtes et facultatives ; comment respecter la sensibilité au mouvement et les réglages d'accessibilité de l'appareil ? **A** laisser uniquement le réglage manuel existant d'activation/désactivation des animations ; **B** respecter par défaut la préférence système « Réduire les animations/mouvements » quand elle existe, tout en permettant au joueur de choisir explicitement l'activation ou la désactivation dans CardForge ; **C** supprimer toutes les animations de la plateforme. La détection ne doit jamais modifier le moteur, retarder une confirmation métier ni rendre un résultat incompréhensible sans effet visuel.
