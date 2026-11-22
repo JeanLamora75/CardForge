@@ -2079,4 +2079,50 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T523 | Clavier, lecteur d'écran, FR/EN | Statuts et nouvelle tentative compréhensibles et accessibles | À vérifier en accessibilité, non exécuté |
 | GC-V2-T524 | Variations de statut sans mouvement joué | Statistiques, score et compteur de figures inchangés | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-47 / partie ouverte dans plusieurs onglets :** si le joueur ouvre la **même partie locale** dans deux onglets ou fenêtres, comment empêcher une sauvegarde ancienne d'écraser sa progression ? **A** autoriser les deux onglets à jouer indépendamment sans prévention des conflits ; **B** autoriser **un seul onglet actif en écriture**, avertir dans les autres avec mode consultation/possibilité de reprendre le contrôle de façon explicite ; **C** permettre des modifications simultanées et fusionner automatiquement leurs coups. Préserver la sauvegarde GC-32/46, la cohérence des statistiques et la jouabilité hors ligne.
+**GC-47 : option B validée ultérieurement — un seul onglet actif en écriture avec transfert explicite du contrôle ; voir §61.**
+
+
+## 61. Décision UX Gridcannon V2 — GC-47 : un seul onglet détenteur du droit d'écriture
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Pour une **même partie locale**, un seul onglet ou fenêtre est autorisé à émettre des actions métier et à écrire la sauvegarde courante. Les autres onglets peuvent afficher une **vue de consultation sans interaction métier** et proposer une commande explicite **« Reprendre le contrôle ici »**. Le transfert de contrôle invalide le droit d'écriture de l'ancien onglet et impose au nouvel onglet de charger la **dernière sauvegarde durable valide** avant d'accepter une action. Ce mécanisme reste local au navigateur et ne suppose aucune synchronisation cloud.
+
+### 61.1. Contrat fonctionnel, sécurité des données et UX
+
+1. **Identité de la partie :** l'exclusivité porte sur un identifiant stable de partie active propre à Gridcannon, pas sur le navigateur entier ni sur toutes les parties de CardForge. Une autre partie ou un autre jeu demeure indépendant.
+2. **Un seul propriétaire :** établir un mécanisme de propriété ou bail local par partie avec identifiant de détenteur et génération monotone (**fencing token** ou équivalent) contrôlée à chaque mutation et écriture. La solution technique précise est à définir par Winston/Amelia ; elle doit garantir l'absence de double auteur valide, y compris lors de courses entre onglets.
+3. **Deuxième onglet :** si la partie possède déjà un propriétaire actif, afficher « Partie déjà ouverte dans un autre onglet » et permettre consultation en lecture seule ou prise de contrôle explicite. Aucun coup, dépense d'As/Joker, abandon ni sauvegarde métier ne peut être initié en lecture seule.
+4. **Transfert explicite :** « Reprendre le contrôle ici » demande l'acquisition atomique d'une nouvelle génération ; si elle réussit, l'ancien détenteur devient immédiatement obsolète et ne peut plus valider de nouveau coup ni écrire une sauvegarde.
+5. **Rechargement après transfert :** le nouveau propriétaire recharge la **dernière sauvegarde confirmée** et actualise le plateau, les compteurs, les ressources et le statut GC-46 avant de jouer. Ne jamais reprendre un état périmé d'un onglet ouvert plus tôt.
+6. **Coups non persistés :** si l'ancien onglet possède des modifications non sauvegardées (GC-46), le transfert ne doit **pas les effacer silencieusement ni supposer qu'elles sont récupérables depuis l'autre onglet**. Le joueur reçoit un avertissement explicite ; le transfert peut être différé le temps d'une tentative de sauvegarde valide ou conduire à une confirmation de perte des coups non persistés, selon la procédure technique sûre retenue.
+7. **Écritures concurrencées :** toutes les sauvegardes doivent être protégées contre les écritures obsolètes et les confirmations tardives. Une écriture initiée avant perte du contrôle mais finalisée après transfert ne doit jamais écraser l'état du nouveau propriétaire ; vérification atomique du propriétaire, de la génération et de la révision persistée.
+8. **Fermeture brutale :** ne pas bloquer indéfiniment une partie si un onglet est fermé, suspendu ou tué sans libérer proprement la propriété. Autoriser une reprise explicite sûre après détection d'inactivité ou d'abandon du bail ; éviter qu'un onglet « réveillé » récupère son ancien droit.
+9. **Réseau :** coordination exclusivement locale, utilisable hors ligne ; ne pas confondre plusieurs onglets d'un même navigateur/profil de stockage avec des appareils ou profils indépendants qui n'ont pas de partage de sauvegarde.
+10. **Statistiques :** chaque victoire, défaite ou abandon est enregistrée **une seule fois**, même en cas d'événements tardifs de l'onglet précédent ; préserver l'idempotence GC-34 et les règles de remise à zéro GC-35.
+11. **Lecture seule :** l'onglet secondaire peut consulter le plateau et les informations publiques disponibles dans sa sauvegarde, mais ses contrôles de jeu sont clairement indisponibles ; une vue de consultation qui ne suit pas en temps réel le propriétaire est explicitement signalée comme pouvant être ancienne.
+12. **Réactivité et accessibilité :** afficher clairement quel onglet détient le contrôle, proposer une action clavier/tactile pour récupérer la propriété, labels FR/EN dès le MVP GC-28, annonce d'erreur explicite sans code couleur seul.
+13. **Aucune fusion :** ne pas fusionner automatiquement des séquences de coups divergentes ni reconstruire un état qui contreviendrait aux règles originales de Gridcannon V2.
+14. **Portée :** coordination entre onglets, non un mode multijoueur ; aucune modification des actions, conditions de fin ou score du jeu.
+
+**Exemple :** une partie est jouée dans l'onglet A. En ouvrant la même partie dans B, le joueur peut la consulter mais ne peut ni poser de carte ni consommer un Joker. Il clique « Reprendre le contrôle ici » dans B : la propriété est transférée, B recharge la sauvegarde durable valide et A passe en lecture seule. Un coup tardif ou une écriture obsolète émise par A est refusé, sans modifier B.
+
+**Statut : GC-47 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire seulement ; mécanismes de verrouillage/transaction à concevoir et implémenter, aucun test exécuté.
+
+### 61.2. Scénarios de conformité — GC-47
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T525 | Ouverture de la partie dans un seul onglet | Cet onglet peut jouer et enregistrer seul | Spécifié, non exécuté |
+| GC-V2-T526 | Même partie ouverte en second onglet | Consultation seule, message « Partie déjà ouverte » | Spécifié, non exécuté |
+| GC-V2-T527 | Tentative de jouer depuis onglet secondaire | Aucun coup, attaque, pioche ou dépense | Spécifié, non exécuté |
+| GC-V2-T528 | Reprise de contrôle explicite dans le second onglet | Nouveau propriétaire confirmé, sauvegarde récente rechargée | Spécifié, non exécuté |
+| GC-V2-T529 | Ancien onglet tente un coup après transfert | Action refusée, état canonique intact | Spécifié, non exécuté |
+| GC-V2-T530 | Écriture tardive de l'ancien propriétaire | Écriture rejetée, sauvegarde récente préservée | À vérifier en concurrence, non exécuté |
+| GC-V2-T531 | Fermeture brutale du propriétaire puis reprise | Récupération sûre sans blocage permanent ni double propriétaire | À vérifier en concurrence, non exécuté |
+| GC-V2-T532 | Deux clics simultanés « Reprendre le contrôle » | Au plus un propriétaire valable par génération | À vérifier en concurrence, non exécuté |
+| GC-V2-T533 | Propriétaire avec coup non sauvegardé lors du transfert | Risque signalé, aucune perte silencieuse ni récupération inventée | Spécifié, non exécuté |
+| GC-V2-T534 | Reprise en mode hors ligne | Exclusion locale des écritures toujours opérationnelle | Spécifié, non exécuté |
+| GC-V2-T535 | Victoire émise deux fois après conflit d'onglets | Statistiques mises à jour une fois seulement | Spécifié, non exécuté |
+| GC-V2-T536 | Partie différente ou jeu différent dans autre onglet | Aucune exclusion indue sur cet autre jeu/partie | Spécifié, non exécuté |
+| GC-V2-T537 | Interface FR/EN, clavier et lecteur d'écran | État lecture seule et transfert accessibles et compréhensibles | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-48 / lisibilité renforcée et contrastes :** les cartes fantasy illustrées doivent rester compréhensibles indépendamment du contraste de leur illustration, d'un trouble de perception des couleurs ou d'un petit écran. **A** un seul rendu graphique standard ; **B** un **mode de lisibilité renforcée facultatif**, avec contrastes, contours et libellés explicites, sans modifier les illustrations originales ni les règles ; **C** un éditeur complet de palettes et de styles carte par carte. Respecter les codes non exclusivement colorés déjà définis, FR/EN et l'identité graphique de chaque univers CardForge.
