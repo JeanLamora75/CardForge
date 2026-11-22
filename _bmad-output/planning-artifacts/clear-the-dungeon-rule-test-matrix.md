@@ -184,3 +184,20 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T61 | Main terminée, pioche non vide, un monstre encore vivant | Clôture prépare le tirage normal, aucune défaite par épuisement | Spécifié, non exécuté |
 
 **Reclassement des anciens scénarios :** CTD-T16, CTD-T24, CTD-T53 ont désormais une règle CardForge explicite sur la fin de pioche. Ces scénarios restent à implémenter et exécuter ; ils n'étaient pas des tests déjà passés. **CTD-06 à arbitrer** : séquence de retrait/révélation après attaque complète.
+
+
+## Décision CTD-06 / CTD-ARB-06 — révélation immédiate du monstre suivant (22 novembre 2026)
+
+**Option A VALIDÉE :** une attaque complète élimine immédiatement sa cible et ses trois cartes, puis révèle immédiatement le prochain monstre de cette colonne s'il existe. Les autres attaques partielles ne sont pas modifiées. Aucune défausse vers les dégâts, et la victoire au douzième monstre est prioritaire.
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T62 | Un Valet visible couvre une Dame cachée ; terminer une attaque valide contre le Valet | Valet et trois cartes d'attaque retirés ; Dame révélée immédiatement, sans clôture de main | Spécifié, non exécuté |
+| CTD-T63 | Après CTD-T62, le joueur possède encore une carte en main | Il peut l'utiliser sur le monstre désormais visible si son placement est légal | Spécifié, non exécuté |
+| CTD-T64 | Attaque partielle sur monstre B tandis que A est vaincu | Les cartes déjà affectées à B restent inchangées et à leur emplacement | Spécifié, non exécuté |
+| CTD-T65 | Dernier monstre de sa colonne vaincu, d'autres colonnes restent occupées | Colonne vidée ; aucune carte fictive révélée ; partie continue | Spécifié, non exécuté |
+| CTD-T66 | Douzième monstre vaincu, pioche éventuellement vide | Victoire immédiate, jamais remplacée par défaite d'épuisement | Spécifié, non exécuté |
+| CTD-T67 | Une attaque complète et valide vainc un monstre | Les trois cartes engagées sont éliminées et n'ajoutent aucun dégât | Spécifié, non exécuté |
+| CTD-T68 | Après révélation, reprise sauvegardée, rafraîchissement ou attaque répétée | Monstre révélé une seule fois, aucun second retrait et aucun double résultat | Spécifié, non exécuté |
+
+**Prochain arbitrage : CTD-07**, ordre de pose des cartes de puissance et de déclenchement. La mention « CTD-06 à arbitrer » dans la documentation historique est remplacée par cette validation.
