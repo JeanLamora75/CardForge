@@ -1946,4 +1946,46 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T486 | Fenêtre inspection en portrait/paysage et sur petit écran | Cartes lisibles, défilement et fermeture accessibles | À vérifier en UX, non exécuté |
 | GC-V2-T487 | Parcours clavier/lecteur d'écran, français et anglais | Composition connue annoncée dans l'ordre, aucune action cachée disponible | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-44 / présentation des figures en attente de découverte :** comment représenter sur le plateau les emplacements périphériques de figures qui ne sont pas encore révélées, tout en conservant leur identité cachée ? Options : **A** emplacements vides sans marqueur ; **B** silhouettes ou emplacements neutres clairement identifiés comme « Figure non révélée », sans valeur ni enseigne ; **C** silhouettes mystères personnalisées par type ou famille, au risque de dévoiler des informations cachées. Le plateau doit rester lisible dans les deux orientations, sans présenter une figure non révélée comme vaincue.
+**GC-44 : option B validée ultérieurement — silhouettes neutres pour les emplacements de figures non révélées ; voir §58.**
+
+
+## 58. Décision UX Gridcannon V2 — GC-44 : silhouettes neutres des emplacements de figures non révélées
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Les positions périphériques en attente d'une figure sont signalées par des **emplacements ou silhouettes neutres**, communs à toutes les figures encore inconnues et identifiés comme **« Figure non révélée »**. La représentation n'indique jamais le rang, l'enseigne, la couleur, la puissance ni le futur ordre d'arrivée d'une figure. Elle distingue sans ambiguïté trois états du plateau : **emplacement non occupé**, **figure révélée encore vivante**, **figure vaincue**.
+
+### 58.1. Contrat fonctionnel et UX
+
+1. **Positions officielles :** afficher les emplacements périphériques réellement prévus autour de la grille dans une géométrie cohérente avec Gridcannon V2, y compris les zones encore inoccupées ; ne pas créer de figure physique ni de cible supplémentaire dans l'état du moteur.
+2. **Silhouette identique :** avant révélation, utiliser une illustration générique ou un cadre neutre identique pour tous les emplacements, indépendamment de toute valeur potentielle de la pioche. Les différences de placement géométrique nécessaires à la lecture du plateau ne doivent pas coder l'identité future d'une figure.
+3. **Texte explicite :** annoncer « Figure non révélée » et non « Figure vaincue », « Figure active » ou un nom de faction dont la nature pourrait révéler une information cachée ; FR/EN au MVP, extension aux autres langues selon GC-28.
+4. **Trois états visuels :** (a) silhouette neutre pour l'emplacement inoccupé, (b) carte de figure connue avec ses attributs publics lorsqu'elle est révélée, (c) figure retournée/neutralisée après défaite, conforme à GC-31. Les trois états doivent rester différenciables sans seule couleur ou animation.
+5. **Transition métier :** lors de la révélation et pose réelles d'une figure, remplacer la silhouette uniquement à l'emplacement effectivement choisi par le moteur ou le joueur selon les règles ; le placement n'est pas déclenché par la silhouette elle-même.
+6. **Aucune information future :** les caractéristiques des figures encore dans la pioche ne sont pas inspectables par clic, touche, survol, lecteur d'écran ou attributs techniques de l'interface. Ne pas produire de modèle de carte secrète puis le masquer seulement par CSS.
+7. **Cibles et attaque :** un emplacement vide n'est pas une figure vivante, ne reçoit ni armure ni tir et n'entre pas dans les calculs d'attaques. Les zones d'attaque et de prévisualisation GC-23/38 n'y montrent aucune cible fictive.
+8. **Progression :** l'affichage d'emplacements non révélés ne change jamais le compteur « Figures vaincues X/12 » de GC-31 ; la seule révélation d'une figure n'incrémente pas ce compteur.
+9. **Lisibilité des axes :** maintenir les positions et silhouettes faciles à identifier autour du plateau entier en portrait et paysage (GC-40/41), sans recouvrir les cartes déjà présentes, les compteurs ou la réserve d'actions spéciales.
+10. **Accessibilité :** emplacements identifiables au clavier et lecteur d'écran lorsqu'ils constituent une destination autorisée de placement de figure ; ceux qui ne sont pas interactifs ne doivent pas produire de faux boutons. Annoncer l'état de façon non ambiguë.
+11. **Reprise et persistance :** au chargement, dériver les trois états de l'état canonique des figures et des emplacements, sans compteur d'interface indépendant ni nouvelle révélation. La rotation et le zoom ne changent pas l'état.
+12. **Portée :** ce choix relève uniquement de la présentation et ne modifie ni le déroulement de la pioche ni les règles de placement ou de victoire.
+
+**Exemple :** un côté du plateau n'a pas encore reçu sa figure : une silhouette identique à celles des autres emplacements inoccupés et le libellé « Figure non révélée » apparaissent. Une figure est ensuite tirée et légalement placée à cet endroit : la silhouette devient sa carte illustrée et connue. Après élimination, cette figure reste physiquement présente sous sa représentation vaincue ; elle ne redevient pas une silhouette.
+
+**Statut : GC-44 CLOS pour CardForge — option B validée le 22 novembre 2026.** Documentation uniquement : aucune implémentation, aucun test exécuté.
+
+### 58.2. Scénarios de conformité — GC-44
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T488 | Début de partie avec positions de figures non occupées | Silhouettes neutres sur seules positions inoccupées | Spécifié, non exécuté |
+| GC-V2-T489 | Plusieurs emplacements vides avec figures futures de types différents | Silhouettes identiques, sans indice de valeur ni d'enseigne | Spécifié, non exécuté |
+| GC-V2-T490 | Survol, clic ou inspection d'un emplacement vide | Aucun renseignement caché ni nouvelle carte révélés | Spécifié, non exécuté |
+| GC-V2-T491 | Figure légalement révélée et placée | Silhouette remplacée par sa figure publique au bon emplacement | Spécifié, non exécuté |
+| GC-V2-T492 | Figure vaincue | Figure retournée conservée, silhouette neutre non rétablie | Spécifié, non exécuté |
+| GC-V2-T493 | Emplacement sans figure lors d'un tir | Aucune attaque fictive, aucune armure attribuée | Spécifié, non exécuté |
+| GC-V2-T494 | Révélation d'une figure sans combat | Compteur des figures vaincues inchangé | Spécifié, non exécuté |
+| GC-V2-T495 | Reprise de sauvegarde avec emplacements mixtes | États vides, vivants et vaincus restaurés fidèlement | Spécifié, non exécuté |
+| GC-V2-T496 | Zoom et rotation sur smartphone | Silhouettes visibles sans recouvrement bloquant | À vérifier en UX, non exécuté |
+| GC-V2-T497 | Navigation clavier et lecteur d'écran FR/EN | Libellés d'état compréhensibles sans révélation cachée | À vérifier en accessibilité, non exécuté |
+| GC-V2-T498 | Deux emplacements vides identifiés comme destinations potentielles | Le moteur garde seul la validation de la pose, aucune sélection automatique | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-45 / mode plein écran :** comment permettre au joueur de bénéficier d'un plateau plus vaste sur les petits écrans ? **A** conserver uniquement l'affichage normal du navigateur/de l'application ; **B** proposer un **mode plein écran facultatif**, activé et quitté explicitement avec solution de repli si la plateforme ne prend pas en charge l'API ; **C** lancer automatiquement les parties en plein écran lorsqu'il est disponible. Garder les commandes essentielles, l'accès au catalogue, l'orientation adaptative et la sauvegarde inchangés.
