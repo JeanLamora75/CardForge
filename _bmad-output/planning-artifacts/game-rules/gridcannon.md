@@ -899,3 +899,45 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T197 | Utilisation clavier / écran tactile pendant la recherche | « Carte suivante » et actions disponibles utilisables sans survol ni automatisme | À vérifier en test UX, non exécuté |
 
 **Prochain arbitrage GC-19 :** durant la recherche **pas à pas**, faut-il montrer au joueur **les identités des cartes numériques déjà révélées et temporairement mises de côté**, leur nombre seulement, ou les masquer ? À la réinsertion, ces cartes deviennent de nouveau des cartes **face cachée sous la pioche** : leur présentation ne doit pas constituer une consultation illimitée des futurs tirages.
+
+
+## 33. Décision d'ergonomie Gridcannon V2 — GC-19 : visibilité des numériques temporairement écartées
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Pendant la recherche **manuelle, carte par carte**, d'une nouvelle figure (**GC-18**), l'interface affiche une zone identifiée **« Cartes temporairement écartées »** présentant **les cartes numériques 2–10 déjà révélées, avec leur valeur et leur enseigne, dans l'ordre chronologique de révélation**. Cette zone est visible uniquement tant que le **mode recherche GC-06** est actif. Après révélation et **placement légal** de la nouvelle figure, les cartes numériques retournent **face cachée sous la pioche** dans leur ordre de rencontre (**GC-10**) et **la zone disparaît**. Le joueur ne peut ni manipuler ni réordonner les cartes de cette zone.
+
+### 33.1. Contrat fonctionnel et UX
+
+1. **Contenu affiché :** toutes les cartes physiques numériques **déjà** tirées depuis l'entrée dans la recherche en cours, dans l'ordre **première révélée → dernière révélée**, avec **valeur et enseigne** ; ne montrer aucune carte non encore tirée.
+2. **Rôle de la zone :** un affichage **informatif et non interactif** de la liste temporaire réelle du moteur, en lecture seule ; pas de commande pour déplacer, trier, retourner, sélectionner comme cible d'action spéciale, jouer sur la grille ou remettre prématurément sous la pioche.
+3. **Mise à jour :** après chaque « Carte suivante » révélant une **numérique** (GC-18), ajouter **exactement une** carte à la fin de la liste visible, sans réordonnancement. Si le tirage est un **As ou Joker**, la réserve se met à jour selon **GC-09**, mais la liste numérique **reste inchangée** ; si c'est une figure, le moteur engage sa pose légale.
+4. **Actions spéciales pendant la recherche :** une Extraction ou Réaffectation **légalement exécutée** (GC-11) modifie la grille, la pioche ou la réserve selon sa propre règle, **sans modifier les cartes numériques déjà écartées ni leur ordre** ; celles-ci sont hors des piles cibles d'actions.
+5. **Clôture :** lors de l'apparition d'une figure, il est possible que le moteur doive encore obtenir un **choix de placement** (GC-01/02/13). La zone de cartes écartées **reste liée à l'état de recherche et ne s'efface pas avant la validation complète de la pose**, suivie de la **réinsertion atomique** des numériques sous la pioche selon GC-10. Dès la réinsertion, la zone est vidée et **masquée**.
+6. **Protection de l'information après réinsertion :** les cartes devenues **face cachée** ne sont plus affichées via cette zone, ni dans une liste consultable de futur ordre de pioche. L'interface ne prétend pas que le joueur a oublié ces cartes ; elle **ne maintient simplement pas de visualisation supplémentaire** de leur identité ou de leur position après leur retour au paquet.
+7. **Recherche suivante :** créer une **nouvelle zone temporaire vide**, sans afficher les cartes écartées lors des recherches précédentes. Une nouvelle carte ne s'y ajoute que sur révélation effective pendant la recherche courante.
+8. **Présentation adaptative :** prévoir une zone lisible et accessible sur bureau et mobile ; une présentation horizontale défilante ou réductible est acceptable **si** la liste complète, les valeurs et les enseignes restent consultables pendant la recherche sans perdre l'ordre, et **sans modification de l'état de jeu**.
+9. **Sauvegarde/reprise :** ne pas créer de deuxième inventaire d'état divergent ; reconstruire la présentation depuis la **séquence temporaire ordonnée unique** persistée pour GC-06/10. La reprise en cours de recherche réaffiche exactement les cartes retenues ; la reprise après clôture n'affiche **aucune zone résiduelle** et ne révèle aucune carte future.
+10. **Événements limites :** à la douzième figure vaincue, **GC-08** impose la victoire immédiate, sans nouvelle recherche ; en cas d'anomalie GC-12, ne pas effacer l'état temporaire avant sauvegarde/diagnostic. Si le mode recherche n'a encore révélé aucune carte numérique, une zone vide ou l'absence de son contenu est acceptable ; aucune carte fictive n'est représentée.
+
+**Exemple :** en recherche, les tirages successifs `4♣`, `As♠`, `8♦`, `Joker`, `5♠`, `Q♥` entraînent l'affichage temporaire **[4♣, 8♦, 5♠]**, tandis que l'As et le Joker rejoignent la réserve. Après le placement légal de la Dame, **[4♣, 8♦, 5♠]** rejoint le dessous de la pioche dans cet ordre, face cachée, et la zone d'attente est masquée.
+
+**Statut : GC-19 CLOS pour CardForge.** Il s'agit d'un **choix de présentation** qui respecte la connaissance acquise par révélation et les décisions GC-06/09/10/11/18, **sans revendiquer une règle originale supplémentaire de Tom Francis**. Aucun test moteur ou parcours UX n'a été exécuté.
+
+### 33.2. Scénarios de conformité — GC-19
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T198 | Entrée en recherche, aucune numérique encore révélée | Zone identifiée, vide ou sans contenu fictif | Spécifié, non exécuté |
+| GC-V2-T199 | Tirages `4♣`, puis `8♦`, puis `5♠` | Afficher **4♣ → 8♦ → 5♠** avec valeurs et enseignes | Spécifié, non exécuté |
+| GC-V2-T200 | As et Joker tirés entre deux numériques | As/Joker en réserve ; liste numérique inchangée | Spécifié, non exécuté |
+| GC-V2-T201 | Joueur tente de glisser ou jouer une numérique temporaire | Aucune pose, réorganisation ou dépense autorisée | Spécifié, non exécuté |
+| GC-V2-T202 | Extraction légale exécutée durant la recherche | Liste numérique temporaire et son ordre inchangés | Spécifié, non exécuté |
+| GC-V2-T203 | Figure révélée mais choix de position GC-13 encore en attente | Liste conservée tant que la figure n'est pas placée et le lot réinséré | Spécifié, non exécuté |
+| GC-V2-T204 | Figure placée ; lot numérique réinjecté GC-10 | Liste effacée et zone masquée ; pioche face cachée, ordre interne inchangé | Spécifié, non exécuté |
+| GC-V2-T205 | Joueur tente de consulter l'ancien lot depuis la pioche après réinsertion | Aucune vue supplémentaire de l'ordre futur face cachée | Spécifié, non exécuté |
+| GC-V2-T206 | Deux recherches successives avec lots distincts | Seul le lot de la recherche courante s'affiche | Spécifié, non exécuté |
+| GC-V2-T207 | Sauvegarde avec trois numériques temporaires puis reprise | Même liste visible, même ordre, aucune duplication de carte | Spécifié, non exécuté |
+| GC-V2-T208 | Reprise après recherche terminée | Aucune ancienne liste affichée ni carte future révélée | Spécifié, non exécuté |
+| GC-V2-T209 | Recherche sur petit écran, longue liste de numériques | Liste complète accessible dans l'ordre, sans altérer les actions « Carte suivante » et As/Joker | À vérifier en test UX, non exécuté |
+| GC-V2-T210 | Tirage répété par erreur technique du même identifiant de carte | Une seule carte temporaire affichée, moteur cohérent avec le tirage réel | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-20 / fin de pioche en cours de jeu (G-05) :** lorsque la pioche est **vide** alors qu'au moins **une figure vivante subsiste**, faut-il **laisser le joueur utiliser ses actions spéciales légalement utiles** avant de prononcer une défaite, déclarer immédiatement une défaite, ou conserver indéfiniment la partie en attente ? Ce cas est **distinct de GC-12**, qui concerne une recherche sans figure vivante et des figures physiques introuvables.
