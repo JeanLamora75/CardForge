@@ -119,3 +119,8 @@
 ## 11. Arbitrage CardForge CTD-ARB-04 — pioche finale de taille inférieure à trois (22 novembre 2026)
 
 **Option A validée par le porteur :** quand il reste une ou deux cartes au moment où la pioche est autorisée, le joueur prend toutes les cartes restantes, qui constituent une main jouable. La pioche devient vide, mais la main ne perd pas son droit d'être jouée ; aucune carte de dégâts n'est recyclée. **La défaite une fois la main épuisée demeure la question CTD-05**, qui n'est pas décidée ici. Décision de comportement CardForge, pas une citation officielle non ambiguë de l'auteur. Voir [règles](./clear-the-dungeon.md) et [matrice de conformité](../clear-the-dungeon-rule-test-matrix.md).
+
+
+## 12. Arbitrage CardForge CTD-ARB-05 — moment de défaite par pioche vide (22 novembre 2026)
+
+**Option A approuvée par le porteur :** une dernière main reste jouable même avec une pioche vide ; si la dernière main est clôturée et qu'au moins un monstre subsiste, la défaite est automatique. Une victoire par élimination du 12e monstre est immédiate ; le 7e dégât déclenche une défaite immédiate avant toute clôture. Ce comportement est acté pour le moteur CardForge sans présumer que tous ses détails figurent dans le texte officiel intégral encore inaccessible. Les tests CTD-T55 à CTD-T61 ont été ajoutés à la matrice. **CTD-06** (séquence d'élimination et révélation) reste à décider.
