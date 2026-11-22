@@ -1307,4 +1307,45 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T308 | Ajout futur d'une troisième langue complète | Langue détectable/sélectionnable sans modification de règle ou sauvegarde | À vérifier lors d'une livraison ultérieure |
 | GC-V2-T309 | Relecture des écrans critiques dans les deux langues | Aucun texte métier manquant ni traduction ambiguë de règle | À vérifier, non exécuté |
 
-**Prochain arbitrage proposé — GC-29 / présentation du compteur de pioche :** quelles informations montrer constamment au joueur sur les cartes restantes en pioche ? Options : **A** paquet fermé sans compteur ; **B** paquet fermé avec nombre de cartes restantes ; **C** compteur plus historique des cartes déjà tirées, sans révéler les cartes futures. La représentation ne doit pas divulguer les cartes cachées ni altérer GC-06/18/19.
+**GC-29 : option B validée ultérieurement — pioche face cachée avec compteur exact des cartes restantes (voir §43).**
+
+
+
+## 43. Décision UX Gridcannon V2 — GC-29 : pioche fermée avec compteur de cartes restantes
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** La pioche reste représentée **face cachée**, sans possibilité d'inspecter son contenu ni son ordre ; l'interface affiche de façon permanente un **compteur exact du nombre de cartes physiques encore présentes dans la pioche**. Les cartes tirées auparavant ne sont pas présentées dans un historique consultable par GC-29. La zone provisoire des numériques déjà révélées pendant la recherche de figure reste distincte et inchangée (GC-19).
+
+### 43.1. Contrat fonctionnel et UX
+
+1. **Contenu du compteur :** utiliser exclusivement la longueur de la **pioche réelle** dans l'état canonique du moteur. Ne compter ni les cartes des neuf piles de la grille, ni les figures en périphérie, ni les As/Jokers conservés en réserve, ni les numériques temporairement écartées de GC-19.
+2. **Information autorisée :** montrer la quantité seulement, jamais la valeur ou l'enseigne d'une carte cachée, l'ordre des futures cartes, ni la carte suivante. La pioche est visuellement face cachée tant qu'elle contient des cartes.
+3. **Actualisation à chaque changement réel :** décrémenter après chaque tirage confirmé ; incrémenter lorsque GC-05 réinsère une pile entière sous la pioche ; refléter les réinsertions GC-10 et autres mécanismes effectivement exécutés par le moteur. Une prévisualisation GC-23 ou une animation GC-24 ne change pas le compteur.
+4. **Pendant la recherche GC-06/18/19 :** chaque clic « Carte suivante » retire une seule carte de la pioche et diminue le compteur d'une unité ; les numériques de la zone temporaire ne sont pas comptées jusqu'à leur remise effective sous la pioche. La remise de ce lot recalcule le compteur selon le nombre exact réintroduit.
+5. **Pioche vide :** afficher explicitement **0** et signaler l'épuisement sans annoncer automatiquement une défaite. Si des actions spéciales légalement utiles restent disponibles, GC-20 autorise la continuation selon ses règles.
+6. **Préparation et remplacement initial :** après la distribution et les éventuels tirages du remplacement facultatif GC-14/16, refléter la pioche réelle à chaque étape où elle est montrée, y compris les cartes réinjectées. Pas de nombre supposé fixe après la mise en place.
+7. **Aucune nouvelle capacité :** le compteur est strictement informatif ; il ne permet pas de trier, consulter, manipuler, mélanger ou reconstituer un historique des cartes passées.
+8. **Sauvegarde/reprise :** reconstruire le nombre depuis la pioche restaurée sans second compteur sauvegardé divergent. Aucun double décrément à la suite de clics concurrents, de rafraîchissements ou d'une reprise.
+9. **Localisation et accessibilité :** les libellés « Cartes restantes » et « Pioche vide » sont disponibles en français et en anglais pour le MVP (GC-28) et extensibles aux langues futures. Le compteur reste lisible sur mobile, distinguable des totaux d'armures et interprétable par lecteur d'écran.
+10. **Source de vérité :** la quantité n'est pas un score supplémentaire ni une mécanique nouvelle de Gridcannon V2 ; c'est une aide de lecture propre à CardForge.
+
+**Exemple :** si 12 cartes sont dans la pioche, le compteur affiche « 12 cartes restantes ». Le joueur en révèle une par « Carte suivante », ce qui donne 11. Trois numériques déjà tirées sont temporairement écartées dans GC-19 : elles ne sont pas comptées. Après le placement légal de la nouvelle figure et la réinsertion de ces trois numériques selon GC-10, le nombre augmente de trois, sans révéler leur nouvel ordre.
+
+**Statut : GC-29 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement, aucun test exécuté.
+
+### 43.2. Scénarios de conformité — GC-29
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T310 | Pioche de 12 cartes physiques | Affichage 12, cartes cachées et non consultables | Spécifié, non exécuté |
+| GC-V2-T311 | Une carte tirée légalement | Compteur décrémenté d'une carte exactement | Spécifié, non exécuté |
+| GC-V2-T312 | Pioche alimentée par extraction d'une pile de quatre cartes | Compteur augmenté de quatre, sans révélation de contenu | Spécifié, non exécuté |
+| GC-V2-T313 | Trois numériques temporairement écartées pendant recherche de figure | Hors du compteur ; chacune visible uniquement dans la zone GC-19 | Spécifié, non exécuté |
+| GC-V2-T314 | Réinsertion des trois numériques de GC-19 après figure placée | Compteur augmenté de trois, zone temporaire masquée | Spécifié, non exécuté |
+| GC-V2-T315 | Pioche vide avec As encore utile | Compteur 0, pas de défaite automatique contraire à GC-20 | Spécifié, non exécuté |
+| GC-V2-T316 | Prévisualisation de tir, puis annulation | Compteur et pioche inchangés | Spécifié, non exécuté |
+| GC-V2-T317 | Reprise de sauvegarde avec pioche de taille connue | Compteur reconstruit exactement sans duplication | Spécifié, non exécuté |
+| GC-V2-T318 | Double commande de tirage concurrente sur le même état | Un seul tirage accepté, compteur cohérent | Spécifié, non exécuté |
+| GC-V2-T319 | Consultation de la pioche par clic/toucher | Aucune identité de carte cachée ni historique divulgué | Spécifié, non exécuté |
+| GC-V2-T320 | Lecture du compteur sur mobile en français et anglais | Libellé et quantité lisibles, état 0 explicite | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-30 / présentation des As et Jokers :** comment afficher à tout instant les **actions spéciales disponibles et déjà consommées** ? Options envisagées : **A**, simple compteur numérique par type ; **B**, icônes/cartes miniatures différenciant disponibles et utilisées, ouvrant l'action légale sur sélection ; **C**, panneau détaillé permanent avec chaque carte et ses possibilités. Préserver les quatre As, deux Jokers et leur dépense unique, sans autoriser une activation illégale.
