@@ -144,3 +144,8 @@
 ## 16. Arbitrage CardForge CTD-ARB-09 — première puissance mathématiquement complétable (22 novembre 2026)
 
 **Option A validée par le porteur :** une première carte de puissance n'est acceptée que si sa valeur + 10 atteint au moins la résistance du monstre (valet 11, dame 12, roi 13). Ce test de borne supérieure théorique n'inspecte pas la pioche et refuse les premières poses impossibles sans modifier l'état de jeu. Scénarios CTD-T85 à CTD-T93 spécifiés, non exécutés. **CTD-09 clos ; CTD-10** portera sur le rôle et l'enseigne du joker à la pose. La règle d'interdiction anticipée est un arbitrage CardForge et non une citation officielle.
+
+
+## 17. Arbitrage CardForge CTD-ARB-10 — usage contextuel du joker (22 novembre 2026)
+
+**Option A validée par le porteur :** le joueur choisit l'emplacement physique d'un joker ; ce placement détermine sans dialogue supplémentaire son rôle de première/deuxième puissance (valeur 10 fixe) ou de déclencheur (enseigne automatiquement égale à celle du monstre). Un même joker physique n'occupe jamais plusieurs emplacements simultanément ; les deux jokers disposent d'identités indépendantes, y compris après sauvegarde. Aucun rôle n'est imposé automatiquement par une IA ou par une combinaison inférée après coup. **CTD-10 clos ; CTD-11** demeure ouvert sur le cumul des deux jokers distincts dans une attaque, sans présupposer une restriction du livret. Tests CTD-T94 à CTD-T103 spécifiés, non exécutés.
