@@ -239,3 +239,11 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 - **Rédigé, à approuver :** ce PRD comme périmètre de référence.
 - **Non validé :** règles complètes de Clear the Dungeon, cas limites de Gridcannon et conditions de son nom public/crédits, portée documentée de la permission de Clear the Dungeon, performance et appareils cibles.
 - **Prochaine étape :** validation fonctionnelle du PRD, puis découpage BMAD en Epics et User Stories petites et testables ; aucune création Jira sans autorisation explicite.
+
+## Complément Mary — revue approfondie des règles (22 novembre 2026)
+
+Les [sources et contradictions documentées](../../game-rules/recherche-approfondie-2026-11-22.md) renforcent les critères de passage avant livraison :
+- **Clear the Dungeon :** règle du joker CTD-J01 incompatible entre le résumé Web et le livret Classic 1.1.0 reproduit ; à clarifier auprès d'une source faisant autorité. Les attaques partielles et l'épuisement avec main en cours restent ouverts.
+- **Gridcannon V2 :** cas nouveaux G-01a (meilleure carte au centre), G-07 (ploy restant mais inutile) et G-08 (score après réapprovisionnement) ; les lacunes G-01b, G-02, G-03 et G-04 demeurent.
+- Les matrices de conformité ont été enrichies, mais **aucune exécution de moteur, validation automatique BMAD ou contact des auteurs** n'a eu lieu.
+- Le périmètre à deux jeux jouables reste validé ; les points ouverts sont des dépendances de conformité, non des options de gameplay que CardForge peut inventer silencieusement.
