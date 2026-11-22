@@ -167,3 +167,20 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T54 | Sauvegarde puis reprise avec dernière main et pioche vide | Même main, mêmes cartes engagées, aucune nouvelle distribution | Spécifié, non exécuté |
 
 **Traçabilité :** CTD-T16 / CTD-T24 (anciens scénarios « à préciser ») doivent être réévalués à partir de cette décision ; l'incertitude restante porte sur le *déclenchement de la défaite*, non sur le droit de jouer une dernière main incomplète.
+
+
+## Arbitrage CTD-05 / CTD-ARB-05 — défaite à la clôture de la dernière main (22 novembre 2026)
+
+**Option A VALIDÉE :** pioche vide = pas de défaite tant qu'il reste des actions autorisées dans la dernière main ; si un monstre reste vivant **à sa clôture**, défaite automatique. Douzième monstre vaincu = victoire immédiate ; 7e dégât = défaite immédiate.
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T55 | Tirer les deux dernières cartes : pioche devient vide, main contient deux cartes | Aucune défaite au seul tirage ; cartes jouables | Spécifié, non exécuté |
+| CTD-T56 | Pioche vide, attaque partielle complétée avec la dernière carte, 12e monstre vaincu | Victoire immédiate, jamais suivie d'une défaite par épuisement | Spécifié, non exécuté |
+| CTD-T57 | Pioche vide, dernière carte défaussée, monstres encore vivants, puis main clôturée | Défaite par épuisement automatiquement à la clôture | Spécifié, non exécuté |
+| CTD-T58 | Pioche vide, 6 dégâts, dernière main contient une carte ; défausse explicite | 7e dégât = défaite immédiate, pas de clôture supplémentaire | Spécifié, non exécuté |
+| CTD-T59 | Pioche vide et main vide, des attaques partielles verrouillées restent sans déclencheur et des monstres vivent | Clôture de la main = défaite, sans autorisation de piocher ou de rejouer les cartes verrouillées | Spécifié, non exécuté |
+| CTD-T60 | Clôture de dernière main déclenchée deux fois ou rafraîchissement après défaite | Une seule fin de partie et un seul résultat statistique | Spécifié, non exécuté |
+| CTD-T61 | Main terminée, pioche non vide, un monstre encore vivant | Clôture prépare le tirage normal, aucune défaite par épuisement | Spécifié, non exécuté |
+
+**Reclassement des anciens scénarios :** CTD-T16, CTD-T24, CTD-T53 ont désormais une règle CardForge explicite sur la fin de pioche. Ces scénarios restent à implémenter et exécuter ; ils n'étaient pas des tests déjà passés. **CTD-06 à arbitrer** : séquence de retrait/révélation après attaque complète.
