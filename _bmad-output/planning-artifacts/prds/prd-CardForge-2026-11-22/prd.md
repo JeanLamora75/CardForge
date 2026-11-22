@@ -286,3 +286,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A explicitement approuvée :** dans Clear the Dungeon, l'épuisement de la pioche n'entraîne pas de défaite tant que le joueur n'a pas terminé sa dernière main, même si celle-ci contient seulement une ou deux cartes. Dès qu'il clôture cette main, si la pioche est vide et qu'un monstre reste vivant, la **défaite par épuisement est automatique**. Si le douzième monstre est vaincu avant cela : **victoire immédiate**. Si le septième dégât survient avant la clôture : **défaite immédiate**. Le joueur n'a pas à demander inutilement une nouvelle pioche vide.
 
 **Traçabilité :** CTD-05 / CTD-ARB-05 fermé, FR-07/FR-08/FR-16/FR-22/FR-24 précisés ; le résultat de fin de partie n'est inscrit qu'une fois et doit supporter la sauvegarde/reprise. Voir [règles](../../game-rules/clear-the-dungeon.md) et [matrice](../../clear-the-dungeon-rule-test-matrix.md). **CTD-06** (séquence attaque/révélation) reste à valider.
+
+
+## Décision fonctionnelle CTD-ARB-06 — révélation immédiate d'un nouveau monstre (22 novembre 2026)
+
+**Option A validée :** lorsque trois cartes forment une attaque valide contre un monstre visible dans Clear the Dungeon, les trois cartes d'attaque et le monstre sont retirés du jeu immédiatement ; le suivant de sa colonne est révélé immédiatement s'il existe, **sans attendre la fin de main et sans bouton de révélation**. Les attaques partielles des autres monstres restent intactes, les cartes restantes en main sont toujours jouables, et l'élimination du douzième monstre déclenche instantanément la victoire. Aucune de ces cartes ne rejoint la pile de dégâts. FR-06/FR-07/FR-08/FR-16/FR-18/FR-24 sont précisés.
+
+**CTD-06 / CTD-ARB-06 clos** ; **CTD-07** à examiner : ordre de placement des cartes de puissance et du déclencheur. Références : [règles du jeu](../../game-rules/clear-the-dungeon.md) et [matrice](../../clear-the-dungeon-rule-test-matrix.md).
