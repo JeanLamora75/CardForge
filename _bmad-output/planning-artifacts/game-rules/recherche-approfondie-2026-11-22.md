@@ -104,3 +104,8 @@
 ## 8. Arbitrage CardForge CTD-ARB-01 — attaques partielles (22 novembre 2026)
 
 **Option B approuvée par le porteur** : il est permis d'entamer plusieurs attaques sur des monstres différents, et les cartes posées y restent associées à travers les mains/tours. Cet arbitrage est **clos pour CardForge**, sans prétendre que le texte complet original a été consulté ou confirmé sur ce cas précis. Le traitement des cartes déjà posées (récupération, déplacement, changement de cible) est à examiner séparément sous **CTD-02**. Une conservation rigoureuse dans les sauvegardes et des tests multi-monstres sont requis.
+
+
+## 9. Arbitrage CardForge CTD-ARB-02 — cartes posées durant la main (22 novembre 2026)
+
+**Décision du porteur : option B.** Les cartes de la main courante peuvent être récupérées/repositionnées avant clôture, mais les cartes des mains précédentes sont verrouillées. Les attaques déjà entièrement résolues ne sont pas réversibles. Ce point est **fermé pour l'implémentation CardForge**, mais demeure une interprétation produit faute de texte officiel assez précis. Le prochain point CTD-03 concerne les cartes inutilisées à la clôture de la main.
