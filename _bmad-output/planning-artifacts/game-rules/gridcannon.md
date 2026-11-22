@@ -1233,3 +1233,45 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T290 | Reprise après fermeture d'une aide et changement de langue | Sauvegarde et statistiques invariantes, langue choisie respectée | Spécifié, non exécuté |
 
 **Prochain arbitrage proposé — GC-27 / sélection et cohérence des dix langues :** déterminer comment choisir et présenter les langues de l'application et des jeux. Options : **A** sélection manuelle unique pour toute l'application et tous les jeux ; **B** détection initiale de la langue du système avec sélection manuelle commune et persistante ; **C** langue indépendante par jeu, avec préférence globale de l'application. Ne pas fixer les dix langues ni lancer de traduction avant validation spécifique.
+
+
+## 41. Décision transversale CardForge — GC-27 : détection automatique et préférence linguistique commune
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026. Langue de repli explicitement validée : anglais (en).** La langue est **commune à l'application CardForge et à tous ses jeux**. Au premier lancement sans choix enregistré, détecter les préférences linguistiques de l'appareil/navigateur et utiliser la première langue effectivement prise en charge ; à défaut, afficher l'application en **anglais**. Le joueur peut choisir manuellement une autre langue disponible à tout moment ; son choix est persistant et prioritaire sur toute détection ultérieure.
+
+### 41.1. Contrat fonctionnel et UX
+
+1. **Priorité de sélection :** (a) langue choisie explicitement et enregistrée, si encore prise en charge ; sinon (b) première langue compatible parmi les langues préférées exposées par le système/navigateur ; sinon (c) **anglais**. En l'absence de préférence enregistrée, la détection est effectuée à l'ouverture.
+2. **Repli anglais :** l'anglais doit toujours faire partie des langues complètes livrées ; aucun message indispensable ne doit devenir vide ou illisible faute de traduction. Un repli ponctuel de texte est une protection technique et non un substitut à la couverture complète des langues annoncées.
+3. **Sélection manuelle :** rendre une commande de changement de langue visible et accessible dans les paramètres communs. Afficher le nom des langues de manière compréhensible, indépendamment de la langue active. La préférence explicite prime sur une détection à chaque visite.
+4. **Portée :** une seule langue active couvre le catalogue CardForge, l'ensemble des jeux disponibles, règles, aides contextuelles GC-26, statistiques, messages d'erreur, préférences et résultats. Ne pas conserver de réglage linguistique divergent propre à un jeu.
+5. **Changement à chaud :** changer de langue sans redémarrer ni réinitialiser une partie, déplacer des cartes, modifier la pioche, les figures, les actions spéciales ou les scores. Mettre à jour les textes immédiatement, sans réexécuter une action métier ni une animation.
+6. **Langues régionales :** gérer les variantes régionales via correspondance raisonnable vers une langue effectivement disponible (par exemple une variante de langue vers son code de base si pris en charge) ; en cas d'échec, anglais. Ne jamais présumer que des variantes spécifiques sont déjà traduites.
+7. **Hors ligne :** conserver le choix linguistique localement et assurer le fonctionnement hors réseau pour les langues officiellement livrées, conformément à GC-26 et aux engagements PWA ; aucune dépendance de traduction en temps réel obligatoire.
+8. **Formatage localisé :** formats de nombres, dates, libellés, pluriels et accessibilité adaptés à la langue sélectionnée. Les identifiants de cartes, l'ordre de pioche, les règles et les sauvegardes restent indépendants des chaînes traduites.
+9. **Persistance et intégrité :** si le stockage de préférences est indisponible, garder un fonctionnement de repli sans bloquer le jeu ; la sauvegarde des parties ne dépend pas de la langue. Ne jamais écraser une préférence explicite valide par simple mise à jour de la langue système.
+10. **Dix langues au minimum :** l'obligation globale GC-26 demeure. **La liste de dix langues n'est pas encore validée** ; leur sélection et la politique des ressources incomplètes feront l'objet des prochains arbitrages.
+11. **Accessibilité :** le sélecteur est utilisable au clavier et au tactile, sans son ni survol imposé, et expose correctement la langue active aux technologies d'assistance.
+12. **Portée de décision :** cette règle de localisation est un choix produit CardForge, sans impact sur les règles originales de Gridcannon Version 2.
+
+**Exemple :** un appareil est configuré en français puis en allemand. Si le français est pris en charge, CardForge démarre en français. Le joueur choisit ensuite l'anglais : CardForge et tous les jeux passent en anglais et le restent lors du prochain lancement, même si le système reste français. Si aucune langue de l'appareil n'est disponible, l'anglais est utilisé par défaut.
+
+**Statut : GC-27 CLOS — option B et repli anglais validés le 22 novembre 2026.** Spécification documentaire ; aucune implémentation, traduction ni test exécuté.
+
+### 41.2. Scénarios de conformité — GC-27
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T291 | Aucun réglage enregistré, première langue système prise en charge | Première langue compatible sélectionnée | Spécifié, non exécuté |
+| GC-V2-T292 | Plusieurs langues système, première inconnue mais deuxième disponible | Deuxième langue compatible choisie | Spécifié, non exécuté |
+| GC-V2-T293 | Aucune langue système compatible | Repli anglais (en) | Spécifié, non exécuté |
+| GC-V2-T294 | Préférence manuelle valide différente de celle du système | Préférence manuelle conservée et appliquée à tous les jeux | Spécifié, non exécuté |
+| GC-V2-T295 | Changement manuel pendant une partie Gridcannon | Textes actualisés, état du moteur et ordre de pioche inchangés | Spécifié, non exécuté |
+| GC-V2-T296 | Passage d'un jeu à un autre | Même langue active pour le catalogue, les jeux et les aides | Spécifié, non exécuté |
+| GC-V2-T297 | Langue système variante régionale non disponible, langue de base disponible | Correspondance vers langue de base prise en charge | Spécifié, non exécuté |
+| GC-V2-T298 | Application utilisée hors ligne après choix manuel | Langue conservée, textes essentiels disponibles sans réseau | À vérifier, non exécuté |
+| GC-V2-T299 | Préférence enregistrée devenue indisponible | Détection d'une langue compatible ou anglais sans blocage | Spécifié, non exécuté |
+| GC-V2-T300 | Changement de langue avec lecteur d'écran ou clavier | Sélecteur accessible, langue active identifiable | À vérifier en UX, non exécuté |
+| GC-V2-T301 | Dix langues annoncées par l'application | Anglais inclus, parcours fondamentaux complets dans chaque langue livrée | À vérifier, non exécuté |
+
+**Prochain arbitrage proposé — GC-28 / sélection des dix premières langues :** décider comment figer les **dix langues initialement livrées** en incluant obligatoirement l'anglais (GC-27). Choix envisagés : **A** décider maintenant une liste précise de dix langues ; **B** choisir d'abord les critères et priorités, puis valider la liste ; **C** conserver une liste extensible sans minimum concret par livraison. L'exigence de dix langues effectives reste impérative ; l'option C ne peut pas la réduire.
