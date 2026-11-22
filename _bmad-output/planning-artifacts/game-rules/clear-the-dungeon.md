@@ -337,3 +337,23 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-10 / CTD-ARB-10 CLOS pour CardForge.** Il s'agit d'une décision de conception d'interaction fidèle aux deux usages documentés du joker, non d'une nouvelle mécanique officielle attribuée à Mark S. Ball. Aucun test de moteur n'a été exécuté.
 
 **Prochain arbitrage CTD-11 :** les deux jokers physiques peuvent-ils être utilisés dans **une même attaque** (deux puissances ou une puissance et un déclencheur) ? La recherche documentaire n'établit pas de restriction spécifique ; aucune limite arbitraire n'est ajoutée avant validation du porteur.
+
+
+## 22. Décision fonctionnelle CTD-11 / CTD-ARB-11 — deux jokers distincts dans une même attaque
+
+**Option A VALIDÉE explicitement par le porteur le 22 novembre 2026.** Les deux jokers physiques de Clear the Dungeon sont **deux cartes indépendantes** : ils peuvent tous deux être affectés **à une même attaque**, dans deux emplacements différents, pourvu que l'ordre, les rôles et les conditions de victoire soient respectés.
+
+**Combinaisons légales :**
+- **Joker 1 puissance + joker 2 puissance** : somme = **10 + 10 = 20** (admissible contre J11, Q12 ou K13), mais la cible n'est vaincue qu'avec **une troisième carte déclencheuse**, normale de l'enseigne requise, selon CTD-ARB-07.
+- **Joker 1 puissance + carte numérique puissance + joker 2 déclencheur** : les puissances doivent atteindre la résistance ; joker 2 adopte automatiquement l'enseigne de la cible selon CTD-ARB-10.
+- Le même raisonnement s'applique avec les deux jokers inversés ; **aucune limite arbitraire d'un joker par attaque ni d'un joker par main** n'est introduite.
+- Les deux jokers peuvent aussi être utilisés dans **deux attaques différentes** ; aucun partage de ressources entre emplacements.
+- Une **même carte joker**, même si polyvalente, **ne peut jamais remplir deux rôles ou deux emplacements simultanément**. Les trois cartes utilisées pour une attaque victorieuse restent trois **cartes physiques distinctes**.
+- Le moteur conserve la **valeur fixe 10**, l'enseigne adaptée uniquement dans le rôle déclencheur, les contrôles de la première et deuxième puissance (CTD-ARB-08/09), et la séquence puissance → puissance → déclencheur.
+- La sauvegarde/reprise conserve l'identifiant et l'emplacement de chaque joker, y compris lorsqu'un joker a été engagé dans une main antérieure et l'autre dans la main courante.
+
+**Exemple déterministe :** Roi de pique (résistance 13), Joker A comme première puissance 10, un 3 de carreau comme deuxième puissance 3, Joker B comme déclencheur prenant l'enseigne pique : **victoire contre ce roi**. Autre cas : Joker A + Joker B en puissances 10 + 10, puis un 2 de pique comme déclencheur : **victoire contre le roi**.
+
+**Statut : CTD-11 / CTD-ARB-11 CLOS pour CardForge.** Arbitrage explicite compatible avec les rôles des jokers définis, mais aucune restriction ou permission spécifique aux deux jokers n'a été explicitement confirmée par l'auteur dans le texte officiel intégral inaccessible ; ne pas présenter la décision comme une citation d'auteur. Scénarios spécifiés mais non exécutés.
+
+**Prochain point CTD-12 :** calcul du score officiel en cas de victoire **avec des cartes restant dans la main**, distinct de la réussite elle-même.
