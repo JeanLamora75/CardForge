@@ -1191,3 +1191,45 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T278 | Mode silencieux après changement de préférence et relancement | Préférence conservée, jeu utilisable entièrement sans son | Spécifié, non exécuté |
 
 **Prochain arbitrage proposé — GC-26 / accompagnement des nouveaux joueurs :** comment expliquer les règles parfois complexes de la Version 2 (placement, attaques, As, Joker, armures et cas limites), sans automatiser des décisions à la place du joueur ni altérer les règles ? Options à comparer : **A** règlement consultable à tout moment ; **B** règlement structuré + conseils contextuels facultatifs sur les actions et les erreurs ; **C** tutoriel interactif guidé avec une partie d'apprentissage dédiée, en plus du règlement. Aucun des trois choix ne doit révéler la pioche future ni prendre de décision stratégique à la place du joueur.
+
+
+## 40. Décision UX Gridcannon V2 — GC-26 : aide contextuelle facultative et couverture multilingue
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026 : aide contextuelle facultative, en complément d'un règlement complet accessible à tout moment.** Exigence transversale confirmée : **CardForge, l'application commune et chacun de ses jeux doivent prendre en charge au moins dix langues**, y compris les règles, l'aide, les retours des actions et les messages d'erreur. Cette exigence dépasse le seul jeu Gridcannon et doit être reprise dans la planification produit/architecture. Les dix langues exactes seront fixées séparément : ne pas supposer qu'elles ont déjà été choisies.
+
+### 40.1. Contrat fonctionnel et UX
+
+1. **Règlement complet :** proposer un règlement structuré, consultable pendant une partie, couvrant la mise en place, les placements, figures, tirs, armures, As, Jokers, victoire, défaite et cas particuliers déjà validés, avec exemples adaptés à Version 2 uniquement.
+2. **Aide à la demande :** depuis une carte, une figure, une action spéciale ou une situation d'erreur, le joueur peut consulter l'explication pertinente ; l'aide montre la règle applicable et, quand utile, la raison d'une action invalide. Elle ne remplace pas la prévisualisation des tirs GC-23.
+3. **Conseils non intrusifs :** les messages automatiques éventuels sont courts, circonstanciés, non bloquants et facultatifs. Une préférence permet de les masquer durablement sans supprimer l'accès volontaire au règlement ou à une explication.
+4. **Absence d'automatisation stratégique :** l'aide ne choisit pas une destination, une cible d'armure ou une action spéciale à la place du joueur ; elle ne divulgue jamais les cartes futures de la pioche. Les décisions GC-07/11/18/21 restent volontaires.
+5. **Véracité :** ne pas présenter une convention spécifique CardForge comme une citation de Tom Francis. Les exemples doivent refléter exactement les règles et arbitrages GC-01 à GC-25.
+6. **Portée multilingue :** l'interface de CardForge, le catalogue, les réglages, chacun des jeux, les tutoriels ou aides existants, les règles, les infobulles, les avertissements, les retours de tirs, les statistiques et les états de victoire/défaite doivent fonctionner dans **au moins dix langues**. La mise à disposition d'une langue suppose la couverture des parcours essentiels du jeu et de l'application, sans mélange involontaire de textes.
+7. **Ressources localisables :** employer des identifiants stables pour les textes avec paramètres (valeurs de cartes, résistances, touches/actions), éviter les chaînes codées en dur et respecter les règles de pluralisation, les formats locaux et les libellés accessibles.
+8. **Cohérence de langue :** la préférence linguistique doit être commune au shell CardForge et au jeu ouvert ; le changement de langue ne doit pas changer l'état métier, redémarrer la partie, modifier la pioche ou faire perdre le point d'avancement.
+9. **Hors ligne :** les textes indispensables aux dix langues prises en charge et les explications nécessaires au jeu hors ligne doivent être disponibles sans accès réseau sur les plateformes promises comme hors ligne ; stratégie précise de chargement/cache à fixer avec Winston.
+10. **Qualité de traduction :** établir et vérifier glossaire, noms d'actions, règles et messages de cas limites ; le vocabulaire doit conserver son sens stratégique. Les noms propres de l'auteur et les crédits restent attribués correctement, quel que soit le langage d'interface.
+11. **Accessibilité :** assistance utilisable au clavier et au tactile, compatible lecteurs d'écran, sans dépendance au son (GC-25), au seul survol ni à la seule couleur.
+12. **Réversibilité :** fermer un conseil ou modifier la langue ne provoque aucune action métier, aucune dépense de ressource et aucun effet sur le score.
+13. **Arbitrages à ne pas inventer :** le choix des dix langues, l'ordre de livraison, la stratégie de traduction et les éventuels parcours interactifs de formation doivent faire l'objet d'une décision ultérieure. GC-26 ne supprime pas de plein droit un tutoriel facultatif déjà mentionné dans le cadrage transversal du MVP : le périmètre doit être harmonisé avec John.
+
+**Statut : GC-26 CLOS — option B validée le 22 novembre 2026, avec exigence de dix langues minimum à l'échelle de CardForge.** Documentation uniquement, sans implémentation ni exécution de tests.
+
+### 40.2. Scénarios de conformité — GC-26
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T279 | Joueur ouvre le règlement pendant une partie | Règles Version 2 consultables sans altérer la partie | Spécifié, non exécuté |
+| GC-V2-T280 | Destination de carte illégale | Explication contextuelle exacte, aucune pose fictive | Spécifié, non exécuté |
+| GC-V2-T281 | Aide sur Joker, As ou armure | Règles et limites propres à l'action visibles sans automatisme | Spécifié, non exécuté |
+| GC-V2-T282 | Joueur masque les conseils automatiques | Conseils non sollicités absents ; règlement et aide à la demande toujours accessibles | Spécifié, non exécuté |
+| GC-V2-T283 | Conseil contextuel durant un choix GC-21 | Aucun choix de figure ni changement d'armure automatique | Spécifié, non exécuté |
+| GC-V2-T284 | Changement de langue pendant une partie | Interface et aide changent de langue, état et pioche identiques | Spécifié, non exécuté |
+| GC-V2-T285 | Parcours clés de l'application et de chaque jeu dans chacune des langues livrées | Au moins dix langues effectivement couvertes ; messages essentiels complets et cohérents | À vérifier, non exécuté |
+| GC-V2-T286 | Mode hors ligne dans une langue officiellement prise en charge | Règles, aides et messages indispensables accessibles sans réseau | À vérifier, non exécuté |
+| GC-V2-T287 | Résistance, valeur de carte et enseigne interpolées dans une traduction | Valeurs exactes, textes localisés sans altérer les calculs | Spécifié, non exécuté |
+| GC-V2-T288 | Erreur ou conseil sur écran tactile et lecteur d'écran | Contenu compréhensible, action de fermeture accessible | À vérifier en UX, non exécuté |
+| GC-V2-T289 | Carte cachée de la pioche pendant une aide | Aucune divulgation des cartes futures | Spécifié, non exécuté |
+| GC-V2-T290 | Reprise après fermeture d'une aide et changement de langue | Sauvegarde et statistiques invariantes, langue choisie respectée | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-27 / sélection et cohérence des dix langues :** déterminer comment choisir et présenter les langues de l'application et des jeux. Options : **A** sélection manuelle unique pour toute l'application et tous les jeux ; **B** détection initiale de la langue du système avec sélection manuelle commune et persistante ; **C** langue indépendante par jeu, avec préférence globale de l'application. Ne pas fixer les dix langues ni lancer de traduction avant validation spécifique.
