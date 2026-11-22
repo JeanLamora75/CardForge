@@ -1730,4 +1730,48 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T425 | Clic après marqueur devenu obsolète | Moteur rejette le coup illégal sans effet métier | Spécifié, non exécuté |
 | GC-V2-T426 | Navigation au clavier ou lecteur d'écran FR/EN | Destinations légales identifiables sans couleur seule | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-39 / présentation de la dernière action :** comment aider le joueur à comprendre ce qui vient de se produire après un placement, une attaque ou l'utilisation d'un As/Joker, sans créer d'historique complet ? **A** aucun rappel au-delà des animations et valeurs du plateau ; **B** bref message récapitulatif de la dernière action confirmée, consultable ou masquable, distinct du moteur ; **C** journal chronologique complet des actions de la partie. Le récapitulatif ne doit jamais inventer de tir ni révéler la pioche, et doit rester localisable FR/EN.
+**GC-39 : option B validée ultérieurement — résumé compact et masquable de la dernière action réelle ; voir §53.**
+
+
+## 53. Décision UX Gridcannon V2 — GC-39 : résumé facultatif de la dernière action confirmée
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Un bloc compact et discret **« Dernière action »** présente un **récapitulatif textuel de la dernière action métier réellement confirmée** : placement d'une carte, résultat d'une attaque, figure vaincue, Extraction par As ou Réaffectation par Joker. Le récapitulatif est **consultable et masquable**, n'est pas un journal complet et ne modifie jamais les règles, l'état ou la progression de la partie.
+
+### 53.1. Contrat fonctionnel et UX
+
+1. **Événements concernés :** produire un résumé uniquement à partir d'une transition de jeu confirmée par le moteur, avec les données de résultat officielles de l'action : carte réellement posée/déplacée, résultat du ou des tirs, figures réellement vaincues, ressource As/Joker effectivement consommée, ou effet de l'Extraction. Une action sans tir doit être décrite sans tir fictif.
+2. **Dernier résultat uniquement :** conserver un seul résumé courant, remplacé par celui de la transition suivante. Il ne constitue ni un historique consultable des coups ni une trace permanente de toutes les manipulations.
+3. **Contenu :** texte bref, exact et compréhensible, par exemple « Carte posée. Attaque contre la Dame : puissance 12, résistance 11. Dame vaincue. » Ne jamais inventer un effet, des valeurs ou une cause absents du résultat métier.
+4. **Actions multiples :** quand une pose en coin déclenche deux attaques, récapituler clairement les deux résultats dans le même bilan, y compris si l'une réussit et l'autre échoue, sans les assimiler à deux placements distincts.
+5. **Aucun déclenchement spéculatif :** une prévisualisation GC-23, un glissement non confirmé GC-37, une surbrillance GC-38, une inspection GC-36 ou une action annulée ne remplace pas la « Dernière action ».
+6. **Masquage :** offrir un moyen explicite de masquer/réafficher la zone sans conséquence métier. Le choix de visibilité peut être conservé dans les préférences locales, indépendamment des résultats et des sauvegardes.
+7. **Position et ergonomie :** bloc compact, idéalement repliable dans la zone d'informations de partie, ne masquant ni la grille ni les commandes de jeu, notamment sur smartphone. Aucun défilement forcé ni interruption systématique de la partie.
+8. **Indépendance visuelle et sonore :** le résultat reste compréhensible même avec animations GC-24 et audio GC-25 désactivés. Ne pas faire dépendre le résumé de la fin d'une animation.
+9. **Pas de révélation cachée :** ne pas afficher l'identité, l'enseigne ou l'ordre des cartes de la pioche non révélées, ni divulguer les figures futures. Les cartes publiquement tirées ou réellement jouées peuvent être nommées selon leur visibilité.
+10. **Reprise et exactitude :** en cas de sauvegarde/reprise, l'interface peut réafficher le dernier résumé confirmé si son événement public est sauvegardé, ou présenter un état neutre si cette information de présentation n'est pas conservée ; elle ne doit ni rejouer l'action ni inventer un résultat à partir de l'état courant. Aucun double événement lors d'un rafraîchissement.
+11. **Accessibilité et langue :** libellés et modèles de messages localisables en français et anglais dès le MVP (GC-28), puis extensibles ; utiliser des paramètres typés de résultats plutôt qu'un texte métier figé dans le moteur, et rendre le message accessible au lecteur d'écran sans annonces intempestives répétées.
+12. **Portée :** ce retour informatif est distinct de l'aide contextuelle GC-26, de la prévisualisation GC-23 et de l'écran final GC-33. Il n'ajoute aucune assistance stratégique ni règle à Gridcannon Version 2.
+
+**Exemple :** le joueur pose une carte en coin qui attaque deux figures : le bloc indique la pose et le résultat de chacune. Il examine ensuite une carte sans jouer : le résumé reste inchangé. Lorsqu'il annule la préparation d'un Joker, aucune consommation ni nouveau résumé n'apparaît.
+
+**Statut : GC-39 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucune implémentation ni test exécuté.
+
+### 53.2. Scénarios de conformité — GC-39
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T427 | Placement confirmé sans attaque | Message de pose uniquement, aucun tir fictif | Spécifié, non exécuté |
+| GC-V2-T428 | Tir confirmé vainquant une Dame | Valeurs et figure vaincue fidèles au moteur | Spécifié, non exécuté |
+| GC-V2-T429 | Tir légal mais insuffisant | Résultat « figure non vaincue » cohérent, aucune victoire inventée | Spécifié, non exécuté |
+| GC-V2-T430 | Pose en coin avec deux attaques distinctes | Résumé des deux issues dans un bilan unique | Spécifié, non exécuté |
+| GC-V2-T431 | Extraction légale par As | Pile extraite et consommation réelle de l'As récapitulées | Spécifié, non exécuté |
+| GC-V2-T432 | Réaffectation légale par Joker | Mouvement confirmé et consommation Joker décrits | Spécifié, non exécuté |
+| GC-V2-T433 | Prévisualisation annulée, inspection, surbrillance | Aucun remplacement du dernier résumé | Spécifié, non exécuté |
+| GC-V2-T434 | Nouvelle action métier après une précédente | Résumé précédent remplacé ; pas de journal complet | Spécifié, non exécuté |
+| GC-V2-T435 | Masquage et réaffichage du bloc | Partie et statistiques inchangées | Spécifié, non exécuté |
+| GC-V2-T436 | Animation et son désactivés | Résumé disponible et exact indépendamment des effets | Spécifié, non exécuté |
+| GC-V2-T437 | Reprise après un coup confirmé | Aucun coup rejoué et pas de faux résumé | Spécifié, non exécuté |
+| GC-V2-T438 | Carte cachée non révélée | Aucune divulgation dans le texte du bilan | Spécifié, non exécuté |
+| GC-V2-T439 | Affichage mobile, clavier, lecteur d'écran FR/EN | Texte lisible, accès au masquage, sans annonces répétées | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-40 / modes de présentation du plateau sur mobile :** comment adapter l'affichage de la grille 3×3 et des douze figures périphériques aux petits écrans, sans masquer les informations nécessaires au jeu ? **A** plateau intégral fixe avec réduction proportionnelle ; **B** plateau intégral avec zoom/panoramique facultatifs et commandes essentielles toujours accessibles ; **C** affichage par zones (grille centrale et côtés séparés) avec navigation entre panneaux. Préserver la vue cohérente des attaques, des cartes et des figures ainsi que l'accessibilité tactile et clavier.
