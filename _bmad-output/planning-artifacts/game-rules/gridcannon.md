@@ -1348,4 +1348,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T319 | Consultation de la pioche par clic/toucher | Aucune identité de carte cachée ni historique divulgué | Spécifié, non exécuté |
 | GC-V2-T320 | Lecture du compteur sur mobile en français et anglais | Libellé et quantité lisibles, état 0 explicite | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-30 / présentation des As et Jokers :** comment afficher à tout instant les **actions spéciales disponibles et déjà consommées** ? Options envisagées : **A**, simple compteur numérique par type ; **B**, icônes/cartes miniatures différenciant disponibles et utilisées, ouvrant l'action légale sur sélection ; **C**, panneau détaillé permanent avec chaque carte et ses possibilités. Préserver les quatre As, deux Jokers et leur dépense unique, sans autoriser une activation illégale.
+**GC-30 : option B validée ultérieurement — mini-cartes interactives pour les As et Jokers révélés ; voir §44.**
+
+
+## 44. Décision UX Gridcannon V2 — GC-30 : As et Jokers en cartes miniatures interactives
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Les actions spéciales physiquement **déjà découvertes** sont représentées dans une réserve dédiée par des **mini-cartes illustrées interactives**. Chaque As et Joker garde une identité stable ; la présentation distingue les cartes **disponibles** de celles **consommées**. Les cartes pas encore découvertes **ne sont pas exposées**. Sélectionner une carte disponible ouvre le choix de son action **légale** ; cette seule sélection ne la dépense pas.
+
+### 44.1. Contrat fonctionnel et UX
+
+1. **Réserve fidèle :** afficher seulement les As/Jokers effectivement révélés pendant la mise en place, une pioche normale ou la recherche de figure GC-06/09/18 ; jusqu'à **quatre As et deux Jokers physiques distincts**, sans création de ressources fictives ni anticipation de la pioche.
+2. **Mini-cartes :** chaque carte révélée est identifiable par son type (As = Extraction ; Joker = Réaffectation), avec un rendu adapté à l'univers spatial/fantasy et un texte accessible. Les informations d'identité utiles aux actions restent explicites.
+3. **États clairs :** une ressource non dépensée est disponible ; une ressource déjà consommée reste visible comme **utilisée**, mais ne peut plus être activée. Ne pas compter une carte non découverte comme « utilisée ».
+4. **Activation volontaire :** sélectionner une ressource disponible ouvre le flux d'Extraction (choix d'une pile non vide, GC-03/05) ou de Réaffectation (choix de la carte supérieure et de la destination légalement autorisée, GC-04/11). Aucun mouvement ou retrait de carte ne se produit à la simple ouverture.
+5. **Confirmation et validation :** le moteur contrôle les conditions de légalité et les cibles au moment de confirmer. En cas d'annulation, d'absence de destination légale, d'état obsolète ou d'action devenue impossible, la ressource n'est pas dépensée.
+6. **Moment d'utilisation :** respecter les fenêtres d'activation déjà autorisées par les décisions de Version 2, notamment après pioche avant placement, durant la recherche manuelle d'une figure et après épuisement de la pioche si le recours reste utile (GC-11/18/20). Ne pas autoriser une dépense durant une phase où les règles l'interdisent (GC-16).
+7. **Joker et prévisualisation :** la sélection d'une destination par Joker peut présenter la prévisualisation non destructive GC-23 ; le Joker n'est consommé qu'à confirmation du déplacement réellement exécuté. Le tir éventuel suit GC-24.
+8. **Unicité :** une action confirmée consomme exactement **une** carte physique de la réserve et effectue exactement une transition métier. Double clics, rafraîchissements ou reprises ne doivent pas dupliquer la dépense, le mouvement ou un tir.
+9. **Présentation mobile :** prévoir une bande compacte de mini-cartes, adaptative et éventuellement défilante ; ne pas masquer la grille, les décisions ouvertes ni les contrôles de confirmation. Les cartes consommées restent identifiables sans se confondre avec les ressources disponibles.
+10. **Accessibilité :** taille d'activation adaptée au tactile, parcours clavier, état « disponible/utilisé » perceptible par lecteur d'écran et autrement que par la couleur ; ne pas dépendre du survol, d'une animation ou du son (GC-24/25).
+11. **Localisation et sauvegarde :** libellés, explications et messages disponibles en français et anglais dès le MVP (GC-28). Après rechargement, reconstruire la réserve à partir des identifiants physiques et de leur état métier, sans inventaire d'interface divergent.
+12. **Portée :** GC-30 est un choix d'interface CardForge sans modification des six actions spéciales originales ni de leur usage ; le nombre de ressources affichées est celui **réellement révélées**, non un compteur de ressources encore à découvrir.
+
+**Exemple :** deux As et un Joker ont été découverts ; un As est déjà utilisé. La réserve présente trois mini-cartes, dont un As inactif. Le joueur sélectionne le Joker, envisage un déplacement, puis annule : le Joker reste disponible. Après une réaffectation légale confirmée, il passe à l'état utilisé ; aucun Joker non révélé n'apparaît.
+
+**Statut : GC-30 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement, sans développement ni test exécuté.
+
+### 44.2. Scénarios de conformité — GC-30
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T321 | Deux As et un Joker révélés, trois autres ressources encore cachées | Seules trois mini-cartes physiques en réserve sont visibles | Spécifié, non exécuté |
+| GC-V2-T322 | Un As dépensé parmi trois cartes découvertes | Mini-carte « utilisée » visible, non activable ; autres inchangées | Spécifié, non exécuté |
+| GC-V2-T323 | Sélection d'un As puis annulation | Aucune pile retirée, As non dépensé | Spécifié, non exécuté |
+| GC-V2-T324 | Confirmation d'Extraction sur pile non vide | Une pile extraite et un As dépensé exactement une fois | Spécifié, non exécuté |
+| GC-V2-T325 | Tentative d'Extraction illégale | Dépense refusée, carte toujours disponible | Spécifié, non exécuté |
+| GC-V2-T326 | Joker sélectionné puis prévisualisation GC-23 annulée | Aucune dépense, grille inchangée | Spécifié, non exécuté |
+| GC-V2-T327 | Joker confirmé sur déplacement légal déclenchant un tir | Une dépense, un déplacement et tirs réels résolus | Spécifié, non exécuté |
+| GC-V2-T328 | Recherche GC-18 : Joker tiré | Carte ajoutée à la réserve, aucune activation automatique | Spécifié, non exécuté |
+| GC-V2-T329 | Préparation inachevée GC-16 | Aucune activation spéciale prématurée | Spécifié, non exécuté |
+| GC-V2-T330 | Pioche vide avec un As légalement utile GC-20 | Mini-carte activable, aucune défaite prématurée | Spécifié, non exécuté |
+| GC-V2-T331 | Double confirmation ou reprise après dépense | Une seule ressource consommée, invariant physique préservé | Spécifié, non exécuté |
+| GC-V2-T332 | Mini-cartes sur mobile, clavier et lecteur d'écran en français/anglais | Type, disponibilité et action compréhensibles et accessibles | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-31 / suivi de progression des figures :** comment représenter la progression vers les **douze figures vaincues**, sachant que les figures éliminées restent retournées à leur emplacement autour de la grille ? Options : **A**, aucune jauge supplémentaire (seul le plateau fait foi) ; **B**, compteur compact « Figures vaincues : X/12 » en plus de la représentation physique des figures ; **C**, panneau de progression détaillé par figure et par côté avec récapitulatif de leur état. Ne jamais révéler les figures non encore tirées ni considérer une figure non révélée comme déjà vaincue.
