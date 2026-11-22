@@ -154,3 +154,8 @@
 ## 18. Arbitrage CardForge CTD-ARB-11 — deux jokers dans une même attaque (22 novembre 2026)
 
 **Option A validée par le porteur :** les deux jokers sont des cartes physiques distinctes et peuvent être utilisés dans une seule attaque ; ils peuvent constituer les deux puissances (10 + 10, plus un déclencheur distinct) ou une puissance 10 et un déclencheur prenant l'enseigne du monstre. Aucune limite nouvelle d'un joker par attaque/main, jamais de duplication d'un seul joker. **CTD-11 clos**, tests CTD-T104 à CTD-T113 spécifiés mais non exécutés ; **CTD-12** concerne le comptage du score de victoire lorsque des cartes demeurent en main. Arbitrage produit distinct d'une confirmation officielle de l'auteur.
+
+
+## 19. Arbitrage CardForge CTD-ARB-12 — score officiel et main restante (22 novembre 2026)
+
+**Option A validée par le porteur :** le score à la victoire compte **seulement les cartes encore en pioche**, et exclut toute carte encore en main. Pioche vide et douzième monstre vaincu = victoire avec score 0 ; aucune valeur de score officiel de victoire n'est attribuée en cas de défaite/abandon. Ce calcul est confirmé dans les références sur le jeu et reste distinct des statistiques maison CardForge. Tests CTD-T114 à CTD-T121 spécifiés, non exécutés. **CTD-12 clos ; CTD-13** concerne la séquence et l'autorisation des défausses pendant la main (distinct de leur caractère explicitement obligatoire déjà validé dans CTD-03).
