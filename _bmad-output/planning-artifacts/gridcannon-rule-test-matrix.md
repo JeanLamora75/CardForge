@@ -83,3 +83,13 @@ La source primaire identifiée est [Tom Francis — Gridcannon](https://www.pent
 5. Vérifier l'invariant des sauvegardes et de la fidélité des règles sur les trois plateformes avant toute publication mobile.
 
 **Conclusion :** la Version 2 est fixée pour CardForge, mais un référentiel de tests non exécutés et plusieurs questions ouvertes ne constituent pas encore une preuve de conformité du moteur.
+
+## Contrôle documentaire complémentaire du 22 novembre 2026
+- **GC-T27 :** As disponible joué après pioche et avant placement : légal selon [Tom Francis V2](https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/).
+- **GC-T28 :** deux armures cumulées et arrivée au seuil de 20 (J/Q) ou 19 (K) : défaite documentée par Tom Francis.
+- **GC-T29 :** dernière carte de pioche consommée mais As utilisable : **ne pas déclarer automatiquement la défaite** ; laisser le recours se résoudre.
+- **GC-T30 :** aucun adversaire vivant, douze non encore vaincus : traverser la pioche jusqu'à la figure suivante, puis remettre les autres cartes sous la pioche ; ordre exact à confirmer.
+- **GC-T31 :** carte au coin : tirs possibles sur les deux axes ; si deux cibles sont vaincues ensemble, l'ordre terminal reste à arbitrer (G-03).
+- **G-01/G-02 restent ouverts :** [Howto.cards](https://howto.cards/en/gridcannon/) reconnaît explicitement que V2 ne tranche pas l'emplacement de figure occupé ni la valeur d'une pile vide ; ses solutions de repli sont **des propositions secondaires**.
+- **G-04 :** l'extraction remet une pile entière face cachée sous la pioche, mais l'ordre interne exact n'est pas spécifié.
+- Ces nouvelles entrées sont des **spécifications de tests**, non des tests exécutés. [Règles actualisées](./game-rules/gridcannon.md).
