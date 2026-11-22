@@ -300,3 +300,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option A validée :** Clear the Dungeon exige deux cartes de puissance posées avant la carte déclencheuse, laquelle doit correspondre à l'enseigne du monstre (ou être un joker valide). Une carte déclencheuse ne peut pas être posée/réservée à l'avance, et le moteur ne reconstruit pas automatiquement une combinaison de trois cartes placées sans ordre. Les deux puissances peuvent être placées sur des mains différentes selon CTD-ARB-01 ; la modification des cartes de la main courante est permise selon CTD-ARB-02. La troisième carte valide résout immédiatement la victoire locale selon CTD-ARB-06. Traçabilité : FR-06/FR-07, [référentiel](../../game-rules/clear-the-dungeon.md), [matrice CTD-T69 à CTD-T77](../../clear-the-dungeon-rule-test-matrix.md).
 
 **CTD-07 / CTD-ARB-07 est clos pour CardForge.** CTD-08 reste ouvert concernant le placement d'une seconde carte de puissance **insuffisante**. Aucun changement de règle Gridcannon ni de portée de la V1.
+
+
+## Décision produit CTD-ARB-08 — seconde carte de puissance insuffisante (22 novembre 2026)
+
+**Option A approuvée :** Clear the Dungeon refuse de placer une deuxième carte de puissance si la somme avec la première reste strictement inférieure à la résistance du monstre. La carte refusée reste en main ; aucune mutation de la partie, aucun dégât ni pose irréversible ne survient. Le moteur accepte au contraire toute somme **supérieure ou égale** au seuil et conserve la nécessité d'une troisième carte déclencheuse distincte. Cette décision précise FR-06 et FR-07, avec tests de non-régression de sauvegarde FR-16/18.
+
+**CTD-08 / CTD-ARB-08 clos** ; CTD-09 ouvert : doit-on également empêcher une première carte de puissance qui est mathématiquement impossible à compléter ? Sources internes : [règles CTD](../../game-rules/clear-the-dungeon.md), [matrice CTD-T78 à CTD-T84](../../clear-the-dungeon-rule-test-matrix.md).
