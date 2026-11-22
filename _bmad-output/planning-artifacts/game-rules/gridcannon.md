@@ -986,3 +986,42 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T223 | Suite de Réaffectations tournant en boucle et n'ouvrant aucune progression possible | Détecter l'impasse ; pas de partie bloquée indéfiniment | À vérifier par moteur, non exécuté |
 
 **Prochain arbitrage GC-21 / égalité d'attribution d'armure :** lorsqu'une carte numérique doit devenir une **armure** (GC-07), la règle de « ressemblance inverse » peut désigner **plusieurs figures vivantes de même valeur minimale et de même rang de priorité**, sans départage explicite. Doit-on **laisser le joueur choisir** parmi ces cibles ex æquo, imposer un ordre de plateau déterministe, ou appliquer l'armure à toutes les cibles à égalité ? Les seuils de défaite J/Q/K demeurent inchangés.
+
+
+## 35. Décision fonctionnelle Gridcannon V2 — GC-21 : égalité d'attribution d'armure
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026 : choix du joueur entre les cibles ex æquo.** Lorsqu'une carte numérique ne peut légalement être posée et doit devenir une armure conformément à GC-07, le moteur établit d'abord les figures vivantes candidates selon la règle de « ressemblance inverse » (même enseigne, sinon même couleur, sinon plus faible valeur). Si plusieurs figures vivantes restent **strictement ex æquo au meilleur rang d'éligibilité et à la plus faible valeur**, le joueur choisit **une seule** de ces figures pour recevoir **la totalité de la carte d'armure**. Le moteur ne départage pas silencieusement par ordre de plateau et ne duplique pas l'armure.
+
+### 35.1. Contrat fonctionnel CardForge
+
+1. **Déclenchement conditionnel :** ne proposer l'attribution d'armure qu'après les contrôles de pose et de recours légalement utiles de GC-07 ; ne pas transformer prématurément une carte jouable en armure.
+2. **Calcul inchangé des priorités :** préserver l'ordre officiel d'attraction inverse déjà documenté : même enseigne prioritaire, à défaut même couleur, à défaut figure de plus faible valeur. À l'intérieur du meilleur groupe, conserver seulement les figures ayant **la valeur minimale applicable**. Une figure vaincue n'est jamais une cible.
+3. **Absence d'égalité :** si une unique cible gagne ces comparaisons, lui affecter la carte sans demander de choix superflu.
+4. **Égalité exacte :** si plusieurs cibles restent à la même priorité et à la même valeur, présenter au joueur les seules cibles encore éligibles ; le joueur choisit librement **une cible unique**. Ne pas sélectionner automatiquement selon l'ordre des côtés ou des emplacements.
+5. **Une carte physique, une attribution :** ajouter la valeur de la carte numérique **une seule fois**, à la résistance courante de la seule figure choisie. La carte ne peut ni être divisée, ni être copiée sur toutes les figures ex æquo.
+6. **Effet terminal :** après l'attribution, réévaluer immédiatement les seuils de défaite inchangés : **20 ou plus** pour valet/dame, **19 ou plus** pour roi. Le choix du joueur peut donc changer l'issue ; ne pas rediriger automatiquement vers une figure plus favorable.
+7. **Interface et décision :** afficher les figures candidates, leur résistance actuelle et l'effet de l'armure avant confirmation, sans proposer des cibles non éligibles. Le choix doit fonctionner au clavier et au tactile.
+8. **Sauvegarde et unicité :** tant que le choix n'est pas confirmé, conserver la carte numérique en attente sans modifier les armures. Après confirmation, persister la cible, la carte et son effet atomiquement pour éviter les doubles attributions à la reprise ou lors de clics concurrents.
+9. **Traçabilité :** distinguer dans le journal de partie la carte, le groupe de candidates et la figure finalement choisie, pour faciliter les contrôles de conformité sans révéler le contenu futur de la pioche.
+10. **Portée de l'arbitrage :** ce départage par choix du joueur est une **précision fonctionnelle CardForge** pour un cas non explicité dans la source déjà étudiée, **pas une nouvelle règle attribuée à Tom Francis**.
+
+**Exemple :** une carte d'armure 5♥ doit être attribuée et deux valets vivants du même rang d'éligibilité ont chacun une résistance courante de 13. Le moteur propose ces deux cibles ; le joueur en choisit **une seule**, qui passe à 18. L'autre reste à 13. L'armure 5♥ n'est pas répliquée.
+
+**Statut : GC-21 CLOS pour CardForge par validation de l'option A le 22 novembre 2026.** Cette décision complète GC-07 et GC-20 sans modifier la définition des armures ni leurs seuils. **Spécification documentaire uniquement : aucun test n'a été exécuté.**
+
+### 35.2. Scénarios de conformité — GC-21
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T224 | Une seule figure vivante éligible au meilleur rang | Attribution à cette figure ; aucun choix artificiel | Spécifié, non exécuté |
+| GC-V2-T225 | Deux figures vivantes strictement ex æquo au meilleur rang et à la valeur minimale | Choix proposé entre ces deux figures seulement | Spécifié, non exécuté |
+| GC-V2-T226 | Deux cibles ex æquo, choix de la seconde | Une seule armure ajoutée à la seconde ; première inchangée | Spécifié, non exécuté |
+| GC-V2-T227 | Figure plus faible mais de priorité d'enseigne/couleur inférieure | La priorité inverse l'emporte ; figure inférieure non proposée | Spécifié, non exécuté |
+| GC-V2-T228 | Une des figures ex æquo est déjà vaincue | Figure vaincue exclue des choix | Spécifié, non exécuté |
+| GC-V2-T229 | L'armure choisie fait atteindre le seuil terminal à un valet ou une dame | Défaite immédiate à 20 ou plus | Spécifié, non exécuté |
+| GC-V2-T230 | L'armure choisie fait atteindre le seuil terminal à un roi | Défaite immédiate à 19 ou plus | Spécifié, non exécuté |
+| GC-V2-T231 | Sauvegarde au cours du choix, puis reprise | Même carte et mêmes candidates ; aucune armure attribuée avant confirmation | Spécifié, non exécuté |
+| GC-V2-T232 | Double clic de confirmation ou reprise après attribution | Une seule attribution physique et une seule mise à jour de résistance | Spécifié, non exécuté |
+| GC-V2-T233 | Candidats ex æquo sur mobile et au clavier | Choix accessible, résistance et impact visibles avant validation | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-22 / lisibilité des armures :** comment représenter au joueur la **résistance actuelle** de chaque figure (base + armures cumulées) et les cartes d'armure attribuées, afin de permettre des décisions éclairées sans modifier les règles ? Les options d'affichage devront rester adaptées au mobile et préserver la visibilité des seuils de défaite.
