@@ -290,3 +290,40 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T17 | Meilleur candidat bloqué, mais au moins un repli admissible | Aucune défaite déclenchée par ce seul blocage ; placement légal possible | Spécifié, non exécuté |
 
 **Prochaine décision GC-03 / G-02 :** règle de placement d'une carte numérique sur une **case de grille vide après Extraction** : la case vide vaut-elle 0 pour le placement, faut-il la remplir prioritairement, ou est-elle inaccessible par pose normale ? Ce point demeure ouvert.
+
+
+## 17. Décision fonctionnelle Gridcannon V2 — GC-03 / G-02 : case de grille vide après Extraction
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'une Extraction (As) retire une pile entière, sa case devient **vide**. Pour **la seule validation de placement d'une carte numérique de 2 à 10**, la case vide se comporte comme si sa valeur supérieure était **0** : **toute carte numérique 2 à 10 peut y être posée**, sans obligation d'utiliser cette case en priorité.
+
+**Contrat métier pour CardForge :**
+- Après consommation d'un As selon la mécanique Version 2, la pile complète est retirée de son emplacement et réinsérée au-dessous de la pioche selon les règles de l'Extraction ; le **détail de son ordre interne** reste ouvert sous **G-04**. La case n'a **aucune carte visible**.
+- En vérification des destinations d'une nouvelle carte numérique `C` (2 ≤ valeur(C) ≤ 10), une case occupée est admissible si `valeur(C) ≥ valeur(carte supérieure)`, tandis qu'une **case vide est toujours admissible**, de façon équivalente à `valeur(C) ≥ 0`.
+- Le joueur peut **choisir n'importe quelle destination légale**, vide ou déjà occupée ; une case vide n'impose ni priorité ni obligation de remplissage au prochain tirage.
+- Une pose réussie sur la case vide crée une **nouvelle pile** avec la carte réellement posée comme **première et seule carte**, puis cette carte devient la carte supérieure de référence pour les poses suivantes. Aucune carte artificielle de valeur 0 n'est créée, stockée, mélangée ou comptée.
+- **Une case vide n'est pas une carte d'attaque :** elle ne fournit aucune puissance de tir et ne peut à elle seule servir de carte visible dans une vérification de similitude de figure. La valeur technique « 0 » n'est utilisée **que pour autoriser une pose** et ne modifie pas les autres calculs ; les éventuels tirs d'une nouvelle carte se résolvent avec les **cartes réellement visibles** selon le contrat du tir.
+- Plusieurs cases vides sont possibles si plusieurs Extractions légales ont lieu ; elles sont toutes des destinations numériques admissibles selon cette règle.
+- Le moteur persiste la **pile réellement vide** (aucune carte) et non une carte fantôme 0 ; sauvegarde/reprise conserve le nombre de cartes, la pioche, les actions spéciales consommées et les emplacements.
+- Cette décision ne change pas les règles **GC-01 / GC-02** d'attraction des figures ; le centre reste exclu des candidates et les cases vides ne possèdent pas de carte visible attirante.
+- Les cas impossibles ou atypiques sur l'usage d'actions spéciales et la fin de pioche demeurent ouverts sous **G-05/G-07**.
+
+**Exemple :** après extraction de la pile centrale, le joueur pioche 4 cœur. Il peut placer ce 4 sur la case centrale vide, **ou** sur une autre pile dont la carte supérieure vaut au plus 4. Après pose au centre, la nouvelle pile centrale comporte **exactement le 4 cœur**, pas un « 0 » sous-jacent.
+
+**Statut : GC-03 / G-02 CLOS pour CardForge.** La valeur conventionnelle 0 pour une case vide est un **arbitrage produit** compatible avec une analogie de la version historique et une source secondaire ; elle **n'est pas déclarée officiellement confirmée pour la Version 2 par Tom Francis**. Aucun test moteur n'a été exécuté.
+
+### 17.1. Scénarios de conformité — GC-03 / G-02
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T18 | Extraction d'une pile centrale complète par As | Centre réellement vide, As consommé, cartes extraites placées sous la pioche sans apparition d'une carte 0 | Spécifié, non exécuté |
+| GC-V2-T19 | Case centrale vide, carte 2 piochée | Placement possible sur la case vide, même valeur minimale 2 | Spécifié, non exécuté |
+| GC-V2-T20 | Case périphérique vide, carte 10 piochée | Placement possible ; nouvelle pile constituée du seul 10 | Spécifié, non exécuté |
+| GC-V2-T21 | Case vide et autre pile de valeur supérieure autorisant la carte piochée | Le joueur choisit librement l'une des destinations légales ; la case vide n'est pas prioritaire | Spécifié, non exécuté |
+| GC-V2-T22 | Case vide et pile non vide dont le sommet est plus fort que la carte piochée | Case vide autorisée ; pile trop forte interdite par comparaison normale | Spécifié, non exécuté |
+| GC-V2-T23 | Après pose du 4 sur la case vide, tentative d'ajouter un 3 puis un 5 | 3 refusé ; 5 accepté, selon le sommet réel 4 | Spécifié, non exécuté |
+| GC-V2-T24 | Trois cases vides après plusieurs Extractions, carte 6 piochée | Les trois cases vides sont des destinations admissibles, sans obligation de prioriser l'une d'elles | Spécifié, non exécuté |
+| GC-V2-T25 | Case vide située sur le trajet d'un tir | Aucune puissance 0 fictive ajoutée, uniquement les cartes réellement visibles peuvent contribuer | Spécifié, non exécuté |
+| GC-V2-T26 | Case périphérique vide au moment de chercher une carte attirant une figure | Aucune carte 0 fictive prise en compte dans le classement de similitude GC-01/02 | Spécifié, non exécuté |
+| GC-V2-T27 | Sauvegarde/reprise après Extraction puis après réoccupation de la case | Même case vide ou pile réellement recréée ; aucune duplication de carte ni de pioche | Spécifié, non exécuté |
+
+**Prochain arbitrage GC-04 / G-03 :** lorsqu'une carte est posée dans un coin et permet deux tirs (horizontal et vertical), faut-il résoudre les deux tirs à partir d'un même état, les traiter séquentiellement, ou demander au joueur de choisir leur ordre ? La possibilité d'un double tir est documentée ; l'ordre précis reste à arbitrer.
