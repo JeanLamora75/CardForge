@@ -2170,4 +2170,51 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T549 | Parcours clavier et lecteur d'écran FR/EN | Focus, texte et états accessibles sans code couleur unique | À vérifier en accessibilité, non exécuté |
 | GC-V2-T550 | Deux parties identiques jouées avec des modes différents | Résultats, score et règles strictement identiques | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-49 / accompagnement de la première partie :** comment accueillir un nouveau joueur sans rendre l'apprentissage obligatoire ? **A** écran de règles et aide GC-26 uniquement, sans parcours guidé ; **B** **mini-tutoriel interactif facultatif**, proposé lors de la première partie et relançable depuis l'aide, expliquant le plateau, les placements, les tirs et les actions spéciales sans modifier les règles ; **C** tutoriel obligatoire avant tout accès à une vraie partie. Le tutoriel doit respecter les choix de langue GC-27/28, l'accessibilité et ne jamais affecter les statistiques ou la sauvegarde de la partie normale.
+**GC-49 : option B validée ultérieurement — mini-tutoriel facultatif, indépendant des parties, et relançable depuis l'aide ; voir §63.**
+
+
+## 63. Décision UX Gridcannon V2 — GC-49 : mini-tutoriel interactif facultatif pour la première partie
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** À l'occasion de la première découverte de Gridcannon V2, CardForge **propose sans l'imposer** un **mini-tutoriel interactif court**, relançable à tout moment depuis l'aide GC-26. L'initiation utilise un **scénario pédagogique isolé**, distinct de la véritable partie et de ses sauvegardes/statistiques ; elle explique les mécanismes existants sans ajouter ni modifier une règle du jeu original.
+
+### 63.1. Contrat fonctionnel et UX
+
+1. **Proposition non bloquante :** lors du premier accès au jeu, présenter un choix compréhensible entre « Découvrir le tutoriel » et « Jouer directement ». Ne pas conditionner le démarrage d'une vraie partie à la réussite du parcours.
+2. **Progression courte :** proposer quatre séquences pédagogiques indicatives : (a) la grille centrale 3×3 et les figures périphériques ; (b) placement d'une carte et destinations légales GC-37/38 ; (c) résolution ou prévisualisation d'un tir GC-23 ; (d) rôle et consommation d'As et Jokers GC-30. Les cas illustrés suivent strictement les règles originales.
+3. **Interactions guidées réelles :** proposer des gestes simples sur un plateau de démonstration, avec indications contextualisées et possibilité de passer à l'étape suivante, plutôt qu'une succession de textes seuls.
+4. **Scénario distinct :** utiliser un état de démonstration prédéfini, déterministe et clairement identifié comme tutoriel ; ne jamais modifier la pioche, l'ordre des cartes, les ressources, la phase ou les résultats d'une vraie partie en cours.
+5. **Statistiques et score :** les actions du tutoriel ne constituent ni victoire, ni défaite, ni abandon, ni partie achevée au sens de GC-33/34 ; elles ne créent pas de score officiel ni n'affectent les records.
+6. **Sauvegardes :** aucune progression pédagogique n'est enregistrée dans la sauvegarde métier GC-32/46. Le fait d'ouvrir ou de quitter le tutoriel n'écrase pas la partie active et ne réclame pas le contrôle de la partie en lecture seule GC-47.
+7. **Sortie libre :** bouton « Quitter le tutoriel » à tout moment et possibilité de revenir immédiatement au jeu ; aucun écran de confirmation destructrice puisque la véritable partie n'est pas modifiée.
+8. **Relance depuis l'aide :** entrée « Revoir le tutoriel » disponible dans l'aide contextuelle GC-26, même après l'avoir achevé ou ignoré ; ne pas obliger le joueur à réinitialiser ses préférences pour y accéder.
+9. **Mémoire de présentation :** conserver localement une préférence indiquant que la proposition initiale a été traitée (suivie ou ignorée) pour éviter l'invite répétée, tout en maintenant l'accès manuel au tutoriel. Cette préférence est indépendante des statistiques GC-35.
+10. **Concordance de l'interface :** l'initiation utilise les mêmes termes, valeurs et règles que le moteur, et reflète les gestes de manipulation GC-37, les cartes illustrées GC-36, les piles GC-42 et les statuts de combat. Les exemples ne doivent pas annoncer un résultat faux ou un coup impossible.
+11. **Responsive et accessibilité :** compatible smartphone/tablette/ordinateur, portrait et paysage GC-41 ; étapes utilisables au toucher, à la souris et au clavier, avec instructions visibles et alternatives lecteurs d'écran ; ne jamais rendre le glisser-déposer obligatoire.
+12. **Traductions :** intégralité des textes, noms de commandes et indications disponibles en français et anglais dès le MVP GC-28, avec architecture extensible aux autres langues. Les illustrations thématiques ne doivent pas porter des textes figés non traduisibles.
+13. **Compatibilité des préférences :** respecter le mode de lisibilité renforcée GC-48, les réglages d'effets sonores GC-25 et les aides GC-26, sans forcer des animations ou sons pour expliquer une étape.
+14. **Portée CardForge :** privilégier un cadre de tutoriel réutilisable pour les autres jeux du catalogue, chaque jeu ayant ses propres étapes et scénarios d'apprentissage conformes à ses règles.
+
+**Exemple :** un nouveau joueur choisit « Découvrir le tutoriel ». Sur un plateau de démonstration, il observe les neuf cases, sélectionne une carte, choisit une destination autorisée et découvre une résolution de tir puis le rôle des cartes spéciales. Il quitte l'initiation et retrouve sa partie normale strictement inchangée ; aucun résultat n'a été ajouté aux statistiques.
+
+**Statut : GC-49 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucun tutoriel développé, aucune validation UX ni test exécuté.
+
+### 63.2. Scénarios de conformité — GC-49
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T551 | Premier lancement de Gridcannon V2 | Proposition de tutoriel facultative, accès direct au jeu possible | Spécifié, non exécuté |
+| GC-V2-T552 | Joueur choisissant « Jouer directement » | Partie jouable immédiatement, aucun tutoriel imposé | Spécifié, non exécuté |
+| GC-V2-T553 | Démarrage d'un tutoriel avec partie active | Scénario isolé, sauvegarde et état de la partie active inchangés | Spécifié, non exécuté |
+| GC-V2-T554 | Étape découverte du plateau | Grille, figures et terminologie cohérentes avec le jeu | Spécifié, non exécuté |
+| GC-V2-T555 | Placement guidé de carte | Source, destination et coup légaux selon les règles existantes | Spécifié, non exécuté |
+| GC-V2-T556 | Étape attaque guidée | Prévisualisation et résultat strictement conformes au moteur | Spécifié, non exécuté |
+| GC-V2-T557 | Étape As/Joker | Actions et dépenses correctes dans la démonstration uniquement | Spécifié, non exécuté |
+| GC-V2-T558 | Sortie prématurée du tutoriel | Retour au jeu sans modification de la vraie partie | Spécifié, non exécuté |
+| GC-V2-T559 | Tutoriel achevé | Aucun compte de victoire/défaite/abandon ni record mis à jour | Spécifié, non exécuté |
+| GC-V2-T560 | Ouverture « Revoir le tutoriel » depuis l'aide | Tutoriel relancé sans nouvelle partie forcée | Spécifié, non exécuté |
+| GC-V2-T561 | Retour après avoir ignoré le tutoriel | Pas de sollicitation répétée ; accès manuel toujours disponible | Spécifié, non exécuté |
+| GC-V2-T562 | Réinitialisation des statistiques GC-35 | Préférence de tutoriel indépendante et conservée | Spécifié, non exécuté |
+| GC-V2-T563 | Tutoriel avec mode lisibilité GC-48 et sons coupés | Compréhensible sans dépendre de l'audio ni d'une animation | À vérifier en UX, non exécuté |
+| GC-V2-T564 | Tutoriel sur mobile, clavier, lecteur d'écran en FR/EN | Étapes, choix de sortie et guidage accessibles | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-50 / adaptation du niveau d'accompagnement après le tutoriel :** comment aider un joueur qui connaît les règles sans alourdir la partie ? **A** conserver les aides GC-26 manuellement accessibles uniquement ; **B** proposer des **conseils contextuels de règles**, facultatifs et désactivables, uniquement lorsqu'un joueur tente une action illégale ou rencontre pour la première fois une mécanique, sans recommandations stratégiques ; **C** afficher en permanence des conseils de jeu et de stratégie. Le mécanisme doit respecter les règles originales, la confidentialité des cartes cachées, les préférences d'accessibilité et la distinction entre assistance aux règles et suggestion de « meilleur coup ».
