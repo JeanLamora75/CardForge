@@ -2034,4 +2034,49 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T510 | Rafraîchissement ou reprise de partie précédemment en plein écran | Partie restaurée intacte, aucune nouvelle requête automatique | Spécifié, non exécuté |
 | GC-V2-T511 | Navigation au clavier, lecteur d'écran, FR/EN | Activation et sortie accessibles avec état explicite | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-46 / état de sauvegarde automatique :** GC-32 prévoit déjà la reprise automatique d'une partie ; comment informer le joueur que ses derniers coups sont bien enregistrés localement ? **A** sauvegarde silencieuse, sans état affiché ; **B** indicateur discret et fiable « Enregistrement… / Partie sauvegardée / Échec de sauvegarde », avec reprise ou nouvelle tentative contrôlée en cas d'erreur ; **C** panneau permanent détaillant chaque sauvegarde et ses diagnostics techniques. Le retour ne doit jamais afficher « Sauvegardée » avant la confirmation effective de l'écriture ni modifier le fonctionnement hors ligne.
+**GC-46 : option B validée ultérieurement — indicateur fiable de sauvegarde locale avec reprise sur erreur ; voir §60.**
+
+
+## 60. Décision UX Gridcannon V2 — GC-46 : indicateur discret et fiable de sauvegarde automatique locale
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** En complément de la sauvegarde/reprise automatique GC-32, CardForge affiche un **indicateur discret, non bloquant et fidèle à l'état réel de persistance** : « Enregistrement… », « Partie sauvegardée » ou « Échec de sauvegarde », accompagné d'une possibilité de **réessayer** en cas d'erreur. L'information concerne **uniquement la sauvegarde locale** ; elle ne suggère jamais une synchronisation cloud ni une sauvegarde effectuée lorsqu'aucune écriture durable n'a réussi.
+
+### 60.1. Contrat fonctionnel et UX
+
+1. **États distincts :** gérer au minimum « Enregistrement… » tant que l'écriture durable est en attente, « Partie sauvegardée » uniquement après succès confirmé pour **la révision courante**, et « Échec de sauvegarde » si l'écriture a échoué. Un état initial neutre est autorisé avant toute sauvegarde.
+2. **Source de vérité :** dériver le statut du résultat réel de la persistance et de l'identifiant/version de l'état du moteur sauvegardé. Ne jamais afficher « Sauvegardée » au simple déclenchement de la demande ni après la réussite d'une **ancienne** révision si une action plus récente reste non persistée.
+3. **Déclenchement automatique :** effectuer les sauvegardes définies par GC-32 après les transitions métier pertinentes, sans bouton « Sauvegarder » obligatoire ni modification du moteur, des tours ou de la pioche.
+4. **Hors ligne :** la sauvegarde locale fonctionne sans réseau. L'indicateur ne porte aucun symbole ou texte laissant entendre une synchronisation distante ; préférer une icône de stockage local ou de validation neutre à une métaphore cloud trompeuse.
+5. **Erreur explicite :** signaler discrètement mais de façon suffisamment visible les erreurs de quota, d'accès au stockage, de corruption détectée ou d'écriture rejetée, sans effacer de manière silencieuse la sauvegarde précédente valide.
+6. **Nouvelle tentative :** permettre « Réessayer » après échec, sur la version **la plus récente** de l'état actif ; les écritures concurrentes/répétées doivent être ordonnées ou versionnées pour éviter qu'un ancien instantané ne remplace le plus récent.
+7. **Partie encore en mémoire :** une erreur ne doit pas réinitialiser volontairement la partie jouable en mémoire ni provoquer une défaite ou un abandon. Prévenir que **les derniers coups peuvent être perdus si le joueur ferme ou recharge avant la réussite d'une sauvegarde**, sans garantir la conservation des données en mémoire après fermeture.
+8. **Sortie et risques :** au moment d'un abandon, nouveau départ ou départ volontaire, garder les confirmations GC-32 et signaler si des changements non sauvegardés risquent d'être perdus ; une fermeture forcée du navigateur ne peut être empêchée de façon fiable.
+9. **Reprise fidèle :** à la réouverture, charger uniquement une sauvegarde durable et valide ; ne pas inventer la récupération de coups qui n'ont pas été écrits. Une sauvegarde de partie terminée ne doit pas être confondue avec une partie active à reprendre.
+10. **Lisibilité :** afficher un retour court à proximité des informations de partie, sans masquer la grille 3×3, les figures et les commandes, compatible avec zoom, orientation GC-41 et plein écran GC-45.
+11. **Accessibilité et i18n :** distinguer les états par texte et icône, non par couleur seule ; messages FR/EN au MVP (GC-28), annonce lecteur d'écran non répétitive et action de reprise accessible au clavier/tactile.
+12. **Métriques et périmètre :** les transitions de statut de sauvegarde ne constituent pas des coups et ne modifient ni statistiques GC-34, ni compteur GC-31, ni score officiel. Aucun journal technique complet des sauvegardes n'est exposé au joueur (option C rejetée).
+13. **Conflits de contexte :** les parties ouvertes simultanément dans plusieurs onglets peuvent nécessiter une politique explicite pour éviter l'écrasement de versions ; ce point est soumis à l'arbitrage **GC-47**.
+
+**Exemple :** le joueur termine un placement. L'indicateur montre « Enregistrement… ». Si l'écriture locale est confirmée pour cet état précis, il affiche « Partie sauvegardée ». Si le stockage échoue, le message devient « Échec de sauvegarde — Réessayer » ; le plateau reste jouable en mémoire, mais la perte éventuelle des derniers coups après fermeture est explicitement signalée.
+
+**Statut : GC-46 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucun développement, essai sur navigateur ni test exécuté.
+
+### 60.2. Scénarios de conformité — GC-46
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T512 | Premier coup confirmé, écriture encore en attente | « Enregistrement… », jamais « Partie sauvegardée » prématuré | Spécifié, non exécuté |
+| GC-V2-T513 | Écriture locale de la révision courante réussie | Affichage « Partie sauvegardée » exact | Spécifié, non exécuté |
+| GC-V2-T514 | Écriture précédente réussie, coup plus récent non sauvegardé | Ne pas déclarer la révision courante sauvegardée | Spécifié, non exécuté |
+| GC-V2-T515 | Échec de stockage/quota | Message d'échec visible, ancienne sauvegarde valide préservée | Spécifié, non exécuté |
+| GC-V2-T516 | Appui sur « Réessayer » après erreur | Tentative d'écriture de l'état le plus récent, sans coup supplémentaire | Spécifié, non exécuté |
+| GC-V2-T517 | Deux écritures terminées dans un ordre différent | Ancienne version ne remplace pas une version plus récente | À vérifier en concurrence, non exécuté |
+| GC-V2-T518 | Partie jouée sans connexion réseau | Sauvegarde locale et indicateur fonctionnels | Spécifié, non exécuté |
+| GC-V2-T519 | Échec persistant, puis départ volontaire | Risque de perdre les derniers coups communiqué clairement | Spécifié, non exécuté |
+| GC-V2-T520 | Fermeture brutale après échec de sauvegarde | Aucune promesse de récupération des coups non persistés | Spécifié, non exécuté |
+| GC-V2-T521 | Réouverture après sauvegarde réussie | Reprise à l'état réellement sauvegardé, sans double action | Spécifié, non exécuté |
+| GC-V2-T522 | Animation, zoom, rotation et plein écran | Statut exact sans masquer les contrôles de jeu | À vérifier en UX, non exécuté |
+| GC-V2-T523 | Clavier, lecteur d'écran, FR/EN | Statuts et nouvelle tentative compréhensibles et accessibles | À vérifier en accessibilité, non exécuté |
+| GC-V2-T524 | Variations de statut sans mouvement joué | Statistiques, score et compteur de figures inchangés | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-47 / partie ouverte dans plusieurs onglets :** si le joueur ouvre la **même partie locale** dans deux onglets ou fenêtres, comment empêcher une sauvegarde ancienne d'écraser sa progression ? **A** autoriser les deux onglets à jouer indépendamment sans prévention des conflits ; **B** autoriser **un seul onglet actif en écriture**, avertir dans les autres avec mode consultation/possibilité de reprendre le contrôle de façon explicite ; **C** permettre des modifications simultanées et fusionner automatiquement leurs coups. Préserver la sauvegarde GC-32/46, la cohérence des statistiques et la jouabilité hors ligne.
