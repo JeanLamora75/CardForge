@@ -856,3 +856,46 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T184 | Navigation depuis le catalogue vers le jeu après renommage | Liaison par identifiant stable, sans rupture de partie ou de route pérenne | Spécifié, non exécuté |
 
 **Prochain arbitrage GC-18 / UX en jeu (suite GC-11, GC-V2-T116) :** comment rendre le mode **recherche d'une figure** compatible avec le droit validé du joueur d'**intervenir volontairement avec un As/Joker** avant la révélation de la nouvelle figure ? Le moteur doit prévoir des **points de décision réels** plutôt qu'un défilement automatique non interruptible.
+
+
+## 32. Décision fonctionnelle Gridcannon V2 — GC-18 : recherche manuelle de figure, carte par carte
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Pendant le **mode de recherche de nouvelle figure** défini par **GC-06** (aucune figure vivante, moins de douze vaincues), le joueur révèle **une carte à la fois** grâce à une action explicite **« Carte suivante »**. Le moteur **ne déroule pas automatiquement toute la pioche** jusqu'à une figure. **Entre deux révélations**, le joueur peut consulter la réserve et **utiliser volontairement** tout As ou Joker légalement activable, conformément à **GC-11**, y compris les cartes spéciales découvertes au cours de la recherche selon **GC-09**.
+
+### 32.1. Exigences fonctionnelles et d'interface
+
+1. **Entrée en mode recherche :** après l'élimination de la dernière figure vivante, si **moins de douze figures sont vaincues**, basculer en mode recherche (GC-06). Si la douzième figure vient d'être vaincue, déclarer **immédiatement la victoire**, sans proposer de nouveau tirage.
+2. **Rythme :** présenter une seule action manuelle **« Carte suivante »** autorisant la révélation **d'exactement une carte physique** depuis le haut de la pioche réelle. Ne jamais piocher implicitement la carte suivante après cette révélation, après une intervention spéciale ou après une reprise de sauvegarde.
+3. **Numérique 2–10 :** lorsque la carte suivante est numérique, la retirer de la pioche et l'ajouter à la **séquence temporaire ordonnée** (GC-06/GC-10), **sans pose, armure, tir ou décision de destination**. Rendre à nouveau accessible « Carte suivante » après cette transition, avec possibilité de jouer une action spéciale avant le prochain tirage.
+4. **As/Joker :** placer immédiatement et sans dépense la carte révélée dans la réserve (GC-09), puis revenir au point de décision : le joueur peut **utiliser ce nouvel As/Joker**, en activer un autre disponible, ou demander **« Carte suivante »**.
+5. **Action spéciale volontaire :** permettre entre deux tirages toute Extraction/Réaffectation **légale**. Après résolution, revenir au **même point d'attente d'un tirage manuel**, avec la nouvelle configuration réelle de la grille et de la pioche ; ne pas déclencher de tirage ni réinjecter la séquence temporaire automatiquement. Les actions invalides ne consomment rien.
+6. **Figure J/Q/K :** la découverte d'une figure met fin au défilement par « Carte suivante » ; passer au **choix/placement légal de cette figure** conformément à GC-01/02/13, avant de clore le mode recherche. Une fois la figure placée, **réinjecter les numériques traversées sous la pioche** selon GC-10 et reprendre le cycle normal. Ne pas révéler la carte suivant immédiatement la figure.
+7. **Aucune figure à créer artificiellement :** si « Carte suivante » est impossible faute de carte restante alors que la recherche ne devrait pas être terminée, contrôler les invariants d'intégrité définis par GC-12 ; ne pas fabriquer une figure, autoriser un tirage vide ou compter une défaite fictive.
+8. **Interface accessible et déterministe :** identifier clairement le mode **« Recherche de figure »**, l'action « Carte suivante », les cartes spéciales disponibles, et le fait qu'**aucun placement numérique normal n'est permis pendant cette phase**. La prise de décision est réelle, pas une simple animation impossible à interrompre. L'action doit être accessible au clavier et au tactile ; pas de mécanisme dépendant uniquement du survol.
+9. **Aucun tirage supplémentaire lors d'une action spéciale :** une Extraction peut alimenter la pioche selon GC-05, un Joker peut modifier la grille ; seule une nouvelle **commande explicite** reprend l'avancement de la recherche.
+10. **Persistance :** après **chaque action validée** (tirage, ajout en réserve, Extraction, Réaffectation, choix de figure), sauvegarder la phase, les cartes temporaires ordonnées, la pioche, les actions disponibles/dépensées et le point de décision. Le retour à l'application ne lance **aucun tirage automatique** ; deux clics concomitants ne doivent pas consommer deux cartes.
+11. **Hors périmètre :** la **visibilité détaillée des cartes numériques temporairement écartées** et leur présentation après réinsertion, sans fuite d'informations futures, relève d'un arbitrage UX complémentaire **GC-19**. GC-18 impose le rythme et les points d'intervention, pas une présentation nouvelle du contenu futur de la pioche.
+
+**Exemple :** aucune figure vivante, sept vaincues. Le joueur sélectionne « Carte suivante » : `4♣` est mise de côté. Il peut maintenant jouer un As ou continuer. Au clic suivant, il révèle `Joker`, qui rejoint sa réserve ; il peut **utiliser immédiatement ce Joker** avant de demander la prochaine carte. Il clique ensuite et trouve `Q♥` : la Dame est placée selon GC-01/02/13, les numériques écartées sont réintroduites selon GC-10 et la recherche s'achève. À aucun moment le moteur n'a pris plusieurs cartes sur une seule commande.
+
+**Statut : GC-18 CLOS pour CardForge.** Le rythme de révélation **manuel carte par carte** est une **décision UX/produit**, conçue pour respecter le droit à intervenir déjà validé en GC-11. Il ne constitue pas une précision supplémentaire prétendument attribuée à Tom Francis. Aucun test logiciel ni parcours utilisateur n'a été exécuté.
+
+### 32.2. Scénarios de conformité — GC-18
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T185 | Dernière figure vivante éliminée, moins de douze vaincues | Mode recherche actif, action **« Carte suivante »** disponible, aucun tirage automatique | Spécifié, non exécuté |
+| GC-V2-T186 | Action « Carte suivante » avec numérique en tête | **Une seule carte** retirée de pioche et ajoutée à la zone numérique temporaire | Spécifié, non exécuté |
+| GC-V2-T187 | Numérique écartée, As déjà disponible | Possibilité d'utiliser l'As ou de piocher une seule prochaine carte | Spécifié, non exécuté |
+| GC-V2-T188 | As découvert sur commande manuelle | As immédiatement en réserve non dépensé ; attente de décision avant autre tirage | Spécifié, non exécuté |
+| GC-V2-T189 | Joker découvert, utilisé légalement avant la commande suivante | Réaffectation validée, Joker consommé une fois, **aucun tirage automatique** | Spécifié, non exécuté |
+| GC-V2-T190 | Extraction volontaire pendant recherche avec numériques écartées | Pioche augmentée selon GC-05, temporaires inchangées ; prochain tirage uniquement sur commande | Spécifié, non exécuté |
+| GC-V2-T191 | Une figure est révélée par « Carte suivante » | Demander/traiter le placement de figure, ne pas révéler de carte supplémentaire | Spécifié, non exécuté |
+| GC-V2-T192 | Placement de figure terminé après plusieurs numériques traversées | Réinjection des numériques selon GC-10, sortie de recherche et reprise normale | Spécifié, non exécuté |
+| GC-V2-T193 | Sauvegarde alors qu'une numérique a été écartée et un Joker est disponible | Reprise sur le **même point d'attente** sans tirage automatique ni double crédit du Joker | Spécifié, non exécuté |
+| GC-V2-T194 | Deux commandes « Carte suivante » déclenchées presque simultanément | Une seule transition de révélation acceptée pour le même état, aucun double tirage | Spécifié, non exécuté |
+| GC-V2-T195 | Douzième figure vaincue, mode de recherche normalement envisagé | Victoire immédiate ; aucun bouton de recherche ni carte piochée | Spécifié, non exécuté |
+| GC-V2-T196 | Pioche vide en recherche avant figure, moins de douze vaincues | Pas de tirage vide ; contrôles GC-12, aucune défaite fictive | Spécifié, non exécuté |
+| GC-V2-T197 | Utilisation clavier / écran tactile pendant la recherche | « Carte suivante » et actions disponibles utilisables sans survol ni automatisme | À vérifier en test UX, non exécuté |
+
+**Prochain arbitrage GC-19 :** durant la recherche **pas à pas**, faut-il montrer au joueur **les identités des cartes numériques déjà révélées et temporairement mises de côté**, leur nombre seulement, ou les masquer ? À la réinsertion, ces cartes deviennent de nouveau des cartes **face cachée sous la pioche** : leur présentation ne doit pas constituer une consultation illimitée des futurs tirages.
