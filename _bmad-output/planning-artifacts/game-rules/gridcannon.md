@@ -1064,3 +1064,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T243 | Consultation sur mobile et clavier sans survol | Détail ouvrable/fermable et lisible, seuil compréhensible sans seule couleur | À vérifier en UX, non exécuté |
 
 **Prochain arbitrage proposé — GC-23 / aide à la lecture des tirs :** lorsqu'un joueur sélectionne une position de grille pour poser ou déplacer une carte, quel niveau de visualisation fournir pour les **attaques possibles** vers les figures (axes concernés, puissance réellement compatible avec Valet/Dame/Roi, résistance à atteindre) ? Étudier trois niveaux : (A) aucun aperçu avant action, bilan après la pose ; (B) mise en évidence des axes et cibles avant confirmation ; (C) aperçu complet de la puissance et du résultat potentiel, sans effectuer le tir avant validation. Il s'agit d'une décision d'assistance UX, pas d'un changement de mécanique ni d'un calcul d'attaque automatique supplémentaire.
+
+
+## 37. Décision d'ergonomie Gridcannon V2 — GC-23 : prévisualisation complète des attaques
+
+**Option C VALIDÉE par le porteur le 22 novembre 2026.** Avant confirmation d'un placement légal de carte numérique sur la grille — que ce soit après pioche ou lors d'une Réaffectation par Joker — CardForge affiche une **prévisualisation complète et non destructive** des attaques qui seraient déclenchées par ce placement : axes concernés, figures vivantes ciblées, contribution de chacune des deux cartes intermédiaires, puissance effectivement admissible compte tenu des restrictions de la figure, résistance actuelle armure comprise et résultat potentiel (figure vaincue ou survivante). **Aucune attaque ni aucune dépense d'action spéciale n'est effective avant la validation du mouvement.**
+
+### 37.1. Contrat métier et d'interface
+
+1. **Légalité d'abord :** seules les destinations autorisées par le moteur peuvent être envisagées pour une prévisualisation d'un placement réalisable, conformément à GC-03/04 et aux restrictions des mouvements par Joker. Une destination illégale doit être signalée comme telle sans produire de faux résultat de tir.
+2. **Déclencheur exclu :** calculer les tirs à partir des **deux cartes supérieures intermédiaires**, après application hypothétique du placement, sans jamais ajouter la valeur de la nouvelle carte déclencheuse à la puissance (règle Version 2).
+3. **Cibles et restrictions :** chaque figure vivante située à l'extrémité opposée d'une ligne/colonne admissible est évaluée selon ses règles : Valet toutes enseignes ; Dame même couleur ; Roi même enseigne. Afficher les contributions retenues et celles écartées, sans inventer de bonus.
+4. **Résistance réelle :** comparer la somme admissible à la résistance courante **base + armures déjà attribuées**, conformément à GC-22. Indiquer visiblement « vaincue si confirmé » ou « résiste si confirmé », y compris en cas d'égalité exacte entre attaque et résistance (vaincue).
+5. **Double tir :** un placement dans un coin peut produire **deux attaques**, une sur chaque axe. Afficher les deux cibles et leurs bilans indépendants, conformément à GC-04, y compris si une seule est vaincue. Une case centrale n'invente aucun tir direct.
+6. **Aucun effet avant confirmation :** l'aperçu ne dépense pas le Joker, ne change pas la grille, ne retourne aucune figure, ne modifie pas l'armure ou le score et ne produit aucune statistique de victoire/défaite. Annuler le choix laisse intégralement l'état de jeu inchangé.
+7. **Confirmation atomique :** lors de la validation, le moteur recontrôle la légalité et applique le placement réel, ses tirs et ses issues terminales conformément aux règles existantes ; l'aperçu est recalculé ou invalidé si l'état sous-jacent a changé. Ne pas prendre le résultat visuel pour un ordre métier faisant autorité.
+8. **Présentation accessible :** mise en évidence des axes et cibles, valeurs chiffrées lisibles et explications textuelles, sans dépendre uniquement de couleurs, du survol ou d'animations. Sur mobile, la prévisualisation doit rester visible sans masquer l'action de confirmer ou d'annuler.
+9. **Information autorisée :** n'utiliser que les cartes déjà visibles sur le plateau, les résistances et armures connues et la carte actuellement en jeu ; ne jamais exposer des cartes futures ou cachées de la pioche.
+10. **Préservation des décisions existantes :** conserver les règles de GC-04 (double tir), GC-08 (victoire et score), GC-11 (actions spéciales volontaires), GC-21 (choix d'armure) et GC-22 (affichage de résistance). Une prévisualisation ne confère ni nouvelle action ni droit de rejouer un placement.
+11. **Persistance :** si le joueur quitte l'application avant confirmation, aucune attaque prévisualisée n'est enregistrée comme réalisée. La reprise restaure la carte en attente et un choix non confirmé sans double application.
+12. **Portée :** cet aperçu complet est un **choix UX CardForge** et n'est pas présenté comme une mécanique ajoutée par Tom Francis.
+
+**Exemple :** la pose envisagée dans un coin menace un Valet et une Dame. Le Valet a une résistance actuelle de 14 ; les deux cartes intermédiaires totalisent 15, donc « vaincu si confirmé ». La Dame a une résistance de 12 ; sur son axe, seule une carte de valeur 7 possède la couleur adéquate, donc « résiste si confirmé » avec puissance admissible 7. Le plateau reste inchangé jusqu'à confirmation. Chaque axe utilise ses propres cartes intermédiaires.
+
+**Statut : GC-23 CLOS pour CardForge par validation de l'option C le 22 novembre 2026.** Spécification documentaire uniquement ; aucune implémentation ni test UX ou moteur n'a été exécuté.
+
+### 37.2. Scénarios de conformité — GC-23
+
+| Test | Situation | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T244 | Placement légal envisagé en extrémité | Afficher axe, cible, deux intermédiaires, puissance, résistance et verdict potentiel | Spécifié, non exécuté |
+| GC-V2-T245 | Carte déclencheuse de forte valeur, deux intermédiaires faibles | Déclencheuse exclue du total ; aucun faux tir gagnant | Spécifié, non exécuté |
+| GC-V2-T246 | Dame, une carte intermédiaire de couleur incompatible | Cette carte ne contribue pas ; explication visible | Spécifié, non exécuté |
+| GC-V2-T247 | Roi, intermédiaire d'une autre enseigne | Carte incompatible exclue du total | Spécifié, non exécuté |
+| GC-V2-T248 | Puissance égale exactement à résistance totale avec armure | Verdict potentiel « vaincue » | Spécifié, non exécuté |
+| GC-V2-T249 | Pose au coin avec deux figures vivantes | Deux axes évalués séparément et résultats indépendants | Spécifié, non exécuté |
+| GC-V2-T250 | Pose au centre sans cible à deux cartes de distance | Aucun tir direct inventé | Spécifié, non exécuté |
+| GC-V2-T251 | Destination illégale | Pas de faux résultat ; aucune confirmation de pose illégale | Spécifié, non exécuté |
+| GC-V2-T252 | Annulation d'une prévisualisation | Aucun effet sur grille, figures, armure, ressources ou statistiques | Spécifié, non exécuté |
+| GC-V2-T253 | Joker : prévisualisation puis confirmation | Un déplacement légal, une dépense de Joker et tirs réellement résolus une fois | Spécifié, non exécuté |
+| GC-V2-T254 | Changement d'état entre calcul d'aperçu et confirmation | Revalidation de l'état, aucune application obsolète | Spécifié, non exécuté |
+| GC-V2-T255 | Fermeture puis reprise avant validation | Aucune attaque exécutée ; état et carte en attente préservés | Spécifié, non exécuté |
+| GC-V2-T256 | Usage mobile, clavier et contraste réduit | Axes, valeurs et résultats compréhensibles sans survol ni couleur seule | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-24 / restitution visuelle d'un tir confirmé :** après validation du placement et résolution des attaques, comment montrer au joueur les tirs effectivement produits et leur résultat ? Trois options sont à comparer : **A** résultat instantané sans animation ; **B** animation courte, lisible et non bloquante, avec bilan textuel ; **C** séquence cinématique détaillée (effets plus riches, successifs) avec possibilité de passer l'animation. Il s'agit d'une décision de présentation ; le moteur doit déterminer et enregistrer le résultat indépendamment de toute animation.
