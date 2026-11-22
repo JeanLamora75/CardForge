@@ -172,3 +172,33 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 | G-06 | Nom de l'adaptation CardForge | Titre distinct et crédit attribuant Tom Francis |
 
 **Statut de l'étude après décision :** Version 2 validée par le porteur ; mécaniques générales documentées à partir de la source primaire précédemment étudiée. **Les cas limites G-01 à G-05 et le nom/crédit G-06 restent à préciser** avant de considérer le moteur et la publication conformes. Aucune nouvelle consultation Web, exécution de code ou validation de moteur lors de cette mise à jour. Aucun code ni test n'a été exécuté ici.
+
+## 13. Recherche complémentaire du 22 novembre 2026 — contrôle direct de la source Version 2
+
+**Source primaire relue :** [Tom Francis, article du 20 août 2019, section « Version 2 »](https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/). **Source secondaire de recoupement :** [Howto.cards, règles V2](https://howto.cards/en/gridcannon/).
+
+### Points explicitement confirmés par Tom Francis
+
+1. Les as/jokers sont des actions spéciales **disponibles à tout moment**, y compris une fois une nouvelle carte piochée et avant son placement.
+2. Le joker déplace seulement la **carte supérieure** vers une position légale, ce qui peut déclencher un tir normal.
+3. L'as retire une **pile entière** de grille et la remet **face cachée sous la pioche**, tout en libérant sa position.
+4. Une carte impossible à poser devient une **armure** quand les actions spéciales ne peuvent aider. Des armures multiples s'additionnent ; **défaite à 20+ J/Q ou 19+ K**.
+5. Sans figure vivante en jeu mais avec moins de douze figures vaincues, les cartes traversées sont placées temporairement face visible et réinjectées sous la pioche quand une figure arrive.
+6. Si la pioche s'épuise, les actions spéciales restantes peuvent encore permettre de continuer ; la défaite s'applique lorsque les cartes et recours utilisables sont épuisés sans victoire.
+7. Le tir depuis un coin peut affecter la ligne **et** la colonne (source secondaire explicite ; conséquence géométrique de la règle primaire). Le traitement d'une résolution simultanée très particulière demeure ouvert.
+
+### Questions réévaluées
+
+| ID | Résultat | Statut après recherche |
+| --- | --- | --- |
+| G-00 | Version 2 exclusivement | **VALIDÉ, fermé** |
+| G-01 | Similarité de figure et égalités : confirmées ; **cas où tous les emplacements adjacents sont occupés : non défini par Tom Francis**. Howto.cards propose la carte suivante la plus semblable, à titre d'interprétation | **Ouvert ; ne pas adopter l'interprétation secondaire sans décision** |
+| G-02 | L'as rend un emplacement **vide**, confirmé ; sa valeur au placement suivant **non définie en V2**. Howto.cards suggère 0 par analogie avec V1 | **Ouvert ; ne pas importer la V1 automatiquement** |
+| G-03 | **Deux tirs potentiels depuis un coin sont attestés** ; ordre terminal et interactions simultanées non précisées | **Partiellement confirmé** |
+| G-04 | La pile extraite est déposée **face cachée au bas de la pioche** ; ordre interne de la pile et orientation des cartes non explicités | **Partiellement confirmé** |
+| G-05 | Conditions d'armure, seuils et possibilité d'utiliser les actions spéciales après fin de pioche confirmées ; cas limites d'absence de cible / recours utile à préciser | **Partiellement confirmé** |
+| G-06 | Invitation publique à créer des adaptations, crédit à Tom Francis recommandé et nom public différent de « Gridcannon » seul recommandé | **Consigne d'auteur confirmée ; décision de nom CardForge ouverte** |
+
+### Suites obligatoires
+
+Ne pas fermer G-01, G-02, G-03 (ordre), G-04 (ordre interne) ou G-05 (impasses atypiques) par simple intuition. Préparer pour ces cas une demande concise de clarification à Tom Francis si les règles publiées n'en parlent pas. Aucun contact auteur n'a été envoyé. Toute réponse ou validation produit ultérieure doit être rattachée à son identifiant.
