@@ -1817,4 +1817,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T450 | Parcours clavier seul avec lecteur d'écran, FR/EN | Zoom et recentrage possibles sans geste multipoint | À vérifier en accessibilité, non exécuté |
 | GC-V2-T451 | Rafraîchissement ou reprise pendant vue déplacée | Aucun changement du moteur ni déclenchement de coup | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-41 / orientation du jeu sur mobile :** faut-il privilégier un sens d'écran pour la lecture du plateau et les contrôles ? **A** mode portrait uniquement, même lorsque l'appareil pivote ; **B** modes portrait et paysage adaptatifs avec conservation du jeu et du cadrage, sans orientation imposée ; **C** mode paysage obligatoire avec invitation à faire pivoter l'appareil. Évaluer la densité du plateau, la taille des cartes, les zones tactiles et la continuité d'une partie en cours.
+**GC-41 : option B validée ultérieurement — portrait et paysage adaptatifs, avec partie et commandes préservées ; voir §55.**
+
+
+## 55. Décision UX Gridcannon V2 — GC-41 : orientations portrait et paysage adaptatives
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Sur smartphone et tablette, CardForge prend en charge **le portrait comme le paysage**, avec une **disposition responsive adaptée à chaque format**, sans imposer d'orientation ni exiger le rechargement du jeu. Les transformations de mise en page ne doivent **jamais affecter l'état métier de la partie**, la pioche, les cartes, les sélections légales ou les statistiques. Ce choix complète le plateau intégral avec zoom et recentrage de GC-40.
+
+### 55.1. Contrat fonctionnel et UX
+
+1. **Deux orientations :** portrait et paysage sont fonctionnels sur les terminaux compatibles. Aucune rotation obligatoire ni écran bloquant « Tournez votre appareil ».
+2. **Plateau toujours global :** conserver la grille 3×3 et les douze positions périphériques dans un seul espace cohérent en portrait et paysage, sans fractionnement en panneaux ni changement des règles de proximité/axes d'attaque.
+3. **Disposition adaptative :** en portrait, organiser les contrôles autour ou sous la vue du plateau selon la hauteur disponible ; en paysage, exploiter la largeur supplémentaire, par exemple en positionnant les commandes et indicateurs en colonne latérale. L'implantation exacte reste un travail de design UX.
+4. **Transition à chaud :** une rotation ou un redimensionnement met à jour le layout et le cadrage sans recharger le moteur, repiocher, redistribuer, lancer un tir, consommer une action spéciale ni enregistrer un résultat.
+5. **Sélections et actions en cours :** conserver l'état métier confirmé. Pour une interaction visuelle transitoire (glisser-déposer en cours, prévisualisation de tir, fenêtre d'inspection), maintenir la sélection si possible ; sinon interrompre proprement le seul geste visuel **sans confirmer de coup**. Ne jamais créer une action involontaire à la rotation.
+6. **Zoom/panoramique GC-40 :** recalculer cadrage et bornes de déplacement pour la nouvelle dimension, conserver autant que possible la zone d'intérêt et proposer toujours **« Recentrer le plateau »**. Ne jamais laisser le plateau irrécupérable hors écran.
+7. **Interactions GC-36/37/38 :** garder disponibles l'inspection facultative, le glisser-déposer et l'alternative sélection/destination ; les destinations légales et les indications de prévisualisation restent ancrées aux cases réelles après rotation.
+8. **Contrôles essentiels :** validation/annulation, aides GC-26, As/Jokers GC-30, compteurs pioche GC-29 et figures GC-31, résumé GC-39 et sorties GC-32 restent accessibles, sans obstruer durablement le plateau.
+9. **Zones tactiles et lisibilité :** boutons et cartes ciblables, texte lisible ; éviter le recouvrement des commandes lorsque la hauteur du paysage est réduite, en autorisant un défilement du panneau de commandes sans déplacement accidentel des cartes.
+10. **Compatibilité et résilience :** supporter changements de dimensions du navigateur, barres système mobiles et clavier logiciel, pas seulement l'événement natif de rotation ; ne pas faire dépendre le jeu d'une API de verrouillage d'orientation.
+11. **Accessibilité et i18n :** navigation clavier, ordre de focus et lecture d'écran cohérents dans les deux orientations ; les libellés longs français/anglais du MVP (GC-28) doivent tenir sans troncature critique. Architecture prête pour les futures langues.
+12. **Portée transversale :** privilégier des composants responsive communs à CardForge sans imposer aux autres jeux les spécificités du plateau Gridcannon. Les moteurs de jeu conservent leurs propres règles.
+
+**Exemple :** le joueur sélectionne une carte en portrait puis pivote en paysage. Le plateau se réorganise, la carte sélectionnée reste identifiée et les destinations légalement disponibles sont recalculées visuellement. Aucun déplacement n'a eu lieu. Un glissement interrompu par la rotation est annulé sans coup ; le joueur peut recommencer.
+
+**Statut : GC-41 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire seulement ; aucun développement ni test exécuté.
+
+### 55.2. Scénarios de conformité — GC-41
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T452 | Démarrage d'une partie en portrait | Plateau et commandes fonctionnels, sans rotation imposée | Spécifié, non exécuté |
+| GC-V2-T453 | Démarrage d'une partie en paysage | Plateau global et commandes exploitables, sans écran bloquant | Spécifié, non exécuté |
+| GC-V2-T454 | Rotation portrait vers paysage pendant partie active | État, cartes et pioche identiques ; disposition adaptée | Spécifié, non exécuté |
+| GC-V2-T455 | Rotation paysage vers portrait après zoom GC-40 | Nouveau cadrage valide et recentrage accessible | À vérifier en UX, non exécuté |
+| GC-V2-T456 | Rotation avec carte sélectionnée et destinations GC-38 | Sélection cohérente ou annulation visuelle sûre, aucune action métier | Spécifié, non exécuté |
+| GC-V2-T457 | Rotation pendant glisser-déposer GC-37 inachevé | Aucun mouvement ni attaque déclenché | Spécifié, non exécuté |
+| GC-V2-T458 | Rotation pendant prévisualisation GC-23 | Aucune confirmation implicite ; résultats recalculés/affichés fidèlement | Spécifié, non exécuté |
+| GC-V2-T459 | Paysage à faible hauteur disponible | Indicateurs et confirmations restent accessibles sans chevauchement bloquant | À vérifier en UX, non exécuté |
+| GC-V2-T460 | Redimensionnement de fenêtre sans rotation | Même comportement de recalcul responsive, sans changement métier | Spécifié, non exécuté |
+| GC-V2-T461 | Changement d'orientation avec modale GC-36 ouverte | Inspection lisible, pas de carte jouée, fermeture accessible | À vérifier en UX, non exécuté |
+| GC-V2-T462 | Parcours clavier et lecteur d'écran en portrait/paysage FR/EN | Focus cohérent, commandes utilisables, informations lisibles | À vérifier en accessibilité, non exécuté |
+| GC-V2-T463 | Reprise de sauvegarde dans une orientation différente | Partie restaurée à l'identique avec plateau adapté à l'écran actuel | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-42 / lisibilité des cartes empilées :** comment présenter sur la grille les cartes numériques empilées tout en montrant la carte supérieure réellement jouable et la hauteur de la pile ? Options : **A** seule la carte supérieure visible, sans repère de quantité ; **B** carte supérieure au premier plan avec décalage léger des cartes sous-jacentes et compteur exact de hauteur ; **C** piles toujours déployées en éventail pour consulter toutes les cartes déjà visibles. La représentation ne doit pas autoriser le retrait ou le déplacement d'une carte autre que la supérieure lorsque les règles l'interdisent.
