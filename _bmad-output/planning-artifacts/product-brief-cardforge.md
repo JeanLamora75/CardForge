@@ -153,4 +153,11 @@ Référence à jour : [PRD CardForge v0.2](./prds/prd-CardForge-2026-11-22/prd.m
 
 **Gridcannon V2 — GC-26 : option B validée**, règlement complet et aide contextuelle facultative, sans automatisation des décisions du joueur. Référence : [GC-26, référentiel Gridcannon](./game-rules/gridcannon.md).
 
-**Restent à arbitrer :** liste précise des langues, leur priorisation, mécanisme de sélection (GC-27), organisation des ressources et stratégie de traduction. La mention antérieure de tutoriels facultatifs dans le MVP demeure une décision de périmètre distincte à harmoniser avec John ; GC-26 ne la supprime pas silencieusement.
+**Restent à arbitrer :** liste précise des langues et leur priorisation (GC-28), organisation des ressources et stratégie de traduction. **GC-27 validé : détection automatique avec choix manuel persistant, préférence commune et repli anglais.** La mention antérieure de tutoriels facultatifs dans le MVP demeure une décision de périmètre distincte à harmoniser avec John ; GC-26 ne la supprime pas silencieusement.
+
+
+## GC-27 — Choix linguistique global et repli (22 novembre 2026)
+
+**Décision applicable à toute la plateforme CardForge et à chaque jeu :** détecter automatiquement la première langue disponible parmi les préférences de l'appareil/navigateur en l'absence de choix utilisateur, puis permettre une **sélection manuelle persistante** prioritaire. Une **langue unique** s'applique à l'application, à l'ensemble des jeux, à leurs règles et aux aides ; changement à chaud sans perte d'avancement. **L'anglais (en) est la langue de repli obligatoire** si aucune langue compatible n'est disponible. Les ressources nécessaires au mode hors ligne doivent rester accessibles sans réseau pour toutes les langues officiellement livrées.
+
+La cible demeure **au moins dix langues complètes**, dont l'anglais. La liste des neuf autres langues (ou davantage) n'est pas encore validée, sujet GC-28. Référence : [décision et tests GC-27](./game-rules/gridcannon.md#41-décision-transversale-cardforge--gc-27--détection-automatique-et-préférence-linguistique-commune).
