@@ -252,3 +252,41 @@ Ces cas sont des **spécifications de tests à implémenter**, pas des tests ex�
 | GC-V2-T07 | Sauvegarde avant apparition d'une figure ; restauration avec centre et périphérie identiques | Même classement des huit candidats périphériques ; aucune attraction du centre | Spécifié, non exécuté |
 
 **Limite explicite :** si tous les emplacements extérieurs adjacents à la meilleure carte périphérique sont occupés, le résultat reste **en attente de GC-02 / G-01b**. Si une pile périphérique est vide après Extraction, son traitement reste **G-02**. Ne pas considérer ces cas comme décidés par GC-01.
+
+
+## 16. Décision fonctionnelle Gridcannon V2 — GC-02 / G-01b : repli vers la meilleure carte périphérique disponible
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'une figure doit apparaître à l'extérieur de la grille et que **tous** les emplacements extérieurs adjacents à sa carte périphérique la plus semblable sont déjà occupés, le moteur **cherche la meilleure candidate périphérique suivante disposant d'au moins un emplacement extérieur libre**. Une figure déjà vaincue, retournée face cachée, **continue d'occuper sa place** : cet emplacement n'est jamais libéré.
+
+**Contrat déterministe pour CardForge :**
+1. Considérer exclusivement les **huit positions périphériques** de la grille, conformément à **GC-01 / G-01a** ; ne jamais prendre le centre comme carte attractive.
+2. Classer les cartes supérieures de ces positions selon la priorité de similitude de la Version 2 : **même enseigne**, puis **même couleur**, puis **toute autre enseigne** ; à l'intérieur de chaque catégorie, **valeur la plus élevée d'abord**.
+3. Pour chaque rang de similitude, déterminer les cases extérieures **géométriquement adjacentes et libres**. Une carte de coin peut offrir deux côtés ; une case déjà occupée par une figure **vivante ou vaincue** est indisponible.
+4. Retenir le **meilleur rang ayant au moins une possibilité libre**. En cas d'égalité entre plusieurs cartes périphériques de ce rang, ou entre deux places admissibles autour d'un coin, **laisser le joueur choisir parmi ces possibilités légales**. Ne pas retenir une carte moins semblable tant qu'une possibilité existe au meilleur rang disponible.
+5. Placer la figure **dans une seule case extérieure libre** du choix admissible, puis conserver sa position pour toute la partie, y compris après sa défaite.
+6. **Ne pas déclarer automatiquement une défaite** parce que le premier candidat est bloqué ; **ne jamais permettre un placement arbitraire** dans une case sans adjacency au candidat retenu.
+7. Ce choix vaut pendant la **mise en place** et lors de **chaque apparition ultérieure** d'une figure. Après sauvegarde/reprise, la même grille, le même tableau d'occupation et la même figure produisent le même ensemble d'options légales.
+8. **Hors portée du présent arbitrage :** le traitement des positions périphériques devenues **vides à la suite d'une Extraction** reste ouvert en **G-02 / GC-03**. Si aucun candidat ne possède de place admissible, le moteur ne doit **ni inventer une défaite ni déplacer une figure** sans nouvelle décision de règle ; ce cas d'impasse est à documenter dans l'étude générale **G-05**.
+
+**Exemple :** roi de cœur à placer ; 9 cœur périphérique est la meilleure correspondance mais sa place extérieure est occupée ; 8 cœur périphérique possède une place libre. Le roi est dirigé vers le **8 cœur**, et non vers la place déjà occupée du 9 cœur ni vers une place choisie sans critère.
+
+**Statut : GC-02 / G-01b CLOS pour CardForge.** Le repli sur la meilleure autre carte disponible est un arbitrage fonctionnel approuvé ; il est compatible avec une interprétation secondaire identifiée, mais ne constitue **pas** une précision explicitement vérifiée dans les règles primaires de Tom Francis. Aucun test moteur n'a été exécuté.
+
+### 16.1. Scénarios de conformité — GC-02 / G-01b
+
+Ces cas sont **spécifiés, non exécutés**.
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T08 | Roi cœur ; 9 cœur périphérique meilleur candidat, place adjacente occupée ; 8 cœur avec place libre | Sélectionner **8 cœur** et sa place libre | Spécifié, non exécuté |
+| GC-V2-T09 | Meilleure carte périphérique située dans un coin : l'un de ses deux emplacements libres, l'autre occupé | Retenir le coin, proposer **seulement la place libre** | Spécifié, non exécuté |
+| GC-V2-T10 | Une carte de coin a ses deux emplacements extérieurs occupés | Ignorer cette candidate et chercher la suivante | Spécifié, non exécuté |
+| GC-V2-T11 | L'emplacement adjacent à la meilleure carte est occupé par une figure **vaincue face cachée** | Emplacement indisponible ; repli identique à une figure vivante | Spécifié, non exécuté |
+| GC-V2-T12 | Toutes les cartes de même enseigne ont leurs cases adjacentes occupées ; une carte de même couleur dispose d'une place | Choisir la meilleure candidate **de même couleur** avec place libre avant les autres couleurs | Spécifié, non exécuté |
+| GC-V2-T13 | Toutes les cartes de même enseigne et couleur sont bloquées ; d'autres cartes ont des places | Choisir la plus haute valeur restante avec place libre | Spécifié, non exécuté |
+| GC-V2-T14 | Deux candidates à égalité dans le meilleur rang disponible disposent de places différentes | Offrir au joueur le choix parmi les emplacements admissibles des deux candidates | Spécifié, non exécuté |
+| GC-V2-T15 | Une meilleure carte périphérique dispose d'une place ; une moins semblable dispose de plusieurs places | Ne **pas** privilégier le nombre de places libres : meilleure candidate choisie | Spécifié, non exécuté |
+| GC-V2-T16 | Sauvegarde/reprise avant placement avec plusieurs emplacements occupés et repli nécessaire | Même classement, mêmes occupés et mêmes choix disponibles après reprise | Spécifié, non exécuté |
+| GC-V2-T17 | Meilleur candidat bloqué, mais au moins un repli admissible | Aucune défaite déclenchée par ce seul blocage ; placement légal possible | Spécifié, non exécuté |
+
+**Prochaine décision GC-03 / G-02 :** règle de placement d'une carte numérique sur une **case de grille vide après Extraction** : la case vide vaut-elle 0 pour le placement, faut-il la remplir prioritairement, ou est-elle inaccessible par pose normale ? Ce point demeure ouvert.
