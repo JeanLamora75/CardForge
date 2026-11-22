@@ -272,3 +272,10 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Option B validée :** dans Clear the Dungeon, les cartes inutilisées de la main sont défaussées explicitement, individuellement ou via « Défausser les cartes restantes ». Elles alimentent la pile de dégâts une par une ; le 7e dégât entraîne immédiatement la défaite. Le joueur ne peut pas piocher une nouvelle main tant qu'il conserve des cartes dans la main actuelle ; les cartes posées sur des monstres restent engagées suivant CTD-ARB-01 et CTD-ARB-02. La clôture de la main verrouille les placements provisoires. Cela précise FR-06/07/16/18 sans introduire de conservation gratuite de cartes inutilisées.
 
 **Statut :** CTD-03 / CTD-ARB-03 clos ; CTD-04 (fin de pioche) à valider. [Règles](../../game-rules/clear-the-dungeon.md) · [Scénarios](../../clear-the-dungeon-rule-test-matrix.md).
+
+
+## Décision fonctionnelle CTD-ARB-04 — dernier tirage incomplet (22 novembre 2026)
+
+**Option A validée pour Clear the Dungeon :** une pioche autorisée prélève jusqu'à trois cartes, ou toutes les cartes restantes s'il en reste moins. Une dernière main à une ou deux cartes est jouable, notamment pour achever des attaques partielles. L'épuisement du paquet pendant le tirage ne termine pas prématurément cette main. Aucune carte n'est ajoutée depuis la pile de dégâts, aucune carte n'est inventée ou remélangée. Ce choix précise FR-05/FR-07/FR-16/FR-18 et est documenté dans les [règles](../../game-rules/clear-the-dungeon.md) et [tests](../../clear-the-dungeon-rule-test-matrix.md).
+
+**Statut : CTD-04 / CTD-ARB-04 clos.** La question CTD-05 (moment exact de la défaite lorsque la pioche est épuisée) reste à valider séparément.
