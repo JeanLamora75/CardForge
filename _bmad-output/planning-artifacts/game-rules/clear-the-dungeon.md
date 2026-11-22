@@ -299,3 +299,23 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-08 / CTD-ARB-08 CLOS pour l'implémentation CardForge.** Ce rejet explicite des poses illégales est un arbitrage de comportement demandé par le porteur ; ne pas le présenter comme une règle formellement précisée par Mark S. Ball. Aucun test n'a été exécuté.
 
 **Prochaine question CTD-09 :** une *première* carte de puissance peut-elle être placée si, même accompagnée de la plus forte seconde puissance possible (10), elle ne peut jamais atteindre la résistance du monstre ?
+
+
+## 20. Décision fonctionnelle CTD-09 / CTD-ARB-09 — première puissance mathématiquement complétable
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Une première carte de puissance de valeur `P1` ne peut être placée contre un monstre de résistance `R` que si **`P1 + 10 >= R`**, car une carte de puissance supplémentaire (joker compris) ne peut dépasser 10. Si ce critère n'est pas respecté, **le placement est refusé immédiatement** et la carte demeure dans la main : aucune carte n'est engagée, aucune pile modifiée, aucun dégât infligé.
+
+**Seuils d'admissibilité de la première puissance :**
+| Monstre | Résistance | Première puissance minimale |
+| --- | ---: | ---: |
+| Valet (J) | 11 | 1 |
+| Dame (Q) | 12 | 2 |
+| Roi (K) | 13 | 3 |
+
+**Exemples :** un 2 contre un roi (13) est rejeté car `2 + 10 = 12 < 13` ; un 3 contre le même roi est accepté car `3 + 10 = 13`. Un As vaut 1, un joker de puissance vaut **10 fixe** (CTD-J01). Un premier placement admissible **ne garantit pas** qu'une deuxième carte suffisante sera réellement piochée ; l'algorithme effectue uniquement un contrôle de borne **théorique** sans examiner ou révéler la pioche.
+
+**Interaction avec CTD-ARB-01/02/07/08 :** les attaques partielles et les mains successives restent permises ; seule une première carte théoriquement impossible est rejetée. L'acceptation d'une première carte ne dispense pas du contrôle concret lors de l'ajout de la seconde puissance (CTD-ARB-08) et du déclencheur distinct (CTD-ARB-07). La carte refusée reste librement utilisable pour un autre monstre, comme déclencheur valide lorsque le contexte le permet, ou peut être défaussée explicitement (CTD-ARB-03).
+
+**Statut : CTD-09 / CTD-ARB-09 CLOS pour CardForge.** Décision explicite de validation de placement du porteur, non présentée comme précision officielle de Mark S. Ball. Aucun test n'a été exécuté.
+
+**Prochain arbitrage CTD-10 (ergonomie et moteur) :** affectation du joker polyvalent entre rôle « puissance » ou « déclencheur » et éventuel choix d'enseigne dans l'interface, sans changer la valeur 10 ni permettre de jouer une carte dans deux rôles.
