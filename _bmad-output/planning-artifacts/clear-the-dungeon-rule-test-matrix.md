@@ -335,3 +335,23 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T130 | Défausse, attaque, sauvegarde, reprise pendant une main active | Identités/positions des cartes et dégâts stables ; pas de réapplication d'une action | Spécifié, non exécuté |
 
 **Prochaine question CTD-14 :** la main devenue vide est-elle clôturée automatiquement ou par action explicite ? Tant que ce point n'est pas validé, ne pas supposer que la pose ou la défausse de la dernière carte verrouille immédiatement tous les placements.
+
+
+## Décision CTD-14 / CTD-ARB-14 — clôture explicite après vidage de la main (22 novembre 2026)
+
+**Option B VALIDÉE :** une main vide n'est **pas** clôturée automatiquement ; le joueur doit la confirmer. Les cartes encore provisoires de cette main restent modifiables tant que la clôture n'est pas demandée. Le verrouillage et le tirage suivant peuvent être regroupés en **une action explicite**. La fin de pioche entraîne la défaite **à cette confirmation**, et non lors du retrait de la dernière carte de la main.
+
+| Test | Précondition/action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T131 | Poser la dernière carte de la main dans une attaque partielle sans victoire | Main vide **mais ouverte** ; placement encore provisoire | Spécifié, non exécuté |
+| CTD-T132 | Main vide et ouverte ; reprendre la dernière carte provisoire posée | Carte récupérée ; main redevient non vide, clôture indisponible | Spécifié, non exécuté |
+| CTD-T133 | Main vide et ouverte ; déplacer une carte provisoire entre deux monstres vivants | Réaffectation permise selon CTD-02 tant que la main n'est pas clôturée | Spécifié, non exécuté |
+| CTD-T134 | Main vide, pioche > 0 ; action « Terminer la main et piocher » | Placements verrouillés, puis une unique main de max. 3 cartes distribuée | Spécifié, non exécuté |
+| CTD-T135 | Main non vide ; tenter « Terminer la main » | Action interdite ; aucun verrouillage ni tirage | Spécifié, non exécuté |
+| CTD-T136 | Main vide, pioche vide, au moins un monstre vivant ; aucune confirmation | Pas de défaite par simple vidage de la main ; partie encore en attente de confirmation | Spécifié, non exécuté |
+| CTD-T137 | Même contexte que T136 puis confirmation « Terminer la main » | Placements verrouillés, défaite par épuisement immédiate selon CTD-05 | Spécifié, non exécuté |
+| CTD-T138 | Douzième monstre vaincu ou septième dégât atteint avant confirmation | Résultat terminal **immédiat** ; aucune clôture supplémentaire | Spécifié, non exécuté |
+| CTD-T139 | Recharger le jeu pendant une main vide mais encore ouverte | État ouvert et cartes provisoires restaurés ; aucune clôture implicite | Spécifié, non exécuté |
+| CTD-T140 | Cliquer deux fois sur « Terminer la main et piocher » ou répéter l'événement après reprise | Une seule clôture, une seule pioche et aucun doublon d'état | Spécifié, non exécuté |
+
+**Cadrage des mécaniques CTD :** CTD-01 à CTD-14 validés comme décisions de CardForge, **tests spécifiés mais jamais exécutés**. Une revue de cohérence entre l'ensemble des arbitrages, leur rapport aux sources et les états limites devra précéder la qualification du moteur. Le prochain **point de décision inédit et bloquant** concerne **Gridcannon V2 / G-01a**, sur la figure attirée par une carte centrale.
