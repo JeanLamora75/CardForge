@@ -162,3 +162,22 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 - **Statut d'implémentation : CTD-J01 FERMÉ par décision CardForge.** Le référentiel Classic 1.1.0 reproduit donne également une valeur 10, mais la présentation Web de l'auteur mentionne une valeur choisie jusqu'à 10 ; cette divergence documentaire est conservée ci-dessus comme historique de recherche et **n'est pas réputée résolue officiellement par l'auteur**.
 - Tester un joker comme carte de puissance = **10**, et comme déclencheur de toute enseigne autorisée ; tester que la valeur ne dépend ni des illustrations ni d'un choix utilisateur.
 - **Toujours ouverts :** O-CTD-01/03 (attaques incomplètes et leur durée), O-CTD-02 (épuisement de pioche et main), O-CTD-05 (ordre de fin de partie dans les cas limites). Le déroulement des défausses exactes demeure à valider.
+
+
+## 12. Décision fonctionnelle CTD-01 / CTD-ARB-01 — attaques partielles multi-monstres
+
+**Décision du porteur de CardForge, 22 novembre 2026 : option B VALIDÉE.**
+
+**Règle retenue pour CardForge :** le joueur peut engager plusieurs attaques incomplètes contre des monstres différents, en répartissant des cartes de sa main entre ces cibles. Les cartes affectées à ces attaques demeurent associées à leur monstre lorsque le joueur passe à une nouvelle main ou à un nouveau tour, jusqu'à l'achèvement de l'attaque, sous réserve d'autres règles de déplacement et défausse à trancher séparément. Un monstre n'est vaincu qu'une fois les trois cartes nécessaires réunies et les conditions de puissance/enseigne satisfaites.
+
+**Conséquences vérifiables :**
+- Plusieurs monstres peuvent chacun conserver des cartes posées au même instant.
+- Les cartes posées sur ces monstres ne sont pas automatiquement envoyées à la pile de dégâts lors du renouvellement de la main.
+- Le contenu et l'affectation des attaques partielles doivent être inclus dans la sauvegarde et restitués à l'identique.
+- Aucune carte ne peut être comptée deux fois comme carte disponible dans deux emplacements.
+- Cette décision **ne tranche pas** si le joueur peut reprendre, changer de cible, remplacer ou réorganiser une carte déjà posée : **prochain arbitrage CTD-02**.
+- Cette décision **ne tranche pas** les limites de cartes par monstre ni la façon de récupérer les cartes si un monstre est supprimé dans un autre événement ; ne rien inventer.
+
+**Statut :** CTD-01 (nom de l'arbitrage utilisateur) = **validé**. Pour éviter la collision avec le code de contrôle documentaire « CTD-01 — composition du paquet », cette décision est tracée techniquement sous **CTD-ARB-01**. Les anciens paragraphes notant O-CTD-01/03 « ouverts » constituent l'historique antérieur ; ce point précis est maintenant résolu pour CardForge.
+
+**Provenance :** arbitrage explicite du porteur, cohérent avec la possibilité de poser des cartes contre différents monstres dans la documentation précédente, mais persistance entre mains non attestée indépendamment dans la version originale intégrale. Ne pas attribuer cette clarification à Mark S. Ball.
