@@ -216,3 +216,39 @@ Dossier source détaillé : [recherche approfondie Mary](./recherche-approfondie
 - **G-06 :** l'auteur **recommande**, sans imposer comme condition juridique formelle dans le billet, un crédit « Based on Gridcannon by Tom Francis » et un titre d'adaptation distinct de « Gridcannon » seul.
 
 **État :** référence Version 2 définitivement validée ; pas de changement de mécanique décidé par CardForge pendant cette recherche. Questions G-01a/b, G-02, G-03, G-04, G-05, G-07, G-08 encore ouvertes.
+
+
+## 15. Décision fonctionnelle Gridcannon V2 — GC-01 / G-01a : exclure le centre de l'attraction des figures
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Pour déterminer la carte de grille qui attire une nouvelle figure (J, Q ou K), le moteur considère **uniquement les huit emplacements périphériques** de la grille 3 × 3. La **case centrale ne participe jamais à la sélection de la carte attractive**, même si elle porte la meilleure correspondance d'enseigne, couleur ou valeur. Cette restriction s'applique à la mise en place et à toutes les apparitions ultérieures de figures.
+
+**Contrat métier CardForge :**
+- Les candidats éligibles sont les huit cartes supérieures des piles périphériques, selon la géométrie du plateau ; la carte visible au centre est exclue **avant** d'appliquer les priorités de similitude existantes (même enseigne puis valeur la plus élevée ; sinon même couleur puis valeur la plus élevée ; sinon valeur la plus élevée).
+- La figure est placée à l'extérieur de la grille dans un emplacement **adjacent à la carte périphérique sélectionnée**, suivant les règles de choix existantes en cas de coin ou d'égalité. La décision ne permet pas de choisir arbitrairement un côté à partir de la carte centrale.
+- La carte du centre **reste pleinement utilisable** pour recevoir des cartes numériques, participer au calcul des tirs et subir les actions spéciales légales ; seule son influence sur le **choix de la carte attractive** est supprimée.
+- Après Extraction d'une pile périphérique, les règles de comparabilité des cases vides demeurent **à trancher en G-02** ; ne pas inventer une valeur ou une attraction d'emplacement vide sous couvert de GC-01.
+- **Non tranché ici : G-01b / GC-02** — le choix d'une nouvelle carte attractive si les cases extérieures adjacentes à la meilleure carte périphérique sont déjà occupées, y compris par des figures vaincues restées en place. Ne jamais réutiliser automatiquement une case extérieure occupée.
+- Sauvegarde et reprise doivent restaurer mêmes cartes visibles/positions et mener à la même liste de candidats et aux mêmes possibilités de choix.
+
+**Exemple :** un roi de cœur apparaît ; le centre porte 10 cœur, une position périphérique porte 9 cœur et aucune autre périphérique de cœur n'est de valeur supérieure. **Le 9 cœur périphérique attire le roi** ; le 10 cœur central est ignoré pour cette opération.
+
+**Statut : GC-01 / G-01a CLOS pour CardForge.** L'exclusion du centre est un arbitrage fonctionnel du porteur fondé sur la géométrie d'adjacence, **pas** une règle explicitement précisée dans la source primaire Version 2 de Tom Francis. Aucun test du moteur n'a été exécuté lors de cet arbitrage. La Version 2 demeure l'unique version ciblée.
+
+**Prochain arbitrage GC-02 / G-01b :** comment traiter une figure dont la meilleure carte périphérique est entourée d'emplacements extérieurs déjà occupés ?
+
+
+### 15.1. Cas de test de conformité — GC-01 / G-01a
+
+Ces cas sont des **spécifications de tests à implémenter**, pas des tests exécutés.
+
+| ID | Précondition / action | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T01 | Roi cœur à placer, 10 cœur au centre et 9 cœur en périphérie, pas de meilleur cœur périphérique | La figure est attirée par **9 cœur périphérique** ; 10 cœur central ignoré | Spécifié, non exécuté |
+| GC-V2-T02 | Meilleure correspondance absolue au centre, correspondances périphériques d'une autre enseigne mais même couleur | Le calcul ignore le centre et applique la priorité de couleur aux seuls candidats périphériques | Spécifié, non exécuté |
+| GC-V2-T03 | Aucune périphérique de la même enseigne/couleur ; carte centrale de même enseigne | Le calcul retient la **plus forte valeur périphérique**, sans utiliser le centre | Spécifié, non exécuté |
+| GC-V2-T04 | Deux périphériques de même enseigne et valeur maximale à égalité | Choix du joueur limité aux emplacements extérieurs adjacents admissibles selon l'égalité existante | Spécifié, non exécuté |
+| GC-V2-T05 | Carte périphérique sélectionnée dans un coin, deux emplacements extérieurs adjacents libres | Choix parmi ces deux côtés, jamais une case sélectionnée à partir du centre | Spécifié, non exécuté |
+| GC-V2-T06 | Carte centrale remplacée par une carte plus forte/de meilleure enseigne avant apparition d'une figure | Aucun changement de candidat attractif si les huit périphériques restent identiques | Spécifié, non exécuté |
+| GC-V2-T07 | Sauvegarde avant apparition d'une figure ; restauration avec centre et périphérie identiques | Même classement des huit candidats périphériques ; aucune attraction du centre | Spécifié, non exécuté |
+
+**Limite explicite :** si tous les emplacements extérieurs adjacents à la meilleure carte périphérique sont occupés, le résultat reste **en attente de GC-02 / G-01b**. Si une pile périphérique est vide après Extraction, son traitement reste **G-02**. Ne pas considérer ces cas comme décidés par GC-01.
