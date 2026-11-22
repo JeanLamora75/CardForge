@@ -585,3 +585,42 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T104 | Pioche épuisée sans nouvelle figure malgré des figures encore non vaincues | **Cas non décidé par GC-10**, à examiner dans G-05 ; aucune défaite ou boucle fictive inventée | En attente G-05 |
 
 **Prochaine décision GC-11 :** les As/Jokers **déjà disponibles**, y compris ceux révélés pendant une recherche (GC-09), peuvent-ils être **activés volontairement alors que le moteur cherche encore la prochaine figure** (GC-06), ou leur usage doit-il attendre la fin de cette recherche ? La Version 2 présente les actions spéciales comme disponibles « à tout moment », mais le séquencement avec la recherche est à préciser.
+
+
+## 25. Décision fonctionnelle Gridcannon V2 — GC-11 : actions spéciales volontaires pendant la recherche de figure
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'aucune figure vivante n'est présente et que le jeu recherche la prochaine figure (**GC-06**), le joueur peut **activer volontairement un As (Extraction) ou un Joker (Réaffectation) disponible** avant l'apparition du nouvel adversaire, sous réserve des **conditions de légalité ordinaires** de l'action. Après sa résolution, le moteur **reprend la recherche à partir de l'état réel de la pioche et du plateau**, sans réinitialiser les numériques temporairement écartées et sans dépense automatique de carte spéciale.
+
+**Contrat métier :**
+1. **Réserve disponible :** toutes les actions spéciales présentes, y compris les As/Jokers révélés et ajoutés pendant la recherche par **GC-09**, peuvent être proposées au joueur. Une action reste disponible jusqu'à **l'activation explicite et légale** ; sa révélation ne la dépense jamais.
+2. **Extraction / As :** l'utilisateur peut choisir une **pile non vide** de la grille, en retirer la **pile entière**, consommer l'As **une seule fois** et transférer les cartes face cachée **sous la pioche**, selon **GC-03 et GC-05**. Une case déjà vide ne constitue pas une cible extractible. Le nouvel ordre de pioche tient compte de cette Extraction.
+3. **Réaffectation / Joker :** le joueur peut déplacer la **carte supérieure réelle** d'une pile non vide vers une autre destination **légalement admissible**, en consommant le Joker **une seule fois**. Cela peut modifier les sommets ou créer une case vide ; les règles de placement (dont GC-03) restent applicables. Les conséquences de tirs sont évaluées selon les règles normales **s'il existe une cible vivante** ; aucune figure vivante n'est créée ni éliminée artificiellement durant cette phase.
+4. **La recherche reste active** tant qu'aucune figure vivante n'a été découverte/placée et que moins de douze figures sont vaincues. L'activation d'une action spéciale **ne constitue pas la fin de la recherche**, ne donne pas le droit de jouer les cartes numériques traversées et n'entraîne aucune conversion en armure.
+5. La **séquence temporaire ordonnée** des cartes numériques écartées selon **GC-06/GC-10** est **conservée à l'identique** durant les actions spéciales. Les cartes de cette zone ne sont pas disponibles comme sources ou destinations de Réaffectation/Extraction.
+6. Après l'action, les futurs tirages de recherche suivent **l'ordre réel de la pioche ainsi mis à jour** ; un As qui réinjecte une pile peut donc prolonger la recherche en ajoutant des cartes au bas du paquet, sans mélanger ni réinsérer prématurément les cartes numériques retenues.
+7. La manière dont l'interface fournit au joueur des **points de décision pour intervenir** dans un parcours qui pourrait autrement être automatique constitue un **choix d'interaction à régler dans GC-12 ou dans les spécifications UX**, sans permettre au moteur de priver en pratique le joueur du droit de jouer ces actions avant la nouvelle figure.
+8. **Sauvegarde/reprise et idempotence :** préserver la phase de recherche, les cartes numériques retenues dans leur ordre, les As/Jokers disponibles ou dépensés, les modifications de grille et le nouvel ordre de pioche. Ne pas doubler une Extraction, une Réaffectation ou un tirage après une interruption.
+9. **Hors de portée :** la situation où la pioche deviendrait vide sans nouvelle figure alors que des figures restent non vaincues, déjà signalée en **G-05**, **n'est pas résolue** par le seul droit d'utiliser une action spéciale. Ne pas inventer de défaite, de figure ou de reconstitution automatique du paquet.
+
+**Exemple :** pendant une recherche, `4♣` et `8♦` ont été temporairement écartées. Un As disponible est activé pour extraire une pile `[9♥,5♠]` de la grille ; l'As est dépensé, la case devient vide et le groupe `[9♥,5♠]` est ajouté sous la pioche selon **GC-05**. La recherche reprend, les cartes `4♣,8♦` restant provisoirement écartées et ordonnées jusqu'à la prochaine figure (GC-10).
+
+**Statut : GC-11 CLOS pour CardForge.** La disponibilité générale des actions spéciales est étayée par la Version 2, mais leur activation précisément **pendant le cycle de recherche d'une figure** est une **décision fonctionnelle CardForge**, sans confirmation textuelle spécifique de Tom Francis. Aucun test moteur ni parcours UX n'a été exécuté.
+
+### 25.1. Scénarios de conformité — GC-11
+
+| Test | Précondition / action | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T105 | Recherche en cours, un As disponible, pile de grille non vide | Extraction autorisée sur demande, As consommé une fois ; recherche continue | Spécifié, non exécuté |
+| GC-V2-T106 | Recherche en cours, un Joker disponible, source et destination légales | Réaffectation autorisée, Joker consommé une fois ; recherche continue | Spécifié, non exécuté |
+| GC-V2-T107 | As révélé pendant la recherche puis activé volontairement | As d'abord ajouté disponible à la réserve (GC-09), puis dépensé seulement sur activation explicite | Spécifié, non exécuté |
+| GC-V2-T108 | Joker révélé puis inutilisé jusqu'à l'apparition de la figure | Joker toujours disponible et non dépensé à la sortie de recherche | Spécifié, non exécuté |
+| GC-V2-T109 | Deux cartes numériques déjà écartées, puis Extraction pendant la recherche | Numériques temporaires inchangées ; pile extraite ajoutée sous la pioche selon GC-05 | Spécifié, non exécuté |
+| GC-V2-T110 | Joker utilisé pour déplacer une carte alors qu'aucune figure n'est vivante | Grille modifiée légalement, aucune figure créée ou tuée fictivement | Spécifié, non exécuté |
+| GC-V2-T111 | Tentative d'Extraction d'une case vide pendant la recherche | Action rejetée et As préservé ; aucune mutation de pioche | Spécifié, non exécuté |
+| GC-V2-T112 | Tentative de Réaffectation vers une destination illégale | Action rejetée et Joker préservé ; aucune mutation de grille | Spécifié, non exécuté |
+| GC-V2-T113 | Recherche après Extraction suivie d'une nouvelle figure | Ordre réel de pioche respecté ; figure placée GC-01/02 ; réinsertion des numériques GC-10 | Spécifié, non exécuté |
+| GC-V2-T114 | Sauvegarde après usage d'un As en recherche, puis reprise | As dépensé une fois, pioche reconstruite et cartes numériques écartées identiques | Spécifié, non exécuté |
+| GC-V2-T115 | Rejeu du même ordre d'activation après interruption | Aucun second prélèvement de pile ni double consommation d'action | Spécifié, non exécuté |
+| GC-V2-T116 | Interface déclenchant la recherche automatiquement alors qu'un As/Joker est disponible | **Point de contrôle UX à valider** : le joueur doit pouvoir exercer GC-11 avant que la recherche n'atteigne la figure suivante | Spécifié, non exécuté — conception UX ouverte |
+
+**Prochain arbitrage GC-12 / sous-cas G-05 :** la recherche n'a révélé **aucune nouvelle figure** avant l'épuisement de la pioche, alors que **moins de douze figures sont vaincues et aucune n'est vivante**. Dans un état de jeu conservant les 12 figures physiques, ce cas paraît **inatteignable** si toute figure non apparue reste obligatoirement dans la pioche : il faut déterminer le traitement d'un **état incohérent**, sans inventer une condition de défaite officielle. La question d'ergonomie des pauses pendant la recherche reste distincte.
