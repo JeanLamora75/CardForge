@@ -265,3 +265,19 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Statut : CTD-06 / CTD-ARB-06 CLOS pour CardForge.** Le principe de révélation immédiate est étayé par le livret Classic reproduit, mais l'implémentation devra continuer à respecter les autres règles documentées ; aucun test de moteur n'a été exécuté lors de cet arbitrage.
 
 **Prochaine question CTD-07 :** l'ordre de pose des deux cartes de puissance et de la troisième carte déclencheuse, compte tenu des attaques partielles persistantes et de la correction de placements pendant la main courante.
+
+
+## 18. Décision fonctionnelle CTD-07 / CTD-ARB-07 — ordre obligatoire des cartes d'une attaque
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026 :** pour attaquer un monstre, le joueur pose d'abord **deux cartes de puissance** puis, lorsque leur somme atteint au moins la résistance du monstre, **une troisième carte déclencheuse** de l'enseigne requise (un joker pouvant adopter cette enseigne). La pose du déclencheur **avant** ces deux cartes n'est pas une action légale. La notion de « troisième carte » est **un rôle et un ordre chronologique**, pas une combinaison reconstruite automatiquement à partir de trois cartes quelconques.
+
+**Contrat de gameplay CardForge :**
+- Sur un monstre visible, le moteur suit les positions d'attaque **puissance 1 → puissance 2 → déclencheur**. Les deux cartes de puissance peuvent être d'enseignes quelconques ; leur ordre mutuel est indifférent pour le calcul, mais chacune est posée avant le déclencheur.
+- Une attaque partielle avec **une seule carte de puissance** reste préparée d'une main à l'autre conformément à CTD-ARB-01, et peut recevoir sa seconde puissance lors d'une main ultérieure.
+- Après que deux cartes de puissance légales atteignent la résistance, le joueur peut conserver cette attaque partielle et attendre une **carte déclencheuse valide** au cours d'une main ultérieure. Aucune troisième carte déclencheuse n'est « réservée » à l'avance.
+- Les cartes de la main courante peuvent être déplacées/reprises avant clôture conformément à CTD-ARB-02 ; celles de mains précédentes restent engagées. Une attaque déjà résolue est irréversible.
+- Le déclencheur est **exactement une** carte de l'enseigne du monstre (ou joker autorisé), **indépendamment de sa valeur** ; les jokers de puissance ont la valeur fixe 10 conformément à CTD-J01.
+- La pose du déclencheur valide termine immédiatement l'attaque et entraîne retrait/révélation selon CTD-ARB-06, sans défausse de ces cartes vers les dégâts.
+- **À trancher en CTD-08 :** si une seconde carte de puissance fait une somme **inférieure** à la résistance du monstre, faut-il refuser immédiatement cette pose ou autoriser provisoirement deux cartes sous le seuil ? Aucune troisième carte de puissance et aucun déclencheur ne doivent être autorisés à contourner le critère officiel de victoire.
+
+**Statut : CTD-07 / CTD-ARB-07 CLOS.** Il s'agit de l'application explicite de la séquence documentée des « deux premières cartes de puissance » puis de la « troisième carte déclencheuse » au modèle de mains/attaques partielles choisi dans CardForge. Aucun test de moteur n'a été exécuté à l'occasion de cet arbitrage.
