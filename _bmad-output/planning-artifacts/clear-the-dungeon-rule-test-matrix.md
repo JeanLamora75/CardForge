@@ -298,3 +298,21 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T113 | Une attaque avec deux jokers distincts et une troisième carte numérique élimine le 12e monstre | Victoire immédiate, trois cartes retirées exactement une fois, jamais dans les dégâts | Spécifié, non exécuté |
 
 **Prochain point CTD-12 :** score de victoire lorsque des cartes restent en main. Les cas CTD-T104 à CTD-T113 sont spécifiés uniquement ; aucune exécution n'a été réalisée.
+
+
+## Décision CTD-12 / CTD-ARB-12 — score uniquement calculé sur la pioche à la victoire (22 novembre 2026)
+
+**Option A VALIDÉE :** lors de l'élimination du douzième monstre, le score officiel est `drawPile.length`. Les cartes déjà en main, les attaques partielles, les cartes retirées et les dégâts ne sont pas comptés. Un score **0** peut accompagner une victoire. Une défaite n'a pas de score officiel de victoire.
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T114 | 12e monstre vaincu, 5 cartes dans la pioche et 2 en main | Victoire avec score officiel **5**, pas 7 | Spécifié, non exécuté |
+| CTD-T115 | 12e monstre vaincu, pioche vide, main encore non vide | Victoire avec score officiel **0**, sans défaite d'épuisement | Spécifié, non exécuté |
+| CTD-T116 | 12e monstre vaincu, 8 cartes en pioche, 3 cartes affectées à d'autres attaques partielles | Score officiel **8**, excluant les attaques partielles | Spécifié, non exécuté |
+| CTD-T117 | 12e monstre vaincu, 4 cartes en pioche, 6 cartes dans la pile de dégâts | Score officiel **4**, aucun bonus/malus de dégâts | Spécifié, non exécuté |
+| CTD-T118 | Partie perdue au 7e dégât, pioche non vide | Résultat défaite, **aucun score officiel de victoire** | Spécifié, non exécuté |
+| CTD-T119 | Partie perdue par épuisement, monstres encore vivants | Résultat défaite, aucun score officiel de victoire | Spécifié, non exécuté |
+| CTD-T120 | 12e monstre vaincu ; double clic/rechargement/réouverture de partie | Score figé, un seul événement de victoire et aucune duplication statistique | Spécifié, non exécuté |
+| CTD-T121 | Score officiel et statistiques complémentaires CardForge sur le même écran | Score officiel séparé et identifié ; autres indicateurs n'en modifient pas le calcul | Spécifié, non exécuté |
+
+**Prochain point CTD-13 :** moment où les défausses explicites sont permises dans la main, et possibilité ou non de reprendre les attaques après une première défausse. CTD-03 ne tranchait que l'obligation de défausse explicite avant la pioche suivante.
