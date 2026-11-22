@@ -1391,4 +1391,44 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T331 | Double confirmation ou reprise après dépense | Une seule ressource consommée, invariant physique préservé | Spécifié, non exécuté |
 | GC-V2-T332 | Mini-cartes sur mobile, clavier et lecteur d'écran en français/anglais | Type, disponibilité et action compréhensibles et accessibles | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-31 / suivi de progression des figures :** comment représenter la progression vers les **douze figures vaincues**, sachant que les figures éliminées restent retournées à leur emplacement autour de la grille ? Options : **A**, aucune jauge supplémentaire (seul le plateau fait foi) ; **B**, compteur compact « Figures vaincues : X/12 » en plus de la représentation physique des figures ; **C**, panneau de progression détaillé par figure et par côté avec récapitulatif de leur état. Ne jamais révéler les figures non encore tirées ni considérer une figure non révélée comme déjà vaincue.
+**GC-31 : option B validée ultérieurement — compteur compact « Figures vaincues : X/12 » ; voir §45.**
+
+
+## 45. Décision UX Gridcannon V2 — GC-31 : compteur compact des figures vaincues
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** L'interface affiche un **compteur compact permanent « Figures vaincues : X / 12 »**, éventuellement accompagné d'une jauge de progression discrète. Les figures vaincues continuent d'être retournées et de conserver leur position physique autour de la grille. Le compteur constitue uniquement une synthèse des figures **réellement vaincues**, sans révéler les figures non découvertes ni modifier les règles de victoire de Gridcannon Version 2.
+
+### 45.1. Contrat fonctionnel et UX
+
+1. **Source de vérité :** dériver X du nombre de figures physiques J/Q/K ayant effectivement l'état métier « vaincue » ; ne pas déduire X du nombre de figures révélées, du nombre de positions occupées, de la quantité de cartes en pioche ou des animations.
+2. **Bornes :** X est un entier de 0 à 12. En cas de données incohérentes (doublons, nombre supérieur à douze), ne pas masquer une anomalie moteur au moyen d'un simple plafonnement visuel.
+3. **Mise à jour :** ne faire progresser X qu'à la résolution confirmée d'une attaque vainquant une figure. Un tir insuffisant, une prévisualisation GC-23 ou une animation GC-24 n'ajoute aucune victoire.
+4. **Double attaque :** si une pose en coin vainc deux figures distinctes, le compteur augmente de deux, de manière atomique avec le résultat métier ; aucune dépendance à l'ordre des effets visuels.
+5. **Objectif :** afficher un total de **12** en permanence, même si certaines figures ne sont pas encore apparues. Ce total est l'objectif connu des règles, **pas une liste d'identités ni une révélation des cartes futures**.
+6. **Victoire :** à X = 12, le moteur prononce la victoire conformément à GC-08 et au score officiel en actions spéciales restantes ; le compteur ne remplace pas les conditions métiers et ne crée pas de récompense additionnelle.
+7. **Présentation :** placer l'indicateur dans une zone d'informations compacte de la partie, idéalement près du compteur de pioche GC-29, sans masquer la grille ni les mini-cartes As/Jokers GC-30. Une barre graphique peut représenter X/12 sans devenir la seule source de l'information.
+8. **Accessibilité et localisation :** libellé numérique et textuel explicite, accessible sans couleur seule, sans survol ni animation. Prévoir français et anglais pour le MVP et extension aux langues futures (GC-27/28).
+9. **Persistance :** après reprise, reconstruire X depuis les figures réellement vaincues et leurs identifiants physiques ; ne pas sauvegarder un second compteur susceptible de diverger de l'état de jeu.
+10. **Portée :** choix UX CardForge, sans ajout de règle ni inspection de la pioche. Les figures non révélées restent inconnues dans leur identité et leur ordre de découverte.
+
+**Exemple :** sur une partie avec neuf figures déjà révélées, dont sept vaincues, l'indicateur présente « Figures vaincues : 7 / 12 ». Les trois figures encore non révélées restent cachées dans la pioche ; le compteur ne donne ni leur identité ni leur position. Si un mouvement légal élimine deux figures simultanément, il passe à « 9 / 12 » après résolution réelle.
+
+**Statut : GC-31 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucun développement ni test exécuté.
+
+### 45.2. Scénarios de conformité — GC-31
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T333 | Début de partie, aucune figure vaincue | Compteur 0 / 12, y compris si des figures sont déjà révélées | Spécifié, non exécuté |
+| GC-V2-T334 | Sept figures vaincues, neuf révélées | Compteur 7 / 12, sans exposer les figures cachées | Spécifié, non exécuté |
+| GC-V2-T335 | Attaque confirmée vainquant une figure | Incrément de 1 exactement après résolution métier | Spécifié, non exécuté |
+| GC-V2-T336 | Attaque insuffisante | Compteur inchangé | Spécifié, non exécuté |
+| GC-V2-T337 | Prévisualisation GC-23, puis annulation | Aucun changement du compteur | Spécifié, non exécuté |
+| GC-V2-T338 | Deux figures vaincues depuis un coin en un mouvement | Incrément de 2, aucune dépendance aux animations GC-24 | Spécifié, non exécuté |
+| GC-V2-T339 | Douzième figure vaincue | Compteur 12 / 12, victoire GC-08 prononcée une seule fois | Spécifié, non exécuté |
+| GC-V2-T340 | Reprise d'une partie avec plusieurs figures vaincues | Compteur identique reconstruit depuis l'état métier | Spécifié, non exécuté |
+| GC-V2-T341 | Répétition technique d'événement ou double clic | Aucun double comptage | Spécifié, non exécuté |
+| GC-V2-T342 | Petite résolution et lecteur d'écran FR/EN | Compteur et objectif compréhensibles, sans dépendance à la jauge ou couleur | À vérifier en UX, non exécuté |
+| GC-V2-T343 | État invalide contenant plus de douze figures distinctes vaincues | Anomalie détectable ; pas de masquage par plafonnement graphique | Spécifié, non exécuté |
+
+**Prochain arbitrage proposé — GC-32 / abandon et nouvelle partie :** que faire lorsque le joueur demande à quitter définitivement une partie active ou à commencer une nouvelle partie ? Options **A** remplacement immédiat sans confirmation ; **B** confirmation explicite uniquement pour les actions destructrices, avec possibilité de reprendre une partie via la sauvegarde existante ; **C** archivage automatique de chaque partie remplacée pour consultation ou restauration ultérieure. Ce choix devra respecter les compteurs de victoires/défaites/abandons et éviter tout double comptage.
