@@ -239,3 +239,22 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T84 | Deux puissances insuffisantes ; essayer une troisième puissance comme rattrapage | Aucun emplacement « troisième puissance » autorisé : la troisième place est réservée au déclencheur après deux puissances suffisantes | Spécifié, non exécuté |
 
 **Prochain arbitrage : CTD-09**, validité d'une première carte de puissance qui ne pourrait atteindre le seuil avec aucune deuxième carte de valeur maximale 10.
+
+
+## Décision CTD-09 / CTD-ARB-09 — première carte de puissance complétable (22 novembre 2026)
+
+**Option A VALIDÉE :** refuser toute première puissance `P1` telle que `P1 + 10 < R`, sans mutation de la partie. Le calcul utilise le maximum théorique 10 et **n'inspecte jamais** les futures cartes de la pioche. La pose de la deuxième puissance garde sa validation indépendante CTD-08.
+
+| Test | Situation | Attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T85 | Roi K13, première puissance 2 | Refus : 2 + 10 = 12 < 13 ; carte conservée en main, aucun dégât | Spécifié, non exécuté |
+| CTD-T86 | Roi K13, première puissance 3 | Acceptation : 3 + 10 = 13 ; attaque partielle en attente | Spécifié, non exécuté |
+| CTD-T87 | Dame Q12, première puissance As (1) | Refus : 1 + 10 = 11 < 12 | Spécifié, non exécuté |
+| CTD-T88 | Dame Q12, première puissance 2 | Acceptation : 2 + 10 = 12 | Spécifié, non exécuté |
+| CTD-T89 | Valet J11, première puissance As (1) | Acceptation : 1 + 10 = 11 | Spécifié, non exécuté |
+| CTD-T90 | Roi K13, première puissance joker fixe 10 | Acceptation : 10 + 10 = 20 ≥ 13 | Spécifié, non exécuté |
+| CTD-T91 | Première carte mathématiquement admissible mais aucune seconde carte suffisante effectivement disponible en pioche | Première pose acceptée ; aucune inspection d'informations cachées | Spécifié, non exécuté |
+| CTD-T92 | Première puissance rejetée, puis sauvegarde/reprise | Même main, plateau et pioche, sans trace fantôme ni carte ajoutée aux dégâts | Spécifié, non exécuté |
+| CTD-T93 | Première puissance autorisée puis seconde insuffisante | Première reste en place ; seconde refusée selon CTD-08 | Spécifié, non exécuté |
+
+**Prochaine décision CTD-10 :** rôle et enseigne du joker au moment du placement (ergonomie/moteur). Les cas CTD-T85 à CTD-T93 sont seulement **spécifiés**, pas exécutés.
