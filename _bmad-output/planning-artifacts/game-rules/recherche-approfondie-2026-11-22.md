@@ -99,3 +99,8 @@
 **22 novembre 2026 — décision explicite du porteur : joker = 10 fixe.** Le désaccord entre la page Web et le livret reproduit subsiste comme fait historique ; il est résolu **pour le comportement CardForge**, pas au nom de l'auteur. CTD-J01 n'est donc plus un point d'arbitrage produit bloquant. La [documentation du jeu](./clear-the-dungeon.md) et la [matrice de tests](../clear-the-dungeon-rule-test-matrix.md) comportent cette décision et les cas de test à appliquer.
 
 **Restent prioritaires :** attaques partielles et leur éventuelle persistance, main en fin de pioche, détails de défausse ; pour Gridcannon, centre/placements occupés, pile vide après as, pile réinjectée et armure quand un ploy existe mais ne sert à rien.
+
+
+## 8. Arbitrage CardForge CTD-ARB-01 — attaques partielles (22 novembre 2026)
+
+**Option B approuvée par le porteur** : il est permis d'entamer plusieurs attaques sur des monstres différents, et les cartes posées y restent associées à travers les mains/tours. Cet arbitrage est **clos pour CardForge**, sans prétendre que le texte complet original a été consulté ou confirmé sur ce cas précis. Le traitement des cartes déjà posées (récupération, déplacement, changement de cible) est à examiner séparément sous **CTD-02**. Une conservation rigoureuse dans les sauvegardes et des tests multi-monstres sont requis.
