@@ -149,3 +149,8 @@
 ## 17. Arbitrage CardForge CTD-ARB-10 — usage contextuel du joker (22 novembre 2026)
 
 **Option A validée par le porteur :** le joueur choisit l'emplacement physique d'un joker ; ce placement détermine sans dialogue supplémentaire son rôle de première/deuxième puissance (valeur 10 fixe) ou de déclencheur (enseigne automatiquement égale à celle du monstre). Un même joker physique n'occupe jamais plusieurs emplacements simultanément ; les deux jokers disposent d'identités indépendantes, y compris après sauvegarde. Aucun rôle n'est imposé automatiquement par une IA ou par une combinaison inférée après coup. **CTD-10 clos ; CTD-11** demeure ouvert sur le cumul des deux jokers distincts dans une attaque, sans présupposer une restriction du livret. Tests CTD-T94 à CTD-T103 spécifiés, non exécutés.
+
+
+## 18. Arbitrage CardForge CTD-ARB-11 — deux jokers dans une même attaque (22 novembre 2026)
+
+**Option A validée par le porteur :** les deux jokers sont des cartes physiques distinctes et peuvent être utilisés dans une seule attaque ; ils peuvent constituer les deux puissances (10 + 10, plus un déclencheur distinct) ou une puissance 10 et un déclencheur prenant l'enseigne du monstre. Aucune limite nouvelle d'un joker par attaque/main, jamais de duplication d'un seul joker. **CTD-11 clos**, tests CTD-T104 à CTD-T113 spécifiés mais non exécutés ; **CTD-12** concerne le comptage du score de victoire lorsque des cartes demeurent en main. Arbitrage produit distinct d'une confirmation officielle de l'auteur.
