@@ -139,3 +139,8 @@
 ## 15. Arbitrage CardForge CTD-ARB-08 — seconde puissance insuffisante (22 novembre 2026)
 
 **Option A validée par le porteur :** refuser sans mutation l'ajout de la seconde carte de puissance lorsqu'elle ferait une somme inférieure à la résistance du monstre ; la carte reste en main, aucune pénalité de dégâts. Une somme égale ou supérieure au seuil est valide et le déclencheur reste obligatoire. Scénarios CTD-T78 à CTD-T84 spécifiés mais non exécutés. **CTD-08 clos ; CTD-09 (première puissance mathématiquement non complétable) reste à décider.** Il s'agit d'un arbitrage produit documenté, non d'une nouvelle citation de l'auteur.
+
+
+## 16. Arbitrage CardForge CTD-ARB-09 — première puissance mathématiquement complétable (22 novembre 2026)
+
+**Option A validée par le porteur :** une première carte de puissance n'est acceptée que si sa valeur + 10 atteint au moins la résistance du monstre (valet 11, dame 12, roi 13). Ce test de borne supérieure théorique n'inspecte pas la pioche et refuse les premières poses impossibles sans modifier l'état de jeu. Scénarios CTD-T85 à CTD-T93 spécifiés, non exécutés. **CTD-09 clos ; CTD-10** portera sur le rôle et l'enseigne du joker à la pose. La règle d'interdiction anticipée est un arbitrage CardForge et non une citation officielle.
