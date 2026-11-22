@@ -141,3 +141,7 @@ Une collection de jeux solo aux identités visuelles marquées, dotée d'un mote
 La version de règles de Gridcannon, la source primaire, la matrice de cas limites et les droits d'utilisation sont **à vérifier** avant de déclarer le jeu conforme ou publiable. Cette décision augmente le périmètre initial ; elle ne constitue pas une validation des règles de Gridcannon. Clear the Dungeon demeure en Classic 1.1.0 sans réserve facultative, avec ses propres vérifications encore ouvertes. Les sorties Android et iOS restent ultérieures.
 
 Référence à jour : [PRD CardForge v0.2](./prds/prd-CardForge-2026-11-22/prd.md).
+
+## Gridcannon — version de règles validée (22 novembre 2026)
+- **Version 2 confirmée pour CardForge**, à l'exclusion de l'ancienne v1. Voir [référentiel BMAD du jeu](./game-rules/gridcannon.md).
+- Les mécaniques principales ont été documentées à partir de l'article de Tom Francis ; demeurent ouverts les cas limites G-01 à G-05, le nom public et les crédits G-06. Les anciennes réserves sur l'identification de la version sont désormais levées.
