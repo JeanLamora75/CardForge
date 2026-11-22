@@ -109,3 +109,8 @@
 ## 9. Arbitrage CardForge CTD-ARB-02 — cartes posées durant la main (22 novembre 2026)
 
 **Décision du porteur : option B.** Les cartes de la main courante peuvent être récupérées/repositionnées avant clôture, mais les cartes des mains précédentes sont verrouillées. Les attaques déjà entièrement résolues ne sont pas réversibles. Ce point est **fermé pour l'implémentation CardForge**, mais demeure une interprétation produit faute de texte officiel assez précis. Le prochain point CTD-03 concerne les cartes inutilisées à la clôture de la main.
+
+
+## 10. Arbitrage CardForge CTD-ARB-03 — défausse explicite (22 novembre 2026)
+
+**Option B validée par le porteur :** défausse explicite (carte par carte ou toutes les restantes) avant la prochaine pioche ; chacune compte pour un dégât et le 7e déclenche immédiatement la défaite. Les cartes engagées dans des attaques partielles ne sont pas défaussées lors du renouvellement. Les placements provisoires deviennent verrouillés à la clôture de la main selon CTD-ARB-02. Le point **CTD-03 est clos pour CardForge**, sans résoudre **CTD-04** (épuisement de la pioche).
