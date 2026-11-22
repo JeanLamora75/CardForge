@@ -1474,4 +1474,46 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T354 | Échec local de création de nouvelle partie après confirmation | Pas de perte silencieuse de l'état précédent ; état récupérable | Spécifié, non exécuté |
 | GC-V2-T355 | Modale d'abandon en FR/EN sur mobile et au clavier | Conséquence explicite, choix Annuler/Confirmer accessibles | À vérifier en UX, non exécuté |
 
-**Prochain arbitrage proposé — GC-33 / écran de fin de partie :** quelle richesse de récapitulatif montrer une fois la victoire ou la défaite définitivement confirmée ? Options : **A**, résultat seul avec commandes « Nouvelle partie » et « Catalogue » ; **B**, résultat et résumé compact (score officiel uniquement en cas de victoire, figures vaincues, actions spéciales restantes, cause éventuelle de défaite), sans révélation superflue des cartes cachées ; **C**, rapport détaillé de la partie et historique de tous les mouvements. Préserver le score officiel de la Version 2 et la distinction victoire/défaite/abandon de GC-32.
+**GC-33 : option B validée ultérieurement — résultat et résumé compact, score officiel seulement en cas de victoire ; voir §47.**
+
+
+## 47. Décision UX Gridcannon V2 — GC-33 : écran de fin avec résultat et résumé compact
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Après une **victoire** ou une **défaite** définitivement confirmée, CardForge affiche un écran de fin comprenant le résultat explicite et un **résumé compact** : figures vaincues sur douze, As et Jokers non consommés et, en cas de défaite, sa cause lorsqu'elle est déterminable. Le **score officiel** de Gridcannon Version 2 est affiché **uniquement pour une victoire** et correspond au nombre d'actions spéciales non utilisées, de 0 à 6. Aucune valeur ne doit être présentée comme score officiel d'une défaite ou d'un abandon.
+
+### 47.1. Contrat fonctionnel et UX
+
+1. **Déclenchement métier :** présenter le bilan uniquement lorsque la partie passe réellement dans l'état terminal « victoire » ou « défaite », selon les règles GC-08/20 et les autres arbitrages. Une simple prévisualisation de tir GC-23 ne déclenche aucun écran final.
+2. **Victoire :** afficher clairement « Victoire », le total exact **12/12 figures vaincues**, le **score officiel** calculé à partir des As et Jokers effectivement non dépensés au moment de la victoire, et le nombre d'actions spéciales encore disponibles par type. Ne pas attribuer des actions jamais découvertes à l'interface sans validation de l'inventaire physique du moteur.
+3. **Défaite :** afficher « Défaite », le nombre réel de figures vaincues, les actions spéciales non dépensées et une cause explicite et vérifiable lorsque disponible : seuil d'armure dépassé (J/Q >= 20, K >= 19) ou impasse confirmée GC-20. **Ne pas afficher de score officiel**, même s'il reste des actions non utilisées.
+4. **Abandon :** un abandon confirmé relève de GC-32 et des statistiques distinctes. Si un écran de clôture d'abandon est présenté, il est libellé **« Partie abandonnée »**, sans être qualifié de victoire/défaite ni assorti d'un score officiel.
+5. **Unicité des chiffres :** dériver figures vaincues et ressources restantes de l'état terminal canonique, sans compteurs d'affichage divergents. La valeur « 12/12 » vient des figures vaincues et pas des emplacements simplement occupés.
+6. **Statistiques et persistance :** enregistrer le résultat final et ses statistiques **une seule fois** ; retourner au catalogue, actualiser la page ou rouvrir la partie terminée ne génère ni nouvelle victoire ni nouvelle défaite.
+7. **Animations :** les effets GC-24/25 peuvent accompagner la fin, sans retarder la validation métier ; la désactivation des animations ou du son ne supprime jamais le bilan.
+8. **Navigation :** proposer clairement les actions « Nouvelle partie » et « Retour au catalogue ». Une partie déjà terminée ne demande pas de confirmation de remplacement selon GC-32.
+9. **Aucune information cachée superflue :** pas d'historique détaillé des coups, pas de révélation des futures cartes de pioche ou d'informations qui n'appartenaient pas à l'état connu du joueur. Les données utiles au résumé sont celles de la partie achevée.
+10. **Mobile et accessibilité :** résumé adapté aux petits écrans, libellés et valeurs compréhensibles sans seule couleur ou animation, commandes accessibles au clavier et au toucher. Textes en français et anglais au MVP, extensibles selon GC-27/28.
+11. **Portée :** l'écran de résultat est un choix de présentation CardForge ; le score officiel et les conditions de résultat demeurent ceux de la Version 2, sans notation de défaite inventée ni bonus esthétique.
+
+**Exemple victoire :** « Victoire — 12/12 figures vaincues — Score officiel : 4/6 — Actions non utilisées : 3 As, 1 Joker ». **Exemple défaite :** « Défaite — 8/12 figures vaincues — Cause : résistance d'un Roi portée à 19 — Actions non utilisées : 1 Joker ». Dans ce deuxième cas, aucun « score officiel » n'est affiché.
+
+**Statut : GC-33 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucun développement ni test exécuté.
+
+### 47.2. Scénarios de conformité — GC-33
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T356 | Douzième figure vaincue, quatre actions non dépensées | « Victoire », 12/12, score officiel 4/6 | Spécifié, non exécuté |
+| GC-V2-T357 | Victoire avec zéro action non dépensée | Score officiel 0/6, sans confusion avec une défaite | Spécifié, non exécuté |
+| GC-V2-T358 | Défaite par armure d'un Roi atteignant 19 | « Défaite », motif exact, aucune ligne de score officiel | Spécifié, non exécuté |
+| GC-V2-T359 | Défaite par impasse GC-20 | Cause d'impasse documentée, pas de score officiel | Spécifié, non exécuté |
+| GC-V2-T360 | Huit figures vaincues, quatre autres déjà révélées mais vivantes | Affichage 8/12, sans confusion avec figures découvertes | Spécifié, non exécuté |
+| GC-V2-T361 | Ressources restantes, deux As et un Joker | Récapitulatif exact par type et somme cohérente | Spécifié, non exécuté |
+| GC-V2-T362 | Abandon GC-32 | État « abandonnée » distinct, aucune victoire/défaite ni score officiel fictif | Spécifié, non exécuté |
+| GC-V2-T363 | Écran final réaffiché après rafraîchissement | Résultat et statistiques comptés une seule fois | Spécifié, non exécuté |
+| GC-V2-T364 | Animation GC-24 ou son GC-25 désactivés | Résumé affiché entièrement et sans délai métier | Spécifié, non exécuté |
+| GC-V2-T365 | Choix « Nouvelle partie » depuis écran final | Nouvelle distribution sans abandon de la partie achevée | Spécifié, non exécuté |
+| GC-V2-T366 | Choix « Retour au catalogue » | Résultat conservé, aucune statistique supplémentaire | Spécifié, non exécuté |
+| GC-V2-T367 | Écran final FR/EN sur mobile et clavier | Motifs et chiffres lisibles, navigation accessible, sans couleur seule | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-34 / statistiques du jeu dans CardForge :** après un écran de fin compact, comment présenter les performances cumulées dans la fiche du jeu ? **A** uniquement victoires, défaites et abandons ; **B** ces trois totaux, nombre de parties achevées, taux de victoire et meilleur score officiel de victoire, sans classement ; **C** tableau d'analyse avancée avec historique par partie, durée, évolutions et graphiques. Le score officiel des défaites doit rester inexistant, les abandons étant distingués des parties gagnées ou perdues. Les définitions exactes des dénominateurs seront explicitées avant validation.
