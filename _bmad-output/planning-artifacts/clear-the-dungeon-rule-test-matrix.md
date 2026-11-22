@@ -201,3 +201,22 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T68 | Après révélation, reprise sauvegardée, rafraîchissement ou attaque répétée | Monstre révélé une seule fois, aucun second retrait et aucun double résultat | Spécifié, non exécuté |
 
 **Prochain arbitrage : CTD-07**, ordre de pose des cartes de puissance et de déclenchement. La mention « CTD-06 à arbitrer » dans la documentation historique est remplacée par cette validation.
+
+
+## Décision CTD-07 / CTD-ARB-07 — ordre puissance, puissance, déclencheur (22 novembre 2026)
+
+**Option A VALIDÉE :** les deux cartes de puissance doivent précéder la troisième carte déclencheuse. La main et le tour peuvent changer entre les placements, mais **le rôle de déclencheur n'est jamais prérempli**. Les déplacements de cartes de la main courante demeurent permis selon CTD-02.
+
+| Test | Précondition / action | Résultat attendu CardForge | Statut |
+| --- | --- | --- | --- |
+| CTD-T69 | Valet de cœur J11, aucune puissance posée ; tenter de poser un 3 cœur comme déclencheur | Déclencheur refusé : les deux puissances ne sont pas placées | Spécifié, non exécuté |
+| CTD-T70 | Valet J11 avec seulement un 6 de puissance posé ; tenter une carte déclencheuse de même enseigne | Refusé tant que la seconde puissance n'est pas présente | Spécifié, non exécuté |
+| CTD-T71 | Valet J11 ; poser 6 puis 5 en puissance, et enfin 3 de l'enseigne du valet | Somme 11, attaque résolue à la pose de la troisième carte | Spécifié, non exécuté |
+| CTD-T72 | Valet J11 ; première puissance 6 sur une main, seconde puissance 5 sur la suivante, déclencheur sur une troisième | Les placements antérieurs persistent et la troisième carte termine l'attaque | Spécifié, non exécuté |
+| CTD-T73 | Dame Q12 ; deux puissances totalisent 12, mais le déclencheur ne correspond pas à l'enseigne | Attaque non résolue ; les rôles sont conservés sans déclenchement illégal | Spécifié, non exécuté |
+| CTD-T74 | Roi K13 ; deux puissances totalisent 13, joker fixe 10 joué comme déclencheur d'enseigne adaptée | Attaque valide et résolue, sans capacité supplémentaire | Spécifié, non exécuté |
+| CTD-T75 | Deux puissances totalisent le seuil, le joueur retire une carte posée dans la main actuelle avant de jouer le déclencheur | Attaque redevient partielle, déclencheur encore interdit tant qu'il manque une puissance | Spécifié, non exécuté |
+| CTD-T76 | Trois cartes en main pourraient former une attaque en les permutant, sans placement chronologique approprié | Le moteur ne les réordonne pas automatiquement pour éliminer la cible | Spécifié, non exécuté |
+| CTD-T77 | Deux puissances déjà posées totalisent **moins** que la résistance | **Attendu incomplet : CTD-08 doit décider** si la seconde pose est rejetée ou conservée sans déclencheur | En attente de décision |
+
+**Prochain arbitrage CTD-08 :** comportement lorsqu'une seconde carte de puissance produit un total insuffisant ; le rejet d'un déclencheur insuffisant est acquis, le sort de la seconde carte insuffisante ne l'est pas.
