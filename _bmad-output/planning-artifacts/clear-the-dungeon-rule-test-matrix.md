@@ -37,7 +37,7 @@ Tous les exemples qui suivent sont **conceptuels**. Ils servent à préciser les
 | T-06 | Monstre K (13), cartes 6 et 7, déclencheur correct | Attaquer | Attaque admissible | Spécifié |
 | T-07 | Monstre J, cartes 1 (As) et 10, déclencheur correct | Attaquer | Attaque admissible si As=1 | Spécifié ; confirmer As |
 | T-08 | Monstre J, deux valeurs suffisantes et joker déclencheur | Attaquer | Attaque admissible si le joker tient l'enseigne requise | Spécifié |
-| T-09 | Main contenant un joker comme carte de puissance | Attaquer | Valeur de joker choisie jusqu'à 10, respecter les contraintes du jeu ; borne basse à confirmer | À préciser |
+| T-09 | Main contenant un joker comme carte de puissance | Attaquer | **Attendu à arbitrer** : joker à puissance choisie jusqu'à 10 ou fixe 10, selon source faisant foi | À préciser |
 | T-10 | Pioche initiale | Distribuer la mise en place | Douze figures en quatre colonnes, paquet de puissance de 42 cartes, aucune carte créée/perdue | Spécifié |
 | T-11 | Un monstre accessible est vaincu, un autre est caché sous lui | Finaliser l'attaque | Révélation du monstre suivant et mouvement des cartes conforme à la règle | À préciser |
 | T-12 | Pile de dégâts à 6 cartes | Ajouter une carte de dégâts | Défaite au seuil de 7 selon l'ordre officiel de résolution | À préciser |
@@ -80,3 +80,11 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 - La publication accessible des règles Classic v1.1.0 indique que la puissance d'un joker est **choisie jusqu'à 10** ; l'ancienne formulation « vaut 10 » est incomplète. Les scénarios de joker doivent donc examiner plusieurs valeurs, mais la borne basse et les situations d'utilisation simultanée restent à vérifier sur la source primaire complète.
 - Référentiel propre au jeu : [règles Clear the Dungeon](./game-rules/clear-the-dungeon.md).
 - Ne pas confondre cette matrice de scénarios à exécuter avec une suite de tests réussis.
+
+## Contrôle documentaire complémentaire du 22 novembre 2026
+- **CTD-J01 — Bloquant :** la page de présentation ([Gifts for Card Players](https://giftsforcardplayers.com/clear-the-dungeon-a-solo-card-game/)) parle de puissance de joker choisie jusqu'à 10 ; le [livret Classic reproduit](https://www.scribd.com/document/846020212/Clear-the-Dungeon-Complete-1-0-2) parle d'une puissance de 10. Les anciennes formulations univoques de cette matrice étaient trop affirmatives : **les deux comportements ne doivent pas être testés comme simultanément officiels**.
+- **CTD-T21 à prévoir :** deux jokers et déclencheur de joker, avec une attente fixée seulement après résolution CTD-J01.
+- **CTD-T22 à prévoir :** septième carte de dégâts => défaite immédiate (attesté par deux textes).
+- **CTD-T23 à prévoir :** répartition de cartes entre plusieurs monstres et attaque partiellement posée : résultat à confirmer.
+- **CTD-T24 à prévoir :** fin de pioche avec une ou deux cartes en main : résultat à confirmer.
+- [Référentiel actualisé Clear the Dungeon](./game-rules/clear-the-dungeon.md). Aucun scénario ci-dessus n'est exécuté.
