@@ -375,3 +375,21 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-12 / CTD-ARB-12 CLOS pour CardForge.** Décision du porteur conforme au score classique référencé. Aucun test logiciel n'a été exécuté pendant cette revue.
 
 **Prochaine question CTD-13 :** organisation des phases Attaque / Défausse — le joueur peut-il défausser une carte au milieu d'une main, puis reprendre ses placements, ou passe-t-il explicitement à une phase de défausse sans retour ? Ce point n'a pas été décidé par CTD-ARB-03 (qui exige une défausse explicite avant de piocher).
+
+
+## 24. Décision fonctionnelle CTD-13 / CTD-ARB-13 — alternance libre des attaques et défausses pendant une main
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Durant une main active, le joueur peut **alterner librement poses/ajustements d'attaques et défausses explicites**, sans phase de défausse irréversiblement séparée de la phase d'attaque. Par exemple : poser un 8, défausser un 2, puis poser un 6 est autorisé, sous réserve que les deux placements respectent les règles de puissance et d'enseigne et que la partie ne soit pas terminée entre ces actions.
+
+**Règles exécutables pour CardForge :**
+- Chaque défausse explicite retire **une carte non engagée** de la main active et l'ajoute immédiatement à la **pile de dégâts** selon CTD-ARB-03, sans possibilité de récupération ultérieure. Une action « Défausser les cartes restantes » applique le même principe carte par carte et s'arrête en cas de résultat terminal.
+- **Défausser ne verrouille pas les autres cartes et ne clôture pas, à elle seule, la main** : après une ou plusieurs défausses, le joueur peut continuer de jouer des cartes encore en main, reprendre/repositionner les cartes posées pendant cette même main selon CTD-ARB-02 et finaliser une attaque valide selon CTD-ARB-06/07.
+- À l'arrivée du **septième dégât**, appliquer immédiatement une **défaite terminale** ; le joueur ne peut plus attaquer, récupérer, piocher ou défausser, même si d'autres cartes de la main auraient permis de vaincre un monstre.
+- Si la pose d'un déclencheur valide élimine le **douzième monstre**, appliquer immédiatement une **victoire**, même si des cartes non utilisées restent en main ; il n'est pas nécessaire de les défausser et le score est calculé sur la pioche conformément à CTD-ARB-12.
+- **Aucune nouvelle pioche tant que la main courante contient encore des cartes**, qu'elles aient été jouées ou non ; la transition attend sa clôture selon CTD-ARB-03. Les cartes placées dans les attaques partielles restent sur les monstres selon CTD-ARB-01.
+- Une action de défausse explicite est définitive, contrairement à la pose provisoire réversible d'une carte en attaque pendant la main (CTD-ARB-02). Ne pas introduire de bouton « Annuler la défausse » qui reviendrait sur un dégât déjà acté.
+- La sauvegarde/reprise doit conserver l'ordre des actions sans modifier les dégâts, les cartes en main, les placements provisoires et les événements terminaux.
+
+**Périmètre :** CTD-13 / CTD-ARB-13 **CLOS pour le comportement CardForge** ; le livret présente le cycle Pioche / Attaque / Défausse, mais la libre alternance est un arbitrage d'ergonomie explicite du porteur, et non une attribution de ce détail à Mark S. Ball. Les tests ne sont pas exécutés.
+
+**Prochain arbitrage CTD-14 :** une fois la main **vide** par poses/défausses, la clôture est-elle automatique ou soumise à une **confirmation explicite** ? Ce point influence la faculté, déjà validée en CTD-ARB-02, de repositionner une carte posée pendant la main avant verrouillage et la défaite automatique à la clôture de la dernière main (CTD-ARB-05).
