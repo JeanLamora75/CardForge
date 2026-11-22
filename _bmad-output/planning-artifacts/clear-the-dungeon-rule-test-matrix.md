@@ -278,3 +278,23 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T103 | Placement du joker refusé pour cause de rôle non autorisé | Joker demeure disponible, aucune mutation de main/plateau/dégâts | Spécifié, non exécuté |
 
 **Prochain point CTD-11 :** cumul éventuel des **deux jokers distincts** dans une attaque. Ne pas confondre cette question avec l'interdiction, déjà confirmée, de jouer **un seul et même joker** dans deux emplacements.
+
+
+## Décision CTD-11 / CTD-ARB-11 — les deux jokers peuvent contribuer à une même attaque (22 novembre 2026)
+
+**Option A VALIDÉE :** deux jokers physiques indépendants, sans plafond d'un joker par attaque ni par main. Chacun occupe un seul emplacement distinct et conserve son rôle selon CTD-ARB-10. Interdit de compter **un seul** joker dans deux emplacements.
+
+| Test | Précondition / action | Attendu CardForge | État |
+| --- | --- | --- | --- |
+| CTD-T104 | Roi pique K13 : Joker A en puissance 1, 3 carreau en puissance 2, Joker B en déclencheur | 10+3=13 ; Joker B adopte pique, victoire locale | Spécifié, non exécuté |
+| CTD-T105 | Roi K13 : Joker A + Joker B dans les deux emplacements de puissance | Total 20 admissible ; attaque **non achevée** tant qu'aucun déclencheur n'est posé | Spécifié, non exécuté |
+| CTD-T106 | Suite de T105 : ajouter une carte numérique ayant l'enseigne du roi | Monstre vaincu après troisième carte de déclenchement | Spécifié, non exécuté |
+| CTD-T107 | Suite de T105 : ajouter une carte de mauvaise enseigne | Déclencheur refusé, cible non vaincue | Spécifié, non exécuté |
+| CTD-T108 | Joker A engagé sur le roi lors d'une main antérieure, Joker B comme déclencheur lors de la main courante | Attaque légale si puissance totale suffisante ; Joker A reste verrouillé jusqu'à résolution | Spécifié, non exécuté |
+| CTD-T109 | Deux jokers en main dans le même tour pour deux monstres différents | Chaque joker peut être joué séparément ; aucun plafond d'un joker par main | Spécifié, non exécuté |
+| CTD-T110 | Joker A utilisé comme puissance, tentative de le réutiliser simultanément comme déclencheur | Refus ; impossibilité de cloner l'identifiant de carte | Spécifié, non exécuté |
+| CTD-T111 | Sauvegarde avec deux jokers distincts posés sur même monstre | Reprise avec même identité, rôle, cible et état de verrouillage de chaque joker | Spécifié, non exécuté |
+| CTD-T112 | Joker A en déclencheur avec joker B en puissance, mais seconde puissance numérique insuffisante | Respect de CTD-ARB-08 ; l'usage de deux jokers ne contourne pas les seuils | Spécifié, non exécuté |
+| CTD-T113 | Une attaque avec deux jokers distincts et une troisième carte numérique élimine le 12e monstre | Victoire immédiate, trois cartes retirées exactement une fois, jamais dans les dégâts | Spécifié, non exécuté |
+
+**Prochain point CTD-12 :** score de victoire lorsque des cartes restent en main. Les cas CTD-T104 à CTD-T113 sont spécifiés uniquement ; aucune exécution n'a été réalisée.
