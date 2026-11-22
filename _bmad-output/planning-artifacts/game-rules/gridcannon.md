@@ -202,3 +202,17 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 ### Suites obligatoires
 
 Ne pas fermer G-01, G-02, G-03 (ordre), G-04 (ordre interne) ou G-05 (impasses atypiques) par simple intuition. Préparer pour ces cas une demande concise de clarification à Tom Francis si les règles publiées n'en parlent pas. Aucun contact auteur n'a été envoyé. Toute réponse ou validation produit ultérieure doit être rattachée à son identifiant.
+
+## 14. Approfondissement : défauts de spécification propres à Version 2
+
+Dossier source détaillé : [recherche approfondie Mary](./recherche-approfondie-2026-11-22.md). Source normative : [article Version 2 de Tom Francis](https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/), non sa démonstration vidéo antérieure aux révisions.
+
+- **G-01a — NOUVEAU, bloquant :** la grille 3 × 3 inclut le centre ; la règle de la carte « la plus semblable » ne dit pas si l'on doit **exclure la case centrale** (qui ne possède pas de place extérieure adjacente). Le placement n'est pas défini si cette carte centrale serait la meilleure candidate.
+- **G-01b — bloquant :** si les emplacements périphériques adjacents à la meilleure carte sont déjà occupés, l'auteur ne donne pas de repli explicite. « Chercher la suivante » est une suggestion secondaire, pas une règle officielle.
+- **G-07 — NOUVEAU :** « aucune action spéciale à utiliser » dans la source primaire vs « aucune action spéciale qui aide » en source secondaire : que faire si un As/Joker reste disponible mais ne permet pas de rendre la carte posable ?
+- **G-08 — NOUVEAU, faible priorité :** préciser la convention de score si la pioche est d'abord épuisée, puis réapprovisionnée par une Extraction, et qu'une victoire suit.
+- **G-03 :** l'existence possible d'un **double tir depuis un coin** est étayée ; l'ordre de résolution en situation limite demeure à formaliser.
+- **G-04/G-05 :** pile complète extraite sous la pioche et actions spéciales après épuisement de pioche confirmées ; ordre de pile et impasses sans solution restent ouverts.
+- **G-06 :** l'auteur **recommande**, sans imposer comme condition juridique formelle dans le billet, un crédit « Based on Gridcannon by Tom Francis » et un titre d'adaptation distinct de « Gridcannon » seul.
+
+**État :** référence Version 2 définitivement validée ; pas de changement de mécanique décidé par CardForge pendant cette recherche. Questions G-01a/b, G-02, G-03, G-04, G-05, G-07, G-08 encore ouvertes.
