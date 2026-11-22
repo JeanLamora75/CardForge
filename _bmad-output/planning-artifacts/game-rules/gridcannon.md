@@ -2264,4 +2264,50 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T577 | Conseils en plein écran, portrait et paysage, mode lisibilité GC-48 | Plateau accessible et message lisible | À vérifier en UX, non exécuté |
 | GC-V2-T578 | Clavier et lecteur d'écran, FR/EN | Conseil et action de désactivation accessibles sans code couleur seul | À vérifier en accessibilité, non exécuté |
 
-**Prochain arbitrage proposé — GC-51 / raccourcis clavier facultatifs :** comment accélérer l'utilisation de Gridcannon sur ordinateur sans compromettre les interactions tactiles et l'accessibilité ? **A** navigation et activation au clavier standard uniquement, sans raccourcis dédiés ; **B** quelques **raccourcis clavier facultatifs, affichés dans l'aide**, pour les fonctions fréquentes (annuler une sélection, inspecter, recentrer le plateau, ouvrir l'aide), sans jamais jouer de coup sans les confirmations prévues ; **C** système complet de raccourcis personnalisables par action, avec éditeur de touches. Préserver les commandes accessibles sans raccourci et éviter toute collision avec les raccourcis navigateur et les champs de saisie.
+**GC-51 : option B validée ultérieurement — raccourcis clavier facultatifs, documentés et limités aux commandes de confort ; voir §65.**
+
+
+## 65. Décision UX Gridcannon V2 — GC-51 : raccourcis clavier simples, facultatifs et documentés
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Gridcannon V2 propose un **petit nombre de raccourcis clavier facultatifs** pour les opérations d'interface courantes : annuler une sélection/fermer une vue, inspecter la carte concernée, recentrer le plateau, ouvrir l'aide. Les raccourcis sont **visibles dans l'aide GC-26**, n'empêchent jamais de jouer via souris/tactile/navigation standard et ne peuvent **contourner une validation du moteur ou une confirmation de jeu**.
+
+### 65.1. Contrat fonctionnel, accessibilité et intégration
+
+1. **Raccourcis limités :** réserver cette première version aux actions de confort et de navigation. Une table de correspondance modeste et cohérente sera validée pendant la conception UX, puis présentée dans l'aide et, si pertinent, en infobulle des commandes.
+2. **Affectations indicatives, non définitives :** Échap pour annuler/fermer l'élément actif ; I pour examiner la carte sélectionnée ; R pour recentrer le plateau GC-40 ; ? pour ouvrir l'aide GC-26. Les touches exactes restent à vérifier selon les dispositions de clavier, navigateurs et besoins d'accessibilité.
+3. **Priorité au contexte :** un raccourci agit uniquement si la fonction est pertinente et disponible dans le contexte actuel : pas d'inspection si aucune carte consultable n'est ciblée ; pas d'annulation implicite d'une action déjà confirmée. Les modales ouvertes prennent priorité sur les commandes de plateau.
+4. **Pas de raccourci de coup automatique :** un raccourci ne pose pas de carte, ne confirme pas de tir, ne révèle pas de carte cachée, ne dépense pas un As/Joker et ne lance pas de nouvelle partie sans le parcours métier prévu. Les confirmations GC-23/30/32 restent obligatoires.
+5. **Accessibilité non dépendante des raccourcis :** toutes les fonctionnalités demeurent disponibles par boutons, commandes tactiles et parcours clavier standard (Tab, Entrée, Espace, Échap), avec gestion correcte du focus. Aucun geste ou combinaison spéciale n'est obligatoire.
+6. **Éviter les conflits :** ne pas intercepter les raccourcis réservés du navigateur/système. Désactiver les raccourcis alphabétiques lorsque le focus est dans un champ de saisie, une zone éditable ou une commande nécessitant la frappe de texte.
+7. **Prévention des déclenchements involontaires :** ignorer les répétitions de touches non pertinentes et éviter le double déclenchement lié aux écouteurs d'événements ou à la propagation d'événements entre fenêtres/contrôles.
+8. **Paramétrage :** pas d'éditeur complet de raccourcis ni d'assignations personnalisées au MVP (option C écartée). L'absence de support d'un raccourci n'empêche jamais l'accès à sa fonction.
+9. **Aide multilingue :** descriptions des raccourcis disponibles en français et anglais dès le MVP GC-28, extensibles, et présentées avec les libellés localisés des actions ; l'aide précise les cas dans lesquels le raccourci s'applique.
+10. **Vue responsive :** les raccourcis ne doivent pas introduire des commandes visibles superflues sur mobile ; ils fonctionnent avec un clavier physique éventuel sur tablette, en portrait ou paysage GC-41, et en plein écran GC-45.
+11. **Inspection et accessibilité :** l'action d'inspection GC-36/43 conserve son caractère purement consultatif. Si un raccourci ouvre une fenêtre, le focus est géré et retourné au déclencheur lors de la fermeture.
+12. **Coordination multi-onglets :** dans un onglet GC-47 en lecture seule, les raccourcis d'observation ou d'aide sont possibles, mais tout raccourci qui pourrait modifier l'état doit rester interdit. Aucun transfert de contrôle implicite.
+13. **Indépendance des données :** déclencher une action de confort ne change ni l'ordre de la pioche, ni les cartes, ni le score officiel, ni les statistiques, ni le statut de sauvegarde GC-46.
+14. **Cohérence CardForge :** favoriser une convention de raccourcis commune aux interfaces de la collection, sans imposer des commandes sans objet aux autres jeux ni modifier leurs règles.
+
+**Exemple :** le joueur sélectionne une carte et appuie sur I : sa vue détaillée s'ouvre sans jouer le coup. Il presse Échap : la vue se ferme et le focus revient au plateau. En appuyant sur R, le plateau se recentre. Lorsqu'il saisit du texte dans un champ, la lettre R ne recentre rien.
+
+**Statut : GC-51 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire seulement ; correspondances finales à valider en UX, aucune implémentation ni tests exécutés.
+
+### 65.2. Scénarios de conformité — GC-51
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T579 | Consultation de l'aide GC-26 | Raccourcis et commandes correspondantes documentés en FR/EN | Spécifié, non exécuté |
+| GC-V2-T580 | Raccourci d'inspection sur carte visible sélectionnée | Vue GC-36 ouverte, aucun coup ni ressource consommés | Spécifié, non exécuté |
+| GC-V2-T581 | Raccourci d'inspection sans carte admissible | Aucun effet métier ni accès à une carte cachée | Spécifié, non exécuté |
+| GC-V2-T582 | Raccourci de recentrage sur plateau zoomé | Retour au cadrage GC-40, état de jeu intact | Spécifié, non exécuté |
+| GC-V2-T583 | Ouverture de l'aide par raccourci | Règles consultables sans déplacer de carte | Spécifié, non exécuté |
+| GC-V2-T584 | Échap pendant consultation ou sélection en cours | Fermeture/annulation contextuelle sans confirmer de coup | Spécifié, non exécuté |
+| GC-V2-T585 | Raccourci durant confirmation GC-23/30 | Aucune validation implicite du coup ou de l'action spéciale | Spécifié, non exécuté |
+| GC-V2-T586 | Frappe de I/R/? dans champ de saisie actif | Champ reçoit la saisie ; aucun raccourci global déclenché | Spécifié, non exécuté |
+| GC-V2-T587 | Collision potentielle avec combinaison navigateur/système | Fonction système non détournée, alternative UI disponible | À vérifier en compatibilité, non exécuté |
+| GC-V2-T588 | Répétition rapide du raccourci d'ouverture | Pas de modales empilées ni double activation | Spécifié, non exécuté |
+| GC-V2-T589 | Partie en lecture seule dans second onglet GC-47 | Aucun contrôle métier ou prise de propriété implicite | Spécifié, non exécuté |
+| GC-V2-T590 | Clavier seul, écran tactile, lecteur d'écran | Commandes accessibles sans raccourci et focus correct | À vérifier en accessibilité, non exécuté |
+| GC-V2-T591 | Orientation mobile et plein écran | Comportement compatible, aucune commande de jeu involontaire | À vérifier en UX, non exécuté |
+
+**Prochain arbitrage proposé — GC-52 / confirmation des actions irréversibles ordinaires :** faut-il demander confirmation pour chaque coup de jeu afin d'éviter les erreurs de manipulation, ou s'appuyer sur la prévisualisation et les garde-fous déjà décidés ? **A** chaque coup légal est exécuté immédiatement après choix de la destination, sous réserve des confirmations spécifiques déjà prévues ; **B** confirmation systématique de chaque placement et déplacement, même simple ; **C** confirmation configurable, désactivable pour les coups ordinaires, mais toujours obligatoire pour les actions explicitement sensibles. Attention : les confirmations spécifiques des attaques GC-23, des As/Jokers GC-30 et des abandons GC-32 **restent inchangées** quelle que soit l'option.
