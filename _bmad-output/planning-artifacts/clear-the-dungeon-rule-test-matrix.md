@@ -117,3 +117,19 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | CTD-T34 | Compléter une attaque sur A tandis que B est incomplète | A seulement peut être vaincu suivant ses règles ; B conserve ses cartes | Spécifié par décision, non exécuté |
 
 **Non tranché : CTD-02** — reprise, déplacement ou réaffectation d'une carte déjà posée ; la matrice sera complétée après décision. La persistance des attaques entre tours est une décision du projet et non une citation verbatim de l'auteur.
+
+
+## Décision CTD-02 / CTD-ARB-02 — modifications provisoires pendant la main (22 novembre 2026)
+
+**Option B VALIDÉE.** Une carte placée pendant la main courante est récupérable/réaffectable uniquement avant clôture de la main et avant résolution d'une attaque ; une carte issue d'une main antérieure est verrouillée. Ce choix est propre à CardForge lorsque les sources sont muettes.
+
+| Test à développer | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| CTD-T35 | Le joueur place une carte 8 sur monstre A, puis la reprend avant la fin de main | La carte 8 revient dans la main ; elle ne figure plus sur A | Spécifié, non exécuté |
+| CTD-T36 | Le joueur place une carte 8 sur A puis la déplace sur B dans la main courante | B seul possède la carte 8, sans duplication | Spécifié, non exécuté |
+| CTD-T37 | Une carte placée sur A est confirmée par la clôture d'une main, puis la main suivante commence | Reprise/réaffectation de cette carte interdite | Spécifié, non exécuté |
+| CTD-T38 | Une carte ancienne est verrouillée, une carte courante est provisoire sur le même monstre | Seule la carte de la main courante peut être reprise ou déplacée | Spécifié, non exécuté |
+| CTD-T39 | Sauvegarde pendant une main avec des placements provisoires, puis reprise | Même répartition et mêmes droits de modification ; pas de remélange | Spécifié, non exécuté |
+| CTD-T40 | Un monstre vient d'être vaincu par une attaque résolue | Impossible de reprendre les cartes de l'attaque achevée, même avant clôture de la main | Spécifié, non exécuté |
+
+**Reste à arbitrer : CTD-03**, traitement des cartes encore en main lors de la clôture (défausse/dégâts). Les ancienne mentions « CTD-02 ouvert » dans l'historique ne reflètent plus son statut courant.
