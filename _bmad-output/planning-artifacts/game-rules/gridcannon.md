@@ -549,3 +549,39 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T93 | Recherche avec As/Joker, puis épuisement de pioche sans figure | As/Joker correctement en réserve ; **issue de l'épuisement non tranchée** et renvoyée à G-05 | En attente d'arbitrage G-05 |
 
 **Prochain arbitrage GC-10 :** à la sortie du mode recherche de GC-06, dans quel **ordre** remettre les cartes numériques traversées sous la pioche après l'apparition d'une figure ? La remise sans mélange est actée, mais l'ordre exact de la séquence temporaire (ordre de rencontre, ordre inverse, réorganisation) reste à valider. **Cette question est distincte de GC-05**, qui porte sur les piles complètes extraites par As.
+
+
+## 24. Décision fonctionnelle Gridcannon V2 — GC-10 : ordre des cartes numériques réinsérées après la recherche de figure
+
+**Option A VALIDÉE par le porteur le 22 novembre 2026.** Lorsqu'aucune figure vivante n'est présente, la recherche de la prochaine figure définie par **GC-06** met temporairement de côté les cartes **numériques 2 à 10** rencontrées. À la découverte et au placement légal de la nouvelle figure, ces cartes numériques sont replacées **face cachée sous la pioche dans leur ordre chronologique de rencontre**, **sans mélange, inversion ni réorganisation par le joueur**.
+
+**Contrat métier et invariants CardForge :**
+1. Pendant la recherche, les numériques révélées sont conservées dans une **séquence temporaire ordonnée du premier au dernier tirage**, avec leurs identifiants physiques distincts. Les As/Jokers rencontrés rejoignent la réserve conformément à **GC-09** et ne font pas partie de la séquence temporaire.
+2. Lorsqu'une nouvelle figure est révélée, appliquer son placement légal suivant **GC-01/GC-02**. La recherche s'achève après le placement ; **les numériques temporaires** sont ajoutées **en bloc à la fin de l'ordre futur de tirage** de la pioche, dans **le même ordre où elles avaient été rencontrées**.
+3. Exemple : les cartes traversées sont `4♣`, `8♦`, `5♠`, puis apparaît `Q♥`. Après placement de `Q♥`, les cartes numériques du lot reviendront à la pioche dans l'ordre de futur tirage **`4♣ → 8♦ → 5♠`**. Elles ne sont ni jouées durant la recherche ni transformées en armure (GC-06).
+4. **Priorité des cartes déjà en pioche :** si des cartes y demeurent après le placement de la figure, elles **seront tirées avant** le groupe numérique réinjecté. Ainsi, avec une pioche restante d'ordre de tirage `[A, B]` et un lot traversé `[4♣,8♦,5♠]`, le nouvel ordre est **`[A,B,4♣,8♦,5♠]`**.
+5. Si la pioche est **vide au moment où la figure est trouvée**, les numériques du lot traversé constituent la totalité de la pioche reconstituée, dans leur **ordre de rencontre**. Si le lot est vide, n'ajouter aucune carte.
+6. Les cartes réinjectées sont **face cachée** ; l'opération ne donne **aucun aperçu supplémentaire** du contenu futur de la pioche et ne remet en jeu aucun As/Joker de la réserve.
+7. Si une nouvelle recherche survient plus tard, elle crée son **propre lot ordonné** ; chaque lot est ajouté sous la pioche existante à la fin de cette recherche. Le traitement de l'ordre de **piles entières extraites par As** (GC-05) reste indépendant et inchangé.
+8. La **sauvegarde/reprise** durant la recherche doit sérialiser la **séquence ordonnée** des numériques temporaires, la pioche courante, le mode recherche et les cartes spéciales en réserve. L'opération de placement de figure et de réinsertion est **atomique et idempotente** : aucun lot ne doit être réinséré deux fois après un rechargement ou un double déclenchement.
+9. **Hors portée de GC-10 :** cas où **aucune figure n'est découverte avant épuisement complet de la pioche**, alors que moins de douze sont vaincues (G-05) ; droit de jouer une action spéciale **pendant** la recherche (futur **GC-11**). Ne pas inventer un verdict terminal ni une permission/restriction d'action sur la seule base de GC-10.
+
+**Statut : GC-10 CLOS pour CardForge.** La remise sous la pioche sans mélange après recherche de figure est documentée dans les références de la Version 2 ; le choix précis **ordre de rencontre → ordre futur de tirage** est un **arbitrage fonctionnel CardForge**, non une précision explicitement citée de Tom Francis. Les tests ci-dessous sont spécifiés, **non exécutés**.
+
+### 24.1. Scénarios de conformité — GC-10
+
+| Test | Précondition / action | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T94 | Numériques 4♣, 8♦, 5♠ traversées, puis Q♥ révélée | Après placement de la Dame, ordre de retour **4♣, 8♦, 5♠** | Spécifié, non exécuté |
+| GC-V2-T95 | Pioche encore [A, B] lors de la révélation de la figure, lot numérique [4♣, 8♦, 5♠] | Ordre final **[A, B, 4♣, 8♦, 5♠]** | Spécifié, non exécuté |
+| GC-V2-T96 | As/Joker révélés au milieu des numériques traversées | As/Joker en réserve selon GC-09 ; seules les numériques sont réinsérées, ordre maintenu | Spécifié, non exécuté |
+| GC-V2-T97 | Aucune numérique traversée avant la nouvelle figure | Pas de réinsertion ; pioche inchangée hormis figure prélevée | Spécifié, non exécuté |
+| GC-V2-T98 | Pioche vide **après révélation de la figure**, lot temporaire non vide | Lot réinjecté seul, dans l'ordre de rencontre | Spécifié, non exécuté |
+| GC-V2-T99 | Deux épisodes de recherche de figure avec des lots numériques distincts | Chaque lot ajouté à la fin de la pioche à son propre moment, sans inversion | Spécifié, non exécuté |
+| GC-V2-T100 | Recherche avec une carte 2 pourtant posable sur une case vide | 2 reste temporaire ; retour sous la pioche, aucune pose ni armure | Spécifié, non exécuté |
+| GC-V2-T101 | Sauvegarde au milieu de la recherche avec 3 numériques temporaires | Reprise reproduit le même ordre, les mêmes identifiants et la même réserve | Spécifié, non exécuté |
+| GC-V2-T102 | Double événement de fin de recherche après révélation de figure | Figure et lot numériques traités exactement une fois ; aucune duplication physique | Spécifié, non exécuté |
+| GC-V2-T103 | Réinsertion des numériques après une Extraction survenue antérieurement | Maintien de l'ordre préalable de pioche, groupe numérique placé après les cartes encore présentes ; GC-05 inchangé | Spécifié, non exécuté |
+| GC-V2-T104 | Pioche épuisée sans nouvelle figure malgré des figures encore non vaincues | **Cas non décidé par GC-10**, à examiner dans G-05 ; aucune défaite ou boucle fictive inventée | En attente G-05 |
+
+**Prochaine décision GC-11 :** les As/Jokers **déjà disponibles**, y compris ceux révélés pendant une recherche (GC-09), peuvent-ils être **activés volontairement alors que le moteur cherche encore la prochaine figure** (GC-06), ou leur usage doit-il attendre la fin de cette recherche ? La Version 2 présente les actions spéciales comme disponibles « à tout moment », mais le séquencement avec la recherche est à préciser.
