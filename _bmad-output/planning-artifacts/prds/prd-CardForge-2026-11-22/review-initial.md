@@ -22,3 +22,10 @@
 
 ## Verdict
 **PRD publié en statut « draft-for-review »**, suffisamment structuré pour discussion, mais pas encore approuvé pour transformation automatique en User Stories de réalisation.
+
+## Complément de revue — périmètre à deux jeux (22 novembre 2026)
+- La nouvelle décision du porteur remplace le périmètre initial à un jeu ; PRD v0.2 maintient les exigences antérieures applicables aux deux Jeux.
+- **FR-33** explicite le caractère réellement jouable de Gridcannon sans inventer de règles ni considérer ses droits comme acquis.
+- Le succès **SM-01** exige des tests de conformité exécutés pour les deux jeux et pas seulement Clear the Dungeon.
+- Point bloquant nouvellement reconnu : étude Mary de Gridcannon (règles sources, variantes, matrice de tests, droits d'exploitation) et charge de production additionnelle.
+- Relecture documentaire seulement : aucune recherche Web, validation automatique, exécution de tests ou création de tickets Jira effectuée.
