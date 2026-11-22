@@ -1860,4 +1860,47 @@ Ces cas sont **spécifiés, non exécutés**.
 | GC-V2-T462 | Parcours clavier et lecteur d'écran en portrait/paysage FR/EN | Focus cohérent, commandes utilisables, informations lisibles | À vérifier en accessibilité, non exécuté |
 | GC-V2-T463 | Reprise de sauvegarde dans une orientation différente | Partie restaurée à l'identique avec plateau adapté à l'écran actuel | Spécifié, non exécuté |
 
-**Prochain arbitrage proposé — GC-42 / lisibilité des cartes empilées :** comment présenter sur la grille les cartes numériques empilées tout en montrant la carte supérieure réellement jouable et la hauteur de la pile ? Options : **A** seule la carte supérieure visible, sans repère de quantité ; **B** carte supérieure au premier plan avec décalage léger des cartes sous-jacentes et compteur exact de hauteur ; **C** piles toujours déployées en éventail pour consulter toutes les cartes déjà visibles. La représentation ne doit pas autoriser le retrait ou le déplacement d'une carte autre que la supérieure lorsque les règles l'interdisent.
+**GC-42 : option B validée ultérieurement — cartes supérieures au premier plan, bords décalés et compteur exact par pile ; voir §56.**
+
+
+## 56. Décision UX Gridcannon V2 — GC-42 : piles compactes décalées avec compteur de hauteur
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026.** Chaque emplacement de la grille contenant plusieurs cartes numériques est représenté par la **carte supérieure illustrée au premier plan**, des **bords légèrement décalés** suggérant les cartes sous-jacentes, et un **compteur exact de cartes présentes dans la pile**. L'affichage reste compact, lisible sur smartphone en portrait/paysage et ne rend pas les cartes inférieures manipulables en dehors des possibilités expressément autorisées par le moteur Gridcannon Version 2.
+
+### 56.1. Contrat fonctionnel et UX
+
+1. **Carte principale :** la face de la carte supérieure demeure prioritaire, identifiable et lisible ; les bords inférieurs suggèrent uniquement la profondeur de pile, sans occulter les valeurs ou les éléments de puissance de la carte jouable.
+2. **Hauteur exacte :** un indicateur numérique « 1 », « 2 », « 3 »… représente le nombre **réel de cartes physiques actuellement présentes** dans la pile, et non une hauteur visuelle plafonnée ni une somme de valeurs. Sa source est le tableau canonique du moteur.
+3. **Pile vide :** l'emplacement ne montre ni fausse carte ni compteur ambigu ; un emplacement vide reste identifiable et cible potentielle selon les règles.
+4. **Pile unitaire :** avec une seule carte, afficher normalement la carte supérieure et son compteur 1 ; éviter un faux effet de plusieurs cartes décalées.
+5. **Décalage plafonné :** le nombre de bords visibles peut être limité pour préserver l'encombrement, mais le compteur doit continuer à donner le **nombre intégral exact**, sans limitation ni arrondi.
+6. **Mutations légales :** le compteur et la représentation sont recalculés après tout placement, Extraction par As, Réaffectation par Joker et restauration de sauvegarde ayant modifié les piles ; les prévisualisations GC-23, surbrillances GC-38 et gestes non confirmés ne les altèrent pas.
+7. **Manipulation :** seule la carte réellement autorisée comme source dans la phase courante est sélectionnable, notamment la **carte supérieure** lors de la Réaffectation par Joker ; les couches décalées ne constituent ni boutons, ni sources de déplacement. L'Extraction d'une pile par As conserve son action sur la pile entière comme prévu, sans transformer individuellement ses cartes en sources libres.
+8. **Pas d'information cachée :** les bords décalés ne dévoilent ni une carte inconnue ni les identités de cartes qui ne seraient pas publiques ; aucune visualisation de contenu caché n'est ajoutée.
+9. **Interaction avec GC-36 :** l'agrandissement facultatif de la carte supérieure continue de fonctionner, sans sélectionner ni jouer les cartes du dessous. La possibilité d'inspecter la composition d'une pile constitue **GC-43** et n'est pas implicitement validée ici.
+10. **Responsive :** conserver des décalages suffisamment discrets pour ne pas provoquer de chevauchements bloquants sur la grille 3×3, dans les deux orientations GC-41 et aux niveaux de zoom GC-40.
+11. **Accessibilité :** exposer textuellement « Pile de N cartes, carte supérieure : ... », avec état et sélection annoncés au clavier/lecteur d'écran. Ne pas communiquer la hauteur par profondeur d'ombre ou couleur seules. Libellés FR/EN au MVP (GC-28), extensibles.
+12. **Intégrité métier :** aucun effet sur la légalité des mouvements, l'ordre des cartes, le calcul des attaques, le score ou les conditions de fin de partie ; la représentation graphique ne peut pas diverger de la pile du moteur.
+
+**Exemple :** une pile contient cinq cartes et présente un décalage visuel correspondant au maximum à quelques bords. Le badge indique « 5 », même si seuls deux bords sous-jacents sont dessinés. Le joueur déplace légalement la carte supérieure par Joker : la pile passe à « 4 », sans rendre déplaçables les cartes inférieures.
+
+**Statut : GC-42 CLOS pour CardForge — option B validée le 22 novembre 2026.** Spécification documentaire uniquement ; aucun développement ni test exécuté.
+
+### 56.2. Scénarios de conformité — GC-42
+
+| Test | Situation | Résultat attendu | Statut |
+| --- | --- | --- | --- |
+| GC-V2-T464 | Case vide de la grille | Emplacement vide identifiable, aucun compteur trompeur | Spécifié, non exécuté |
+| GC-V2-T465 | Pile d'une carte | Carte supérieure et indicateur 1, aucun faux bord de pile | Spécifié, non exécuté |
+| GC-V2-T466 | Pile de trois cartes | Carte supérieure visible, bords discrets et compteur 3 | Spécifié, non exécuté |
+| GC-V2-T467 | Pile de huit cartes avec décalage graphique limité | Compteur exact 8 même si moins de huit bords visibles | Spécifié, non exécuté |
+| GC-V2-T468 | Ajout légal d'une carte | Compteur augmenté de 1, nouvelle carte supérieure présentée | Spécifié, non exécuté |
+| GC-V2-T469 | Réaffectation légale par Joker | Décrément de la pile source et ajustement de la destination, une seule dépense | Spécifié, non exécuté |
+| GC-V2-T470 | Extraction par As de la pile entière | Pile source vide, pas de cartes résiduelles ni compteur non nul | Spécifié, non exécuté |
+| GC-V2-T471 | Tentative de déplacer la deuxième carte d'une pile | Aucune manipulation illégale autorisée | Spécifié, non exécuté |
+| GC-V2-T472 | Prévisualisation GC-23 annulée | Carte supérieure, hauteur et ordre des piles inchangés | Spécifié, non exécuté |
+| GC-V2-T473 | Reprise de sauvegarde contenant des piles de tailles variées | Hauteurs exactes reconstruites depuis l'état canonique | Spécifié, non exécuté |
+| GC-V2-T474 | Plateau en portrait et paysage, avec zoom | Aucun chevauchement bloquant ; badge et carte du dessus lisibles | À vérifier en UX, non exécuté |
+| GC-V2-T475 | Clavier, lecteur d'écran et traduction FR/EN | Hauteur exacte et carte supérieure accessibles sans profondeur visuelle seule | À vérifier en accessibilité, non exécuté |
+
+**Prochain arbitrage proposé — GC-43 / consultation des cartes sous une pile :** une pile compacte présente seulement sa carte supérieure ; faut-il permettre d'examiner les cartes inférieures **déjà connues du joueur** sans les rendre jouables ? **A** non, la hauteur et la carte supérieure suffisent ; **B** consultation facultative, en lecture seule, de la composition connue de la pile dans une vue détaillée ; **C** déploiement automatique en éventail de la pile sur sélection. Préserver la confidentialité des cartes réellement cachées et le fonctionnement de l'Extraction par As et du Joker.
