@@ -197,3 +197,19 @@ Ces questions doivent être tranchées par le texte complet officiel ou par clar
 **Portée :** décision de comportement CardForge sur une ambiguïté documentaire, **non présentée comme une confirmation de l'auteur**. CTD-02 / CTD-ARB-02 est **CLOS pour l'implémentation**.
 
 **Prochaine question CTD-03 :** clôture de main et traitement des cartes restant non placées (défausse et dégâts).
+
+
+## 14. Décision fonctionnelle CTD-03 / CTD-ARB-03 — défausse explicite en fin de main
+
+**Option B VALIDÉE par le porteur le 22 novembre 2026 :** les cartes inutilisées de la main courante doivent être **explicitement défaussées**, individuellement ou par une action « Défausser les cartes restantes », avant de pouvoir piocher la main suivante. Les cartes défaussées alimentent la **pile de dégâts**, chacune comptant pour **une carte de dégâts**. La défaite s'applique **immédiatement au septième dégât**, même si une pioche ultérieure serait possible.
+
+**Règles exécutables pour CardForge :**
+- Tant qu'une carte reste dans la main courante, une nouvelle main ne peut pas être piochée. Les cartes peuvent être jouées selon les règles d'attaque ou défaussées par le joueur ; **elles ne sont jamais conservées gratuitement dans une nouvelle main**.
+- Le joueur peut défausser une carte explicitement, ou toutes les cartes restantes en une action explicite. Dans ce dernier cas, chaque carte compte séparément dans la pile de dégâts et le seuil de sept est contrôlé immédiatement pendant l'opération ; aucune carte n'est piochée si la défaite survient.
+- Les cartes déjà affectées à des **attaques partielles** ne sont pas des cartes « inutilisées en main » ; elles restent sur leur monstre selon CTD-ARB-01.
+- Les cartes posées pendant la main actuelle restent récupérables/repositionnables **avant clôture** selon CTD-ARB-02. La clôture de la main, possible lorsque la main est vide, confirme/verrouille les placements partiels encore provisoires.
+- La défausse et la transition de main sont des actions métier explicites et sauvegardées selon AD-03/09/10/11 ; l'UI indique la conséquence en dégâts avant de défausser.
+
+**Exemple d'acceptation :** le joueur a joué un 8 sur un roi et conserve les cartes 4 et 2 en main. Une action explicite « Défausser les cartes restantes » envoie 4 et 2 aux dégâts (**+2**), laisse le 8 engagé sur le roi, puis rend la nouvelle pioche possible **si la partie n'est pas terminée**. En cas de six dégâts initiaux, la défausse déclenche la défaite dès la première carte défaussée.
+
+**Statut :** CTD-03 / CTD-ARB-03 **clos**. C'est un choix d'interface explicitant la défausse prévue par les règles publiées, et non une variante autorisant la conservation de cartes inutilisées entre les mains. **Prochain arbitrage : CTD-04, fin de pioche (1–2 cartes restantes, pioche vide, actions encore possibles).**
