@@ -28,7 +28,7 @@ function nearVictory(score=5) {
 function run(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,true,JSON.stringify(r));assert.deepEqual(s,prev);assert.equal(engine.validateState(r.state).valid,true,JSON.stringify(engine.validateState(r.state)));return r.state;}
 function refuse(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,false);assert.strictEqual(r.state,s);assert.deepEqual(s,prev);}
 
-test('CTD-T113 / CTD-T116 / CTD-T66 / CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
+test('CTD-T113 / CTD-T66 / CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
  const {s,monsterId}=nearVictory(5);
  const final=run(s,{type:'trigger-attack',cardId:'joker-2',monsterId});
  assert.equal(final.defeated.length,12);
@@ -107,4 +107,45 @@ test('CTD-T19 / CTD-T68 / CTD-T120: persisted terminal result and official score
  assert.equal(restored.getState().endReason,'victory');
  assert.equal((await restored.dispatch({type:'end-hand'})).accepted,false);
  assert.equal(commits,1);
+});
+
+test('CTD-T52/T54: last single-card hand reloads unchanged, discards once, then loses only on closure',()=>{
+ const start=engine.createInitialState({seed:15}),pool=[...start.hand,...start.drawPile];
+ const last='clubs-2';
+ assert.ok(pool.includes(last));
+ const pre={...start,hand:[last],drawPile:[],removed:pool.filter(id=>id!==last)};
+ assert.deepEqual(engine.validateState(pre),{valid:true});
+ const restored=JSON.parse(JSON.stringify(pre));
+ assert.deepEqual(restored,pre);
+ assert.deepEqual(engine.getLegalActions(restored),engine.getLegalActions(pre));
+ const after=run(restored,{type:'discard',cardId:last});
+ assert.equal(after.damages.length,1);
+ assert.equal(after.hand.length,0);
+ assert.equal(after.drawPile.length,0);
+ assert.equal(after.outcome,'in-progress');
+ const terminal=run(after,{type:'end-hand'});
+ assert.equal(terminal.outcome,'loss');
+ assert.equal(terminal.endReason,'exhaustion');
+ assert.equal(terminal.damages.length,1);
+ refuse(terminal,{type:'end-hand'});
+});
+test('CTD-T117/T127: victory after explicit damage scores remaining draw cards only',()=>{
+ const {s,monsterId}=nearVictory(4);
+ assert.equal(s.drawPile.length,4);
+ const bonus=s.removed.slice(0,4);
+ let pre={...s,removed:s.removed.slice(4),damages:[...s.damages,...bonus]};
+ assert.equal(pre.damages.length,5);
+ assert.deepEqual(engine.validateState(pre),{valid:true});
+ const expendable=pre.hand.find(id=>id!=='joker-2');
+ assert.ok(expendable);
+ pre=run(pre,{type:'discard',cardId:expendable});
+ assert.equal(pre.damages.length,6);
+ assert.equal(pre.outcome,'in-progress');
+ const final=run(pre,{type:'trigger-attack',cardId:'joker-2',monsterId});
+ assert.equal(final.outcome,'win');
+ assert.equal(final.endReason,'victory');
+ assert.equal(final.victoryScore,4);
+ assert.equal(final.drawPile.length,4);
+ assert.equal(final.damages.length,6);
+ refuse(final,{type:'end-hand'});
 });
