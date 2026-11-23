@@ -40,7 +40,7 @@ export function makeGrimDelveSummary(state: {
 }
 
 export function makeThunderfighterSummary(state: {
-  outcome: "in-progress" | "win" | "loss";
+  outcome: "in-progress" | "win" | "loss" | "abandoned";
   defeatedFigures?: readonly string[];
   specialReserve: readonly string[];
   spentSpecials: readonly string[];
