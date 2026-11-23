@@ -1,4 +1,4 @@
-import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame, TerminalGameCommit, TerminalCommitResult } from '../ports/local-storage.ts';
+import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame, TerminalGameCommit, TerminalCommitResult, ReplaceGameCommit, ReplaceGameResult } from '../ports/local-storage.ts';
 import { LocalStorageError, stableResultId } from '../ports/local-storage.ts';
 
 const VERSION = 1;
@@ -67,6 +67,70 @@ export function createIndexedDbGameStorage(options: {
     readGame: <State>(gameId: string) => read<SavedGame<State>>(SESSIONS, gameId),
     readResult: (id: string) => read<GameResult>(RESULTS, id),
     readStatistics: (gameId: string) => read<GameStatistics>(STATISTICS, gameId),
+    async replaceGame<State>(update: ReplaceGameCommit<State>): Promise<ReplaceGameResult> {
+      const { expectedSessionId, replacement } = update;
+      if (!expectedSessionId || !replacement.gameId || !replacement.sessionId ||
+          replacement.sessionId === expectedSessionId || !replacement.rulesVersion ||
+          !Number.isSafeInteger(replacement.formatVersion) || replacement.formatVersion < 1) {
+        throw new LocalStorageError('write-failed', 'Invalid replacement metadata');
+      }
+      const db = await open();
+      try {
+        return await new Promise<ReplaceGameResult>((resolve, reject) => {
+          let tx: IDBTransaction;
+          try { tx = db.transaction([SESSIONS, RESULTS, STATISTICS], 'readwrite'); }
+          catch (cause) { reject(new LocalStorageError('write-failed', 'Cannot begin replacement transaction', { cause })); return; }
+          let outcome: ReplaceGameResult = 'replaced-finished';
+          let failure: unknown;
+          const abort = (cause: unknown) => {
+            failure = cause;
+            try { tx.abort(); } catch { /* already aborted */ }
+          };
+          tx.oncomplete = () => resolve(outcome);
+          tx.onabort = () => reject(new LocalStorageError('write-failed', 'Replacement rolled back', { cause: failure ?? tx.error }));
+          tx.onerror = () => { /* onabort handles transaction errors */ };
+          try {
+            const sessions = tx.objectStore(SESSIONS);
+            const results = tx.objectStore(RESULTS);
+            const statistics = tx.objectStore(STATISTICS);
+            const lookup = sessions.get(replacement.gameId);
+            lookup.onsuccess = () => {
+              const current = lookup.result as SavedGame<unknown> | undefined;
+              if (!current || current.sessionId !== expectedSessionId) {
+                abort(new Error('Previous session changed')); return;
+              }
+              const oldId = stableResultId(replacement.gameId, expectedSessionId);
+              const terminal = results.get(oldId);
+              terminal.onsuccess = () => {
+                if (terminal.result !== undefined) {
+                  try { sessions.put(replacement); } catch (cause) { abort(cause); }
+                  return;
+                }
+                const stats = statistics.get(replacement.gameId);
+                stats.onsuccess = () => {
+                  const previous = stats.result as GameStatistics | undefined;
+                  const next: GameStatistics = previous
+                    ? { ...previous }
+                    : { gameId: replacement.gameId, played: 0, won: 0, lost: 0, abandoned: 0 };
+                  if (next.gameId !== replacement.gameId ||
+                      ![next.played, next.won, next.lost, next.abandoned].every(n => Number.isSafeInteger(n) && n >= 0)) {
+                    abort(new Error('Invalid statistics')); return;
+                  }
+                  next.played++;
+                  next.abandoned++;
+                  try {
+                    results.add({ id: oldId, gameId: replacement.gameId, sessionId: expectedSessionId, outcome: 'abandoned' });
+                    statistics.put(next);
+                    sessions.put(replacement);
+                    outcome = 'replaced-abandoned';
+                  } catch (cause) { abort(cause); }
+                };
+              };
+            };
+          } catch (cause) { abort(cause); }
+        });
+      } finally { db.close(); }
+    },
     async commitTerminal<State>(update: TerminalGameCommit<State>): Promise<TerminalCommitResult> {
       const { save, result } = update;
       if (!save.gameId || !save.sessionId || !save.rulesVersion ||
@@ -175,13 +239,26 @@ export function createIndexedDbGameStorage(options: {
           tx.onabort = () => reject(new LocalStorageError('write-failed', 'Local transaction rolled back', { cause: tx.error }));
           tx.onerror = () => { /* onabort is the settlement point */ };
           try {
-            tx.objectStore(SESSIONS).put(save);
-            if (result && statistics) {
-              tx.objectStore(RESULTS).put(result);
-              tx.objectStore(STATISTICS).put(statistics);
-            }
+            const sessions = tx.objectStore(SESSIONS);
+            const lookup = sessions.get(save.gameId);
+            lookup.onsuccess = () => {
+              const current = lookup.result as SavedGame<unknown> | undefined;
+              if (current && current.sessionId !== save.sessionId) {
+                try { tx.abort(); } catch { /* already aborted */ }
+                return;
+              }
+              try {
+                sessions.put(save);
+                if (result && statistics) {
+                  tx.objectStore(RESULTS).put(result);
+                  tx.objectStore(STATISTICS).put(statistics);
+                }
+              } catch {
+                try { tx.abort(); } catch { /* already aborted */ }
+              }
+            };
           } catch (cause) {
-            try { tx.abort(); } catch { /* aborted already */ }
+            try { tx.abort(); } catch { /* already aborted */ }
             reject(new LocalStorageError('write-failed', 'Cannot write local transaction', { cause }));
           }
         });
