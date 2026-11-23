@@ -129,7 +129,7 @@ function GameDetail({
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
                 <strong>{statusLabel(game)}</strong> — La partie jouable n’est pas encore disponible.
-                Aucun lancement de jeu n’est proposé.
+                {game.id === "clear-the-dungeon" ? "Le plateau est accessible en préversion depuis cette fiche." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
@@ -261,8 +261,8 @@ export default function App() {
               <h2 id="catalog-title">Choisissez votre univers</h2>
               <span>{games.length} jeux dans la collection</span>
             </div>
-            <p className="catalog-notice">Les moteurs de Grim Delve et Thunderfighter sont en développement.
-              Les interfaces de partie ne sont pas encore ouvertes au public.</p>
+            <p className="catalog-notice">Le plateau Grim Delve est accessible en préversion depuis sa fiche.
+              Les autres jeux ne sont pas encore ouverts à la partie.</p>
             <div className="game-grid">
               {games.map(game => (
                 <article className={`game-card ${game.accent}`} key={game.id} aria-labelledby={`name-${game.id}`}>
@@ -293,7 +293,7 @@ export default function App() {
           </section>
         </>
       )}
-      <footer>CardForge · Collection en construction · Les jeux ne sont pas encore accessibles en partie</footer>
+      <footer>CardForge · Collection en construction · Plateau Grim Delve en préversion</footer>
     </main>
   );
 }
