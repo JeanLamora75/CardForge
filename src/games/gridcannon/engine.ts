@@ -81,6 +81,7 @@ function value(id: string): number {
   const card = byId.get(id);
   return card && 'rank' in card ? card.rank : 0;
 }
+const rankOf = value;
 function suitOf(id: string): string {
   const card = byId.get(id);
   return card && 'suit' in card ? card.suit : '';
@@ -289,7 +290,7 @@ function validate(value: unknown): ValidationResult {
   if (state.outcome === 'loss' && state.lossReason === 'armor' &&
       !(state.armorCards ?? []).some(armor =>
         state.figureSlots.includes(armor.figureId) &&
-        resistance(state, armor.figureId) >= (value(armor.figureId) === 13 ? 19 : 20)))
+        resistance(state, armor.figureId) >= (rankOf(armor.figureId) === 13 ? 19 : 20)))
     errors.push('armor loss without excessive resistance');
 
   if (state.outcome === 'in-progress' && state.victoryScore != null) errors.push('premature score');
