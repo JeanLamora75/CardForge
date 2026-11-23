@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { readLanguage, saveLanguage, type Locale } from "./i18n/language.ts";
+import { localizeSurface } from "./i18n/surface.ts";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
 import {
   availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress,
@@ -164,7 +166,7 @@ function GameDetail({
   );
 }
 
-function Settings({ onBack }: { onBack: () => void }) {
+function Settings({ onBack, language, onLanguageChange }: { onBack: () => void; language: Locale; onLanguageChange: (locale: Locale) => void }) {
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => { title.current?.focus(); }, []);
   return (
@@ -172,12 +174,33 @@ function Settings({ onBack }: { onBack: () => void }) {
       <button className="back-link" type="button" onClick={onBack}>← Retour au catalogue</button>
       <h1 ref={title} tabIndex={-1} id="settings-title">Paramètres</h1>
       <p>CardForge fonctionne sans compte et enregistre les parties dans le navigateur. La navigation entre les écrans n’abandonne jamais une partie.</p>
-      <p className="help-note">Les options de personnalisation et de langue seront proposées dans une version ultérieure. Aucun réglage local n’est modifié ici.</p>
+      <label className="language-setting" htmlFor="settings-language">Langue de l’interface</label>
+      <select id="settings-language" value={language} onChange={event => onLanguageChange(event.target.value as Locale)}>
+        <option value="fr">Français</option><option value="en">English</option>
+      </select>
+      <p className="help-note">La langue est mémorisée localement et ne modifie jamais la partie, les cartes ou les statistiques.</p>
     </section>
   );
 }
 
 export default function App() {
+  const [language, setLanguage] = useState<Locale>(() => {
+    let store: Storage | null = null;
+    try { store = window.localStorage; } catch { /* Browser storage unavailable. */ }
+    return readLanguage(store, navigator.languages);
+  });
+  const surfaceRef = useRef<HTMLElement>(null);
+  const [languageSaveFailed, setLanguageSaveFailed] = useState(false);
+  const selectLanguage = (next: Locale) => {
+    setLanguage(next);
+    let store: Storage | null = null;
+    try { store = window.localStorage; } catch { /* Browser storage unavailable. */ }
+    setLanguageSaveFailed(!saveLanguage(store, next));
+  };
+  useLayoutEffect(() => {
+    document.documentElement.lang = language;
+    return surfaceRef.current ? localizeSurface(surfaceRef.current, language) : undefined;
+  }, [language]);
   const [route, setRoute] = useState<CatalogRoute>(() => parseCatalogRoute(window.location.hash));
   const { progress, error } = useCatalogProgress();
   const lastTrigger = useRef<HTMLElement | null>(null);
@@ -225,13 +248,18 @@ export default function App() {
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main className="shell">
+    <main ref={surfaceRef} className="shell">
       <header className="topbar">
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
           <span className="brand-icon" aria-hidden="true">♠</span> CardForge
         </button>
         <div className="topbar-actions">
+          <label className="language-switch"><span className="language-label">Langue</span>
+            <select aria-label="Langue / Language" value={language} onChange={event => selectLanguage(event.target.value as Locale)}>
+              <option value="fr">FR</option><option value="en">EN</option>
+            </select>
+          </label>
           <span className="pill">Collection solo · En création</span>
           <button className="settings-button" type="button" onClick={() => {
             if (route.page !== "settings") settingsOrigin.current = route;
@@ -240,8 +268,9 @@ export default function App() {
             aria-label="Paramètres">⚙ Paramètres</button>
         </div>
       </header>
+      {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
-      {route.page === "settings" ? <Settings onBack={back} /> :
+      {route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} />
