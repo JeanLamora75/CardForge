@@ -69,3 +69,64 @@ footer p { margin: 8px auto; }
   .game-art { min-height: 185px; }
 }
 @media(prefers-reduced-motion: reduce) { :root { scroll-behavior: auto; } }
+
+/* CAR-29: catalogue/detail interaction styles, aligned with the actual React components. */
+button { font: inherit; cursor: pointer; }
+button:focus-visible { outline: 3px solid #f4d8a3; outline-offset: 4px; }
+button:disabled { cursor: not-allowed; opacity: .65; }
+button.brand { border: 0; padding: 0; color: inherit; background: transparent; text-align: left; }
+.catalog-notice { max-width: 800px; margin: 0 0 25px; color: #c8c1cd; font-size: .94rem; line-height: 1.65; }
+.status {
+  flex: 0 0 auto; padding: 6px 10px; border: 1px solid #79674f;
+  border-radius: 9999px; background: #403326; color: #ffe0ae;
+  font-size: .69rem; font-weight: 700; white-space: nowrap;
+}
+.status[data-status="coming-soon"] { background: #302b36; color: #e0d9e5; border-color: #655b71; }
+.status[data-status="available"] { background: #1a4434; color: #b4f2d0; border-color: #437a62; }
+.card-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: auto; padding-top: 24px; }
+.secondary-action,.primary-action,.back-link {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+  min-height: 44px; padding: 10px 16px; border-radius: 9px;
+  border: 1px solid #807262; font-size: .9rem; font-weight: 700;
+}
+.secondary-action { color: #f3dab7; background: #312a2b; }
+.secondary-action:hover { background: #493a36; border-color: #d8ab77; }
+.primary-action { background: #e8b777; color: #1a1420; border-color: #f4d8a3; }
+.primary-action:hover { background: #f4d8a3; }
+.detail { padding: 30px 0 12px; }
+.detail-navigation { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 27px; }
+.back-link { color: #f3dab7; background: transparent; }
+.back-link:hover { border-color: #dfbc87; background: #29232d; }
+.detail-layout { display: grid; grid-template-columns: minmax(260px, .9fr) minmax(0, 1.1fr); gap: clamp(24px,5vw,62px); align-items: start; }
+.detail-art {
+  min-height: 420px; display: grid; place-items: center;
+  position: relative; overflow: hidden; border: 1px solid #494151; border-radius: 22px;
+  background: radial-gradient(circle at 55% 35%,#854437,#341d23 68%,#1c141c);
+  box-shadow: 0 20px 60px #08060b50;
+}
+.detail-art::after { content:""; position:absolute; width: 64%; aspect-ratio: 1; border:1px solid #ffffff30; border-radius:50%; box-shadow:0 0 0 36px #ffffff06; }
+.detail-art span { z-index: 1; font-size: 7rem; filter: drop-shadow(0 7px 20px #0008); }
+.detail.cosmos .detail-art { background: radial-gradient(circle at 50% 35%,#375a8e,#1b2a4a 70%,#121421); }
+.detail.neon .detail-art { background: radial-gradient(circle at 50% 35%,#7b64b7,#302348 70%,#181426); }
+.detail.sand .detail-art { background: radial-gradient(circle at 50% 35%,#926b39,#30231c 70%,#19151a); }
+.detail.royal .detail-art { background: radial-gradient(circle at 50% 35%,#865b75,#332137 70%,#17141c); }
+.game-card.neon .game-art { background: radial-gradient(circle at 55% 32%,#7b64b7,#302348 65%,#181426); }
+.game-card.sand .game-art { background: radial-gradient(circle at 55% 35%,#926b39,#30231c 65%,#19151a); }
+.game-card.royal .game-art { background: radial-gradient(circle at 55% 30%,#865b75,#332137 68%,#17141c); }
+.detail-copy h1 { font: 700 clamp(2.5rem,5vw,4rem)/1.12 Georgia,serif; margin: 10px 0 16px; }
+.detail-copy h2 { font: 700 1.35rem/1.3 Georgia,serif; margin: 34px 0 10px; }
+.detail-copy p { font-size: 1rem; line-height: 1.7; color: #d2c9d6; }
+.detail-copy .setting { color: #f3d3a2; font-weight: 700; }
+.detail-copy .detail-description { font-size: 1.1rem; }
+.game-facts { display: grid; gap: 12px; padding: 18px 0; border-top: 1px solid #453d4a; border-bottom: 1px solid #453d4a; }
+.game-facts div { display: grid; grid-template-columns: 125px 1fr; gap: 10px; }
+.game-facts dt { color: #c0b3c7; }
+.game-facts dd { margin: 0; color: #f5f0e8; }
+.availability-note { padding: 17px; border: 1px solid #766950; border-radius: 12px; background: #28232b; }
+@media (max-width: 760px) {
+  .detail-layout { grid-template-columns: 1fr; gap: 26px; }
+  .detail-art { min-height: 245px; }
+  .detail-art span { font-size: 5.5rem; }
+  .detail-navigation { flex-wrap: wrap; }
+  .game-facts div { grid-template-columns: 1fr; gap: 2px; }
+}
