@@ -51,7 +51,7 @@ function reorder(state, ids) {
   return assertValid({ ...state, drawPile: [...ids, ...old.filter(id => !ids.includes(id))] });
 }
 
-test('GC-V2: initial setup has nine visible numeric cards, centre included, with 54 unique cards', () => {
+test('GC-T01 / GC-V2: initial setup has nine visible numeric cards, centre included, with 54 unique cards', () => {
   assert.equal(THUNDERFIGHTER_GAME_ID, 'gridcannon');
   assert.equal(THUNDERFIGHTER_RULES_VERSION, 'v2');
   for (const seed of [0, 1, 17, 127, 2026]) {
@@ -69,7 +69,7 @@ test('GC-V2: initial setup has nine visible numeric cards, centre included, with
     assert.equal(s.replacementSlot, null);
   }
 });
-test('same seed gives exact same ordered piles, queue, specials and draw, independent of artwork', () => {
+test('GC-T26: same seed gives exact same ordered piles, queue, specials and draw, independent of artwork', () => {
   const a = engine.createInitialState({ seed: 12345 });
   assert.deepEqual(a, engine.createInitialState({ seed: 12345 }));
   assert.notDeepEqual(a, engine.createInitialState({ seed: 12346 }));
