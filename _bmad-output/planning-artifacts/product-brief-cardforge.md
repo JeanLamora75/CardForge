@@ -166,3 +166,7 @@ Référence à jour : [PRD CardForge v0.2](./prds/prd-CardForge-2026-11-22/prd.m
 ## GC-28 — Phasage de livraison des langues (22 novembre 2026)
 
 **Décision faisant foi sur les formulations antérieures :** première version de CardForge, Clear the Dungeon et Gridcannon V2 en **français et anglais uniquement**, avec toutes les règles, aides contextuelles, messages et écrans essentiels traduits. **Anglais comme langue de repli** ; détection automatique et sélection manuelle persistante conformément à GC-27. La cible **d'au moins dix langues** est maintenue **à terme** et ne bloque pas la première livraison bilingue. Prévoir dès le MVP une architecture permettant des ajouts de langues indépendants du moteur et compatibles avec le hors ligne. Les autres langues et leur calendrier restent ouverts. Voir [GC-28 et tests](./game-rules/gridcannon.md).
+
+## Actualisation de l'identité produit — 23 novembre 2026
+
+**Titre public validé : Thunderfighter**, adaptation CardForge du jeu original **Gridcannon Version 2** de Tom Francis. Le titre de travail « Bastion Stellaire » est **abandonné**. Utiliser Thunderfighter dans le catalogue, les fiches, les interfaces, les cartes promotionnelles et les futures traductions ; garder Gridcannon pour les références de règles et de crédit. Ce changement n'affecte ni les moteurs ni les identifiants de sauvegarde/statistiques. Disponibilité du titre et droits à vérifier avant la diffusion ; toutes les mentions antérieures de « nom à choisir » relèvent de la chronologie.
