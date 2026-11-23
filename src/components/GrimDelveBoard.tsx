@@ -4,6 +4,8 @@ import { grimDelveEngine, GRIM_DELVE_GAME_ID, GRIM_DELVE_RULES_VERSION, type Gri
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
 import { createTutorialSession } from "../application/learning.ts";
+import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
+import GameResultPanel from "./GameResultPanel.tsx";
 
 type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
 const cards = new Map(makeDeckWithJokers().map(card => [card.id, card]));
@@ -45,7 +47,7 @@ const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
   ("monsterId" in a ? a.monsterId : undefined) === ("monsterId" in b ? b.monsterId : undefined);
 
-export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true }: { tutorial?: boolean; hintsEnabled?: boolean }) {
+export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<GrimDelveState | null>(null);
   const [legal, setLegal] = useState<readonly GrimDelveAction[]>([]);
@@ -90,6 +92,24 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true }
     } catch { setNotice("Impossible de démarrer une partie. Vérifiez le stockage local ; aucune partie existante n'a été remplacée."); }
     finally { setBusy(false); }
   }
+  async function replay() {
+    if (busy || !state || state.outcome === "in-progress") return;
+    if (tutorial) { onReplayTutorial?.(); return; }
+    setBusy(true);
+    try {
+      const restored = await replayFinishedGame(
+        grimDelveEngine, createIndexedDbGameStorage(), options,
+        { seed: Math.floor(Math.random() * 0x100000000) }, crypto.randomUUID(),
+      );
+      session.current = restored;
+      setState(restored.getState());
+      setLegal(restored.getLegalActions());
+      setSelected(null);
+      setNotice("Nouvelle expédition enregistrée. Bonne chance !");
+    } catch {
+      setNotice("Impossible de rejouer : la sauvegarde a peut-être changé. Aucune partie active n'a été abandonnée.");
+    } finally { setBusy(false); }
+  }
   async function dispatch(action: GrimDelveAction) {
     if (busy || !session.current || !legal.some(candidate => sameAction(candidate, action))) return;
     if (action.type === "discard-remaining" && !window.confirm("Défausser toutes les cartes restantes ? Les dégâts sont irréversibles.")) return;
@@ -133,7 +153,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true }
         <span>Main n° {state.handNumber}</span><span>Pioche : {state.drawPile.length}</span>
         <span>Dégâts : {state.damages.length} / 7</span><span>Monstres vaincus : {state.defeated.length} / 12</span>
       </div>
-      {state.outcome !== "in-progress" ? <p className="grim-ending" role="status"><strong>{state.outcome === "win" ? "Victoire" : "Défaite"}</strong> — {state.outcome === "win" ? `Score : ${state.victoryScore ?? state.drawPile.length} cartes dans la pioche.` : state.endReason === "damage" ? "Sept dégâts reçus." : "Pioche épuisée."}</p> : null}
+      {state.outcome !== "in-progress" ? <GameResultPanel summary={makeGrimDelveSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       <h3>Monstres et attaques en préparation</h3>
       <div className="grim-columns">
         {state.columns.map((column, index) => {
