@@ -201,3 +201,35 @@ test('CTD-T112: two Jokers cannot bypass the second power strength requirement',
   refuse(next,{type:'place-power',cardId:'clubs-2',monsterId});
   refuse(next,{type:'trigger-attack',cardId:'joker-2',monsterId});
 });
+
+test('CTD-T72: first power, second power and matching trigger can span three successive hands',()=>{
+ const {state,monsterId}=prepare(11,['clubs-6','diamonds-9','clubs-7']);
+ const front=['diamonds-5','hearts-8','clubs-2','joker-1','hearts-3','clubs-3'];
+ assert.ok(front.every(id=>state.drawPile.includes(id)));
+ let next={...state,drawPile:[...front,...state.drawPile.filter(id=>!front.includes(id))]};
+ assert.deepEqual(engine.validateState(next),{valid:true});
+ next=play(next,{type:'place-power',cardId:'clubs-6',monsterId});
+ next=play(next,{type:'discard-remaining'});
+ next=play(next,{type:'end-hand'});
+ assert.equal(next.handNumber,2);
+ assert.equal(next.attacks[0].powers.length,1);
+ next=play(next,{type:'place-power',cardId:'diamonds-5',monsterId});
+ next=play(next,{type:'discard-remaining'});
+ next=play(next,{type:'end-hand'});
+ assert.equal(next.handNumber,3);
+ assert.equal(next.attacks[0].powers.length,2);
+ assert.deepEqual(next.attacks[0].powers.map(p=>p.handNumber),[1,2]);
+ next=play(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
+ assert.ok(next.defeated.includes(monsterId));
+ assert.equal(next.damages.length,4);
+});
+test('CTD-T92: rejected first power followed by serialization creates no ghost attack',()=>{
+ const {state,monsterId}=prepare(13,['clubs-2','diamonds-3','joker-1']);
+ refuse(state,{type:'place-power',cardId:'clubs-2',monsterId});
+ const saved=JSON.parse(JSON.stringify(state));
+ assert.deepEqual(saved.attacks,[]);
+ assert.deepEqual(saved.hand,state.hand);
+ assert.deepEqual(saved.drawPile,state.drawPile);
+ assert.deepEqual(saved.damages,[]);
+ assert.deepEqual(engine.getLegalActions(saved),engine.getLegalActions(state));
+});
