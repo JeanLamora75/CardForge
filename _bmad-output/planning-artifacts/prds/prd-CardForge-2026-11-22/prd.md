@@ -547,3 +547,11 @@ Sources internes : [référentiel du jeu](../../game-rules/clear-the-dungeon.md)
 **Critères de validation MVP :** (1) les deux langues couvrent réellement l'application et les deux jeux ; (2) appareil dans une langue indisponible → anglais ; (3) choix manuel persistant ; (4) règles et aides fr/en disponibles hors ligne ; (5) changement linguistique sans mutation du moteur ; (6) seules les langues effectivement livrées sont proposées. Aucun de ces tests n'a été exécuté à ce stade.
 
 Référence : [GC-26 à GC-28, référentiel Gridcannon](../../game-rules/gridcannon.md).
+
+## Mise à jour de la dénomination produit — 23 novembre 2026
+
+**Décision validée :** l'adaptation de **Gridcannon Version 2** porte le nom public **Thunderfighter**. **Bastion Stellaire est abandonné** : il ne doit plus apparaître comme option de nom ou titre provisoire dans les nouveaux livrables. Le PRD, les Epics et les Stories concernent le même jeu Gridcannon, sans changement des règles ni des identifiants de partie.
+
+**Critère de recette :** le catalogue, la fiche, le plateau, les tutoriels, statistiques, résultats et crédits portent le nom public « Thunderfighter » et permettent de retrouver l'attribution au jeu original **Gridcannon**, auteur **Tom Francis**. La disponibilité commerciale/juridique de « Thunderfighter » et les obligations de crédit restent des contrôles **préalables à la publication**, et non des validations déjà obtenues.
+
+Les formulations précédentes « Bastion Stellaire » et « titre provisoire », notamment dans les notes GC-17 datées du 22 novembre, sont **conservées comme historique et supplantées par cette décision**.
