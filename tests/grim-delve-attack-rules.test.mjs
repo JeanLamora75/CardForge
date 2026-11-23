@@ -34,7 +34,7 @@ function refuse(s, action) {
   assert.strictEqual(r.state, s);
   assert.deepEqual(s, before);
 }
-test('CTD-T71: exact threshold 6+5=11 defeats Jack with Joker trigger', () => {
+test('CTD-T25 / CTD-T71: exact threshold 6+5=11 defeats Jack with Joker trigger', () => {
   const { state, monsterId } = prepare(11, ['clubs-6', 'diamonds-5', 'joker-1']);
   let s = play(state, { type: 'place-power', cardId: 'clubs-6', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-5', monsterId });
@@ -65,7 +65,7 @@ test('CTD-T69/T70: trigger requires two previously placed powers', () => {
   const s = play(state, { type: 'place-power', cardId: 'clubs-8', monsterId });
   refuse(s, { type: 'trigger-attack', cardId: 'joker-1', monsterId });
 });
-test('CTD-T78/T82: inadequate second power is refused without consumption', () => {
+test('CTD-T77 / CTD-T78/T82 / CTD-T93: inadequate second power is refused without consumption', () => {
   const { state, monsterId } = prepare(13, ['clubs-5', 'diamonds-7', 'joker-1']);
   const s = play(state, { type: 'place-power', cardId: 'clubs-5', monsterId });
   refuse(s, { type: 'place-power', cardId: 'diamonds-7', monsterId });
@@ -78,21 +78,21 @@ test('CTD-T85/T86: first 2 cannot reach K13 but first 3 can', () => {
   const s = play(state, { type: 'place-power', cardId: 'diamonds-3', monsterId });
   assert.equal(s.attacks[0].powers[0].cardId, 'diamonds-3');
 });
-test('CTD-T94/T95: first Joker counts exactly 10 and numeric 3 reaches K13', () => {
+test('CTD-T28 / CTD-T94/T95: first Joker counts exactly 10 and numeric 3 reaches K13', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'diamonds-3', 'clubs-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-3', monsterId });
   assert.equal(s.attacks[0].powers.length, 2);
   assert.equal(s.defeated.length, 0);
 });
-test('CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
+test('CTD-T30 / CTD-T74 / CTD-T102 / CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'diamonds-3', 'joker-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-3', monsterId });
   s = play(s, { type: 'trigger-attack', cardId: 'joker-2', monsterId });
   assert.deepEqual(s.removed, ['joker-1', 'diamonds-3', 'joker-2']);
 });
-test('CTD-T105: two Jokers in power slots do not finish attack without third card', () => {
+test('CTD-T29 / CTD-T105: two Jokers in power slots do not finish attack without third card', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'joker-2', 'clubs-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'joker-2', monsterId });
