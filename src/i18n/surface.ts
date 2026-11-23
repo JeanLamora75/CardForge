@@ -26,7 +26,7 @@ export function translateUiText(text: string, locale: Locale): string {
   }
   // Card labels combine physical rank and suit at runtime. Translate the
   // grammatical connector without changing the stable physical card ID.
-  result = result.replace(/\\b(As|Ace|Jack|Queen|King|[0-9]{1,2}) de (Hearts|Diamonds|Clubs|Spades)\\b/g,
+  result = result.replace(/\b(As|Ace|Jack|Queen|King|[0-9]{1,2}) de (Hearts|Diamonds|Clubs|Spades)\b/g,
     (_, rank: string, suit: string) => `${rank === "As" ? "Ace" : rank} of ${suit}`);
   return result;
 }
