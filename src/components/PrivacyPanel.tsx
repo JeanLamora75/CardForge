@@ -28,6 +28,7 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
     if (pending) confirmRef.current?.focus();
@@ -112,11 +113,28 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
         </button>
       </div>
     </div>
-    {pending ? <div className="privacy-confirm" role="alertdialog" aria-modal="true" aria-labelledby="privacy-confirm-title" aria-describedby="privacy-confirm-description">
+    {pending ? <div className="privacy-confirm" role="alertdialog" aria-modal="true"
+      aria-labelledby="privacy-confirm-title" aria-describedby="privacy-confirm-description"
+      onKeyDown={event => {
+        if (event.key === "Escape" && !busy) {
+          event.preventDefault();
+          event.stopPropagation();
+          setPending(null);
+        }
+        if (event.key === "Tab") {
+          if (event.shiftKey && document.activeElement === cancelRef.current) {
+            event.preventDefault();
+            confirmRef.current?.focus();
+          } else if (!event.shiftKey && document.activeElement === confirmRef.current) {
+            event.preventDefault();
+            cancelRef.current?.focus();
+          }
+        }
+      }}>
       <h4 id="privacy-confirm-title">{english ? "Confirm permanent deletion" : "Confirmer la suppression définitive"}</h4>
       <p id="privacy-confirm-description">{explanation(pending, english)}</p>
       <div className="privacy-confirm-actions">
-        <button type="button" className="secondary-action" disabled={busy} onClick={() => setPending(null)}>
+        <button ref={cancelRef} type="button" className="secondary-action" disabled={busy} onClick={() => setPending(null)}>
           {english ? "Cancel — keep my data" : "Annuler — conserver mes données"}
         </button>
         <button ref={confirmRef} type="button" className="primary-action" disabled={busy} onClick={() => void confirm()}>
