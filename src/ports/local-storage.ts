@@ -49,6 +49,12 @@ export interface ReplaceGameCommit<State = unknown> {
 /** The old session is finalized only when no terminal result exists yet. */
 export type ReplaceGameResult = 'replaced-abandoned' | 'replaced-finished';
 
+/** Compare-and-swap keeps the previous save until the migration transaction completes. */
+export interface GameMigrationCommit<State = unknown> {
+  previous: SavedGame<unknown>;
+  migrated: SavedGame<State>;
+}
+
 export interface LocalGameStorage {
   readGame<State = unknown>(gameId: string): Promise<SavedGame<State> | undefined>;
   readResult(resultId: string): Promise<GameResult | undefined>;
@@ -58,6 +64,7 @@ export interface LocalGameStorage {
   /** Atomic deduplication and statistics update owned by the storage adapter. */
   commitTerminal<State>(update: TerminalGameCommit<State>): Promise<TerminalCommitResult>;
   replaceGame<State>(update: ReplaceGameCommit<State>): Promise<ReplaceGameResult>;
+  migrateGame<State>(update: GameMigrationCommit<State>): Promise<void>;
 }
 
 export type StorageErrorCode = 'unavailable' | 'read-failed' | 'write-failed';
