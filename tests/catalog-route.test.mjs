@@ -79,3 +79,33 @@ test('statistics never divide by zero and exclude abandonments from the win deno
   assert.equal(victoryRate({gameId:'gridcannon',played:3,won:0,lost:0,abandoned:3}),'—');
   assert.equal(victoryRate({gameId:'gridcannon',played:7,won:3,lost:1,abandoned:3}),'75 %');
 });
+
+
+test('global settings return to the originating game subpage without abandoning its session',()=>{
+  const source={page:'game',gameId:'gridcannon',section:'statistics'};
+  assert.deepEqual(backRoute({page:'settings'},source),source);
+  assert.deepEqual(backRoute({page:'settings'},{page:'settings'}),HOME);
+  assert.deepEqual(parseCatalogRoute(routeHash(source)),source);
+});
+test('a terminal saved snapshot without its result record cannot masquerade as resumable',async()=>{
+  const storage={
+    readGame:async()=>({gameId:'gridcannon',sessionId:'finished-1',
+      state:{outcome:'loss'},rulesVersion:'v2',formatVersion:1}),
+    readResult:async()=>undefined,
+    readStatistics:async()=>undefined,
+  };
+  const status=await readCatalogGameProgress(storage,'gridcannon');
+  assert.equal(status.indicator,'finished');
+});
+test('malformed saved outcomes are surfaced without write or an active badge',async()=>{
+  let writes=0;
+  const storage={
+    readGame:async()=>({gameId:'gridcannon',sessionId:'bad-1',
+      state:{phase:'attack'},rulesVersion:'v2',formatVersion:1}),
+    readResult:async()=>undefined,
+    readStatistics:async()=>undefined,
+    commit:async()=>{writes++},
+  };
+  await assert.rejects(()=>readCatalogGameProgress(storage,'gridcannon'),/Inconsistent saved game outcome/);
+  assert.equal(writes,0);
+});
