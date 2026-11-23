@@ -31,7 +31,7 @@ Cette synthèse fait **foi pour la préparation du backlog**. Les compléments c
 | Clear the Dungeon | Joker à **puissance 10 fixe** ; **CTD-ARB-01 à 14 clos** pour CardForge, y compris poses provisoires, verrouillage, main vide et fin de pioche | [Mary — règles CTD §11–25](../../game-rules/clear-the-dungeon.md) |
 | Gridcannon V2 | **Cadrage documentaire terminé**, GC-01 à GC-21 de mécanique/précision clos et GC-22 à GC-53 de portée UX/transverse documentés ; statut normatif actuel au **§68**. GC-54 reste une proposition technique à instruire | [Mary — règles GC §68](../../game-rules/gridcannon.md) |
 | Jeux futurs | [Card Capture](../../game-rules/card-capture.md), [Loot the Loop](../../game-rules/loot-the-loop.md) et adaptation de [Regicide — « Les Douze Tyrans », Grèce antique](../../game-rules/regicide.md) disposent de référentiels séparés, mais sont **hors du MVP** | Documents Mary propres à chaque jeu |
-| Titre de Gridcannon | « **Bastion Stellaire** » reste **provisoire**, attribution à Tom Francis et vérification de disponibilité avant publication | Mary GC-17 |
+| Titre de Gridcannon | **« Thunderfighter » validé le 23 novembre 2026**, « Bastion Stellaire » abandonné ; attribution à Tom Francis et vérification de disponibilité avant publication | Mary GC-17 actualisé |
 | Langues | **FR et EN complets dans le MVP**, préférence manuelle persistante, détection, repli anglais et usage hors ligne ; au moins **dix langues à terme**, sans imposer les dix dès le MVP | GC-26 à GC-28 |
 | Conformité | **Aucun moteur ni scénario de conformité exécuté**. La clôture du cadrage n'est pas une certification des conventions CardForge par les auteurs ; sources primaires, tests et droits restent des **jalons de sortie** | Mary §68 et matrices |
 | Plateformes | Web/PWA d'abord, préparation Android/iOS par l'architecture, validation native séparée | AD-01/12 |
@@ -248,7 +248,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 | Sujet | Dépendance / contrôle |
 | --- | --- |
 | Règles Classic 1.1.0 | CTD-ARB-01 à 14 et Joker 10 fixés pour CardForge ; tests à exécuter, conformité au texte primaire et distinctions entre conventions et source à vérifier avant sortie |
-| Règles Gridcannon | Version 2 et cadrage métier clos (Mary §68) ; exécuter la matrice et contrôler la fidélité des conventions ; « Bastion Stellaire » reste un titre de travail, et les crédits/droits se vérifient séparément avant publication |
+| Règles Gridcannon | Version 2 et cadrage métier clos (Mary §68) ; exécuter la matrice et contrôler la fidélité des conventions ; le titre public est **Thunderfighter**, et les crédits/droits se vérifient séparément avant publication |
 | Livraison à deux jeux | Deux moteurs, deux tutoriels et deux univers d'illustrations augmentent le périmètre ; les composants communs doivent être utilisables par les deux sans rapprocher artificiellement leurs règles |
 | Autorisation | Accord de l'auteur annoncé par le porteur du projet, sous condition de gratuité ; conserver/clarifier sa portée exacte et l'attribution avant diffusion |
 | Créations | Vérifier droits des illustrations, sons, polices et autres Ressources avant distribution |
@@ -262,7 +262,7 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 - **Q-01 [preuve de conformité] :** vérifier la fidélité des conventions CTD validées aux sources primaires et exécuter les scénarios ; pas de nouvel arbitrage produit demandé.
 - **Q-02 [bloquante pour publication] :** formulation conservable de l'accord de Mark S. Ball et périmètre précis (nom, Web, Android, iOS, crédits, territoires).
-- **Q-08 [preuve de conformité et diffusion] :** le cadrage Gridcannon Version 2 est clos (§68 Mary). Exécuter les tests et vérifier les conventions CardForge ; titre « Bastion Stellaire » provisoire, droits et crédits à vérifier avant publication.
+- **Q-08 [preuve de conformité et diffusion] :** le cadrage Gridcannon Version 2 est clos (§68 Mary). Exécuter les tests et vérifier les conventions CardForge ; titre public **Thunderfighter** approuvé, disponibilité juridique du titre, droits et crédits à vérifier avant publication.
 - **Q-09 :** préciser le périmètre minimum des deux tutoriels et de leurs ressources illustrées pour une V1 à deux Jeux, sans supprimer les fonctions validées.
 - **Q-03 :** valeurs cibles concrètes de fluidité, démarrage et tailles d'écran à tester.
 - **Q-04 :** granularité souhaitée de suppression des données locales.
