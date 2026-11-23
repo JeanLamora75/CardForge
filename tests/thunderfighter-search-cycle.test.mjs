@@ -78,7 +78,7 @@ test('GC-09/19: revealed numerics are ordered and As/Joker go immediately into r
   assert.deepEqual(s.spentSpecials,[]);
   assert.equal(getSearchPresentation(s).visible,true);
 });
-test('GC-18/19: found figure must be placed before buffered numerics return to bottom',()=>{
+test('GC-T21 / GC-T30 / GC-18/19: found figure must be placed before buffered numerics return to bottom',()=>{
   let s=fixture();
   for(let i=0;i<5;i++)s=step(s,{type:'draw-search'});
   const before=[...s.drawPile];
