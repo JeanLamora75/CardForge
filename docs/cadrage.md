@@ -208,3 +208,10 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 **Traçabilité :** `Gridcannon` demeure le nom du jeu original de **Tom Francis** et la référence des règles de Mary ; le nom public **Thunderfighter** est une métadonnée d'affichage. L'identifiant interne stable du jeu, les moteurs, sauvegardes et statistiques ne doivent pas dépendre du libellé. Conserver les crédits et le lien vers l'original ; **la disponibilité du titre et les droits doivent être vérifiés avant publication**, sans présumer qu'ils ont été vérifiés. Aucun changement de mécanique n'est induit par ce renommage.
 
 Les mentions antérieures de titre provisoire, y compris G-06 et GC-17, restent des **notes historiques supplantées par cette décision**.
+
+
+## Décision produit confirmée — 23 novembre 2026 : Wuxia / Chanbara
+
+**Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
+
+Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
