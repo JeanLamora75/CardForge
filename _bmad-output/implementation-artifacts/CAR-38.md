@@ -35,7 +35,7 @@ Le service worker ne touche qu'aux caches préfixés `cardforge-app-`. Au moment
 - `tests/pwa.test.mjs` : stabilité et changement des versions à modification du bundle, précache complet, rejet des URL externes, affichage « prêt » refusé si manque un actif ou si page non contrôlée, vérification de l’absence de suppression de base de données dans le script généré.
 - `scripts/verify-pwa-build.mjs` : vérifie le **résultat réel du build** : `dist/sw.js`, manifeste, icônes PNG, JavaScript, CSS et chacun des fichiers énumérés dans le précache.
 - `.github/workflows/cardforge-tests.yml` : test, build TypeScript/Vite, puis vérification PWA ; déclenchement également sur modifications `public/**`, `index.html` et `vite.config.ts`.
-- CI verte : [GitHub Actions #45271912722](https://github.com/JeanLamora75/CardForge/actions/runs/45271912722) — **265 tests réussis et vérification de 8 ressources de cache** au commit `95ad997af25e593c4a7de4c6922cb1a162e437c8`. Les améliorations ultérieures de chemins relatifs nécessitent la vérification de leur CI.
+- CI verte : [GitHub Actions #45272065655](https://github.com/JeanLamora75/CardForge/actions/runs/45272065655) — **265 tests réussis, 0 échec**, build TypeScript/Vite et vérification de **8 ressources de cache** au commit `e834836d2f51d5ace67ce507c9576bcc4d349c18` (inclut les chemins relatifs).
 
 ## Recette manuelle encore attendue
 
