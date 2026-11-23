@@ -8,6 +8,8 @@ import {
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
 import { createTutorialSession } from "../application/learning.ts";
+import { makeThunderfighterSummary, replayFinishedGame } from "../application/game-results.ts";
+import GameResultPanel from "./GameResultPanel.tsx";
 
 type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAction>, "getState" | "getLegalActions" | "dispatch">;
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
@@ -83,7 +85,7 @@ export function previewThunderfighterAction(state: ThunderfighterState, action: 
     changingCards: after.physicalCardCount === 54,
   };
 }
-export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true }: { tutorial?: boolean; hintsEnabled?: boolean }) {
+export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<ThunderfighterState | null>(null);
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
@@ -127,6 +129,24 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       setNotice("Nouvelle partie créée et sauvegardée.");
     } catch { setNotice("Impossible de commencer ; aucune partie enregistrée n'a été remplacée."); }
     finally { setBusy(false); }
+  }
+  async function replay() {
+    if (busy || !state || state.outcome === "in-progress") return;
+    if (tutorial) { onReplayTutorial?.(); return; }
+    setBusy(true);
+    try {
+      const restored = await replayFinishedGame(
+        thunderfighterEngine, createIndexedDbGameStorage(), options,
+        { seed: Math.floor(Math.random() * 0x100000000) }, crypto.randomUUID(),
+      );
+      session.current = restored;
+      setState(restored.getState());
+      setLegal(restored.getLegalActions());
+      setSelection(null);
+      setNotice("Nouvelle mission enregistrée. Bonne chance !");
+    } catch {
+      setNotice("Impossible de rejouer : la sauvegarde a peut-être changé. Aucune partie active n'a été abandonnée.");
+    } finally { setBusy(false); }
   }
   function choose(action: ThunderfighterAction) {
     if (busy || !legal.some(a => JSON.stringify(a) === JSON.stringify(action))) return;
@@ -188,11 +208,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <span>Figures neutralisées : {result?.defeatedCount} / 12</span>
         <span>Cartes physiques : {result?.physicalCardCount} / 54</span>
       </div>
-      {state.outcome !== "in-progress" ? <p className="thunder-result" role="status">
-        <strong>{state.outcome === "win" ? "Victoire" : "Défaite"}</strong>
-        {state.outcome === "win" ? ` · Score officiel : ${result?.officialScore}` :
-          ` · ${state.lossReason === "armor" ? "Résistance d'armure impossible à franchir" : "Impasse"}`}
-      </p> : null}
+      {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       {state.pendingFigures[0] ? <p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Placement de secours du moteur." : ""}</p> : null}
       {state.pendingNumeric ? <p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p> : null}
       {search?.visible ? <section className="thunder-search" aria-label="Recherche">
