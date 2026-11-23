@@ -12,8 +12,10 @@ export type SaveMigration = Readonly<{
 export type MigrationFailureCode = 'corrupt' | 'incompatible' | 'migration-failed' | 'storage-failed';
 
 export class SaveMigrationError extends Error {
-  constructor(readonly code: MigrationFailureCode, message: string, options?: ErrorOptions) {
+  readonly code: MigrationFailureCode;
+  constructor(code: MigrationFailureCode, message: string, options?: ErrorOptions) {
     super(message, options);
+    this.code = code;
     this.name = 'SaveMigrationError';
   }
 }
