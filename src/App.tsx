@@ -8,6 +8,7 @@ import {
   backRoute, HOME, parseCatalogRoute, routeHash, type CatalogRoute, type GameSection,
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
+import GrimDelveBoard from "./components/GrimDelveBoard";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -112,10 +113,11 @@ function GameDetail({
               {actions.newGame && progress.indicator === "active" ? (
                 <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
               ) : null}
+              {game.id === "clear-the-dungeon" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau Grim Delve</button> : null}
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-            <p className="help-note">Tutoriel : disponible lors de l’ouverture d’un jeu jouable. L’accès au plateau et au tutoriel reste fermé tant que l’interface de partie n’est pas livrée.</p>
+            <p className="help-note">Le plateau Grim Delve est accessible en préversion. Les tutoriels et la publication complète des jeux viendront ultérieurement.</p>
             <details className="source-credits">
               <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
@@ -133,12 +135,12 @@ function GameDetail({
           </div>
         </div>
       ) : (
-        <div className="context-page">
+        <div className={section === "board" ? "board-page" : "context-page"}>
           <span className="eyebrow">{game.title}</span>
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
-            {section === "rules" ? "Règles et mécanismes" : "Statistiques locales"}
+            {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "rules" ? (
+          {section === "board" && game.id === "clear-the-dungeon" ? <GrimDelveBoard /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               <p className="help-note">Ce résumé présente les mécanismes. Le référentiel des règles détaille les actions et les conditions de victoire et de défaite.</p>
