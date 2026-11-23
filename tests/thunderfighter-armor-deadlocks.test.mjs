@@ -4,7 +4,7 @@ import { makeDeckWithJokers } from '../src/core/cards.ts';
 import { thunderfighterEngine as engine, armorCandidates } from '../src/games/gridcannon/engine.ts';
 
 const all=makeDeckWithJokers().map(c=>c.id);
-const numerics=all.filter(id=>/-(?:[2-9]|10)$/.test(id));
+const numerics=all.filter(id=>!id.startsWith('joker-')&&/-(?:[2-9]|10)$/.test(id));
 const figures=all.filter(id=>/-(?:11|12|13)$/.test(id));
 const specials=all.filter(id=>id.startsWith('joker-')||id.endsWith('-1'));
 const base=['clubs-4','hearts-6','spades-5','diamonds-6','diamonds-7',
