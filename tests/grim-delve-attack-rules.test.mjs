@@ -249,3 +249,25 @@ test('CTD-T108: a Joker committed in an earlier hand combines with a distinct Jo
  assert.ok(next.defeated.includes(monsterId));
  assert.deepEqual(next.removed,['joker-1','diamonds-5','joker-2']);
 });
+
+test('T-03: Jack 11 refuses the exact insufficient pair 5+5',()=>{
+ const {state,monsterId}=prepare(11,['clubs-5','diamonds-5','joker-1']);
+ const next=play(state,{type:'place-power',cardId:'clubs-5',monsterId});
+ refuse(next,{type:'place-power',cardId:'diamonds-5',monsterId});
+ assert.deepEqual(next.attacks[0].powers.map(x=>x.cardId),['clubs-5']);
+ assert.ok(next.hand.includes('diamonds-5'));
+});
+test('T-06: King 13 is defeated by exactly 6+7 with a valid Joker trigger',()=>{
+ const {state,monsterId}=prepare(13,['clubs-6','diamonds-7','joker-1']);
+ let next=play(state,{type:'place-power',cardId:'clubs-6',monsterId});
+ next=play(next,{type:'place-power',cardId:'diamonds-7',monsterId});
+ next=play(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
+ assert.ok(next.defeated.includes(monsterId));
+});
+test('T-07: Ace power is exactly one; Ace 1 plus 10 defeats Jack 11',()=>{
+ const {state,monsterId}=prepare(11,['hearts-1','clubs-10','joker-1']);
+ let next=play(state,{type:'place-power',cardId:'hearts-1',monsterId});
+ next=play(next,{type:'place-power',cardId:'clubs-10',monsterId});
+ next=play(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
+ assert.ok(next.defeated.includes(monsterId));
+});
