@@ -59,6 +59,16 @@ test("Both complete rulebooks are bundled locally, translating paragraphs withou
   }
   assert.ok(Object.keys(english).length>100);
 });
+test("Dynamic card labels and destructive action confirmations localize without exposing card IDs", () => {
+  assert.equal(translateUiText("Valet de Cœur","en"),"Jack of Hearts");
+  assert.equal(translateUiText("As de Pique","en"),"Ace of Spades");
+  assert.equal(translateUiText("10 de Carreau","en"),"10 of Diamonds");
+  assert.equal(translateUiText("clubs-11","en"),"clubs-11");
+  assert.equal(translateUiText("Défausser cette carte ? Cela ajoute un dégât irréversible.","en"),
+    "Discard this card? It adds one irreversible damage point.");
+  assert.equal(translateUiText("Défausser toutes les cartes restantes ? Les dégâts sont irréversibles.","en"),
+    "Discard all remaining cards? Damage is irreversible.");
+});
 test("Translating presentation data never changes a seeded engine state",()=>{
   for (const [engine,seed] of [[grimDelveEngine,123],[thunderfighterEngine,321]]) {
     const state=engine.createInitialState({seed});
