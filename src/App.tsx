@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { readLanguage, saveLanguage, type Locale } from "./i18n/language.ts";
 import { localizeSurface } from "./i18n/surface.ts";
+import { readSharedSettings, saveSharedSettings, type SharedSettings } from "./application/shared-settings.ts";
+import { resumeAudio, suspendAudio, updateAudioPreferences } from "./application/audio.ts";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
 import {
   availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress,
@@ -73,13 +75,15 @@ const ruleReference: Record<GameId, string> = {
 };
 
 function GameDetail({
-  game, section, progress, onNavigate, onBack,
+  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange,
 }: {
   game: GameEntry;
   section: GameSection;
   progress: CatalogGameProgress;
   onNavigate: (route: CatalogRoute) => void;
   onBack: () => void;
+  hintsEnabled: boolean;
+  onHintsChange: (enabled: boolean) => void;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => { titleRef.current?.focus(); }, [section, game.id]);
@@ -145,7 +149,7 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <GameLearning key={game.id} gameId={game.id} /> : section === "rules" ? (
+          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {(game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
@@ -166,7 +170,13 @@ function GameDetail({
   );
 }
 
-function Settings({ onBack, language, onLanguageChange }: { onBack: () => void; language: Locale; onLanguageChange: (locale: Locale) => void }) {
+function Settings({ onBack, language, onLanguageChange, preferences, onPreferencesChange }: {
+  onBack: () => void;
+  language: Locale;
+  onLanguageChange: (locale: Locale) => void;
+  preferences: SharedSettings;
+  onPreferencesChange: (next: SharedSettings) => void;
+}) {
   const title = useRef<HTMLHeadingElement>(null);
   useEffect(() => { title.current?.focus(); }, []);
   return (
@@ -179,11 +189,60 @@ function Settings({ onBack, language, onLanguageChange }: { onBack: () => void; 
         <option value="fr">Français</option><option value="en">English</option>
       </select>
       <p className="help-note">La langue est mémorisée localement et ne modifie jamais la partie, les cartes ou les statistiques.</p>
+      <fieldset className="shared-options">
+        <legend>Confort de jeu</legend>
+        <label className="shared-option"><span><strong>Musique d’ambiance</strong><small>Fond musical facultatif, indépendant des effets.</small></span>
+          <input type="checkbox" checked={preferences.music}
+            onChange={event => onPreferencesChange({ ...preferences, music: event.target.checked })} />
+        </label>
+        <label className="shared-option"><span><strong>Effets sonores</strong><small>Retours sonores facultatifs sur les coups et résultats.</small></span>
+          <input type="checkbox" checked={preferences.sounds}
+            onChange={event => onPreferencesChange({ ...preferences, sounds: event.target.checked })} />
+        </label>
+        <label className="shared-option"><span><strong>Aides contextuelles</strong><small>Les commandes légales et les règles restent consultables.</small></span>
+          <input type="checkbox" checked={preferences.hints}
+            onChange={event => onPreferencesChange({ ...preferences, hints: event.target.checked })} />
+        </label>
+        <label className="shared-motion" htmlFor="settings-animations">Animations
+          <select id="settings-animations" value={preferences.animations}
+            onChange={event => onPreferencesChange({ ...preferences, animations: event.target.value as SharedSettings["animations"] })}>
+            <option value="system">Suivre le système</option>
+            <option value="on">Activer</option>
+            <option value="off">Désactiver</option>
+          </select>
+        </label>
+        <p className="help-note">Avec « Suivre le système », CardForge respecte la réduction des mouvements configurée sur votre appareil. Les résultats restent lisibles sans animation ni son.</p>
+        <p className="help-note">Les réglages s’appliquent à tous les jeux, sans changer les cartes, les règles ni les sauvegardes. La lecture audio dépend des autorisations du navigateur.</p>
+      </fieldset>
     </section>
   );
 }
 
 export default function App() {
+  const [preferences, setPreferences] = useState<SharedSettings>(() => {
+    try { return readSharedSettings(window.localStorage); }
+    catch { return readSharedSettings(null); }
+  });
+  const [settingsSaveFailed, setSettingsSaveFailed] = useState(false);
+  const changePreferences = (next: SharedSettings) => {
+    setPreferences(next);
+    updateAudioPreferences(next);
+    let store: Storage | null = null;
+    try { store = window.localStorage; } catch { /* Storage can be blocked. */ }
+    setSettingsSaveFailed(!saveSharedSettings(store, next));
+  };
+  useEffect(() => {
+    updateAudioPreferences(preferences);
+    const onVisibility = () => document.hidden ? suspendAudio() : resumeAudio();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      suspendAudio();
+    };
+  }, [preferences.music, preferences.sounds]);
+  useEffect(() => {
+    document.documentElement.dataset.motion = preferences.animations;
+  }, [preferences.animations]);
   const [language, setLanguage] = useState<Locale>(() => {
     let store: Storage | null = null;
     try { store = window.localStorage; } catch { /* Browser storage unavailable. */ }
@@ -268,12 +327,14 @@ export default function App() {
             aria-label="Paramètres">⚙ Paramètres</button>
         </div>
       </header>
+      {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
-      {route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} /> :
+      {route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
-          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} />
+          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back}
+          hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
         <>
           <section className="hero" aria-labelledby="heading">
