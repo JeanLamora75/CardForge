@@ -187,7 +187,7 @@ test('CTD-T63: the newly exposed enemy is immediately targetable with a remainin
   assert.equal(after.visibleMonsters[0],start.columns[0][1]);
   assert.ok(grimDelveEngine.getLegalActions(after).some(x=>x.type==='place-power'&&x.cardId==='clubs-4'&&x.monsterId===after.visibleMonsters[0]));
 });
-test('CTD-T65: defeating last monster of one column does not invent a replacement or premature victory',()=>{
+test('T-14 / CTD-T65: defeating last monster of one column does not invent a replacement or premature victory',()=>{
   const start=first(),original=start.columns.flat(),a=original[0],b=original[3];
   const pool=[...start.hand,...start.drawPile],used=['joker-1','clubs-8','joker-2'];
   const pre={...start,columns:[[a],[b],[],[]],visibleMonsters:[a,b,null,null],
