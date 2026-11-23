@@ -15,5 +15,7 @@ export interface GameEngine<State, Action, Setup> {
   getLegalActions(state: Readonly<State>): readonly Action[];
   transition(state: Readonly<State>, action: Readonly<Action>): TransitionResult<State>;
   getOutcome(state: Readonly<State>): GameOutcome;
+  /** Optional official score, defined by the rules of the game (not UI statistics). */
+  getVictoryScore?(state: Readonly<State>): number | null;
   validateState(state: unknown): ValidationResult;
 }
