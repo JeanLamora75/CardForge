@@ -10,7 +10,7 @@ const categories=[
 const testFiles=readdirSync(resolve(root,"tests")).filter(file=>file.endsWith(".test.mjs"));
 const tests=testFiles.flatMap(file=>{
   const source=readFileSync(resolve(root,"tests",file),"utf8");
-  return [...source.matchAll(/(?:^|\n)\s*test\s*\(\s*(['"`])([^\n]*?)\1\s*,/g)]
+  return [...source.matchAll(/\btest\s*\(\s*(['"`])([^\n]*?)\1\s*,/g)]
     .map(match=>({file,title:match[2]}));
 });
 function statedIds(title) {
