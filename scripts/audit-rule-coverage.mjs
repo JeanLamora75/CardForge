@@ -13,10 +13,20 @@ const tests=testFiles.flatMap(file=>{
   return [...source.matchAll(/(?:^|\n)\s*test\s*\(\s*(['"`])([^\n]*?)\1\s*,/g)]
     .map(match=>({file,title:match[2]}));
 });
+function statedIds(title) {
+  const found = new Set();
+  for (const m of title.matchAll(/\b(CTD-T|GC-T)(\d{1,3})((?:\/\d{1,3})*)/g)) {
+    found.add(m[1]+m[2]);
+    for (const extra of m[3].split("/").filter(Boolean)) found.add(m[1]+extra);
+  }
+  for (const m of title.matchAll(/\bT-\d{2,3}\b/g)) found.add(m[0]);
+  return found;
+}
+const labelledTests=tests.map(t=>({...t,ids:statedIds(t.title)}));
 const results=categories.map(({label,file,pattern})=>{
   const content=readFileSync(resolve(root,file),"utf8");
   const ids=[...new Set(content.match(pattern)??[])].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
-  const covered=ids.filter(id=>tests.some(test=>new RegExp(`(?:^|[^A-Z0-9-])${id}(?![0-9])`).test(test.title)));
+  const covered=ids.filter(id=>labelledTests.some(test=>test.ids.has(id)));
   return {label,matrix:file,total:ids.length,referencedInExecutableTests:covered.length,covered,
     notDirectlyReferenced:ids.filter(id=>!covered.includes(id))};
 });
