@@ -19,4 +19,4 @@ function offlineBuild(): Plugin {
   };
 }
 
-export default defineConfig({ plugins: [react(), offlineBuild()] });
+export default defineConfig({ base: "./", plugins: [react(), offlineBuild()] });
