@@ -324,7 +324,12 @@ function applyShots(s: ThunderfighterState, cell: number): ThunderfighterState {
   const won = defeatedFigures.length === 12;
   const livingRemain = s.figureSlots.some(id => id !== null && !defeatedFigures.includes(id));
   const phase = !won && !livingRemain && s.phase === 'playing' ? 'searching' : s.phase;
+  // If the final living figure is beaten by a special while a numeric is pending,
+  // that card becomes a held search numeric instead of orphaning an invalid turn.
+  const enterSearch=phase==='searching'&&s.pendingNumeric!=null;
   return {...s, phase, defeatedFigures,lastShot:targets,
+    pendingNumeric:enterSearch?null:s.pendingNumeric,
+    searchBuffer:enterSearch?[...(s.searchBuffer??[]),s.pendingNumeric!]:s.searchBuffer,
     outcome:won?'win':'in-progress',victoryScore:won?s.specialReserve.length:null};
 }
 /** GC-21: rank by same suit, then same colour, then lowest FIGURE value. */
@@ -379,6 +384,22 @@ function hasUsefulContinuation(s:Readonly<ThunderfighterState>, goal:'place'|'pr
   }
   return visit(s.grid,s.specialReserve);
 }
+/** In a blocked numeric turn, offer only special actions leading to an actual solution. */
+function usefulArmorRecourses(s:Readonly<ThunderfighterState>, specials:readonly ThunderfighterAction[]):ThunderfighterAction[] {
+  return specials.filter(action=>{
+    if(action.type==='extract')return true; // The extracted pile always creates a usable empty cell.
+    if(action.type!=='reassign')return false;
+    const grid=s.grid.map(p=>[...p]);
+    const card=grid[action.from].pop();
+    if(!card)return false;
+    grid[action.to].push(card);
+    const after:ThunderfighterState={...s,grid,
+      specialReserve:s.specialReserve.filter(id=>id!==action.cardId)};
+    return numericCanPlace(after) ||
+      getShotTargets(after,action.to).length>0 ||
+      hasUsefulContinuation(after,'place');
+  });
+}
 function isDeadlock(s:Readonly<ThunderfighterState>):boolean {
   return s.phase==='playing'&&s.outcome==='in-progress'&&!s.pendingNumeric&&
     s.drawPile.length===0&&hasLivingFigure(s)&&!hasUsefulContinuation(s,'progress');
@@ -402,7 +423,8 @@ function getLegalActions(s: Readonly<ThunderfighterState>): readonly Thunderfigh
         !pile.length || value(pile.at(-1)!) <= numeric ? [{ type: 'place-number' as const, cell }] : []);
       if(placements.length)return [...specials,...placements];
       // A usable sequence of As/Joker actions takes precedence over armor.
-      if(hasUsefulContinuation(s,'place'))return specials;
+      const useful=usefulArmorRecourses(s,specials);
+      if(useful.length)return useful;
       return armorCandidates(s).map(figureId=>({type:'assign-armor' as const,figureId}));
     }
     return [...specials, ...(s.drawPile.length ? [{ type: 'draw-card' as const }] : [])];
@@ -473,7 +495,7 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
       searchBuffer: searchCompleted ? [] : (s.searchBuffer??[]),
       placingFromSearch: searchCompleted ? false : (s.placingFromSearch??false),
       replacementSlot: phase === 'playing' ? null : s.replacementSlot };
-    return { accepted: true, state: next };
+    return { accepted: true, state: finishIfDeadlocked(next) };
   }
   if (action.type === 'skip-replacement') return { accepted: true, state: { ...s, phase: 'playing' } };
   if (action.type === 'start-replacement') {
