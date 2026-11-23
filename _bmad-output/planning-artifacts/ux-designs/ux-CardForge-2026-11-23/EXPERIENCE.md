@@ -35,7 +35,7 @@ design: './DESIGN.md'
 | --- | --- | --- | --- |
 | UX-01 Catalogue | Ouverture de l'application, retour depuis un jeu | Galerie des 5 jeux, image d'univers, titre, pitch, disponibilité, discrète partie active ; entrée paramètres/crédits | [CAR-29](https://lmn24.atlassian.net/browse/CAR-29) |
 | UX-02 Fiche de jeu | Carte de catalogue | Univers, version de règles, présentation, règles, statistiques, Jouer/Reprendre/Nouvelle partie, tutoriel | [CAR-30](https://lmn24.atlassian.net/browse/CAR-30) |
-| UX-03 Plateau Clear the Dungeon | Jouer, Reprendre, tutoriel distinct | Monstres, quatre colonnes d'attaque, main, pioche, pile de dégâts, joker, actions et sauvegarde | [CAR-31](https://lmn24.atlassian.net/browse/CAR-31) |
+| UX-03 Plateau Grim Delve (règles Clear the Dungeon) | Jouer, Reprendre, tutoriel distinct | Monstres, quatre colonnes d'attaque, main, pioche, pile de dégâts, joker, actions et sauvegarde | [CAR-31](https://lmn24.atlassian.net/browse/CAR-31) |
 | UX-04 Plateau Gridcannon | Jouer, Reprendre, tutoriel distinct | Grille 3×3, figures périphériques, piles, compteur de pioche, As/Jokers découverts, armures, actions, sauvegarde | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
 | UX-05 Inspection carte/figure/pile | Activation volontaire au plateau | Identité publique, rang, enseigne/faction, résistance, armures ou cartes connues selon le contexte | [CAR-31](https://lmn24.atlassian.net/browse/CAR-31), [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
 | UX-06 Aperçu / confirmation | Destination légale ou action à confirmer | Prévisualiser tirs et effets sans mutation ; Annuler et Confirmer, **une** confirmation pertinente | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
@@ -131,7 +131,7 @@ Les expressions des règles originales, résistances, scores et avertissements d
 5. **Aide** : ouverture facultative, règles toujours consultables ; conseils de découverte non modaux et non prescriptifs (GC-50).
 6. **Sauvegarde** : statut dérivé de l'accusé de la couche applicative ; ne pas confondre « action affichée en mémoire » et « action durablement enregistrée ».
 
-### Clear the Dungeon — contrat spécifique d'interface
+### Grim Delve (règles Clear the Dungeon) — contrat spécifique d'interface
 
 - Les **quatre colonnes** de monstres restent explicitement associées à leurs emplacements d'attaque ; la main et les cartes posées pendant la main courante sont distinguées des cartes définitivement engagées les mains précédentes. Voir **CTD-ARB-01/02**.
 - La pose d'une première/deuxième carte de puissance puis d'une déclencheuse est montrée dans **l'ordre des positions** ; le UI explique les refus sans calcul inventé. Joker : valeur 10 fixe, enseigne selon son rôle et l'emplacement CTD-ARB-10/11. La première puissance mathématiquement impossible et la seconde insuffisante sont rejetées par le moteur CTD-ARB-08/09.
@@ -334,3 +334,20 @@ Le moteur, le `gameId`, la reprise d'une partie et les compteurs restent inchang
 **Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
 
 Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
+
+
+## Décision de nomenclature produit — 23 novembre 2026 (fait foi pour tous les futurs livrables)
+
+Le porteur de CardForge valide explicitement les titres publics suivants :
+
+| Jeu original et référentiel Mary | **Nom public CardForge** | Univers graphique validé | Statut de livraison |
+| --- | --- | --- | --- |
+| *Clear the Dungeon* Classic 1.1.0 | **Grim Delve** | Donjon dark fantasy, monstres illustrés | MVP |
+| *Gridcannon* Version 2, Tom Francis | **Thunderfighter** | Science-fiction spatiale pulp rétrofuturiste | MVP |
+| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | Après MVP |
+| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | Après MVP |
+| *Regicide* | **Les Douze Tyrans** | Wuxia / Chanbara, Asie féodale fantastique | Après MVP |
+
+**Important :** la formulation « Loop the Loot » employée lors de la validation désigne le jeu original documenté par Mary sous son titre exact ***Loot the Loop***. **Midnight Syndicate** est le titre public voulu, sans changement des règles originales. Les titres antérieurs de travail « Bastion Stellaire », « Corsaires du ciel » ou les autres libellés provisoires ne doivent pas remplacer les noms publics ci-dessus dans les nouveaux écrans et maquettes ; « Corsaires du ciel » reste un **univers**, non le nom du jeu.
+
+Les noms des jeux originaux sont **conservés dans les références aux sources, la traçabilité juridique, les identifiants stables et les noms des documents de règles**. Il ne faut pas renommer les `gameId`, les répertoires internes, les sauvegardes, les statistiques ou les moteurs du seul fait d'un changement de titre public. Tous les jeux reprennent les **règles originales documentées par Mary**, sans nouveau pouvoir associé au thème. Le catalogue, les fiches, les interfaces, l'aide, les traductions et les crédits affichent leurs noms publics respectifs et l'attribution au jeu source. **La disponibilité des nouveaux titres et les droits d'adaptation restent à vérifier avant toute diffusion publique : aucune vérification juridique n'est revendiquée.**
