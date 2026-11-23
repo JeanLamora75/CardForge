@@ -322,3 +322,36 @@ test('first game starts without abandonment or confirmation dialog', async () =>
   assert.equal(session.getSaveStatus(), 'saved');
   assert.equal(await storage.readStatistics('grim'), undefined);
 });
+
+
+test('migration adapter replaces only matching snapshot and preserves the other game', async () => {
+  const s = setup();
+  const old = game();
+  await s.commit({ save: old });
+  await s.commit({ save: game('gridcannon', { cards: ['other'] }) });
+  const migrated = { ...old, formatVersion: 2, state: { cards: ['a', 'b'], phase: 'pending' } };
+  await s.migrateGame({ previous: old, migrated });
+  assert.deepEqual(await s.readGame('clear-the-dungeon'), migrated);
+  assert.deepEqual(await s.readGame('gridcannon'), game('gridcannon', { cards: ['other'] }));
+});
+
+test('migration adapter rejects stale snapshot without changing durable save', async () => {
+  const s = setup();
+  const old = game();
+  await s.commit({ save: old });
+  const newer = game('clear-the-dungeon', { cards: ['changed'] });
+  await s.commit({ save: newer });
+  await assert.rejects(() => s.migrateGame({ previous: old, migrated: { ...old, formatVersion: 2 } }), e => e.code === 'write-failed');
+  assert.deepEqual(await s.readGame('clear-the-dungeon'), newer);
+});
+
+test('migration adapter rolls back failed write then permits retry', async () => {
+  const s = setup();
+  const old = game();
+  await s.commit({ save: old });
+  await assert.rejects(() => s.migrateGame({ previous: old, migrated: { ...old, formatVersion: 2, state: { bad: () => 3 } } }), e => e.code === 'write-failed');
+  assert.deepEqual(await s.readGame('clear-the-dungeon'), old);
+  const migrated = { ...old, formatVersion: 2, state: { cards: ['a', 'b'], extra: 1 } };
+  await s.migrateGame({ previous: old, migrated });
+  assert.deepEqual(await s.readGame('clear-the-dungeon'), migrated);
+});
