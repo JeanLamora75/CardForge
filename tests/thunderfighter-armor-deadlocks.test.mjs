@@ -60,7 +60,7 @@ function endgame({reserve=[],pending='hearts-2'}={}){
     defeated:figures.filter(id=>id!==alive),reserve,spent,drawPile:[]});
   return state;
 }
-test('GC-21: exact tie among black Jacks requires explicit one-of-two choice, never silent first',()=>{
+test('GC-T18 / GC-21: exact tie among black Jacks requires explicit one-of-two choice, never silent first',()=>{
   const s=fixture({targets:{0:'clubs-11',3:'spades-11'}});
   assert.deepEqual(armorCandidates(s),['clubs-11','spades-11']);
   assert.deepEqual(actions(s,'assign-armor').map(a=>a.figureId),['clubs-11','spades-11']);
