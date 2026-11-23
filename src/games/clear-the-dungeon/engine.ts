@@ -157,7 +157,12 @@ function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveActi
   const refused=(reason:string):TransitionResult<GrimDelveState>=>({accepted:false,state:state as GrimDelveState,reason});
   if(!validate(state).valid) return refused('invalid game state');
   if(state.outcome!=='in-progress') return refused('game finished');
-  if(!record(action)||!getLegalActions(state).some(legal=>legal.type===action.type &&
+  if(!record(action) ||
+     Object.keys(action).some(key=>!['type','cardId','monsterId'].includes(key)) ||
+     (action.type==='end-hand' && Object.keys(action).length!==1) ||
+     (['discard','take-back'].includes(String(action.type)) && Object.keys(action).length!==2) ||
+     (['place-power','move-power','trigger-attack'].includes(String(action.type)) && Object.keys(action).length!==3) ||
+     !getLegalActions(state).some(legal=>legal.type===action.type &&
       (('cardId' in legal ? legal.cardId : undefined)===('cardId' in action ? action.cardId : undefined)) &&
       (('monsterId' in legal ? legal.monsterId : undefined)===('monsterId' in action ? action.monsterId : undefined)))) return refused('illegal action');
   if(action.type==='discard') {
