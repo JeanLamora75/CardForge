@@ -172,3 +172,25 @@ test('non-corner edge trigger resolves one horizontal shot independently',()=>{
   const out=play(s,{type:'place-number',cell:3});
   assert.deepEqual(out.lastShot,['hearts-11']);
 });
+
+test('GC-T09: 6+5 defeats an unarmored Jack and trigger 8 is excluded from shot power',()=>{
+  const s=fixture({trigger:'hearts-8',targets:{3:'clubs-11'}});
+  const done=play(s,{type:'place-number',cell:0});
+  assert.deepEqual(done.lastShot,['clubs-11']);
+  assert.deepEqual(done.defeatedFigures,['clubs-11']);
+  assert.equal(done.grid[0].at(-1),'hearts-8');
+});
+test('GC-T10: 6+5 cannot defeat a Queen with resistance 12',()=>{
+  const s=fixture({trigger:'hearts-8',targets:{3:'hearts-12'}});
+  const done=play(s,{type:'place-number',cell:0});
+  assert.deepEqual(done.lastShot,[]);
+  assert.deepEqual(done.defeatedFigures,[]);
+  assert.equal(done.grid[0].at(-1),'hearts-8');
+});
+test('GC-T12: 6+7 of the same suit defeats the King at resistance 13',()=>{
+  const grid=[...base]; grid[1]='clubs-6'; grid[2]='clubs-7';
+  const s=fixture({grid,trigger:'hearts-8',targets:{3:'clubs-13'}});
+  const done=play(s,{type:'place-number',cell:0});
+  assert.deepEqual(done.lastShot,['clubs-13']);
+  assert.deepEqual(done.defeatedFigures,['clubs-13']);
+});
