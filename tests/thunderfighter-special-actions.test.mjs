@@ -43,7 +43,7 @@ function reject(s,action){
   const old=structuredClone(s);const r=engine.transition(s,action);
   assert.equal(r.accepted,false);assert.strictEqual(r.state,s);assert.deepEqual(s,old);
 }
-test('GC-05: As extracts full pile top-to-bottom under preexisting draw pile and leaves real empty cell',()=>{
+test('GC-T16 / GC-05: As extracts full pile top-to-bottom under preexisting draw pile and leaves real empty cell',()=>{
   const grid=gridBase.map(id=>[id]);
   grid[0]=['clubs-2','hearts-5','spades-9'];
   const s=fixture({grid,reserve:['hearts-1'],targets:{},drawFirst:['diamonds-2']});
@@ -71,14 +71,14 @@ test('GC-05: extracting empty cell never spends the As or modifies the draw pile
   reject(s,{type:'extract',cardId:'hearts-1',cell:0});
   assert.ok(engine.getLegalActions(s).some(a=>a.type==='extract'&&a.cell===1));
 });
-test('GC-03: after extraction, a numeric 2 can refill the empty cell without a ghost card',()=>{
+test('GC-T08 / GC-03: after extraction, a numeric 2 can refill the empty cell without a ghost card',()=>{
   let s=fixture({reserve:['hearts-1'],targets:{},pending:'diamonds-2'});
   s=apply(s,{type:'extract',cardId:'hearts-1',cell:0});
   assert.ok(engine.getLegalActions(s).some(a=>a.type==='place-number'&&a.cell===0));
   s=apply(s,{type:'place-number',cell:0});
   assert.deepEqual(s.grid[0],['diamonds-2']);
 });
-test('Joker reassigns only the top card to a legal destination and triggers both shots once',()=>{
+test('GC-T17: Joker reassigns only the top card to a legal destination and triggers both shots once',()=>{
   const grid=gridBase.map(id=>[id]);grid[4]=['diamonds-7','hearts-10'];
   let s=fixture({grid,reserve:['joker-1']});
   const beforeSource=[...s.grid[4]];
@@ -105,7 +105,7 @@ test('GC-16: special actions remain blocked until preparation ends',()=>{
   reject(early,{type:'extract',cardId:'hearts-1',cell:0});
   reject(early,{type:'reassign',cardId:'joker-1',from:1,to:0});
 });
-test('specials remain voluntary even while a numeric is awaiting placement',()=>{
+test('GC-T27: specials remain voluntary even while a numeric is awaiting placement',()=>{
   const s=fixture({reserve:['hearts-1','joker-1'],pending:'diamonds-2'});
   const actions=engine.getLegalActions(s);
   assert.ok(actions.some(a=>a.type==='extract'));
