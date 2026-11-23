@@ -14,7 +14,23 @@ export function createGameSession<State, Action, Setup>(
   engine: GameEngine<State, Action, Setup>,
   setup: Setup,
 ): GameSession<State, Action> {
-  let current = engine.createInitialState(setup);
+  return createSessionFromState(engine, engine.createInitialState(setup));
+}
+
+/** A saved state is validated before use; invalid input is never repaired or overwritten. */
+export function restoreGameSession<State, Action, Setup>(
+  engine: GameEngine<State, Action, Setup>,
+  savedState: unknown,
+): GameSession<State, Action> {
+  assertValidState(engine, savedState);
+  return createSessionFromState(engine, structuredClone(savedState) as State);
+}
+
+function createSessionFromState<State, Action, Setup>(
+  engine: GameEngine<State, Action, Setup>,
+  initial: State,
+): GameSession<State, Action> {
+  let current = initial;
   assertValidState(engine, current);
 
   return {
