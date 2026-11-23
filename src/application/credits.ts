@@ -1,5 +1,5 @@
 import { games, type GameId } from "../catalog.ts";
-import appPackage from "../../package.json";
+import appPackage from "../../package.json" with { type: "json" };
 
 export const APP_VERSION = appPackage.version;
 
