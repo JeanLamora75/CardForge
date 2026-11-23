@@ -3,8 +3,9 @@ import { makeDeckWithJokers } from "../core/cards.ts";
 import { grimDelveEngine, GRIM_DELVE_GAME_ID, GRIM_DELVE_RULES_VERSION, type GrimDelveAction, type GrimDelveState } from "../games/clear-the-dungeon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { createTutorialSession } from "../application/learning.ts";
 
-type Session = PersistentGameSession<GrimDelveState, GrimDelveAction>;
+type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
 const cards = new Map(makeDeckWithJokers().map(card => [card.id, card]));
 const factions = { hearts: "Cendres", diamonds: "Cristal", clubs: "Ronces", spades: "Ombres" } as const;
 const symbols = { hearts: "♥", diamonds: "♦", clubs: "♣", spades: "♠" } as const;
@@ -44,7 +45,7 @@ const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
   ("monsterId" in a ? a.monsterId : undefined) === ("monsterId" in b ? b.monsterId : undefined);
 
-export default function GrimDelveBoard() {
+export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true }: { tutorial?: boolean; hintsEnabled?: boolean }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<GrimDelveState | null>(null);
   const [legal, setLegal] = useState<readonly GrimDelveAction[]>([]);
@@ -55,6 +56,15 @@ export default function GrimDelveBoard() {
     let cancelled = false;
     void (async () => {
       try {
+        if (tutorial) {
+          const practice = createTutorialSession(grimDelveEngine, { seed: 3301 });
+          if (cancelled) return;
+          session.current = practice;
+          setState(practice.getState());
+          setLegal(practice.getLegalActions());
+          setNotice("Exercice guidé · les actions ne sont jamais enregistrées.");
+          return;
+        }
         const restored = await resumePersistentGame(grimDelveEngine, createIndexedDbGameStorage(), options);
         if (cancelled) return;
         session.current = restored ?? null;
@@ -66,7 +76,7 @@ export default function GrimDelveBoard() {
       } finally { if (!cancelled) setBusy(false); }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [tutorial]);
   async function start() {
     if (busy || session.current) return;
     setBusy(true);
@@ -95,7 +105,7 @@ export default function GrimDelveBoard() {
         setSelected(null);
         setNotice(result.state.outcome === "win" ? "Victoire ! Les 12 monstres sont vaincus." :
           result.state.outcome === "loss" ? "Défaite : " + (result.state.endReason === "damage" ? "7 dégâts." : "pioche épuisée.") :
-          `Action enregistrée : ${actionName[action.type]}.`);
+          `${tutorial ? "Coup d’entraînement" : "Action enregistrée"} : ${actionName[action.type]}.`);
       }
     } catch { setNotice("Sauvegarde impossible. Le coup n'a pas été appliqué ; réessayez."); }
     finally { setBusy(false); }
@@ -105,6 +115,19 @@ export default function GrimDelveBoard() {
     <h2 id="grim-heading">Grim Delve · Plateau de jeu</h2>
     <p className="help-note">Dark Fantasy · Classic 1.1.0. Les seules commandes proposées sont celles autorisées par le moteur. Les cartes posées restent provisoires jusqu'au déclenchement d'une attaque.</p>
     <p role="status" aria-live="polite" className="grim-notice">{notice}</p>
+    {tutorial && state ? <section className="learning-lesson" aria-label="Étape d'entraînement Grim Delve">
+      <h3>Mission d'entraînement · main {state.handNumber}</h3>
+      <p>{state.outcome !== "in-progress" ? "L'exercice est terminé. Vous pouvez recommencer ou jouer librement." :
+        state.hand.length === 0 ? "Toutes les cartes sont utilisées ou défaussées : activez « Terminer la main » pour continuer." :
+        state.attacks.length ? "Vous avez commencé une attaque. Sélectionnez une carte pour renforcer, déclencher ou reprendre une pose lorsque le moteur le permet." :
+        "Observez les résistances des monstres, choisissez une carte de la main, puis essayez une pose provisoire légale. La défausse crée un dégât irréversible."}</p>
+      <p>Objectif : préparer une attaque de deux puissances suffisantes, puis la déclencher avec l'enseigne du monstre. Sept dégâts entraînent une défaite.</p>
+    </section> : null}
+    {hintsEnabled && state ? <details className="learning-context" open={tutorial}>
+      <summary>Aide sur les actions autorisées ({legal.length})</summary>
+      <p>Le moteur propose {legal.filter(a => a.type === "place-power").length} pose(s), {legal.filter(a => a.type === "trigger-attack").length} déclenchement(s) et {legal.filter(a => a.type === "take-back").length} reprise(s). Sélectionnez une carte pour voir exactement où agir.</p>
+      <p>Une attaque exige deux cartes de puissance atteignant la résistance, puis une troisième carte de l'enseigne du monstre. Les Jokers valent 10 et remplacent une enseigne.</p>
+    </details> : null}
     {!state ? <button type="button" className="primary-action" disabled={busy} onClick={() => void start()}>Commencer une partie</button> : <>
       <div className="grim-counters" aria-label="Progression">
         <span>Main n° {state.handNumber}</span><span>Pioche : {state.drawPile.length}</span>
