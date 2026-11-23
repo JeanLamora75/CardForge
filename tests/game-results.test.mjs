@@ -4,7 +4,7 @@ import {
   makeGrimDelveSummary, makeThunderfighterSummary, presentGameStatistics, replayFinishedGame,
 } from "../src/application/game-results.ts";
 
-test("Grim Delve summary has official score only on a scored win", () => {
+test("CTD-T121: Grim Delve summary has official score only on a scored win", () => {
   const base = { outcome:"win", defeated:Array(12).fill("figure"),damages:[],handNumber:8,drawPile:[1,2],victoryScore:2 };
   const win = makeGrimDelveSummary(base);
   assert.equal(win.score,2);
