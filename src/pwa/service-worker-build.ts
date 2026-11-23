@@ -11,7 +11,7 @@ export function hashBuildFiles(files: readonly { path: string; content: string }
   return (hash >>> 0).toString(16).padStart(8, "0");
 }
 
-export const PWA_PUBLIC_ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icons/cardforge.svg"] as const;
+export const PWA_PUBLIC_ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icons/cardforge.svg", "./icons/cardforge-192.png", "./icons/cardforge-512.png"] as const;
 
 export function createServiceWorkerScript(buildId: string, emittedAssets: readonly string[]): string {
   if (!/^[a-f0-9]{8}$/.test(buildId)) throw new Error("Invalid build identifier");
