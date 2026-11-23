@@ -397,7 +397,7 @@ test('privacy deleteGame atomically removes only selected game saves, statistics
     expectedSessionId:'s1',
     replacement:{...game(),sessionId:'s2',state:{ cards: ['c'] }},
   });
-  assert.equal((await storage.readStatistics('clear-the-dungeon')).abandoned,0);
+  assert.equal((await storage.readStatistics('clear-the-dungeon')).abandoned,1);
   await privacy.deleteGame('clear-the-dungeon');
   assert.equal(await storage.readGame('clear-the-dungeon'),undefined);
   assert.equal(await storage.readStatistics('clear-the-dungeon'),undefined);
