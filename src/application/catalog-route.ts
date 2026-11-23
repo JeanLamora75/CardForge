@@ -25,7 +25,8 @@ export function routeHash(route: CatalogRoute): string {
   return `#game/${route.gameId}${route.section === 'detail' ? '' : `/${route.section}`}`;
 }
 
-export function backRoute(route: CatalogRoute): CatalogRoute {
+export function backRoute(route: CatalogRoute, settingsOrigin: CatalogRoute = HOME): CatalogRoute {
+  if (route.page === 'settings') return settingsOrigin.page === 'settings' ? HOME : settingsOrigin;
   if (route.page === 'game' && route.section !== 'detail')
     return { page: 'game', gameId: route.gameId, section: 'detail' };
   return HOME;
