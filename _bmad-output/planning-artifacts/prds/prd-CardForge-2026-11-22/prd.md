@@ -27,10 +27,10 @@ Cette synthèse fait **foi pour la préparation du backlog**. Les compléments c
 
 | Sujet | Décision/statut courant | Source |
 | --- | --- | --- |
-| MVP | **Clear the Dungeon Classic 1.1.0 sans réserve facultative** et **Gridcannon Version 2** entièrement jouables dans le premier Web/PWA | §6 ; Product Brief |
+| MVP | **Grim Delve** (règles *Clear the Dungeon* Classic 1.1.0 sans réserve facultative) et **Thunderfighter** (règles *Gridcannon* Version 2) entièrement jouables dans le premier Web/PWA | §6 ; Product Brief |
 | Clear the Dungeon | Joker à **puissance 10 fixe** ; **CTD-ARB-01 à 14 clos** pour CardForge, y compris poses provisoires, verrouillage, main vide et fin de pioche | [Mary — règles CTD §11–25](../../game-rules/clear-the-dungeon.md) |
 | Gridcannon V2 | **Cadrage documentaire terminé**, GC-01 à GC-21 de mécanique/précision clos et GC-22 à GC-53 de portée UX/transverse documentés ; statut normatif actuel au **§68**. GC-54 reste une proposition technique à instruire | [Mary — règles GC §68](../../game-rules/gridcannon.md) |
-| Jeux futurs | [Card Capture](../../game-rules/card-capture.md), [Loot the Loop](../../game-rules/loot-the-loop.md) et adaptation de [Regicide — « Les Douze Tyrans », Asie féodale fantastique Wuxia / Chanbara](../../game-rules/regicide.md) disposent de référentiels séparés, mais sont **hors du MVP** | Documents Mary propres à chaque jeu |
+| Jeux futurs | **Skydeck** ([Card Capture](../../game-rules/card-capture.md), **Midnight Syndicate** ([Loot the Loop](../../game-rules/loot-the-loop.md) et adaptation de [Regicide — « Les Douze Tyrans », Asie féodale fantastique Wuxia / Chanbara](../../game-rules/regicide.md) disposent de référentiels séparés, mais sont **hors du MVP** | Documents Mary propres à chaque jeu |
 | Titre de Gridcannon | **« Thunderfighter » validé le 23 novembre 2026**, « Bastion Stellaire » abandonné ; attribution à Tom Francis et vérification de disponibilité avant publication | Mary GC-17 actualisé |
 | Langues | **FR et EN complets dans le MVP**, préférence manuelle persistante, détection, repli anglais et usage hors ligne ; au moins **dix langues à terme**, sans imposer les dix dès le MVP | GC-26 à GC-28 |
 | Conformité | **Aucun moteur ni scénario de conformité exécuté**. La clôture du cadrage n'est pas une certification des conventions CardForge par les auteurs ; sources primaires, tests et droits restent des **jalons de sortie** | Mary §68 et matrices |
@@ -562,3 +562,20 @@ Les formulations précédentes « Bastion Stellaire » et « titre provisoire »
 **Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
 
 Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
+
+
+## Décision de nomenclature produit — 23 novembre 2026 (fait foi pour tous les futurs livrables)
+
+Le porteur de CardForge valide explicitement les titres publics suivants :
+
+| Jeu original et référentiel Mary | **Nom public CardForge** | Univers graphique validé | Statut de livraison |
+| --- | --- | --- | --- |
+| *Clear the Dungeon* Classic 1.1.0 | **Grim Delve** | Donjon dark fantasy, monstres illustrés | MVP |
+| *Gridcannon* Version 2, Tom Francis | **Thunderfighter** | Science-fiction spatiale pulp rétrofuturiste | MVP |
+| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | Après MVP |
+| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | Après MVP |
+| *Regicide* | **Les Douze Tyrans** | Wuxia / Chanbara, Asie féodale fantastique | Après MVP |
+
+**Important :** la formulation « Loop the Loot » employée lors de la validation désigne le jeu original documenté par Mary sous son titre exact ***Loot the Loop***. **Midnight Syndicate** est le titre public voulu, sans changement des règles originales. Les titres antérieurs de travail « Bastion Stellaire », « Corsaires du ciel » ou les autres libellés provisoires ne doivent pas remplacer les noms publics ci-dessus dans les nouveaux écrans et maquettes ; « Corsaires du ciel » reste un **univers**, non le nom du jeu.
+
+Les noms des jeux originaux sont **conservés dans les références aux sources, la traçabilité juridique, les identifiants stables et les noms des documents de règles**. Il ne faut pas renommer les `gameId`, les répertoires internes, les sauvegardes, les statistiques ou les moteurs du seul fait d'un changement de titre public. Tous les jeux reprennent les **règles originales documentées par Mary**, sans nouveau pouvoir associé au thème. Le catalogue, les fiches, les interfaces, l'aide, les traductions et les crédits affichent leurs noms publics respectifs et l'attribution au jeu source. **La disponibilité des nouveaux titres et les droits d'adaptation restent à vérifier avant toute diffusion publique : aucune vérification juridique n'est revendiquée.**
