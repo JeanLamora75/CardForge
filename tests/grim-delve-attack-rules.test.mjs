@@ -59,7 +59,7 @@ test('CTD-T73: incorrect suit cannot trigger even with enough strength', () => {
   refuse(s, { type: 'trigger-attack', cardId: suit === 'spades' ? 'hearts-2' : 'spades-2', monsterId });
   assert.equal(s.attacks[0].powers.length, 2);
 });
-test('CTD-T69/T70: trigger requires two previously placed powers', () => {
+test('CTD-T75 / CTD-T97 / CTD-T69/T70: trigger requires two previously placed powers', () => {
   const { state, monsterId } = prepare(11, ['clubs-8', 'diamonds-5', 'joker-1']);
   refuse(state, { type: 'trigger-attack', cardId: 'joker-1', monsterId });
   const s = play(state, { type: 'place-power', cardId: 'clubs-8', monsterId });
@@ -72,7 +72,7 @@ test('CTD-T77 / CTD-T78/T82 / CTD-T93: inadequate second power is refused withou
   assert.deepEqual(s.attacks[0].powers.map(p => p.cardId), ['clubs-5']);
   assert.ok(s.hand.includes('diamonds-7'));
 });
-test('CTD-T85/T86: first 2 cannot reach K13 but first 3 can', () => {
+test('CTD-T91 / CTD-T85/T86: first 2 cannot reach K13 but first 3 can', () => {
   const { state, monsterId } = prepare(13, ['clubs-2', 'diamonds-3', 'joker-1']);
   refuse(state, { type: 'place-power', cardId: 'clubs-2', monsterId });
   const s = play(state, { type: 'place-power', cardId: 'diamonds-3', monsterId });
@@ -137,7 +137,7 @@ test('CTD-T109: both Jokers can be assigned to two different targets', () => {
   next = play(next, { type: 'place-power', cardId: 'joker-2', monsterId: s.visibleMonsters[1] });
   assert.equal(next.attacks.length, 2);
 });
-test('joker power/suit cannot be overridden by unrecognized action arguments', () => {
+test('CTD-T103: joker power/suit cannot be overridden by unrecognized action arguments', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'joker-2', 'diamonds-3']);
   refuse(state, { type: 'set-joker-value', cardId: 'joker-1', value: 1 });
   refuse(state, { type: 'set-joker-suit', cardId: 'joker-1', suit: 'hearts' });
