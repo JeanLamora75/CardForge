@@ -34,7 +34,7 @@ export function Rulebook({ gameId }: { gameId: PlayableLearningGame }) {
   </article>;
 }
 
-export default function GameLearning({ gameId }: { gameId: PlayableLearningGame }) {
+export default function GameLearning({ gameId, hintsEnabled, onHintsChange }: { gameId: PlayableLearningGame; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
   const [mode, setMode] = useState<LearningChoice | null>(() => readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
@@ -45,11 +45,6 @@ export default function GameLearning({ gameId }: { gameId: PlayableLearningGame 
     const next = { ...preferences, choice };
     setPreferences(next);
     setMode(choice);
-    setSaveWarning(!saveLearningPreferences(local(), gameId, next));
-  }
-  function toggleHints() {
-    const next = { ...preferences, hintsEnabled: !preferences.hintsEnabled };
-    setPreferences(next);
     setSaveWarning(!saveLearningPreferences(local(), gameId, next));
   }
   return <section className="game-learning" aria-label={`Apprendre ou jouer à ${name}`}>
@@ -70,12 +65,12 @@ export default function GameLearning({ gameId }: { gameId: PlayableLearningGame 
         <button className="secondary-action" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>
           {showRules ? "Masquer les règles" : "Consulter les règles"}
         </button>
-        <label className="learning-hints"><input type="checkbox" checked={preferences.hintsEnabled} onChange={toggleHints} /> Aide contextuelle</label>
+        <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
       </div>
       {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
       {showRules ? <Rulebook gameId={gameId} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
-        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={preferences.hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
+        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
           <ThunderfighterBoard tutorial hintsEnabled={preferences.hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard hintsEnabled={preferences.hintsEnabled} /> :
