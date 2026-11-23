@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "verify:pwa": "node scripts/verify-pwa-build.mjs",
-    "audit:rules": "node scripts/audit-rule-coverage.mjs"
+    "audit:rules": "node scripts/audit-rule-coverage.mjs --require-complete"
   },
   "dependencies": {
     "react": "^19.0.0",
