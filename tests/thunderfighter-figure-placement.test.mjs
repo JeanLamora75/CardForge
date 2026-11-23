@@ -63,7 +63,7 @@ test('GC-T02: same-suit numeric card outranks higher-ranked same-colour and othe
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 9] });
 });
 test('GC-T03: without same suit, highest same-colour value wins over a larger opposite-colour card', () => {
-  const grid = [...defaultGrid]; grid[0] = 'spades-10'; grid[7] = 'diamonds-9';
+  const grid = [...defaultGrid]; grid[0] = 'clubs-10'; grid[7] = 'diamonds-9';
   const state = fixture({ grid });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [7] });
 });
@@ -73,11 +73,8 @@ test('GC-01: within the same suit the higher number is preferred', () => {
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [2, 3] });
 });
 test('GC-01: tied candidates and a corner offer all adjacent legal slots for explicit choice', () => {
-  const grid = [...defaultGrid]; grid[0] = 'hearts-9'; grid[2] = 'hearts-9';
-  // Two physical copies of hearts-9 are forbidden; use a cross-category tie for two different cards:
-  grid[2] = 'hearts-8'; grid[0] = 'hearts-8';
-  // Same physical card also cannot appear twice: two same-suit equal values cannot tie in a standard deck.
-  grid[2] = 'clubs-10'; grid[0] = 'hearts-8';
+  // A real deck contains only one card per suit and value. A corner provides the two legal ties.
+  const grid = [...defaultGrid]; grid[0] = 'hearts-8'; grid[2] = 'clubs-10';
   const state = fixture({ grid });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 9] });
   assert.deepEqual(availableFigureSlots(state), [0, 9]);
