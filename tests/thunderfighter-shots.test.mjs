@@ -139,3 +139,36 @@ test('cannot draw twice or place while a figure is pending, and attacks never fi
   assert.deepEqual(getShotTargets(preparatory,0),[]);
   reject(preparatory,{type:'place-number',cell:0});
 });
+
+
+test('a centre placement is legal but never launches a shot',()=>{
+  const s=fixture();
+  assert.ok(engine.getLegalActions(s).some(a=>a.type==='place-number'&&a.cell===4));
+  const out=play(s,{type:'place-number',cell:4});
+  assert.deepEqual(out.lastShot,[]);
+  assert.deepEqual(out.defeatedFigures,[]);
+});
+test('GC-T06: a defeated figure stays physically present but cannot be shot twice',()=>{
+  const s=fixture({defeated:['clubs-11']});
+  const out=play(s,{type:'place-number',cell:0});
+  assert.deepEqual(out.lastShot,['spades-11']);
+  assert.deepEqual(out.defeatedFigures,['clubs-11','spades-11']);
+  assert.equal(out.figureSlots[3],'clubs-11');
+});
+test('a King requires both middle cards in its own suit, exact thirteen succeeds',()=>{
+  const grid=[...base];grid[1]='clubs-8';grid[2]='clubs-5';grid[6]='diamonds-5';
+  const s=fixture({grid,targets:{3:'clubs-13'}});
+  const out=play(s,{type:'place-number',cell:0});
+  assert.deepEqual(out.lastShot,['clubs-13']);
+});
+test('right-side trigger shoots across the row toward the left-hand figure',()=>{
+  const grid=[...base];grid[0]='clubs-8';
+  const s=fixture({grid,targets:{9:'hearts-11'}});
+  const out=play(s,{type:'place-number',cell:2});
+  assert.deepEqual(out.lastShot,['hearts-11']);
+});
+test('non-corner edge trigger resolves one horizontal shot independently',()=>{
+  const s=fixture({targets:{4:'hearts-11'}});
+  const out=play(s,{type:'place-number',cell:3});
+  assert.deepEqual(out.lastShot,['hearts-11']);
+});
