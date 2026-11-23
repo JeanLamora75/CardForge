@@ -7,6 +7,8 @@ export const GRIM_DELVE_GAME_ID = 'clear-the-dungeon' as const;
 
 export interface GrimDelveSetup { seed: number }
 export type GrimDelvePhase = 'attack' | 'finished';
+export interface PlacedPower { cardId: string; handNumber: number }
+export interface PartialAttack { monsterId: string; powers: PlacedPower[] }
 export interface GrimDelveState {
   rulesVersion: typeof GRIM_DELVE_RULES_VERSION;
   phase: GrimDelvePhase;
@@ -19,19 +21,40 @@ export interface GrimDelveState {
   damages: string[];
   defeated: string[];
   removed: string[];
+  attacks: PartialAttack[];
   handNumber: number;
 }
 export type GrimDelveAction =
   | Readonly<{ type: 'discard'; cardId: string }>
-  | Readonly<{ type: 'end-hand' }>;
+  | Readonly<{ type: 'end-hand' }>
+  | Readonly<{ type: 'place-power'; cardId: string; monsterId: string }>
+  | Readonly<{ type: 'take-back'; cardId: string }>
+  | Readonly<{ type: 'move-power'; cardId: string; monsterId: string }>
+  | Readonly<{ type: 'trigger-attack'; cardId: string; monsterId: string }>;
 
 const canonical = makeDeckWithJokers();
-const validIds = new Set(canonical.map(card=>card.id));
+const byId = new Map(canonical.map(card=>[card.id,card]));
+const validIds = new Set(byId.keys());
 const monsterIds = new Set(canonical.filter(card=>'rank' in card && card.rank>=11).map(card=>card.id));
 const powerIds = new Set(canonical.filter(card=>!monsterIds.has(card.id)).map(card=>card.id));
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+const maxPower = 10;
+function strength(id: string): number {
+  const card=byId.get(id);
+  return !card ? 0 : 'kind' in card ? 10 : card.rank;
+}
+function matchesSuit(cardId: string, monsterId: string): boolean {
+  const card=byId.get(cardId), monster=byId.get(monsterId);
+  return !!card && !!monster && ('kind' in card || !('kind' in monster) && card.suit===monster.suit);
+}
+function powersValid(cards: readonly PlacedPower[], monsterId: string): boolean {
+  if(cards.length>2 || !monsterIds.has(monsterId)) return false;
+  if(cards.length>=1 && strength(cards[0].cardId)+maxPower<strength(monsterId)) return false;
+  if(cards.length===2 && strength(cards[0].cardId)+strength(cards[1].cardId)<strength(monsterId)) return false;
+  return true;
 }
 function validate(value: unknown): ValidationResult {
   const errors: string[] = [];
@@ -44,7 +67,7 @@ function validate(value: unknown): ValidationResult {
   if(!Number.isSafeInteger(state.handNumber) || (state.handNumber as number)<1) errors.push('invalid hand number');
   if(!Array.isArray(state.columns) || state.columns.length!==4 || !state.columns.every(c=>Array.isArray(c)&&c.length<=3)) errors.push('invalid monster columns');
   const zones=['drawPile','hand','damages','defeated','removed'] as const;
-  if(zones.some(name=>!Array.isArray(state[name]))) errors.push('invalid power zones');
+  if(zones.some(name=>!Array.isArray(state[name])) || !Array.isArray(state.attacks)) errors.push('invalid power zones');
   if(errors.length) return {valid:false,errors};
   const columns = state.columns as string[][];
   const draws = state.drawPile as string[];
@@ -52,8 +75,28 @@ function validate(value: unknown): ValidationResult {
   const damages = state.damages as string[];
   const defeated = state.defeated as string[];
   const removed = state.removed as string[];
+  const attacks=state.attacks as unknown[];
+  const placed: string[]=[];
+  const activeMonsters=new Set(columns.map(col=>col[0]).filter((id):id is string=>typeof id==='string'));
+  const targeted=new Set<string>();
+  for(const entry of attacks) {
+    if(!record(entry)||typeof entry.monsterId!=='string'||!Array.isArray(entry.powers)) {errors.push('invalid attack entry');continue;}
+    if(!activeMonsters.has(entry.monsterId)||targeted.has(entry.monsterId)) errors.push('attack on hidden, absent or duplicate monster');
+    targeted.add(entry.monsterId);
+    if(entry.powers.length===0||entry.powers.length>2) errors.push('invalid partial attack size');
+    const powers:PlacedPower[]=[];
+    for(const power of entry.powers) {
+      if(!record(power)||typeof power.cardId!=='string'||!Number.isSafeInteger(power.handNumber)||
+         (power.handNumber as number)<1 || (power.handNumber as number)>(state.handNumber as number)) {
+        errors.push('invalid placed card metadata');continue;
+      }
+      powers.push({cardId:power.cardId,handNumber:power.handNumber as number});
+      placed.push(power.cardId);
+    }
+    if(!powersValid(powers,entry.monsterId)) errors.push('invalid partial attack strength');
+  }
   const monsterCards=[...columns.flat(),...defeated];
-  const powerCards=[...draws,...hand,...damages,...removed];
+  const powerCards=[...draws,...hand,...damages,...removed,...placed];
   const all=[...monsterCards,...powerCards];
   if(all.length!==54 || new Set(all).size!==54 || all.some(id=>typeof id!=='string'||!validIds.has(id))) errors.push('duplicate, missing or unknown card');
   if(monsterCards.some(id=>!monsterIds.has(id)) || powerCards.some(id=>!powerIds.has(id))) errors.push('card in incorrect zone');
@@ -77,38 +120,92 @@ function createInitialState(setup: GrimDelveSetup): GrimDelveState {
     phase:'attack', outcome:'in-progress', columns,
     visibleMonsters:columns.map(column=>column[0]),
     hand:power.slice(0,3),drawPile:power.slice(3),
-    damages:[],defeated:[],removed:[],handNumber:1,
+    damages:[],defeated:[],removed:[],attacks:[],handNumber:1,
   };
   if(!validate(state).valid) throw new Error('Invalid initial Classic game');
   return state;
 }
 
 function getLegalActions(state: Readonly<GrimDelveState>): readonly GrimDelveAction[] {
-  if(!validate(state).valid || state.outcome!=='in-progress') return [];
-  if(state.hand.length) return state.hand.map(cardId=>({type:'discard' as const,cardId}));
-  return [{type:'end-hand'}];
+  if(!validate(state).valid||state.outcome!=='in-progress') return [];
+  const actions:GrimDelveAction[]=state.hand.map(cardId=>({type:'discard',cardId}));
+  for(const monsterId of state.visibleMonsters) {
+    if(!monsterId) continue;
+    const attack=state.attacks.find(item=>item.monsterId===monsterId);
+    const powers=attack?.powers??[];
+    for(const cardId of state.hand) {
+      if(powers.length<2 && powersValid([...powers,{cardId,handNumber:state.handNumber}],monsterId))
+        actions.push({type:'place-power',cardId,monsterId});
+      if(powers.length===2 && matchesSuit(cardId,monsterId))
+        actions.push({type:'trigger-attack',cardId,monsterId});
+    }
+  }
+  for(const attack of state.attacks) for(const power of attack.powers) {
+    if(power.handNumber!==state.handNumber) continue;
+    const remaining=attack.powers.filter(item=>item.cardId!==power.cardId);
+    if(powersValid(remaining,attack.monsterId)) actions.push({type:'take-back',cardId:power.cardId});
+    for(const monsterId of state.visibleMonsters) {
+      if(!monsterId||monsterId===attack.monsterId||!powersValid(remaining,attack.monsterId)) continue;
+      const target=state.attacks.find(item=>item.monsterId===monsterId)?.powers??[];
+      if(powersValid([...target,power],monsterId)) actions.push({type:'move-power',cardId:power.cardId,monsterId});
+    }
+  }
+  if(state.hand.length===0) actions.push({type:'end-hand'});
+  return actions;
 }
-function transition(state: Readonly<GrimDelveState>, action: Readonly<GrimDelveAction>): TransitionResult<GrimDelveState> {
-  const refused=(reason:string): TransitionResult<GrimDelveState>=>({accepted:false,state:state as GrimDelveState,reason});
+function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveAction>):TransitionResult<GrimDelveState> {
+  const refused=(reason:string):TransitionResult<GrimDelveState>=>({accepted:false,state:state as GrimDelveState,reason});
   if(!validate(state).valid) return refused('invalid game state');
   if(state.outcome!=='in-progress') return refused('game finished');
+  if(!record(action)||!getLegalActions(state).some(legal=>legal.type===action.type &&
+      (('cardId' in legal ? legal.cardId : undefined)===('cardId' in action ? action.cardId : undefined)) &&
+      (('monsterId' in legal ? legal.monsterId : undefined)===('monsterId' in action ? action.monsterId : undefined)))) return refused('illegal action');
   if(action.type==='discard') {
-    if(!state.hand.includes(action.cardId)) return refused('card not in hand');
     const damages=[...state.damages,action.cardId];
     const outcome=damages.length===7?'loss':'in-progress';
     return {accepted:true,state:{...state,hand:state.hand.filter(id=>id!==action.cardId),damages,
       outcome,phase:outcome==='loss'?'finished':'attack'}};
   }
   if(action.type==='end-hand') {
-    if(state.hand.length) return refused('hand must be empty before next draw');
-    if(state.drawPile.length===0) return {accepted:true,state:{...state,phase:'finished',outcome:'loss'}};
+    const attacks=state.attacks.map(a=>({monsterId:a.monsterId,powers:a.powers.map(p=>({...p}))}));
+    if(state.drawPile.length===0) return {accepted:true,state:{...state,attacks,phase:'finished',outcome:'loss'}};
     const next=state.drawPile.slice(0,3);
-    return {accepted:true,state:{...state,hand:next,drawPile:state.drawPile.slice(next.length),handNumber:state.handNumber+1}};
+    return {accepted:true,state:{...state,attacks,hand:next,drawPile:state.drawPile.slice(next.length),handNumber:state.handNumber+1}};
+  }
+  if(action.type==='place-power') {
+    const attacks=state.attacks.map(a=>({monsterId:a.monsterId,powers:[...a.powers]}));
+    const target=attacks.find(a=>a.monsterId===action.monsterId);
+    const power={cardId:action.cardId,handNumber:state.handNumber};
+    if(target) target.powers.push(power); else attacks.push({monsterId:action.monsterId,powers:[power]});
+    return {accepted:true,state:{...state,attacks,hand:state.hand.filter(id=>id!==action.cardId)}};
+  }
+  if(action.type==='take-back'||action.type==='move-power') {
+    const attacks=state.attacks.map(a=>({monsterId:a.monsterId,powers:a.powers.filter(p=>p.cardId!==action.cardId)})).filter(a=>a.powers.length);
+    if(action.type==='move-power') {
+      const entry=attacks.find(a=>a.monsterId===action.monsterId);
+      const power={cardId:action.cardId,handNumber:state.handNumber};
+      if(entry) entry.powers.push(power); else attacks.push({monsterId:action.monsterId,powers:[power]});
+      return {accepted:true,state:{...state,attacks}};
+    }
+    return {accepted:true,state:{...state,attacks,hand:[...state.hand,action.cardId]}};
+  }
+  if(action.type==='trigger-attack') {
+    const target=state.attacks.find(a=>a.monsterId===action.monsterId)!;
+    const columnIndex=state.columns.findIndex(column=>column[0]===action.monsterId);
+    const columns=state.columns.map(column=>[...column]);
+    columns[columnIndex].shift();
+    const defeated=[...state.defeated,action.monsterId];
+    const outcome=defeated.length===12?'win':'in-progress';
+    return {accepted:true,state:{...state,columns,visibleMonsters:columns.map(column=>column[0]??null),
+      hand:state.hand.filter(id=>id!==action.cardId),
+      attacks:state.attacks.filter(a=>a.monsterId!==action.monsterId).map(a=>({monsterId:a.monsterId,powers:[...a.powers]})),
+      defeated,removed:[...state.removed,...target.powers.map(p=>p.cardId),action.cardId],
+      outcome,phase:outcome==='win'?'finished':'attack'}};
   }
   return refused('unknown action');
 }
 
-/** Only initial draw/discard/hand-closure are exposed here; attacks belong to the next story. */
+/** Each step is derived from legal actions; no UI-specific rule is used. */
 export const grimDelveEngine: GameEngine<GrimDelveState,GrimDelveAction,GrimDelveSetup>={
   createInitialState,getLegalActions,transition,getOutcome:state=>state.outcome,validateState:validate,
 };
