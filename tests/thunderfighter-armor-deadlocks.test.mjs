@@ -118,7 +118,7 @@ test('GC-07: two Jokers can jointly empty a two-card pile; avoid premature armor
   assert.equal(actions(s,'assign-armor').length,0);
   assert.ok(actions(s,'reassign').length);
 });
-test('GC-07: Jack/Queen resistance 20 and King resistance 19 cause immediate armor loss',()=>{
+test('GC-T19 / GC-T20 / GC-T28 / GC-07: Jack/Queen resistance 20 and King resistance 19 cause immediate armor loss',()=>{
   for(const [figureId,prior] of [['hearts-11','hearts-7'],['diamonds-12','clubs-6'],['spades-13','spades-4']]){
     const s=fixture({targets:{0:figureId},pending:'hearts-2',
       armor:[{figureId,cardId:prior}]});
@@ -132,7 +132,7 @@ test('GC-07: Jack/Queen resistance 20 and King resistance 19 cause immediate arm
     reject(after,{type:'assign-armor',figureId});
   }
 });
-test('GC-20: empty draw with living figure and unspent As is not a loss',()=>{
+test('GC-T29 / GC-20: empty draw with living figure and unspent As is not a loss',()=>{
   const s=endgame({reserve:['hearts-1'],pending:null});
   assert.equal(engine.getOutcome(s),'in-progress');
   assert.ok(actions(s,'extract').length);
@@ -141,7 +141,7 @@ test('GC-20: empty draw with living figure and unspent As is not a loss',()=>{
   assert.ok(next.drawPile.length);
   assert.deepEqual(actions(next,'draw-card'),[{type:'draw-card'}]);
 });
-test('GC-20: no draw and no useful special => confirmed stalemate after legal final placement',()=>{
+test('GC-T23 / GC-20: no draw and no useful special => confirmed stalemate after legal final placement',()=>{
   const s=endgame({pending:'hearts-2'});
   const next=apply(s,{type:'place-number',cell:4});
   assert.equal(next.outcome,'loss');assert.equal(next.lossReason,'stalemate');
@@ -149,14 +149,14 @@ test('GC-20: no draw and no useful special => confirmed stalemate after legal fi
   assert.deepEqual(engine.getLegalActions(next),[]);
   reject(next,{type:'place-number',cell:4});
 });
-test('GC-20: sterile Joker does not keep a hopeless empty-draw game alive forever',()=>{
+test('GC-T34 / GC-20: sterile Joker does not keep a hopeless empty-draw game alive forever',()=>{
   const s=endgame({reserve:['joker-1'],pending:'hearts-2'});
   const next=apply(s,{type:'place-number',cell:4});
   assert.equal(next.outcome,'loss');
   assert.equal(next.lossReason,'stalemate');
   assert.ok(next.specialReserve.includes('joker-1'));
 });
-test('armor choice survives JSON save and restore without assigning twice',()=>{
+test('GC-T24: armor choice survives JSON save and restore without assigning twice',()=>{
   const s=fixture({targets:{0:'clubs-11',3:'spades-11'}});
   const restored=JSON.parse(JSON.stringify(s));
   assert.deepEqual(actions(restored,'assign-armor'),actions(s,'assign-armor'));
