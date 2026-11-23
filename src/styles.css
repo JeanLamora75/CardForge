@@ -349,3 +349,20 @@ h1[tabindex="-1"]:focus { outline: none; }
 .privacy-inventory li { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid #77849a; border-radius: 12px; }
 .privacy-inventory span { line-height: 1.5; }
 .privacy-inventory small { align-self: flex-start; border-radius: 6px; padding: 3px 8px; border: 1px solid #77849a; font-size: .8rem; }
+
+
+/* Destructive controls are deliberate, descriptive and keyboard operable. */
+.privacy-actions { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); margin: 18px 0; }
+.privacy-action { border: 1px solid #77849a; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.privacy-action h4 { margin: 0; font-size: 1.1rem; }
+.privacy-action p { flex: 1; margin: 0; font-size: .94rem; }
+.privacy-action label { font-weight: 700; }
+.privacy-action select { min-height: 44px; padding: 8px 12px; border: 1px solid #b7bfce; border-radius: 9px; background: #22283a; color: #fff; font: inherit; }
+.privacy-action button { min-height: 44px; width: 100%; }
+.privacy-danger { border-color: #e3ab8b; }
+.privacy-confirm { border: 2px solid #f1c6a0; border-radius: 14px; padding: clamp(18px,3vw,26px); background: #2f2936; color: #fff9ec; margin: 20px 0; }
+.privacy-confirm h4 { color: #fff4d6; font-size: 1.2rem; margin: 0 0 12px; }
+.privacy-confirm p { line-height: 1.7; }
+.privacy-confirm-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.privacy-confirm-actions button { min-height: 44px; }
+@media (max-width: 570px) { .privacy-confirm-actions button { flex: 1 1 100%; } }
