@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createIndexedDbGameStorage } from '../src/adapters/indexeddb-game-storage.ts';
+import { createPrivacyGameStorage } from '../src/adapters/indexeddb-privacy-storage.ts';
 import { LocalStorageError, stableResultId } from '../src/ports/local-storage.ts';
 import { startPersistentGame, resumePersistentGame } from '../src/application/persistent-game-session.ts';
 import { getNewGameChoice, confirmNewGame } from '../src/application/new-game-choice.ts';
@@ -10,8 +11,10 @@ import { getNewGameChoice, confirmNewGame } from '../src/application/new-game-ch
 function makeFactory() {
   const databases = new Map();
   let failStatisticsPut = false;
+  let failResultsDelete = false;
   return {
     failStats: value => { failStatisticsPut = value; },
+    failDelete: value => { failResultsDelete = value; },
     open(name) {
       const request = {};
       setTimeout(() => {
@@ -42,7 +45,7 @@ function makeFactory() {
                       if (mode !== 'readwrite') throw Error('readonly');
                       if (key === 'statistics' && failStatisticsPut) throw Error('failed statistics put');
                       const copy = structuredClone(value);
-                      staged.push([store, copy[store.keyPath], copy]);
+                      staged.push(['put', store, copy[store.keyPath], copy]);
                       schedule();
                     },
                     get(key) {
@@ -55,6 +58,28 @@ function makeFactory() {
                         schedule();
                       }, 0);
                       return req;
+                    },
+                    getAll() {
+                      const req = {};
+                      pending++;
+                      setTimeout(() => {
+                        req.result = [...store.rows.values()].map(row => structuredClone(row));
+                        req.onsuccess?.();
+                        pending--;
+                        schedule();
+                      }, 0);
+                      return req;
+                    },
+                    delete(id) {
+                      if (mode !== 'readwrite') throw Error('readonly');
+                      if (key === 'results' && failResultsDelete) throw Error('failed results delete');
+                      staged.push(['delete', store, id]);
+                      schedule();
+                    },
+                    clear() {
+                      if (mode !== 'readwrite') throw Error('readonly');
+                      staged.push(['clear', store]);
+                      schedule();
                     },
                   };
                 },
@@ -72,7 +97,11 @@ function makeFactory() {
                   scheduled = false;
                   if (pending || canceled || finished) return;
                   finished = true;
-                  for (const [store, key, value] of staged) store.rows.set(key, value);
+                  for (const [operation, store, key, value] of staged) {
+                    if (operation === 'put') store.rows.set(key, value);
+                    if (operation === 'delete') store.rows.delete(key);
+                    if (operation === 'clear') store.rows.clear();
+                  }
                   tx.oncomplete?.();
                 }, 0);
               }
@@ -354,4 +383,54 @@ test('migration adapter rolls back failed write then permits retry', async () =>
   const migrated = { ...old, formatVersion: 2, state: { cards: ['a', 'b'], extra: 1 } };
   await s.migrateGame({ previous: old, migrated });
   assert.deepEqual(await s.readGame('clear-the-dungeon'), migrated);
+});
+
+test('privacy deleteGame atomically removes only selected game saves, statistics and all historical results', async () => {
+  const factory = makeFactory();
+  const storage = createIndexedDbGameStorage({ factory, name: 'privacy-scoped' });
+  const privacy = createPrivacyGameStorage({ factory, name: 'privacy-scoped' });
+  await storage.commit({ save: game(), result, statistics: stats });
+  await storage.commit({ save: game('gridcannon', { turn: 4 }), result: {
+    id:'g1',gameId:'gridcannon',sessionId:'s1',outcome:'loss',
+  }, statistics: {gameId:'gridcannon',played:1,won:0,lost:1,abandoned:0} });
+  await storage.replaceGame({
+    expectedSessionId:'s1',
+    replacement:{...game(),sessionId:'s2',state:{ cards: ['c'] }},
+  });
+  assert.equal((await storage.readStatistics('clear-the-dungeon')).abandoned,0);
+  await privacy.deleteGame('clear-the-dungeon');
+  assert.equal(await storage.readGame('clear-the-dungeon'),undefined);
+  assert.equal(await storage.readStatistics('clear-the-dungeon'),undefined);
+  assert.equal(await storage.readResult('r1'),undefined);
+  assert.deepEqual(await storage.readGame('gridcannon'),game('gridcannon',{turn:4}));
+  assert.equal((await storage.readStatistics('gridcannon')).lost,1);
+  assert.equal((await storage.readResult('g1')).gameId,'gridcannon');
+});
+test('privacy failed deletion rolls back all three stores, then permits retry', async () => {
+  const factory=makeFactory();
+  const storage=createIndexedDbGameStorage({factory,name:'privacy-rollback'});
+  const privacy=createPrivacyGameStorage({factory,name:'privacy-rollback'});
+  await storage.commit({save:game(),result,statistics:stats});
+  factory.failDelete(true);
+  await assert.rejects(()=>privacy.deleteGame('clear-the-dungeon'),error=>error.code==='write-failed');
+  assert.deepEqual(await storage.readGame('clear-the-dungeon'),game());
+  assert.deepEqual(await storage.readResult('r1'),result);
+  assert.deepEqual(await storage.readStatistics('clear-the-dungeon'),stats);
+  factory.failDelete(false);
+  await privacy.deleteGame('clear-the-dungeon');
+  assert.equal(await storage.readGame('clear-the-dungeon'),undefined);
+});
+test('privacy full erase clears only application game database records', async () => {
+  const factory=makeFactory();
+  const storage=createIndexedDbGameStorage({factory,name:'privacy-total'});
+  const unrelated=createIndexedDbGameStorage({factory,name:'unrelated'});
+  await storage.commit({save:game(),result,statistics:stats});
+  await storage.commit({save:game('gridcannon')});
+  await unrelated.commit({save:game('independent')});
+  const privacy=createPrivacyGameStorage({factory,name:'privacy-total'});
+  await privacy.deleteAllGames();
+  assert.equal(await storage.readGame('gridcannon'),undefined);
+  assert.equal(await storage.readResult('r1'),undefined);
+  assert.equal(await storage.readStatistics('clear-the-dungeon'),undefined);
+  assert.deepEqual(await unrelated.readGame('independent'),game('independent'));
 });
