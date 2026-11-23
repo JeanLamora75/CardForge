@@ -149,3 +149,20 @@ test('CTD-T117/T127: victory after explicit damage scores remaining draw cards o
  assert.equal(final.damages.length,6);
  refuse(final,{type:'end-hand'});
 });
+
+test('CTD-T116: non-applicable other-target partial attacks cannot survive the twelfth-monster victory',()=>{
+ const {s:initial,monsterId}=nearVictory(5);
+ const won=run(initial,{type:'trigger-attack',cardId:'joker-2',monsterId});
+ assert.equal(won.defeated.length,12);
+ assert.deepEqual(won.attacks,[]);
+ const physical=[...won.removed.slice(0,3)];
+ const otherTargets=[won.defeated[0],won.defeated[1]];
+ const inconsistent={...won,removed:won.removed.slice(3),attacks:[
+  {monsterId:otherTargets[0],powers:[{cardId:physical[0],handNumber:1},{cardId:physical[1],handNumber:1}]},
+  {monsterId:otherTargets[1],powers:[{cardId:physical[2],handNumber:1}]},
+ ]};
+ const validity=engine.validateState(inconsistent);
+ assert.equal(validity.valid,false);
+ assert.ok(validity.errors.some(message=>message.includes('attack on hidden, absent or duplicate monster')));
+ assert.deepEqual(engine.getLegalActions(inconsistent),[]);
+});
