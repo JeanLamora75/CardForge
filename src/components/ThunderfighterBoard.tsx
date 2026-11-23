@@ -7,8 +7,9 @@ import {
 } from "../games/gridcannon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { createTutorialSession } from "../application/learning.ts";
 
-type Session = PersistentGameSession<ThunderfighterState, ThunderfighterAction>;
+type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAction>, "getState" | "getLegalActions" | "dispatch">;
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
 const suits = { hearts: ["♥", "Cœur"], diamonds: ["♦", "Carreau"], clubs: ["♣", "Trèfle"], spades: ["♠", "Pique"] } as const;
 const options = { gameId: THUNDERFIGHTER_GAME_ID, rulesVersion: THUNDERFIGHTER_RULES_VERSION, formatVersion: 1 };
@@ -82,7 +83,7 @@ export function previewThunderfighterAction(state: ThunderfighterState, action: 
     changingCards: after.physicalCardCount === 54,
   };
 }
-export default function ThunderfighterBoard() {
+export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true }: { tutorial?: boolean; hintsEnabled?: boolean }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<ThunderfighterState | null>(null);
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
@@ -93,6 +94,15 @@ export default function ThunderfighterBoard() {
     let cancelled = false;
     void (async () => {
       try {
+        if (tutorial) {
+          const practice = createTutorialSession(thunderfighterEngine, { seed: 3201 });
+          if (cancelled) return;
+          session.current = practice;
+          setState(practice.getState());
+          setLegal(practice.getLegalActions());
+          setNotice("Mission guidée · vos coups ne sont pas sauvegardés.");
+          return;
+        }
         const restored = await resumePersistentGame(thunderfighterEngine, createIndexedDbGameStorage(), options);
         if (cancelled) return;
         session.current = restored ?? null;
@@ -104,7 +114,7 @@ export default function ThunderfighterBoard() {
       } finally { if (!cancelled) setBusy(false); }
     })();
     return () => { cancelled = true; };
-  }, []);
+  }, [tutorial]);
   async function start() {
     if (busy || session.current) return;
     setBusy(true);
@@ -141,7 +151,7 @@ export default function ThunderfighterBoard() {
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
           shots.length ? `${shots.length > 1 ? "Double tir" : "Tir"} : ${shots.map(labelOf).join(" et ")}.` :
-          `Coup enregistré : ${actionLabel(selection)}.`);
+          `${tutorial ? "Coup d’entraînement" : "Coup enregistré"} : ${actionLabel(selection)}.`);
       }
       setSelection(null);
     } catch { setNotice("Enregistrement impossible. L'action n'a pas été validée."); }
@@ -156,6 +166,22 @@ export default function ThunderfighterBoard() {
     <h2 id="thunder-title">Thunderfighter · Poste de commandement</h2>
     <p className="help-note">Aventure spatiale rétrofuturiste · Gridcannon V2. Chaque action est prévisualisée sans modifier la partie, puis confirmée et sauvegardée une seule fois.</p>
     <p className="thunder-notice" role="status" aria-live="polite">{notice}</p>
+    {tutorial && state ? <section className="learning-lesson" aria-label="Mission Thunderfighter">
+      <h3>Mission d'entraînement · {phaseLabels[state.phase]}</h3>
+      <p>{state.outcome !== "in-progress" ? "Mission terminée : vous pouvez recommencer l'entraînement ou jouer librement." :
+        state.pendingFigures.length ? "Placez la figure dans un des secteurs proposés. Les emplacements sont déterminés par la ressemblance avec les cartes visibles." :
+        state.phase === "replacement-offer" ? "Vous pouvez garder les neuf piles initiales ou remplacer une carte : testez les deux options en recommençant l'exercice." :
+        state.phase === "replacement-draw" ? "La carte initiale est sous la pioche. Révélez le remplacement puis placez les figures éventuellement rencontrées." :
+        state.phase === "searching" ? "Toutes les figures actuellement en jeu ont été vaincues : cherchez la prochaine figure, sans dévoiler les cartes suivantes." :
+        state.pendingNumeric ? "Examinez les neuf piles : votre carte doit être au moins aussi forte que le sommet. Prévisualisez un tir avant de confirmer." :
+        "Piochez une carte ; observez les éventuelles figures et cartes spéciales. Un As extrait une pile ; un Joker réaffecte une carte supérieure."}</p>
+      <p>Objectif : comprendre les placements, les résistances, les tirs sur deux axes et la réserve spéciale. Toutes les décisions suivent Gridcannon V2.</p>
+    </section> : null}
+    {hintsEnabled && state ? <details className="learning-context" open={tutorial}>
+      <summary>Aide sur les actions autorisées ({legal.length})</summary>
+      <p>{legal.filter(a => a.type === "place-number").length} destination(s) numériques, {legal.filter(a => a.type === "place-figure").length} secteur(s) pour figure, {legal.filter(a => a.type === "extract" || a.type === "reassign").length} action(s) spéciale(s).</p>
+      <p>Les Valets demandent 11 points, les Dames 12 avec la même couleur, les Rois 13 avec la même enseigne. Le score officiel ne dépend que de la réserve inutilisée en cas de victoire.</p>
+    </details> : null}
     {!state ? <button type="button" className="primary-action" onClick={() => void start()} disabled={busy}>Commencer une partie</button> : <>
       <div className="thunder-metrics">
         <span>Phase : {phaseLabels[state.phase]}</span><span>Pioche : {state.drawPile.length}</span>
@@ -205,7 +231,7 @@ export default function ThunderfighterBoard() {
         <h3>Prévisualisation — aucune modification enregistrée</h3>
         <p>{preview.message}</p>
         <p>Intégrité physique prévue : {preview.accepted && preview.changingCards ? "54 / 54 cartes" : "À vérifier"}</p>
-        <button type="button" className="primary-action" disabled={busy || !preview.accepted} onClick={() => void confirm()}>Confirmer et enregistrer ce coup</button>
+        <button type="button" className="primary-action" disabled={busy || !preview.accepted} onClick={() => void confirm()}>{tutorial ? "Confirmer le coup d’entraînement" : "Confirmer et enregistrer ce coup"}</button>
         <button type="button" className="back-link" disabled={busy} onClick={() => setSelection(null)}>Annuler sans modifier</button>
       </div> : null}
     </>}
