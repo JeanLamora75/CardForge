@@ -6,6 +6,7 @@ import { resumePersistentGame, startPersistentGame, type PersistentGameSession }
 import { createTutorialSession } from "../application/learning.ts";
 import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
+import { translateUiText } from "../i18n/surface.ts";
 
 type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
 const cards = new Map(makeDeckWithJokers().map(card => [card.id, card]));
@@ -112,8 +113,8 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
   }
   async function dispatch(action: GrimDelveAction) {
     if (busy || !session.current || !legal.some(candidate => sameAction(candidate, action))) return;
-    if (action.type === "discard-remaining" && !window.confirm("Défausser toutes les cartes restantes ? Les dégâts sont irréversibles.")) return;
-    if (action.type === "discard" && !window.confirm("Défausser cette carte ? Cela ajoute un dégât irréversible.")) return;
+    if (action.type === "discard-remaining" && !window.confirm(translateUiText("Défausser toutes les cartes restantes ? Les dégâts sont irréversibles.", document.documentElement.lang === "fr" ? "fr" : "en"))) return;
+    if (action.type === "discard" && !window.confirm(translateUiText("Défausser cette carte ? Cela ajoute un dégât irréversible.", document.documentElement.lang === "fr" ? "fr" : "en"))) return;
     setBusy(true);
     try {
       const result = await session.current.dispatch(action);
