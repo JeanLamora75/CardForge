@@ -15,6 +15,7 @@ import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
+import OfflineReadiness from "./components/OfflineReadiness";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -332,6 +333,7 @@ export default function App() {
       {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
+      <OfflineReadiness language={language} />
       {route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
