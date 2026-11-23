@@ -1,13 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createIndexedDbGameStorage } from '../src/adapters/indexeddb-game-storage.ts';
-import { LocalStorageError } from '../src/ports/local-storage.ts';
+import { LocalStorageError, stableResultId } from '../src/ports/local-storage.ts';
+import { startPersistentGame, resumePersistentGame } from '../src/application/persistent-game-session.ts';
 
 // In-memory IDB-compatible transaction harness: requests are asynchronous,
 // writes are staged and only made visible by the transaction complete event.
 function makeFactory() {
   const databases = new Map();
+  let failStatisticsPut = false;
   return {
+    failStats: value => { failStatisticsPut = value; },
     open(name) {
       const request = {};
       setTimeout(() => {
@@ -30,8 +33,13 @@ function makeFactory() {
                   if (!namesArray.includes(key)) throw Error('unscoped store');
                   const store = db.stores.get(key);
                   return {
+                    add(value) {
+                      if (store.rows.has(value[store.keyPath])) throw Error('duplicate result');
+                      return this.put(value);
+                    },
                     put(value) {
                       if (mode !== 'readwrite') throw Error('readonly');
+                      if (key === 'statistics' && failStatisticsPut) throw Error('failed statistics put');
                       const copy = structuredClone(value);
                       staged.push([store, copy[store.keyPath], copy]);
                       schedule();
@@ -140,4 +148,90 @@ test('a save-only update preserves prior result and statistics', async () => {
   assert.deepEqual((await s.readGame('clear-the-dungeon')).state, { cards: ['b', 'a'] });
   assert.deepEqual(await s.readResult('r1'), result);
   assert.deepEqual(await s.readStatistics('clear-the-dungeon'), stats);
+});
+
+
+const terminalOptions = gameId => ({ gameId, sessionId: `s-${gameId}`, formatVersion: 1, rulesVersion: '1' });
+function terminalEngine(outcome = 'win') {
+  return {
+    createInitialState: () => ({ step: 0, hand: ['joker-1'], reserve: [] }),
+    getLegalActions: state => state.step === 0 ? [{ type: 'finish' }] : [],
+    transition(state, action) {
+      if (action.type !== 'finish' || state.step !== 0) return { accepted: false, state, reason: 'illegal' };
+      return { accepted: true, state: { ...state, step: 1 } };
+    },
+    getOutcome: state => state.step ? outcome : 'in-progress',
+    validateState: state => state && [0, 1].includes(state.step) && Array.isArray(state.hand)
+      ? { valid: true } : { valid: false, errors: ['invalid'] },
+  };
+}
+const terminalEnvironment = () => {
+  const factory = makeFactory();
+  return { factory, storage: createIndexedDbGameStorage({ factory, name: 'terminal-test' }) };
+};
+const expectedStats = (gameId, played, won, lost, abandoned) => ({ gameId, played, won, lost, abandoned });
+
+test('terminal victory saves game state, result and statistics atomically', async () => {
+  const { storage } = terminalEnvironment();
+  const session = await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  await session.dispatch({ type: 'finish' });
+  assert.equal(session.getSaveStatus(), 'saved');
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 1, 0, 0));
+  assert.deepEqual(await storage.readResult(stableResultId('grim', 's-grim')), {
+    id: stableResultId('grim', 's-grim'), gameId: 'grim', sessionId: 's-grim', outcome: 'win',
+  });
+  assert.equal((await storage.readGame('grim')).state.step, 1);
+});
+
+test('double-click and reload do not increase terminal counters', async () => {
+  const { storage } = terminalEnvironment();
+  const session = await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const results = await Promise.all([session.dispatch({ type: 'finish' }), session.dispatch({ type: 'finish' })]);
+  assert.deepEqual(results.map(x => x.accepted), [true, false]);
+  const resumed = await resumePersistentGame(terminalEngine(), storage, terminalOptions('grim'));
+  assert.equal((await resumed.dispatch({ type: 'finish' })).accepted, false);
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 1, 0, 0));
+});
+
+test('same terminal event is idempotent and conflicting outcome is rejected', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const final = { save: { ...await storage.readGame('grim'), state: { step: 1, hand: ['joker-1'], reserve: [] } }, result: {
+    id: stableResultId('grim', 's-grim'), gameId: 'grim', sessionId: 's-grim', outcome: 'win',
+  } };
+  assert.equal(await storage.commitTerminal(final), 'recorded');
+  assert.equal(await storage.commitTerminal(final), 'already-recorded');
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 1, 0, 0));
+  await assert.rejects(() => storage.commitTerminal({ ...final, result: { ...final.result, outcome: 'loss' } }), e => e.code === 'write-failed');
+});
+
+test('loss and abandonment affect only their own game counters', async () => {
+  const { storage } = terminalEnvironment();
+  await (await startPersistentGame(terminalEngine('loss'), storage, terminalOptions('grim'), undefined)).dispatch({ type: 'finish' });
+  await (await startPersistentGame(terminalEngine('abandoned'), storage, terminalOptions('thunder'), undefined)).dispatch({ type: 'finish' });
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 0, 1, 0));
+  assert.deepEqual(await storage.readStatistics('thunder'), expectedStats('thunder', 1, 0, 0, 1));
+});
+
+test('failed statistics write rolls back all terminal data and supports retry', async () => {
+  const { factory, storage } = terminalEnvironment();
+  const session = await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  factory.failStats(true);
+  await assert.rejects(() => session.dispatch({ type: 'finish' }), e => e.code === 'write-failed');
+  assert.equal(session.getSaveStatus(), 'error');
+  assert.equal((await storage.readGame('grim')).state.step, 0);
+  assert.equal(await storage.readResult(stableResultId('grim', 's-grim')), undefined);
+  assert.equal(await storage.readStatistics('grim'), undefined);
+  factory.failStats(false);
+  await session.dispatch({ type: 'finish' });
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 1, 0, 0));
+});
+
+test('terminal result from a stale session cannot corrupt the current game', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const save = { ...await storage.readGame('grim'), sessionId: 'stale', state: { step: 1, hand: [], reserve: [] } };
+  const result = { id: stableResultId('grim', 'stale'), gameId: 'grim', sessionId: 'stale', outcome: 'win' };
+  await assert.rejects(() => storage.commitTerminal({ save, result }), e => e.code === 'write-failed');
+  assert.equal(await storage.readResult(result.id), undefined);
 });
