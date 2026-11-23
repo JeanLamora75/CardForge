@@ -14,6 +14,7 @@ import {
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
+import PrivacyPanel from "./components/PrivacyPanel";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -214,6 +215,7 @@ function Settings({ onBack, language, onLanguageChange, preferences, onPreferenc
         <p className="help-note">Avec « Suivre le système », CardForge respecte la réduction des mouvements configurée sur votre appareil. Les résultats restent lisibles sans animation ni son.</p>
         <p className="help-note">Les réglages s’appliquent à tous les jeux, sans changer les cartes, les règles ni les sauvegardes. La lecture audio dépend des autorisations du navigateur.</p>
       </fieldset>
+      <PrivacyPanel language={language} />
     </section>
   );
 }
