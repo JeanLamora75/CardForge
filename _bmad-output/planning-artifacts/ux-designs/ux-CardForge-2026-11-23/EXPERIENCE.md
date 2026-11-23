@@ -252,6 +252,48 @@ Références : GC-26/27/28/48/51/53 ; CAR-35/36/34.
 - CAR-37 : hypothèse A-01 sur la granularité de suppression à faire confirmer avant implémentation ; ne pas confondre avec GC-35.
 - CAR-40..43 : recette de focus, tests de refus/lecture seule, vérification des secrets et droits, ressources hors ligne.
 
+
+## Matrice de traçabilité des décisions Mary
+
+Les décisions ci-dessous sont **déjà validées**, leur [référentiel Mary Gridcannon](../../game-rules/gridcannon.md) reste normatif ; cette table décrit uniquement leur traduction UX.
+
+| Décision | Comportement UX | Story Jira principale |
+| --- | --- | --- |
+| GC-22 | Résistance/armure permanentes et détail | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-23 | Prévisualisation complète de tirs | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-24 | Animation courte facultative | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-25 | Son facultatif | [CAR-36](https://lmn24.atlassian.net/browse/CAR-36) |
+| GC-26 | Règles et aide | [CAR-33](https://lmn24.atlassian.net/browse/CAR-33) |
+| GC-27 | Préférence linguistique et repli anglais | [CAR-35](https://lmn24.atlassian.net/browse/CAR-35) |
+| GC-28 | FR/EN MVP, dix langues à terme | [CAR-35](https://lmn24.atlassian.net/browse/CAR-35) |
+| GC-29 | Pioche masquée et compteur | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-30 | Mini-cartes As/Jokers découverts | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-31 | Figures vaincues comptées | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-32 | Reprise et abandon confirmé | [CAR-30](https://lmn24.atlassian.net/browse/CAR-30) |
+| GC-33 | Résultat et résumé | [CAR-34](https://lmn24.atlassian.net/browse/CAR-34) |
+| GC-34 | Statistiques cumulées | [CAR-34](https://lmn24.atlassian.net/browse/CAR-34) |
+| GC-35 | Réinitialisation des statistiques de ce jeu avec confirmation | [CAR-34](https://lmn24.atlassian.net/browse/CAR-34) |
+| GC-36 | Inspection agrandie des cartes | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-37 | Drag-and-drop facultatif et sélection simple | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-38 | Cibles légales surlignées | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-39 | Dernière action confirmée | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-40 | Zoom/panoramique facultatifs | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-41 | Portrait/paysage | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-42 | Piles compactes avec nombre | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-43 | Inspection des cartes connues | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-44 | Silhouettes des figures non révélées | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-45 | Plein écran facultatif | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-46 | Statut réel de sauvegarde | [CAR-13](https://lmn24.atlassian.net/browse/CAR-13) |
+| GC-47 | Un seul onglet écrivain | [CAR-13](https://lmn24.atlassian.net/browse/CAR-13) |
+| GC-48 | Lisibilité renforcée | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-49 | Tutoriel court facultatif | [CAR-33](https://lmn24.atlassian.net/browse/CAR-33) |
+| GC-50 | Conseils contextuels facultatifs | [CAR-33](https://lmn24.atlassian.net/browse/CAR-33) |
+| GC-51 | Raccourcis clavier facultatifs | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-52 | Confirmation des coups ordinaires désactivée par défaut, sauf besoins du flux | [CAR-32](https://lmn24.atlassian.net/browse/CAR-32) |
+| GC-53 | Suivre mouvement réduit appareil par défaut | [CAR-36](https://lmn24.atlassian.net/browse/CAR-36) |
+
+**Clear the Dungeon :** les décisions CTD-ARB-01, CTD-ARB-02, CTD-ARB-03, CTD-ARB-04, CTD-ARB-05, CTD-ARB-06, CTD-ARB-07, CTD-ARB-08, CTD-ARB-09, CTD-ARB-10, CTD-ARB-11, CTD-ARB-12, CTD-ARB-13, CTD-ARB-14 restent normatives pour la mécanique. L'interface de [CAR-31](https://lmn24.atlassian.net/browse/CAR-31) présente poses provisoires, verrouillage, défausses, main vide ouverte, séquence d'attaque et issues, sans créer de nouvelles règles. Source : [Mary Clear the Dungeon](../../game-rules/clear-the-dungeon.md).
+
 ## Décisions et points encore ouverts
 
 **Décisions déjà obtenues, non à redemander :** galerie immersive et fiches ; illustrations fixes des cartes ; univers graphiques par jeu ; tutoriels facultatifs ; une partie active par jeu ; sauvegarde automatique ; Gridcannon GC-22 à GC-53 ; langues FR/EN MVP et dix à terme ; AD-02/04/05 ; Les Douze Tyrans/Grèce antique.
