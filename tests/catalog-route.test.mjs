@@ -109,3 +109,14 @@ test('malformed saved outcomes are surfaced without write or an active badge',as
   await assert.rejects(()=>readCatalogGameProgress(storage,'gridcannon'),/Inconsistent saved game outcome/);
   assert.equal(writes,0);
 });
+
+test('about-and-credits route is direct-linkable and returns to the originating game',()=>{
+  const about={page:'about'};
+  assert.deepEqual(parseCatalogRoute('#about'),about);
+  assert.equal(routeHash(about),'#about');
+  assert.deepEqual(parseCatalogRoute(routeHash(about)),about);
+  assert.deepEqual(backRoute(about),HOME);
+  const origin={page:'game',gameId:'gridcannon',section:'board'};
+  assert.deepEqual(backRoute(about,origin),origin);
+  assert.deepEqual(backRoute(about,{page:'settings'}),HOME);
+});
