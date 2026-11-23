@@ -28,7 +28,7 @@ function nearVictory(score=5) {
 function run(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,true,JSON.stringify(r));assert.deepEqual(s,prev);assert.equal(engine.validateState(r.state).valid,true,JSON.stringify(engine.validateState(r.state)));return r.state;}
 function refuse(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,false);assert.strictEqual(r.state,s);assert.deepEqual(s,prev);}
 
-test('CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
+test('CTD-T66 / CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
  const {s,monsterId}=nearVictory(5);
  const final=run(s,{type:'trigger-attack',cardId:'joker-2',monsterId});
  assert.equal(final.defeated.length,12);
@@ -65,7 +65,7 @@ test('CTD-T118: seventh damage records damage cause and has no official score',(
  assert.equal(final.outcome,'loss');assert.equal(final.endReason,'damage');assert.equal(final.victoryScore,null);
  refuse(final,{type:'discard-remaining'});
 });
-test('CTD-T119: exhausted deck loses only upon closure, distinct from damage loss',()=>{
+test('CTD-T53 / CTD-T59 / CTD-T119: exhausted deck loses only upon closure, distinct from damage loss',()=>{
  const s=engine.createInitialState({seed:15});const allPower=[...s.hand,...s.drawPile];
  const pre={...s,hand:[],drawPile:[],removed:allPower};
  assert.equal(engine.validateState(pre).valid,true);
@@ -81,7 +81,7 @@ test('terminal metadata validation rejects score after a loss and mismatched vic
  const lost=engine.createInitialState({seed:15});
  assert.equal(engine.validateState({...lost,victoryScore:10}).valid,false);
 });
-test('CTD-T120: persisted terminal result and official score are not recomputed on retry/reload',async()=>{
+test('CTD-T19 / CTD-T68 / CTD-T120: persisted terminal result and official score are not recomputed on retry/reload',async()=>{
  const {s,monsterId}=nearVictory(5);
  const options={gameId:'clear-the-dungeon',rulesVersion:GRIM_DELVE_RULES_VERSION,formatVersion:1};
  let saved={...options,sessionId:'game-1',state:structuredClone(s)};
