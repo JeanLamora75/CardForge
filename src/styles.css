@@ -253,3 +253,29 @@ h1[tabindex="-1"]:focus { outline: none; }
   .thunder-slot > small,.thunder-pile > strong { font-size: .59rem; }
   .thunder-emblem { font-size: 1rem; }
 }
+
+
+/* Learning journey and rulebooks never overlap the game engines or their saves. */
+.game-learning { padding-bottom: 28px; }
+.learning-intro { max-width: 780px; border: 1px solid #89775c; border-radius: 16px; background: #292430; padding: clamp(18px, 4vw, 32px); margin: 24px 0; }
+.learning-intro h2 { font: 700 clamp(1.5rem, 3vw, 2rem)/1.2 Georgia, serif; margin-top: 0; }
+.learning-intro p { color: #e4dce7; line-height: 1.65; }
+.learning-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 18px 0; }
+.learning-toolbar > button { white-space: normal; text-align: center; }
+.learning-mode { padding: 10px 13px; border: 1px solid #ac8a61; border-radius: 9px; font-weight: 750; color: #ffdda6; }
+.learning-hints { display: inline-flex; gap: 10px; align-items: center; padding: 11px; border: 1px solid #7d6f83; border-radius: 9px; min-height: 44px; cursor: pointer; }
+.learning-hints input { width: 19px; height: 19px; accent-color: #e8b777; }
+.learning-safety { background: #23392e; color: #d5f8df; border-left: 4px solid #92cba6; border-radius: 6px; padding: 13px; line-height: 1.6; }
+.learning-lesson { border: 1px solid #c7a775; padding: 14px 18px; border-radius: 12px; background: #312b39; margin: 22px 0; }
+.learning-lesson h3 { font: 700 1.2rem/1.35 Georgia, serif; margin: 0 0 10px; }
+.learning-lesson p { color: #f4e9df; line-height: 1.65; margin: 10px 0; }
+.learning-context { border: 1px solid #806f86; padding: 12px 16px; border-radius: 12px; margin: 12px 0 24px; background: #292733; }
+.learning-context summary { cursor: pointer; min-height: 38px; padding: 8px 0; font-weight: 700; }
+.learning-context p { color: #e8dfea; line-height: 1.55; }
+.learning-rulebook { border: 1px solid #655b71; border-radius: 14px; background: #201d29; padding: clamp(16px,3vw,30px); max-width: 980px; margin: 20px 0; }
+.learning-rulebook h2 { font: 700 1.6rem/1.3 Georgia, serif; }
+.learning-rulebook h3 { font: 700 1.2rem/1.35 Georgia, serif; margin: 0 0 8px; }
+.learning-rulebook section { padding: 14px 0; border-top: 1px solid #51485b; }
+.learning-rulebook p { line-height: 1.7; color: #e2d9e5; }
+.learning-rulebook a { text-decoration: underline; color: #ffdfa8; }
+@media (max-width: 540px) { .learning-toolbar > button { flex: 1 1 100%; } .learning-mode, .learning-hints { width: 100%; } }
