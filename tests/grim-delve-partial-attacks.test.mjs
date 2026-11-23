@@ -130,3 +130,75 @@ test('duplicate card in partial attack is invalid and offers no legal actions',(
   assert.equal(grimDelveEngine.validateState(duplicate).valid,false);
   assert.deepEqual(grimDelveEngine.getLegalActions(duplicate),[]);
 });
+
+test('CTD-T45/T47/T130/T139: discarded damage and still-open placements survive a JSON reload without implicit closure',()=>{
+  const {a,state}=twoTargets();
+  let next=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
+  next=act(next,{type:'discard',cardId:'diamonds-9'});
+  next=act(next,{type:'discard',cardId:'hearts-10'});
+  assert.deepEqual(next.hand,[]);
+  assert.equal(next.damages.length,2);
+  const restored=JSON.parse(JSON.stringify(next));
+  assert.deepEqual(restored,next);
+  assert.deepEqual(grimDelveEngine.getLegalActions(restored),grimDelveEngine.getLegalActions(next));
+  assert.ok(grimDelveEngine.getLegalActions(restored).some(action=>action.type==='take-back'&&action.cardId==='clubs-8'));
+  assert.ok(grimDelveEngine.getLegalActions(restored).some(action=>action.type==='end-hand'));
+  next=act(restored,{type:'end-hand'});
+  assert.equal(next.damages.length,2);
+  assert.deepEqual(next.attacks.map(a=>a.powers.map(p=>p.cardId)),[['clubs-8']]);
+  rejected(next,{type:'take-back',cardId:'clubs-8'});
+});
+test('CTD-T75/T133: an empty but open hand can move provisional powers; missing power forbids trigger',()=>{
+  const {a,b,state}=twoTargets();
+  let next=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
+  next=act(next,{type:'place-power',cardId:'diamonds-9',monsterId:b});
+  next=act(next,{type:'discard',cardId:'hearts-10'});
+  assert.equal(next.hand.length,0);
+  next=act(next,{type:'move-power',cardId:'clubs-8',monsterId:b});
+  assert.deepEqual(next.attacks.map(a=>a.powers.map(p=>p.cardId)),[['diamonds-9','clubs-8']]);
+  assert.equal(next.handNumber,state.handNumber);
+  next=act(next,{type:'take-back',cardId:'clubs-8'});
+  assert.deepEqual(next.hand,['clubs-8']);
+  rejected(next,{type:'trigger-attack',cardId:'clubs-8',monsterId:b});
+  rejected(next,{type:'end-hand'});
+});
+test('CTD-T100/T101: provisional Joker survives serialization, can move, then locks on closing hand',()=>{
+  const {a,b,state}=twoTargets();
+  const nextHand=equip(state,['joker-1','clubs-8','hearts-10']);
+  let next=act(nextHand,{type:'place-power',cardId:'joker-1',monsterId:a});
+  const saved=JSON.parse(JSON.stringify(next));
+  assert.ok(grimDelveEngine.getLegalActions(saved).some(x=>x.type==='move-power'&&x.cardId==='joker-1'));
+  next=act(saved,{type:'move-power',cardId:'joker-1',monsterId:b});
+  next=act(next,{type:'discard-remaining'});
+  next=act(next,{type:'end-hand'});
+  assert.deepEqual(next.attacks[0].powers.map(x=>x.cardId),['joker-1']);
+  assert.equal(next.attacks[0].monsterId,b);
+  rejected(next,{type:'take-back',cardId:'joker-1'});
+  rejected(next,{type:'move-power',cardId:'joker-1',monsterId:a});
+});
+test('CTD-T63: the newly exposed enemy is immediately targetable with a remaining hand card',()=>{
+  const start=first(),a=start.visibleMonsters[0];
+  const pool=[...start.hand,...start.drawPile],used=['joker-1','hearts-10','joker-2','clubs-4'];
+  const pre={...start,hand:['joker-2','clubs-4'],
+    drawPile:pool.filter(id=>!used.includes(id)),
+    handNumber:2,attacks:[{monsterId:a,powers:[{cardId:'joker-1',handNumber:1},{cardId:'hearts-10',handNumber:1}]}]};
+  assert.deepEqual(grimDelveEngine.validateState(pre),{valid:true});
+  const after=act(pre,{type:'trigger-attack',cardId:'joker-2',monsterId:a});
+  assert.equal(after.visibleMonsters[0],start.columns[0][1]);
+  assert.ok(grimDelveEngine.getLegalActions(after).some(x=>x.type==='place-power'&&x.cardId==='clubs-4'&&x.monsterId===after.visibleMonsters[0]));
+});
+test('CTD-T65: defeating last monster of one column does not invent a replacement or premature victory',()=>{
+  const start=first(),original=start.columns.flat(),a=original[0],b=original[3];
+  const pool=[...start.hand,...start.drawPile],used=['joker-1','clubs-8','joker-2'];
+  const pre={...start,columns:[[a],[b],[],[]],visibleMonsters:[a,b,null,null],
+    defeated:original.filter(id=>id!==a&&id!==b),
+    hand:['joker-2'],drawPile:pool.filter(id=>!used.includes(id)),
+    attacks:[{monsterId:a,powers:[{cardId:'joker-1',handNumber:1},{cardId:'clubs-8',handNumber:1}]}]};
+  assert.deepEqual(grimDelveEngine.validateState(pre),{valid:true});
+  const done=act(pre,{type:'trigger-attack',cardId:'joker-2',monsterId:a});
+  assert.deepEqual(done.columns[0],[]);
+  assert.equal(done.visibleMonsters[0],null);
+  assert.equal(done.visibleMonsters[1],b);
+  assert.equal(done.defeated.length,11);
+  assert.equal(done.outcome,'in-progress');
+});
