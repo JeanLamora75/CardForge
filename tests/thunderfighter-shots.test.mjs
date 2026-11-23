@@ -64,7 +64,7 @@ test('GC-V2-T19/22: empty cell can receive any 2-10, without a ghost zero',()=>{
   assert.deepEqual(out.grid[4],['hearts-2']);
   assert.equal(out.grid.flat().includes('hearts-0'),false);
 });
-test('GC-V2-T28: a corner triggers horizontal and vertical victories simultaneously',()=>{
+test('GC-T15 / GC-T31 / GC-V2-T28: a corner triggers horizontal and vertical victories simultaneously',()=>{
   const s=fixture();
   assert.deepEqual(getShotTargets(s,0),['clubs-11','spades-11']);
   const done=play(s,{type:'place-number',cell:0});
@@ -87,7 +87,7 @@ test('GC-V2-T31: insufficient shots keep both figures alive and preserve placed 
   assert.deepEqual(out.lastShot,[]);assert.deepEqual(out.defeatedFigures,[]);
   assert.equal(out.grid[0].at(-1),'hearts-10');
 });
-test('GC-V2-T33: queen counts only same-color power and king only same-suit',()=>{
+test('GC-T11 / GC-T13 / GC-V2-T33: queen counts only same-color power and king only same-suit',()=>{
   const grid=[...base];grid[1]='hearts-9';grid[2]='diamonds-5';grid[3]='clubs-10';grid[6]='hearts-7';grid[7]='spades-9';
   const s=fixture({grid, targets:{3:'hearts-12',6:'clubs-13'}});
   const out=play(s,{type:'place-number',cell:0});
@@ -141,7 +141,7 @@ test('cannot draw twice or place while a figure is pending, and attacks never fi
 });
 
 
-test('a centre placement is legal but never launches a shot',()=>{
+test('GC-T14: a centre placement is legal but never launches a shot',()=>{
   const s=fixture();
   assert.ok(engine.getLegalActions(s).some(a=>a.type==='place-number'&&a.cell===4));
   const out=play(s,{type:'place-number',cell:4});
