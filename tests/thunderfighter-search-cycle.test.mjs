@@ -159,7 +159,7 @@ test('GC-12: pending placement is a valid in-flight operation, not missing figur
   assert.deepEqual(diagnoseSearchIntegrity(s).missingFigures,[]);
   assert.equal(s.outcome,'in-progress');
 });
-test('GC-12: search without future figure is rejected safely even if deck identities are complete',()=>{
+test('GC-12: search after all twelve defeated is rejected safely without inventing an outcome',()=>{
   const s=fixture();
   const bad=structuredClone(s);
   const figure=bad.drawPile.find(isFigure);
@@ -168,7 +168,7 @@ test('GC-12: search without future figure is rejected safely even if deck identi
   bad.defeatedFigures.push(figure);
   const diagnosed=diagnoseSearchIntegrity(bad);
   assert.equal(diagnosed.status,'invalid');
-  assert.ok(diagnosed.issues.includes('search cannot reveal any remaining figure'));
+  assert.ok(diagnosed.issues.includes('search after all figures defeated'));
   assert.deepEqual(engine.getLegalActions(bad),[]);
   assert.equal(bad.outcome,'in-progress');
 });
