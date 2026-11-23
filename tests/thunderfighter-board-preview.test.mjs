@@ -42,7 +42,7 @@ test("CAR-32: preview via engine transition does not modify current state", () =
 test("CAR-32: refused action leaves the grid unchanged", () => {
   const state = scenario();
   const before = structuredClone(state);
-  const refused = thunderfighterEngine.transition(structuredClone(state),{type:"place-number",cell:5});
+  const refused = thunderfighterEngine.transition(structuredClone(state),{type:"place-number",cell:9});
   assert.equal(refused.accepted,false);
   assert.deepEqual(state,before);
   assert.equal(getThunderfighterResult(state).physicalCardCount,54);
