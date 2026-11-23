@@ -37,7 +37,7 @@ Les notices des **dépendances logicielles** renvoient au dépôt et à son mani
 
 ## Tests et points ouverts
 
-- Preuve automatisée : la suite Node + compilation TypeScript/Vite dans `CardForge Web tests`. Renseigner l'exécution verte avant clôture technique.
+- **CI verte vérifiée :** [GitHub Actions #45273008507](https://github.com/JeanLamora75/CardForge/actions/runs/45273008507), commit code `e82e5c60909439433ba6a773495ef2388f50c5c4` : **270 tests passés sur 270, 0 échec** ; compilation TypeScript/Vite réussie ; contrôle de 8 ressources de la PWA réussi.
 - Non attestés : revue visuelle navigateur, technologies d'assistance, vérification finale de toutes les licences, pièces justifiant les permissions d'adaptation et disponibilité des titres.
 - Gate **CAR-43** toujours ouvert. La publication publique ne doit pas découler de cette Story.
 - Scripts `uv` BMAD non exécutés (indisponibles dans l'environnement GitHub).
