@@ -398,10 +398,18 @@ test('privacy deleteGame atomically removes only selected game saves, statistics
     replacement:{...game(),sessionId:'s2',state:{ cards: ['c'] }},
   });
   assert.equal((await storage.readStatistics('clear-the-dungeon')).abandoned,1);
+  await storage.commitTerminal({
+    save: { ...game(), sessionId: 's2', state: { cards: ['c'], outcome: 'loss' } },
+    result: { id: stableResultId('clear-the-dungeon', 's2'),
+      gameId: 'clear-the-dungeon', sessionId: 's2', outcome: 'loss' },
+  });
+  assert.equal((await storage.readStatistics('clear-the-dungeon')).played,3);
   await privacy.deleteGame('clear-the-dungeon');
   assert.equal(await storage.readGame('clear-the-dungeon'),undefined);
   assert.equal(await storage.readStatistics('clear-the-dungeon'),undefined);
   assert.equal(await storage.readResult('r1'),undefined);
+  assert.equal(await storage.readResult(stableResultId('clear-the-dungeon','s1')),undefined);
+  assert.equal(await storage.readResult(stableResultId('clear-the-dungeon','s2')),undefined);
   assert.deepEqual(await storage.readGame('gridcannon'),game('gridcannon',{turn:4}));
   assert.equal((await storage.readStatistics('gridcannon')).lost,1);
   assert.equal((await storage.readResult('g1')).gameId,'gridcannon');
