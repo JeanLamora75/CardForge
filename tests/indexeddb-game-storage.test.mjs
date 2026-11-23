@@ -278,7 +278,7 @@ test('new game cancellation preserves both the old save and its counters', async
   assert.equal(await storage.readResult(stableResultId('grim', 's-grim')), undefined);
 });
 
-test('confirmation replaces an active game atomically and records abandonment, not loss', async () => {
+test('T-18: confirmation replaces an active game atomically and records abandonment, not loss', async () => {
   const { storage } = terminalEnvironment();
   await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
   const choice = await getNewGameChoice(storage, 'grim');
