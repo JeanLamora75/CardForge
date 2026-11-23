@@ -1335,3 +1335,11 @@ Tests ou vérifications explicitement attestés ; pas de conformité déduite d'
 - Le découpage n'établit pas que les moteurs sont implémentés, ni que les tests ou droits sont validés.
 - Hypothèse A-01 (granularité de suppression des données) : à valider avant implémentation de CAR-37. « Bastion Stellaire » reste provisoire ; Les Douze Tyrans est la dénomination produit validée pour le jeu futur.
 - Les Epics sont des lots de valeur et leurs dépendances peuvent être affinées lors des revues techniques/UX, sans rouvrir les décisions de règles closes.
+
+## Décision postérieure au découpage Jira — nom public Gridcannon (23 novembre 2026)
+
+**Identité produit approuvée : Thunderfighter** pour l'adaptation de **Gridcannon Version 2**, avec attribution du jeu original à **Tom Francis**. **« Bastion Stellaire » est abandonné.** Ce changement modifie le libellé public uniquement, **pas** l'identifiant interne, les parties, statistiques ni les règles Mary.
+
+**Conséquence pour le backlog :** les tickets **CAR-4, CAR-22 à CAR-28, CAR-32, CAR-39 et CAR-43** doivent être interprétés avec le titre public **Thunderfighter**. Les descriptions d'origine comportant « Bastion Stellaire reste provisoire » sont **des instantanés historiques non normatifs** dans cette copie du backlog ; les remplacer par Thunderfighter lors de la prochaine révision approuvée dans Jira. La vérification des droits et de la disponibilité du nom **reste un gate avant diffusion**.
+
+Aucune Story ni Epic Jira n'a été modifiée dans le cadre de cette **mise à jour documentaire BMAD**.
