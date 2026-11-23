@@ -31,3 +31,15 @@ Ce document conserve les décisions de solution qui n'appartiennent pas au PRD f
 - Winston : contrat moteur, schémas versionnés, prototype de persistance WebView.
 - Murat : tests exécutables et preuves d'exécution CI.
 - John : validation des hypothèses restantes avec le porteur du projet.
+
+## Précisions validées le 23 novembre 2026 — ratification du porteur
+
+Les trois principes ci-dessous sont désormais approuvés, sans changement d'identifiants des AD préexistants. Leur détail technique complet reste dans [l'architecture de Winston](../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md) ; les besoins observables sont dans le PRD v0.3.
+
+- **AD-02 — B :** contrat commun minimal et moteur de règles **indépendant par jeu**. Signatures TypeScript et modes de validation à définir avec Amelia ; aucune généralisation des règles des jeux.
+- **AD-05 — B :** chaque **carte physique** conserve un identifiant stable unique pendant la partie, y compris deux Jokers distincts. Le rôle contextuel appartient au moteur du jeu et les apparences restent en présentation. Le socle actuel génère 52 cartes ordinaires ; sa prise en charge des jokers du MVP doit être développée et testée.
+- **AD-04 — B :** **IndexedDB transactionnel** retenu pour le Web/PWA derrière un port de persistance, avec sauvegarde/résultat/statistiques en une écriture atomique. Réutilisation dans Android/iOS conditionnée à des tests WebView ; pas de décision de persistance native définitive.
+
+**GC-54 :** question de compatibilité des sauvegardes à instruire par Winston/Amelia. **Pas** une règle de Gridcannon validée par Mary.
+
+**Jalon de passage :** tests des deux moteurs effectivement exécutés et conformités vérifiées, droits de diffusion documentés, fonctionnement FR/EN et hors ligne éprouvé. Le PRD consolidé permet de **préparer** le backlog, pas de présumer la conformité logicielle ni de créer des tickets sans accord.
