@@ -18,7 +18,7 @@ design: './DESIGN.md'
 
 ## Foundation
 
-**Produit :** collection de cinq jeux de cartes solo numériques ; MVP : **Clear the Dungeon Classic 1.1.0** sans réserve facultative et **Gridcannon Version 2** entièrement jouables. Card Capture, Loot the Loop et **Les Douze Tyrans** (adaptation de Regicide en Grèce antique) sont visibles mais « À venir ». « Bastion Stellaire » demeure un nom provisoire pour Gridcannon, ne pas le traiter comme marque approuvée.
+**Produit :** collection de cinq jeux de cartes solo numériques ; MVP : **Clear the Dungeon Classic 1.1.0** sans réserve facultative et **Gridcannon Version 2** entièrement jouables. Card Capture, Loot the Loop et **Les Douze Tyrans** (adaptation de Regicide en Grèce antique) sont visibles mais « À venir ». **« Thunderfighter »** est le nom public validé de Gridcannon (remplace « Bastion Stellaire ») ; la disponibilité juridique du titre demeure à vérifier.
 
 **Supports :** Web responsive/PWA mobile-first, tactile, clavier, souris, portrait/paysage ; préparation future Android/iOS mais aucun design natif livré pour le MVP. Toutes les interactions doivent fonctionner **hors ligne après préparation** et dans **les deux langues françaises et anglaises**. Une seule partie active par jeu, sauvegarde après coup confirmé, reprise à l'état exact, aucune donnée de partie stockée dans des animations.
 
