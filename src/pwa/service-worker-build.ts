@@ -15,6 +15,7 @@ export const PWA_PUBLIC_ASSETS = ["./", "./index.html", "./manifest.webmanifest"
 
 export function createServiceWorkerScript(buildId: string, emittedAssets: readonly string[]): string {
   if (!/^[a-f0-9]{8}$/.test(buildId)) throw new Error("Invalid build identifier");
+  if (emittedAssets.some(path => /(^|\/)\.\.(\/|$)/.test(path) || /^(https?:|\/\/|\/)/.test(path))) throw new Error("Invalid local asset path");
   const assets = [...new Set([...PWA_PUBLIC_ASSETS, ...emittedAssets.map(path => "./" + path.replace(/^\.\//, ""))])];
   if (!assets.some(path => /\.js$/.test(path)) || !assets.some(path => /\.css$/.test(path))) {
     throw new Error("Offline app requires built JS and CSS");
