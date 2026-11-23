@@ -7,7 +7,7 @@ export const THUNDERFIGHTER_RULES_VERSION = 'v2' as const;
 
 export type ThunderfighterPhase =
   | 'initial-figures' | 'replacement-offer'
-  | 'replacement-draw' | 'replacement-figures' | 'placing-figure' | 'playing';
+  | 'replacement-draw' | 'replacement-figures' | 'placing-figure' | 'playing' | 'searching';
 
 export interface ThunderfighterState {
   rulesVersion: typeof THUNDERFIGHTER_RULES_VERSION;
@@ -15,6 +15,10 @@ export interface ThunderfighterState {
   outcome: GameOutcome;
   /** Numeric card drawn for this turn but not yet placed on a grid pile. */
   pendingNumeric?: string | null;
+  /** Numerics skipped while finding the next living figure, in encounter order. */
+  searchBuffer?: string[];
+  /** A figure placed during search returns its held numerics under the remaining draw pile. */
+  placingFromSearch?: boolean;
   /** Armor cards stay linked to their physical target, never copied. */
   armorCards?: { figureId: string; cardId: string }[];
   /** Last successful targets from one simultaneous attack event. */
@@ -40,7 +44,10 @@ export type ThunderfighterAction =
   | Readonly<{ type: 'start-replacement'; cell: number }>
   | Readonly<{ type: 'draw-replacement' }>
   | Readonly<{ type: 'draw-card' }>
-  | Readonly<{ type: 'place-number'; cell: number }>;
+  | Readonly<{ type: 'place-number'; cell: number }>
+  | Readonly<{ type: 'extract'; cardId: string; cell: number }>
+  | Readonly<{ type: 'reassign'; cardId: string; from: number; to: number }>
+  | Readonly<{ type: 'draw-search' }>;
 
 const cards = makeDeckWithJokers();
 const byId = new Map(cards.map(card => [card.id, card]));
@@ -171,7 +178,7 @@ function validate(value: unknown): ValidationResult {
   if (!record(value)) return { valid: false, errors: ['state must be an object'] };
   const s = value;
   if (s.rulesVersion !== THUNDERFIGHTER_RULES_VERSION) errors.push('incorrect rules version');
-  if (!['initial-figures','replacement-offer','replacement-draw','replacement-figures','placing-figure','playing'].includes(String(s.phase)))
+  if (!['initial-figures','replacement-offer','replacement-draw','replacement-figures','placing-figure','playing','searching'].includes(String(s.phase)))
     errors.push('invalid preparation phase');
   if (s.outcome !== 'in-progress' && s.outcome !== 'win') errors.push('invalid outcome');
   if (s.outcome === 'win' && s.phase !== 'playing') errors.push('invalid victory phase');
@@ -179,6 +186,7 @@ function validate(value: unknown): ValidationResult {
   if (!Array.isArray(s.figureSlots) || s.figureSlots.length !== 12) errors.push('invalid exterior positions');
   if (!Array.isArray(s.drawPile) || !Array.isArray(s.pendingFigures) ||
       !Array.isArray(s.specialReserve) || !Array.isArray(s.spentSpecials) ||
+      (s.searchBuffer !== undefined && !Array.isArray(s.searchBuffer)) ||
       (s.armorCards !== undefined && !Array.isArray(s.armorCards)) ||
       (s.lastShot !== undefined && !Array.isArray(s.lastShot))) errors.push('invalid card zones');
   if (errors.length) return { valid: false, errors };
@@ -189,6 +197,16 @@ function validate(value: unknown): ValidationResult {
       (!isNumber(state.pendingNumeric) || state.phase !== 'playing' || state.outcome !== 'in-progress'))
     errors.push('invalid pending numeric');
   if ((state.phase !== 'playing' && state.pendingNumeric != null)) errors.push('numeric drawn during preparation');
+  if ((state.searchBuffer ?? []).some(id => typeof id !== 'string' || !isNumber(id)))
+    errors.push('invalid search buffer');
+  if (state.phase === 'searching' && (
+      state.pendingNumeric != null || state.pendingFigures.length || state.outcome !== 'in-progress' ||
+      state.figureSlots.some(id => id !== null && !(state.defeatedFigures ?? []).includes(id))))
+    errors.push('invalid search phase');
+  if ((state.searchBuffer?.length ?? 0) > 0 && state.phase !== 'searching' &&
+      !(state.phase === 'placing-figure' && state.placingFromSearch))
+    errors.push('orphaned search buffer');
+  if (state.placingFromSearch && state.phase !== 'placing-figure') errors.push('orphaned search placement');
   const armor = state.armorCards ?? [];
   if (armor.some(item => !record(item) || !isFigure(item.figureId) || !isNumber(item.cardId) ||
       !state.figureSlots.includes(item.figureId))) errors.push('invalid figure armor');
@@ -199,8 +217,8 @@ function validate(value: unknown): ValidationResult {
       state.victoryScore !== state.specialReserve.length)) errors.push('invalid victory');
   if (state.outcome === 'in-progress' && state.victoryScore != null) errors.push('premature score');
   const emptyIsAllowed = state.phase === 'replacement-draw' ? empty.length === 1
-    : state.phase === 'playing' || state.phase === 'placing-figure' ? true : empty.length === 0;
-  if (!emptyIsAllowed || (state.phase !== 'playing' && state.phase !== 'placing-figure') && state.grid.some(p => p.length > 1))
+    : state.phase === 'playing' || state.phase === 'placing-figure' || state.phase === 'searching' ? true : empty.length === 0;
+  if (!emptyIsAllowed || !['playing','placing-figure','searching'].includes(state.phase) && state.grid.some(p => p.length > 1))
     errors.push('invalid preparation grid occupancy');
   if (state.pendingFigures.some(id => typeof id !== 'string' || !isFigure(id)) ||
       state.figureSlots.some(id => id !== null && (typeof id !== 'string' || !isFigure(id)))) errors.push('invalid figure zone');
@@ -212,14 +230,16 @@ function validate(value: unknown): ValidationResult {
     errors.push('invalid defeated figure status');
   if ([...state.specialReserve, ...state.spentSpecials].some(id => typeof id !== 'string' || !isSpecial(id)))
     errors.push('invalid special zone');
-  if (state.spentSpecials.length) errors.push('special actions forbidden in preparation');
+  if (state.spentSpecials.some(id => state.specialReserve.includes(id))) errors.push('special simultaneously spent and available');
+  if (state.spentSpecials.length && !['playing','searching','placing-figure'].includes(state.phase))
+    errors.push('special actions forbidden in preparation');
   if (typeof state.replacementUsed !== 'boolean' ||
       (state.replacementSlot !== null &&
        (!Number.isInteger(state.replacementSlot) || state.replacementSlot < 0 || state.replacementSlot > 8)))
     errors.push('invalid replacement metadata');
   if ((state.phase === 'replacement-draw' || state.phase === 'replacement-figures') !==
       (state.replacementUsed && state.replacementSlot !== null)) {
-    if (state.phase !== 'playing' && state.phase !== 'replacement-offer' && state.phase !== 'initial-figures')
+    if (!['playing','searching','replacement-offer','initial-figures'].includes(state.phase))
       errors.push('replacement phase mismatch');
   }
   if (state.phase === 'replacement-draw' && empty[0] !== state.replacementSlot) errors.push('wrong empty replacement cell');
@@ -229,11 +249,12 @@ function validate(value: unknown): ValidationResult {
     errors.push('unplaced figures outside placement phase');
   if (state.phase === 'replacement-offer' && state.replacementUsed) errors.push('replacement already used');
   if (state.phase === 'initial-figures' && state.replacementUsed) errors.push('replacement too early');
-  if ((state.phase === 'playing' || state.phase === 'placing-figure') && state.replacementSlot !== null) errors.push('replacement not finished');
+  if ((state.phase === 'playing' || state.phase === 'placing-figure' || state.phase === 'searching') && state.replacementSlot !== null) errors.push('replacement not finished');
   const used = [
     ...state.grid.flat(), ...state.figureSlots.filter((id): id is string => typeof id === 'string'),
     ...state.pendingFigures, ...state.drawPile, ...state.specialReserve, ...state.spentSpecials,
     ...(state.pendingNumeric ? [state.pendingNumeric] : []), ...armor.map(a => a.cardId),
+    ...(state.searchBuffer ?? []),
   ];
   if (used.length !== 54 || new Set(used).size !== 54 || used.some(id => !allIds.has(id)))
     errors.push('missing, duplicate or unknown card');
@@ -257,11 +278,48 @@ function createInitialState(setup: ThunderfighterSetup): ThunderfighterState {
     rulesVersion: THUNDERFIGHTER_RULES_VERSION, phase: pendingFigures.length ? 'initial-figures' : 'replacement-offer',
     outcome: 'in-progress', grid, figureSlots: Array(12).fill(null), defeatedFigures: [], pendingFigures,
     drawPile: shuffled.slice(cursor), specialReserve, spentSpecials: [],
-    pendingNumeric: null, armorCards: [], lastShot: [], victoryScore: null,
+    pendingNumeric: null, searchBuffer: [], placingFromSearch: false,
+    armorCards: [], lastShot: [], victoryScore: null,
     replacementSlot: null, replacementUsed: false,
   };
   if (!validate(state).valid) throw new Error('Invalid initial Gridcannon V2 state');
   return state;
+}
+/** In a reallocation, the moved card is tested against the destination's actual current top. */
+function legalReassignments(s: Readonly<ThunderfighterState>, cardId: string): ThunderfighterAction[] {
+  if (!s.specialReserve.includes(cardId) || !cardId.startsWith('joker-')) return [];
+  const moves: ThunderfighterAction[] = [];
+  for (let from = 0; from < 9; from++) {
+    const moving = s.grid[from].at(-1);
+    if (!moving) continue;
+    for (let to = 0; to < 9; to++) {
+      if (to === from) continue;
+      const destinationTop = s.grid[to].at(-1);
+      if (!destinationTop || value(destinationTop) <= value(moving))
+        moves.push({ type: 'reassign', cardId, from, to });
+    }
+  }
+  return moves;
+}
+function specialActions(s: Readonly<ThunderfighterState>): ThunderfighterAction[] {
+  const actions: ThunderfighterAction[] = [];
+  for (const cardId of s.specialReserve) {
+    if (cardId.startsWith('joker-')) actions.push(...legalReassignments(s,cardId));
+    else if (isSpecial(cardId))
+      for (let cell = 0; cell < 9; cell++)
+        if (s.grid[cell].length) actions.push({type:'extract',cardId,cell});
+  }
+  return actions;
+}
+function applyShots(s: ThunderfighterState, cell: number): ThunderfighterState {
+  // Both axes are computed from the same post-placement state, then merged atomically.
+  const targets = getShotTargets(s,cell);
+  const defeatedFigures = [...(s.defeatedFigures ?? []), ...targets];
+  const won = defeatedFigures.length === 12;
+  const livingRemain = s.figureSlots.some(id => id !== null && !defeatedFigures.includes(id));
+  const phase = !won && !livingRemain && s.phase === 'playing' ? 'searching' : s.phase;
+  return {...s, phase, defeatedFigures,lastShot:targets,
+    outcome:won?'win':'in-progress',victoryScore:won?s.specialReserve.length:null};
 }
 function getLegalActions(s: Readonly<ThunderfighterState>): readonly ThunderfighterAction[] {
   if (!validate(s).valid || s.outcome !== 'in-progress') return [];
@@ -270,13 +328,15 @@ function getLegalActions(s: Readonly<ThunderfighterState>): readonly Thunderfigh
   if (s.phase === 'replacement-offer')
     return [{ type: 'skip-replacement' }, ...s.grid.map((_, cell) => ({ type: 'start-replacement' as const, cell }))];
   if (s.phase === 'replacement-draw' && s.drawPile.length) return [{ type: 'draw-replacement' }];
+  if (s.phase === 'searching') return [...specialActions(s), ...(s.drawPile.length ? [{ type: 'draw-search' as const }] : [])];
   if (s.phase === 'playing') {
+    const specials = specialActions(s);
     if (s.pendingNumeric) {
       const numeric = value(s.pendingNumeric);
-      return s.grid.flatMap((pile, cell) =>
-        !pile.length || value(pile.at(-1)!) <= numeric ? [{ type: 'place-number' as const, cell }] : []);
+      return [...specials, ...s.grid.flatMap((pile, cell) =>
+        !pile.length || value(pile.at(-1)!) <= numeric ? [{ type: 'place-number' as const, cell }] : [])];
     }
-    if (s.drawPile.length) return [{ type: 'draw-card' }];
+    return [...specials, ...(s.drawPile.length ? [{ type: 'draw-card' as const }] : [])];
   }
   return [];
 }
@@ -286,6 +346,30 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
     a.type === action.type && Object.keys(a).length === Object.keys(action).length &&
     Object.entries(a).every(([key, value]) => (action as unknown as Record<string, unknown>)[key] === value)))
     return reject('illegal action or incomplete preparation');
+  if (action.type === 'extract') {
+    const grid=s.grid.map(p=>[...p]);
+    const removed=grid[action.cell];
+    grid[action.cell]=[];
+    const reserve=s.specialReserve.filter(id=>id!==action.cardId);
+    return {accepted:true,state:{...s,grid,drawPile:[...s.drawPile,...removed.toReversed()],
+      specialReserve:reserve,spentSpecials:[...s.spentSpecials,action.cardId],lastShot:[]}};
+  }
+  if (action.type === 'reassign') {
+    const grid=s.grid.map(p=>[...p]);
+    const card=grid[action.from].pop()!;
+    grid[action.to].push(card);
+    const reserve=s.specialReserve.filter(id=>id!==action.cardId);
+    const moved:ThunderfighterState={...s,grid,specialReserve:reserve,
+      spentSpecials:[...s.spentSpecials,action.cardId],lastShot:[]};
+    return {accepted:true,state: s.phase==='playing' ? applyShots(moved,action.to) : moved};
+  }
+  if (action.type === 'draw-search') {
+    const [id,...drawPile]=s.drawPile;
+    if (isSpecial(id)) return {accepted:true,state:{...s,drawPile,specialReserve:[...s.specialReserve,id]}};
+    if (isFigure(id)) return {accepted:true,state:{...s,drawPile,pendingFigures:[id],
+      phase:'placing-figure',placingFromSearch:true}};
+    return {accepted:true,state:{...s,drawPile,searchBuffer:[...(s.searchBuffer??[]),id]}};
+  }
   if (action.type === 'draw-card') {
     const id = s.drawPile[0], drawPile = s.drawPile.slice(1);
     if (isFigure(id)) return { accepted: true, state: { ...s, drawPile,
@@ -298,17 +382,18 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
     const grid = s.grid.map(p => [...p]);
     grid[action.cell].push(s.pendingNumeric!);
     const postPlacement: ThunderfighterState = { ...s, grid, pendingNumeric: null };
-    const targets = getShotTargets(postPlacement, action.cell);
-    const defeatedFigures = [...(s.defeatedFigures ?? []), ...targets];
-    const won = defeatedFigures.length === 12;
-    return { accepted: true, state: { ...postPlacement, defeatedFigures, lastShot: targets,
-      outcome: won ? 'win' : 'in-progress', victoryScore: won ? s.specialReserve.length : null } };
+    return {accepted:true,state:applyShots(postPlacement,action.cell)};
   }
   if (action.type === 'place-figure') {
     const figureSlots = [...s.figureSlots]; figureSlots[action.slot] = s.pendingFigures[0];
     const pendingFigures = s.pendingFigures.slice(1);
     const phase = pendingFigures.length ? s.phase : s.phase === 'initial-figures' ? 'replacement-offer' : 'playing';
-    const next = { ...s, figureSlots, pendingFigures, phase, replacementSlot: phase === 'playing' ? null : s.replacementSlot };
+    const searchCompleted = phase === 'playing' && s.placingFromSearch;
+    const next = { ...s, figureSlots, pendingFigures, phase,
+      drawPile: searchCompleted ? [...s.drawPile,...(s.searchBuffer??[])] : s.drawPile,
+      searchBuffer: searchCompleted ? [] : (s.searchBuffer??[]),
+      placingFromSearch: searchCompleted ? false : (s.placingFromSearch??false),
+      replacementSlot: phase === 'playing' ? null : s.replacementSlot };
     return { accepted: true, state: next };
   }
   if (action.type === 'skip-replacement') return { accepted: true, state: { ...s, phase: 'playing' } };
