@@ -31,7 +31,7 @@ function twoTargets() {
   return {a:base.visibleMonsters[0],b:base.visibleMonsters[1],
     state:equip(base,['clubs-8','diamonds-9','hearts-10'])};
 }
-test('CTD-ARB-01 two distinct partial attacks retain physical card identities',()=>{
+test('CTD-T31 / CTD-ARB-01 two distinct partial attacks retain physical card identities',()=>{
   const {a,b,state}=twoTargets();
   let s=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
   s=act(s,{type:'place-power',cardId:'diamonds-9',monsterId:b});
@@ -90,7 +90,7 @@ test('CTD-ARB-07 a trigger requires two adequate preceding powers',()=>{
   const next=act(s,{type:'place-power',cardId:'clubs-8',monsterId});
   rejected(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
 });
-test('CTD-ARB-06 complete attack removes three powers and immediately reveals next monster',()=>{
+test('CTD-T26 / CTD-T40 / CTD-T67 / CTD-ARB-06 complete attack removes three powers and immediately reveals next monster',()=>{
   const base=first(),monsterId=base.visibleMonsters[0];
   const suit=monsterId.split('-')[0],trigger=suit+'-2';
   let s=equip(base,['clubs-8','diamonds-9',trigger]);
