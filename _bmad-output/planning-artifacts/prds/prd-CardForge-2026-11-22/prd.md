@@ -1,8 +1,8 @@
 ---
 title: 'PRD — CardForge'
-status: draft-for-review
+status: consolidated-for-product-validation
 created: '2026-11-22'
-updated: '2026-11-22'
+updated: '2026-11-23'
 owner: 'John — Product Manager BMAD'
 project: CardForge
 sources:
@@ -12,11 +12,54 @@ sources:
   - '../../clear-the-dungeon-rule-test-matrix.md'
   - '../../game-rules/clear-the-dungeon.md'
   - '../../game-rules/gridcannon.md'
+  - '../../game-rules/card-capture.md'
+  - '../../game-rules/loot-the-loop.md'
+  - '../../game-rules/regicide.md'
 ---
 
 # PRD — CardForge
 
-**Version : 0.2 — périmètre initial à deux jeux, projet de référence à valider par le porteur du projet.** Ce document exprime le *quoi* et les comportements observables. Les contraintes de réalisation AD-01 à AD-12 sont consignées dans l'architecture Winston, et non redécidées ici.
+**Version : 0.3 — consolidation du 23 novembre 2026, intégrant les derniers arbitrages Mary et les validations AD-02/04/05.** Ce document exprime le *quoi* et les comportements observables. Les contraintes de réalisation AD-01 à AD-12 sont consignées dans l'architecture Winston, et non redécidées ici.
+
+## Référence actuelle — Consolidation John du 23 novembre 2026
+
+Cette synthèse fait **foi pour la préparation du backlog**. Les compléments chronologiques datés en fin de document restent conservés pour la traçabilité, mais leurs mentions historiques de décisions « ouvertes » sont dépassées lorsqu'un référentiel Mary ultérieur les clôture.
+
+| Sujet | Décision/statut courant | Source |
+| --- | --- | --- |
+| MVP | **Clear the Dungeon Classic 1.1.0 sans réserve facultative** et **Gridcannon Version 2** entièrement jouables dans le premier Web/PWA | §6 ; Product Brief |
+| Clear the Dungeon | Joker à **puissance 10 fixe** ; **CTD-ARB-01 à 14 clos** pour CardForge, y compris poses provisoires, verrouillage, main vide et fin de pioche | [Mary — règles CTD §11–25](../../game-rules/clear-the-dungeon.md) |
+| Gridcannon V2 | **Cadrage documentaire terminé**, GC-01 à GC-21 de mécanique/précision clos et GC-22 à GC-53 de portée UX/transverse documentés ; statut normatif actuel au **§68**. GC-54 reste une proposition technique à instruire | [Mary — règles GC §68](../../game-rules/gridcannon.md) |
+| Jeux futurs | [Card Capture](../../game-rules/card-capture.md), [Loot the Loop](../../game-rules/loot-the-loop.md) et adaptation de [Regicide — « Les Douze Tyrans », Grèce antique](../../game-rules/regicide.md) disposent de référentiels séparés, mais sont **hors du MVP** | Documents Mary propres à chaque jeu |
+| Titre de Gridcannon | « **Bastion Stellaire** » reste **provisoire**, attribution à Tom Francis et vérification de disponibilité avant publication | Mary GC-17 |
+| Langues | **FR et EN complets dans le MVP**, préférence manuelle persistante, détection, repli anglais et usage hors ligne ; au moins **dix langues à terme**, sans imposer les dix dès le MVP | GC-26 à GC-28 |
+| Conformité | **Aucun moteur ni scénario de conformité exécuté**. La clôture du cadrage n'est pas une certification des conventions CardForge par les auteurs ; sources primaires, tests et droits restent des **jalons de sortie** | Mary §68 et matrices |
+| Plateformes | Web/PWA d'abord, préparation Android/iOS par l'architecture, validation native séparée | AD-01/12 |
+
+### Trois arbitrages techniques explicitement validés
+
+Ces décisions ne modifient pas les règles des jeux et n'imposent pas de signature TypeScript définitive. Elles font foi en tant que **contraintes d'architecture** via [Winston — AD-02/05/04](../../architecture/architecture-CardForge-2026-11-22/ARCHITECTURE-SPINE.md) et son [relais à John](../../architecture/architecture-CardForge-2026-11-22/HANDOFF-JOHN-2026-11-23.md).
+
+- **AD-02, option B :** contrat commun minimal et **moteurs de règles indépendants par jeu**. Le socle n'applique jamais les mécaniques spécifiques à un autre jeu (FR-05 à FR-09, FR-33).
+- **AD-05, option B :** **identifiant physique unique et stable** pour chaque carte au sein de la partie, **Jokers distincts compris** ; rang/enseigne, fonction contextuelle et représentation visuelle sont séparés. Aucune carte perdue, dupliquée ou substituée (FR-07/11/18).
+- **AD-04, option B :** **IndexedDB transactionnel pour Web/PWA**, derrière un port ; sauvegarde, clôture, résultat et statistiques associées doivent rester atomiques et idempotents (FR-16 à FR-25). Compatibilité WebView Android/iOS à tester avant réutilisation de cet adaptateur.
+
+### Exigences observables et critères d'acceptation transversaux
+
+1. Les deux jeux disposent chacun de leur moteur ; seules les **actions légalement possibles** sont validées et leur effet est déterministe. Une action invalide ou une prévisualisation ne change aucun état métier (Gridcannon GC-23, GC-30, GC-47, GC-52).
+2. Chaque partie ordinaire du MVP part de **54 cartes physiques distinctes** (52 + 2 Jokers) ; l'identité de chaque carte est stable dans toutes les zones autorisées, selon les particularités des deux jeux.
+3. Une seule sauvegarde active **par jeu** ; même ordre exact de pioche, même grille, mêmes piles, mêmes phases intermédiaires et ressources après reprise. Aucun remixage à la restauration.
+4. L'enregistrement d'une action validée est durable seulement après confirmation de persistance ; une issue terminale ou un abandon est **compté une seule fois**, même en cas de rafraîchissement, double clic ou incident d'écriture. Une transaction échouée ne laisse aucun résultat partiellement comptabilisé.
+5. Tutoriels facultatifs, règles, aides, résultats, erreurs et menus disponibles en **français et anglais** ; parties hors ligne après installation complète, navigation tactile/clavier et illustrations sans effet mécanique.
+6. Un jeu n'est affiché « **Disponible** » qu'avec des **tests de conformité réellement réussis**, vérifications de fidélité et autorisations de diffusion nécessaires. Le catalogue actuel reste un prototype ; cette mise à jour ne constitue pas une livraison jouable.
+
+### Questions encore légitimes et relais
+
+- **John/Sally :** affiner les parcours, le périmètre de suppression des données (A-01) et les mesures de performance à valider après prototype ; ne pas rouvrir les arbitrages CTD/GC clos.
+- **Winston/Amelia :** définir les types exacts de contrat moteur, le schéma/version des sauvegardes, l'idempotence et GC-54, puis éprouver IndexedDB en WebView.
+- **Murat :** rendre exécutables les scénarios de Mary et contrôler les transactions, identités des cartes, phases, issues et reprise.
+- **Avant publication :** preuves de conformité, droits/permissions, crédits et titres.
+- **Jira CAR :** le découpage en Epics/User Stories est **à préparer et à soumettre pour accord** ; aucune création ou modification autorisée implicitement par ce document.
 
 ## 0. Objet et sources
 
@@ -89,11 +132,11 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 **Deux Jeux jouables dès la V1 : Clear the Dungeon Classic 1.1.0 (sans réserve facultative et avec jokers) et Gridcannon (Version 2 validée le 22 novembre 2026).** Chacun doit disposer de son moteur indépendant et satisfaire les mêmes fonctions transversales. Réalise UJ-1, UJ-2, UJ-3.
 
-**FR-05 — Créer une Partie réglementaire.** Pour chacun des deux Jeux, une nouvelle Partie utilise la configuration et les conditions conformes aux règles originales retenues. **[BLOQUANT RÈGLES]** Les matrices de conformité de Clear the Dungeon et Gridcannon doivent être rapprochées de leurs sources primaires avant acceptation de leurs moteurs respectifs.
+**FR-05 — Créer une Partie réglementaire.** Pour chacun des deux Jeux, une nouvelle Partie utilise la configuration et les conditions conformes aux règles originales retenues. **[GATE CONFORMITÉ]** Le cadrage CardForge des deux jeux est clos ; l'acceptation des moteurs exige l'exécution des scénarios et la vérification de fidélité avec les sources primaires. Les conventions CardForge ne sont pas attribuées aux auteurs.
 
-**FR-06 — Proposer uniquement les actions autorisées.** Le joueur peut sélectionner les cartes et cibles puis soumettre un coup ; la décision de validité relève exclusivement des Règles du jeu. Une action invalide ne modifie pas l'état de la Partie et retourne une explication compréhensible.
+**FR-06 — Proposer uniquement les actions autorisées.** Le joueur peut sélectionner les cartes et cibles puis soumettre un coup ; la décision de validité relève exclusivement des Règles du jeu. Une action invalide ne modifie pas l'état de la Partie et retourne une explication compréhensible. Une simple sélection/prévisualisation n'est pas une commande métier confirmée : aucune carte, ressource, victoire/défaite ou sauvegarde de coup ne change avant la validation de l'action (Gridcannon GC-23/30/47/52 ; AD-02/10).
 
-**FR-07 — Résoudre les effets déterministes.** Une action acceptée met à jour les cartes, les éléments de plateau, la main, la pioche et les phases pertinents selon les Règles du jeu concerné. Une même Partie et une même suite d'actions produisent la même issue, sans nouveau mélange lors de la reprise.
+**FR-07 — Résoudre les effets déterministes.** Une action acceptée met à jour les cartes, les éléments de plateau, la main, la pioche et les phases pertinents selon les Règles du jeu concerné. Une même Partie et une même suite d'actions produisent la même issue, sans nouveau mélange lors de la reprise. Chaque carte physique conserve son identifiant unique et stable dans toutes les zones autorisées, Jokers distincts inclus. Leur rôle contextuel relève du moteur spécifique au jeu, jamais du visuel (AD-02/05).
 
 **FR-08 — Déterminer l'issue.** Le moteur établit seul victoire et défaite selon les Règles du jeu, y compris les cas limites documentés ; aucune mécanique de difficulté ou capacité nouvelle n'est créée par le thème.
 
@@ -119,11 +162,11 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 ### 4.5 Sauvegarde, reprise et résilience
 
-**FR-16 — Enregistrer automatiquement.** Après chaque action valide, l'application enregistre localement la Sauvegarde de la Partie, sans bouton de sauvegarde manuel. Les actions sont traitées dans un ordre contrôlé ; le statut « Enregistré » n'est affiché qu'après confirmation effective de persistance.
+**FR-16 — Enregistrer automatiquement.** Après chaque action valide, l'application enregistre localement la Sauvegarde de la Partie, sans bouton de sauvegarde manuel. Les actions sont traitées dans un ordre contrôlé ; le statut « Enregistré » n'est affiché qu'après confirmation effective de persistance. Les modifications de partie, de résultat et de statistiques associées forment une opération atomique dans la persistance transactionnelle Web/PWA (AD-04).
 
 **FR-17 — Une Partie active par Jeu.** Il existe au plus une Sauvegarde de Partie active pour chaque Jeu, indépendamment des autres Jeux.
 
-**FR-18 — Reprendre exactement.** Le joueur peut restaurer une Sauvegarde compatible et valide, avec ordre exact des cartes, position du plateau, main, phase et état des mécanismes propres au Jeu.
+**FR-18 — Reprendre exactement.** Le joueur peut restaurer une Sauvegarde compatible et valide, avec ordre exact des cartes, position du plateau, main, phase et état des mécanismes propres au Jeu. L'identité des cartes, les états provisoires légalement reprenables, les réserves de ressources et les zones ordonnées doivent aussi être restitués, après vérification des invariants (AD-05/09).
 
 **FR-19 — Confirmer avant remplacement.** Si une Partie active existe, Nouvelle partie déclenche une demande de confirmation ; Annuler conserve l'état initial, Confirmer crée une nouvelle Partie et clôt l'ancienne comme abandon une seule fois, sans toucher aux autres Jeux.
 
@@ -137,7 +180,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 **FR-23 — Distinguer abandon et défaite.** Un abandon est uniquement le résultat d'une action volontaire confirmée, y compris un remplacement de Partie active ; fermer ou quitter l'écran ne compte jamais comme abandon.
 
-**FR-24 — Comptabiliser une seule fois.** Chaque Résultat est enregistré une seule fois, même après rafraîchissement, reprise ou répétition d'une commande. Les Tutoriels ne comptent pas.
+**FR-24 — Comptabiliser une seule fois.** Chaque Résultat est enregistré une seule fois, même après rafraîchissement, reprise ou répétition d'une commande. Les Tutoriels ne comptent pas. Une double commande ou un échec de transaction ne doivent produire ni double résultat ni compteur partiellement écrit (AD-04/10).
 
 **FR-25 — Présenter les Statistiques par Jeu.** Afficher victoires, défaites, abandons, total des Parties closes, taux de victoire = victoires/(victoires+défaites) et « — » quand le dénominateur vaut zéro. Une meilleure performance n'est affichée que si la règle officielle du Jeu définit une mesure pertinente.
 
@@ -163,7 +206,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 - **NFR-01 — Fidélité :** chaque règle officialisée doit être associée à au moins un test métier, et chaque cas limite du référentiel reçoit un statut explicite avant la déclaration « Jeu jouable ».
 - **NFR-02 — Déterminisme :** après reprise d'une Sauvegarde, les mêmes actions produisent le même état et la même issue, y compris l'ordre de la pioche.
-- **NFR-03 — Intégrité :** les transitions de Partie et le Résultat associé sont persistés de manière cohérente ; aucune double comptabilisation après interruption ou nouvelle exécution.
+- **NFR-03 — Intégrité :** les cartes physiques sont uniques et conservées ; transitions de partie, résultats et statistiques correspondantes sont persistés atomiquement, sans perte ni double comptabilisation après interruption, reprise ou double commande (AD-04/05).
 - **NFR-04 — Résilience :** migration/écriture échouée ne détruit pas silencieusement la Sauvegarde existante ; toute erreur durable est explicitement signalée.
 - **NFR-05 — Accessibilité :** usage sur smartphone en portrait et au clavier ; cartes lisibles avec un contraste suffisant, valeurs non codées par couleur seule, respect de la préférence système de mouvement réduit.
 - **NFR-06 — Internationalisation :** l'interface et les aides du MVP sont disponibles en français et anglais ; aucune chaîne de règles originale n'est traduite au point d'en modifier le sens.
@@ -177,7 +220,7 @@ Le Catalogue est l'accueil ; les fiches de Jeux sont immersives mais leurs fonct
 
 ### 6.1 MVP Web/PWA — inclus
 
-Catalogue immersif, **fiches et Parties complètes pour Clear the Dungeon et Gridcannon**, moteurs distincts, Classic 1.1.0 sans réserve pour Clear the Dungeon, **Gridcannon Version 2 retenue ; ses cas limites à confirmer avant le développement complet**, illustrations fixes propres aux deux univers, tutoriels facultatifs propres à chacun, règles, aide, Sauvegardes et Statistiques indépendantes par Jeu, préférences FR/EN, Ressources embarquées et hors ligne PWA, gestion des incidents et tests de conformité des deux moteurs.
+Catalogue immersif, **fiches et Parties complètes pour Clear the Dungeon et Gridcannon**, moteurs distincts, Classic 1.1.0 sans réserve pour Clear the Dungeon, **Gridcannon Version 2 retenue ; cadrage métier clos par Mary, tests et fidélité à vérifier avant la livraison**, illustrations fixes propres aux deux univers, tutoriels facultatifs propres à chacun, règles, aide, Sauvegardes et Statistiques indépendantes par Jeu, préférences FR/EN, Ressources embarquées et hors ligne PWA, gestion des incidents et tests de conformité des deux moteurs.
 
 ### 6.2 Exclusions V1
 
@@ -204,8 +247,8 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 | Sujet | Dépendance / contrôle |
 | --- | --- |
-| Règles Classic 1.1.0 | Mary doit confirmer ordre des phases, jokers, épuisement de pioche et cas limites ; sans cela, pas d'acceptation du moteur complet |
-| Règles Gridcannon | Source primaire de Tom Francis identifiée et Version 2 documentée dans le référentiel Mary ; **cas limites G-01 à G-05 et titre/crédits publics G-06 restent bloquants ; Version 2 validée** avant d'affirmer la conformité et la diffusion |
+| Règles Classic 1.1.0 | CTD-ARB-01 à 14 et Joker 10 fixés pour CardForge ; tests à exécuter, conformité au texte primaire et distinctions entre conventions et source à vérifier avant sortie |
+| Règles Gridcannon | Version 2 et cadrage métier clos (Mary §68) ; exécuter la matrice et contrôler la fidélité des conventions ; « Bastion Stellaire » reste un titre de travail, et les crédits/droits se vérifient séparément avant publication |
 | Livraison à deux jeux | Deux moteurs, deux tutoriels et deux univers d'illustrations augmentent le périmètre ; les composants communs doivent être utilisables par les deux sans rapprocher artificiellement leurs règles |
 | Autorisation | Accord de l'auteur annoncé par le porteur du projet, sous condition de gratuité ; conserver/clarifier sa portée exacte et l'attribution avant diffusion |
 | Créations | Vérifier droits des illustrations, sons, polices et autres Ressources avant distribution |
@@ -217,9 +260,9 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 ## 9. Questions ouvertes
 
-- **Q-01 [bloquante pour le moteur] :** texte primaire intégral et résolution des cas limites de Clear the Dungeon Classic 1.1.0.
+- **Q-01 [preuve de conformité] :** vérifier la fidélité des conventions CTD validées aux sources primaires et exécuter les scénarios ; pas de nouvel arbitrage produit demandé.
 - **Q-02 [bloquante pour publication] :** formulation conservable de l'accord de Mark S. Ball et périmètre précis (nom, Web, Android, iOS, crédits, territoires).
-- **Q-08 [bloquante pour Gridcannon] :** les règles originales **Version 2** ont été retrouvées dans la publication primaire de Tom Francis et étudiées par Mary ; adoption de la Version 2 validée le 22 novembre 2026 ; arbitrer les cas limites G-01 à G-05 documentés, ainsi que le **nom public distinct** et les crédits de l'adaptation avant diffusion.
+- **Q-08 [preuve de conformité et diffusion] :** le cadrage Gridcannon Version 2 est clos (§68 Mary). Exécuter les tests et vérifier les conventions CardForge ; titre « Bastion Stellaire » provisoire, droits et crédits à vérifier avant publication.
 - **Q-09 :** préciser le périmètre minimum des deux tutoriels et de leurs ressources illustrées pour une V1 à deux Jeux, sans supprimer les fonctions validées.
 - **Q-03 :** valeurs cibles concrètes de fluidité, démarrage et tailles d'écran à tester.
 - **Q-04 :** granularité souhaitée de suppression des données locales.
@@ -235,10 +278,14 @@ Les cibles de performance chiffrées et le dispositif d'évaluation de l'utilisa
 
 ## 11. Statut du document et prochain relais
 
-- **Validé :** orientation produit et décisions architecturales AD-01 à AD-12.
+- **Validé :** orientation produit et décisions architecturales AD-01 à AD-12, y compris la ratification explicite des options B pour AD-02, AD-05 et AD-04 le 23 novembre 2026.
 - **Rédigé, à approuver :** ce PRD comme périmètre de référence.
-- **Non validé :** règles complètes de Clear the Dungeon, cas limites de Gridcannon et conditions de son nom public/crédits, portée documentée de la permission de Clear the Dungeon, performance et appareils cibles.
-- **Prochaine étape :** validation fonctionnelle du PRD, puis découpage BMAD en Epics et User Stories petites et testables ; aucune création Jira sans autorisation explicite.
+- **Cadrage des règles clos pour CardForge :** CTD-ARB-01 à 14, joker 10 fixe et Gridcannon V2 (Mary §68), sans preuve de conformité exécutable. **Restent à valider pour la diffusion :** tests, fidélité des conventions, droits, titre/crédits, performances et appareils cibles.
+- **Prochaine étape :** validation fonctionnelle du PRD consolidé, préparation d'Epics et User Stories petites et testables, puis autorisation explicite avant toute création ou modification dans Jira CAR.
+
+## Historique des décisions du 22 novembre 2026 — états intermédiaires conservés
+
+> **Note de lecture :** les annonces « ouvert », « à trancher » ou « prochaine décision » ci-dessous correspondent à des **étapes historiques** et ne rouvrent aucun arbitrage déjà validé. Le statut consolidé en tête du PRD et les **dernières décisions Mary** priment.
 
 ## Complément Mary — revue approfondie des règles (22 novembre 2026)
 
