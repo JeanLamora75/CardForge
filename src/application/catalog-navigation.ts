@@ -25,8 +25,14 @@ export async function readCatalogGameProgress(
   if (terminal && (terminal.gameId !== gameId || terminal.sessionId !== save.sessionId)) {
     throw new Error('Inconsistent saved game result');
   }
+  const state = save.state;
+  const savedOutcome = typeof state === 'object' && state !== null && 'outcome' in state
+    ? state.outcome : undefined;
+  if (savedOutcome !== 'in-progress' && savedOutcome !== 'win' && savedOutcome !== 'loss') {
+    throw new Error('Inconsistent saved game outcome');
+  }
   return {
-    indicator: terminal ? 'finished' : 'active',
+    indicator: terminal || savedOutcome !== 'in-progress' ? 'finished' : 'active',
     statistics: statistics ?? null,
   };
 }
