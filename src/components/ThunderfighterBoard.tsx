@@ -10,6 +10,7 @@ import { resumePersistentGame, startPersistentGame, type PersistentGameSession }
 import { createTutorialSession } from "../application/learning.ts";
 import { makeThunderfighterSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
+import { playGameplayEffect } from "../application/audio.ts";
 
 type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAction>, "getState" | "getLegalActions" | "dispatch">;
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
@@ -168,6 +169,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         const shots = result.state.lastShot ?? [];
         setState(result.state);
         setLegal(session.current.getLegalActions());
+        playGameplayEffect(nextResult.outcome === "win" ? "victory" : nextResult.outcome === "loss" ? "defeat" : "place");
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
           shots.length ? `${shots.length > 1 ? "Double tir" : "Tir"} : ${shots.map(labelOf).join(" et ")}.` :
