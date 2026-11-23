@@ -99,7 +99,7 @@ CardForge est une bibliothèque de mondes : le catalogue relie cinq jeux de cart
 
 **Déjà décidé :** esthétique immersive, illustration **fixe** par carte dans le MVP, cartes non limitées à un habillage de carte traditionnelle, distinction claire entre présentation et modèle métier (AD-05). **[PROPOSITION SALLY]** : conserver le socle sombre et les accents dorés actuellement présents dans le prototype comme identité « cadre » de la collection ; chaque monde peut avoir ses propres images, motifs de fond et accent secondaire, sans modifier le contraste ni les composants de commande.
 
-Les univers recensés dans le catalogue actuel restent des références provisoires ; **« Les Douze Tyrans » / Grèce antique** est le titre et l'univers validés, malgré la présentation historique « Regicide / Fantasy héroïque » encore dans le code. **« Thunderfighter »** est le titre public **validé le 23 novembre 2026** pour Gridcannon V2 ; « Bastion Stellaire » est abandonné.
+Les univers recensés dans le catalogue actuel restent des références provisoires ; **« Les Douze Tyrans » / Asie féodale fantastique Wuxia / Chanbara** est le titre et l'univers validés, malgré la présentation historique « Regicide / Fantasy héroïque » encore dans le code. **« Thunderfighter »** est le titre public **validé le 23 novembre 2026** pour Gridcannon V2 ; « Bastion Stellaire » est abandonné.
 
 ## Colors
 
@@ -108,7 +108,7 @@ Les univers recensés dans le catalogue actuel restent des références provisoi
 | `{colors.shell-base}`, `{colors.surface-card}`, `{colors.ink-primary}` | Shell principal, catalogue, corps de texte | Relevé dans `src/styles.css` |
 | `{colors.accent-collection}` | Identité commune, accent ponctuel, action principale | Approximation du prototype ; validation visuelle à demander |
 | `{colors.ctd-ambiance}`, `{colors.gridcannon-ambiance}` | Atmosphère des deux jeux MVP, fonds décoratifs uniquement | Couleurs du catalogue existant, **non charte finale** |
-| `{colors.card-capture-ambiance}`, `{colors.loot-the-loop-ambiance}`, `{colors.twelve-tyrants-ambiance}` | Repères futurs, sans livrer les jeux | Provisoire ; univers des Douze Tyrans à redessiner selon la Grèce antique |
+| `{colors.card-capture-ambiance}`, `{colors.loot-the-loop-ambiance}`, `{colors.twelve-tyrants-ambiance}` | Repères futurs, sans livrer les jeux | Provisoire ; univers des Douze Tyrans à redessiner selon le Wuxia / Chanbara validé |
 | `{colors.focus-visible}`, `{colors.danger-text}`, `{colors.success-text}` | Focus et retours d'état sémantiques | **[PROPOSITION SALLY]**, à valider par test de contraste réel |
 
 **Règles contraignantes :** couleur seule ne signifie jamais une enseigne, une faction, un coup légal, un statut « disponible » ou une victoire ; ajouter nom, forme, pictogramme et/ou texte. Une teinte de faction ou d'univers ne change jamais une enseigne de règle. Tester les contrastes sur carte et fond illustrés, pas seulement sur surfaces unies.
@@ -186,3 +186,10 @@ Les **principes** de collection, de cartes illustrées, d'univers indépendants 
 **Thunderfighter** est le **nom public désormais validé** de l'adaptation Gridcannon V2 ; **Bastion Stellaire est abandonné**. La direction graphique **rétrofuturiste pulp spatiale, évoquant l'esprit Buck Rogers**, a été appréciée et validée comme ambiance générale, avec l'organisation des écrans, lors de la revue visuelle du 23 novembre. Cette inspiration n'autorise pas la reproduction d'éléments graphiques protégés d'une franchise ; privilégier des illustrations originales.
 
 Dans les nouveaux écrans, afficher **Thunderfighter** et conserver « Gridcannon, créé par Tom Francis » dans les crédits et informations de règles. Le choix du nom n'implique **aucune modification des règles, cartes ou statistiques**. Les mentions anciennes de « Bastion Stellaire » dans ce document décrivent l'état antérieur de la conception.
+
+
+## Décision produit confirmée — 23 novembre 2026 : Wuxia / Chanbara
+
+**Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
+
+Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
