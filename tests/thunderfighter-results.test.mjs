@@ -61,7 +61,7 @@ test('GC-T22 / GC-08: victory on twelfth figure only, with official score of uns
   assert.deepEqual(engine.getLegalActions(won),[]);
   reject(won,{type:'place-number',cell:0});
 });
-test('GC-08: after using an As to refill draw, only remaining Joker contributes to score',()=>{
+test('GC-T35 / GC-08: after using an As to refill draw, only remaining Joker contributes to score',()=>{
   let s=nearVictory();
   const before=s.drawPile.length;
   s=apply(s,{type:'extract',cardId:'hearts-1',cell:4});
