@@ -118,7 +118,10 @@ function createPersistentSession<State, Action, Setup>(
             const resultId = stableResultId(saved.gameId, saved.sessionId);
             const decision = await storage.commitTerminal({
               save: { ...saved, state: candidate },
-              result: { id: resultId, gameId: saved.gameId, sessionId: saved.sessionId, outcome },
+              result: { id: resultId, gameId: saved.gameId, sessionId: saved.sessionId, outcome,
+                ...(outcome === 'win' && engine.getVictoryScore
+                  ? { score: engine.getVictoryScore(candidate) ?? undefined } : {}),
+              },
             });
             if (decision === 'already-recorded') {
               const persisted = await storage.readGame<State>(saved.gameId);
