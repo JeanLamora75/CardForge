@@ -1,4 +1,4 @@
-import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame, TerminalGameCommit, TerminalCommitResult, ReplaceGameCommit, ReplaceGameResult } from '../ports/local-storage.ts';
+import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame, TerminalGameCommit, TerminalCommitResult, ReplaceGameCommit, ReplaceGameResult, GameMigrationCommit } from '../ports/local-storage.ts';
 import { LocalStorageError, stableResultId } from '../ports/local-storage.ts';
 
 const VERSION = 1;
@@ -67,6 +67,45 @@ export function createIndexedDbGameStorage(options: {
     readGame: <State>(gameId: string) => read<SavedGame<State>>(SESSIONS, gameId),
     readResult: (id: string) => read<GameResult>(RESULTS, id),
     readStatistics: (gameId: string) => read<GameStatistics>(STATISTICS, gameId),
+    async migrateGame<State>({ previous, migrated }: GameMigrationCommit<State>): Promise<void> {
+      if (!previous.gameId || !previous.sessionId || migrated.gameId !== previous.gameId ||
+          migrated.sessionId !== previous.sessionId || migrated.rulesVersion !== previous.rulesVersion ||
+          !Number.isSafeInteger(migrated.formatVersion) ||
+          migrated.formatVersion <= previous.formatVersion) {
+        throw new LocalStorageError('write-failed', 'Invalid migration metadata');
+      }
+      const db = await open();
+      try {
+        await new Promise<void>((resolve, reject) => {
+          let tx: IDBTransaction;
+          try { tx = db.transaction(SESSIONS, 'readwrite'); }
+          catch (cause) { reject(new LocalStorageError('write-failed', 'Migration transaction unavailable', { cause })); return; }
+          let cause: unknown;
+          const abort = (error: unknown) => {
+            cause = error;
+            try { tx.abort(); } catch { /* transaction already inactive */ }
+          };
+          tx.oncomplete = () => resolve();
+          tx.onabort = () => reject(new LocalStorageError('write-failed', 'Migration rolled back', { cause: cause ?? tx.error }));
+          tx.onerror = () => { /* onabort reports the transaction failure */ };
+          try {
+            const store = tx.objectStore(SESSIONS);
+            const request = store.get(previous.gameId);
+            request.onsuccess = () => {
+              const live = request.result as SavedGame<unknown> | undefined;
+              // Game states are persisted as structured-cloneable, JSON-compatible data.
+              // Comparing the full snapshot also detects changes within the same session.
+              if (!live || JSON.stringify(live) !== JSON.stringify(previous)) {
+                abort(new Error('Save changed during migration'));
+                return;
+              }
+              try { store.put(migrated); }
+              catch (error) { abort(error); }
+            };
+          } catch (error) { abort(error); }
+        });
+      } finally { db.close(); }
+    },
     async replaceGame<State>(update: ReplaceGameCommit<State>): Promise<ReplaceGameResult> {
       const { expectedSessionId, replacement } = update;
       if (!expectedSessionId || !replacement.gameId || !replacement.sessionId ||
