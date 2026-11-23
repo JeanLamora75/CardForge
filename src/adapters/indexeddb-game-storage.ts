@@ -1,5 +1,5 @@
-import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame } from '../ports/local-storage.ts';
-import { LocalStorageError } from '../ports/local-storage.ts';
+import type { GameCommit, GameResult, GameStatistics, LocalGameStorage, SavedGame, TerminalGameCommit, TerminalCommitResult } from '../ports/local-storage.ts';
+import { LocalStorageError, stableResultId } from '../ports/local-storage.ts';
 
 const VERSION = 1;
 const SESSIONS = 'sessions';
@@ -67,6 +67,89 @@ export function createIndexedDbGameStorage(options: {
     readGame: <State>(gameId: string) => read<SavedGame<State>>(SESSIONS, gameId),
     readResult: (id: string) => read<GameResult>(RESULTS, id),
     readStatistics: (gameId: string) => read<GameStatistics>(STATISTICS, gameId),
+    async commitTerminal<State>(update: TerminalGameCommit<State>): Promise<TerminalCommitResult> {
+      const { save, result } = update;
+      if (!save.gameId || !save.sessionId || !save.rulesVersion ||
+          !Number.isSafeInteger(save.formatVersion) || save.formatVersion < 1 ||
+          result.id !== stableResultId(save.gameId, save.sessionId) ||
+          result.gameId !== save.gameId || result.sessionId !== save.sessionId ||
+          !['win', 'loss', 'abandoned'].includes(result.outcome)) {
+        throw new LocalStorageError('write-failed', 'Invalid terminal event metadata');
+      }
+      const db = await open();
+      try {
+        return await new Promise<TerminalCommitResult>((resolve, reject) => {
+          let tx: IDBTransaction;
+          try {
+            tx = db.transaction([SESSIONS, RESULTS, STATISTICS], 'readwrite');
+          } catch (cause) {
+            reject(new LocalStorageError('write-failed', 'Cannot begin terminal transaction', { cause }));
+            return;
+          }
+          let alreadyRecorded = false;
+          let failure: unknown;
+          const abort = (cause: unknown) => {
+            failure = cause;
+            try { tx.abort(); } catch { /* transaction already ended */ }
+          };
+          tx.oncomplete = () => resolve(alreadyRecorded ? 'already-recorded' : 'recorded');
+          tx.onabort = () => reject(new LocalStorageError('write-failed', 'Terminal transaction rolled back', { cause: failure ?? tx.error }));
+          tx.onerror = () => { /* handled by transaction abort */ };
+          try {
+            const sessions = tx.objectStore(SESSIONS);
+            const results = tx.objectStore(RESULTS);
+            const statistics = tx.objectStore(STATISTICS);
+            const existingResult = results.get(result.id);
+            existingResult.onsuccess = () => {
+              if (existingResult.result !== undefined) {
+                const old = existingResult.result as GameResult;
+                if (old.gameId !== result.gameId || old.sessionId !== result.sessionId || old.outcome !== result.outcome) {
+                  abort(new Error('Conflicting terminal result'));
+                  return;
+                }
+                alreadyRecorded = true;
+                return;
+              }
+              const currentSession = sessions.get(save.gameId);
+              currentSession.onsuccess = () => {
+                const active = currentSession.result as SavedGame<unknown> | undefined;
+                if (!active || active.sessionId !== save.sessionId ||
+                    active.rulesVersion !== save.rulesVersion || active.formatVersion !== save.formatVersion) {
+                  abort(new Error('Session changed before terminal result'));
+                  return;
+                }
+                const currentStats = statistics.get(save.gameId);
+                currentStats.onsuccess = () => {
+                  const previous = currentStats.result as GameStatistics | undefined;
+                  const next: GameStatistics = previous
+                    ? { ...previous }
+                    : { gameId: save.gameId, played: 0, won: 0, lost: 0, abandoned: 0 };
+                  if (next.gameId !== save.gameId || ![next.played, next.won, next.lost, next.abandoned].every(n => Number.isSafeInteger(n) && n >= 0)) {
+                    abort(new Error('Invalid persisted statistics'));
+                    return;
+                  }
+                  next.played += 1;
+                  if (result.outcome === 'win') next.won += 1;
+                  if (result.outcome === 'loss') next.lost += 1;
+                  if (result.outcome === 'abandoned') next.abandoned += 1;
+                  try {
+                    sessions.put(save);
+                    results.add(result);
+                    statistics.put(next);
+                  } catch (cause) {
+                    abort(cause);
+                  }
+                };
+              };
+            };
+          } catch (cause) {
+            abort(cause);
+          }
+        });
+      } finally {
+        db.close();
+      }
+    },
     async commit<State>(update: GameCommit<State>): Promise<void> {
       const { save, result, statistics } = update;
       if (!save.gameId || !save.sessionId || !Number.isInteger(save.formatVersion) || save.formatVersion < 1 || !save.rulesVersion) {
