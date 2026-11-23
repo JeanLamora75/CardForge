@@ -200,3 +200,11 @@ Catalogue responsive + modèle de paquet standard + mélange déterministe testa
 - La source primaire a été identifiée et une étude spécifique est publiée dans [les règles Gridcannon](../_bmad-output/planning-artifacts/game-rules/gridcannon.md). L'ancienne mention « version de règles non encore documentée » reflétait un état antérieur.
 - Les cas limites G-01 à G-05 demeurent à clarifier ; titre public distinct de « Gridcannon » seul et crédits Tom Francis à valider (G-06).
 - Une matrice de conformité dédiée doit être finalisée et exécutée avant déclaration de jeu jouable.
+
+## Nom public validé de Gridcannon — décision du 23 novembre 2026
+
+**Décision du porteur :** l'adaptation de **Gridcannon Version 2** dans CardForge s'appellera désormais **Thunderfighter**. **« Bastion Stellaire » est abandonné** et ne doit pas être utilisé comme titre du jeu dans les nouveaux écrans, maquettes, traductions ou livrables.
+
+**Traçabilité :** `Gridcannon` demeure le nom du jeu original de **Tom Francis** et la référence des règles de Mary ; le nom public **Thunderfighter** est une métadonnée d'affichage. L'identifiant interne stable du jeu, les moteurs, sauvegardes et statistiques ne doivent pas dépendre du libellé. Conserver les crédits et le lien vers l'original ; **la disponibilité du titre et les droits doivent être vérifiés avant publication**, sans présumer qu'ils ont été vérifiés. Aucun changement de mécanique n'est induit par ce renommage.
+
+Les mentions antérieures de titre provisoire, y compris G-06 et GC-17, restent des **notes historiques supplantées par cette décision**.
