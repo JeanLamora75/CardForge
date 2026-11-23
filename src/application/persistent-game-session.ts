@@ -1,5 +1,6 @@
 import type { GameEngine, GameOutcome, TransitionResult, ValidationResult } from '../core/game-engine.ts';
 import type { LocalGameStorage, SavedGame } from '../ports/local-storage.ts';
+import { stableResultId } from '../ports/local-storage.ts';
 
 export type SaveStatus = 'saved' | 'saving' | 'error';
 
@@ -101,13 +102,35 @@ function createPersistentSession<State, Action, Setup>(
       const command = structuredClone(action);
       const run = async (): Promise<TransitionResult<State>> => {
         const before = current;
+        if (engine.getOutcome(before) !== 'in-progress') {
+          return { accepted: false, state: structuredClone(before), reason: 'Game already finished' };
+        }
         const result = engine.transition(structuredClone(before), command);
         if (!result.accepted) return { accepted: false, state: structuredClone(before), reason: result.reason };
         assertValid(engine, result.state);
         const candidate = structuredClone(result.state);
         status = 'saving';
         try {
-          await storage.commit({ save: { ...saved, state: candidate } });
+          const outcome = engine.getOutcome(candidate);
+          if (outcome === 'in-progress') {
+            await storage.commit({ save: { ...saved, state: candidate } });
+          } else {
+            const resultId = stableResultId(saved.gameId, saved.sessionId);
+            const decision = await storage.commitTerminal({
+              save: { ...saved, state: candidate },
+              result: { id: resultId, gameId: saved.gameId, sessionId: saved.sessionId, outcome },
+            });
+            if (decision === 'already-recorded') {
+              const persisted = await storage.readGame<State>(saved.gameId);
+              if (!persisted || persisted.sessionId !== saved.sessionId) {
+                throw new GameRestoreError('Terminal state could not be restored');
+              }
+              assertValid(engine, persisted.state);
+              current = structuredClone(persisted.state);
+              status = 'saved';
+              return { accepted: true, state: structuredClone(current) };
+            }
+          }
         } catch (error) {
           status = 'error';
           throw error;
