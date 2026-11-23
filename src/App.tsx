@@ -16,6 +16,7 @@ import GameLearning, { Rulebook } from "./components/GameLearning";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
+import CreditsPage from "./components/CreditsPage";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -334,7 +335,8 @@ export default function App() {
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
       <OfflineReadiness language={language} />
-      {route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
+      {route.page === "about" ? <CreditsPage language={language} onBack={back} /> :
+      route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back}
@@ -384,7 +386,13 @@ export default function App() {
           </section>
         </>
       )}
-      <footer>CardForge · Collection en construction · Plateaux Grim Delve et Thunderfighter en préversion</footer>
+      <footer className="app-footer">
+        <span>CardForge · Collection en construction · Plateaux Grim Delve et Thunderfighter en préversion</span>
+        <button type="button" className="credits-footer-link" onClick={() => {
+          if (route.page !== "about") settingsOrigin.current = route;
+          navigate({ page: "about" });
+        }}>À propos · Crédits et licences</button>
+      </footer>
     </main>
   );
 }
