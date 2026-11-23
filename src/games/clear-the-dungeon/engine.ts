@@ -7,12 +7,17 @@ export const GRIM_DELVE_GAME_ID = 'clear-the-dungeon' as const;
 
 export interface GrimDelveSetup { seed: number }
 export type GrimDelvePhase = 'attack' | 'finished';
+export type GrimDelveEndReason = 'victory' | 'damage' | 'exhaustion';
 export interface PlacedPower { cardId: string; handNumber: number }
 export interface PartialAttack { monsterId: string; powers: PlacedPower[] }
 export interface GrimDelveState {
   rulesVersion: typeof GRIM_DELVE_RULES_VERSION;
   phase: GrimDelvePhase;
   outcome: GameOutcome;
+  /** Official score only exists for a victory; legacy saves may omit the field. */
+  victoryScore?: number | null;
+  /** Terminal event cause; legacy saves may omit this field. */
+  endReason?: GrimDelveEndReason | null;
   /** First card of a column is its currently revealed monster. */
   columns: string[][];
   visibleMonsters: (string | null)[];
@@ -107,6 +112,13 @@ function validate(value: unknown): ValidationResult {
   if(state.outcome==='in-progress' && (damages.length>=7 || defeated.length===12)) errors.push('terminal condition not applied');
   if(state.outcome==='win' && defeated.length!==12) errors.push('invalid victory');
   if(state.outcome==='loss' && damages.length!==7 && draws.length>0) errors.push('invalid loss');
+  if(state.outcome==='in-progress' && (state.endReason != null || state.victoryScore != null)) errors.push('unexpected terminal metadata');
+  if(state.outcome==='win' && (state.endReason !== undefined && state.endReason !== 'victory' ||
+      state.victoryScore !== undefined && state.victoryScore !== draws.length)) errors.push('invalid victory metadata');
+  if(state.outcome==='loss' && (state.victoryScore != null ||
+      state.endReason !== undefined && state.endReason !== 'damage' && state.endReason !== 'exhaustion' ||
+      state.endReason === 'damage' && damages.length!==7 ||
+      state.endReason === 'exhaustion' && (draws.length!==0 || hand.length!==0))) errors.push('invalid loss metadata');
   return errors.length?{valid:false,errors}:{valid:true};
 }
 
@@ -118,7 +130,7 @@ function createInitialState(setup: GrimDelveSetup): GrimDelveState {
   const columns=Array.from({length:4},(_,index)=>monsters.slice(index*3,index*3+3));
   const state: GrimDelveState={
     rulesVersion: GRIM_DELVE_RULES_VERSION,
-    phase:'attack', outcome:'in-progress', columns,
+    phase:'attack', outcome:'in-progress', victoryScore:null, endReason:null, columns,
     visibleMonsters:columns.map(column=>column[0]),
     hand:power.slice(0,3),drawPile:power.slice(3),
     damages:[],defeated:[],removed:[],attacks:[],handNumber:1,
@@ -172,17 +184,19 @@ function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveActi
     const damages=[...state.damages,...state.hand.slice(0,count)];
     const outcome=damages.length===7?'loss':'in-progress';
     return {accepted:true,state:{...state,hand:state.hand.slice(count),damages,
-      phase:outcome==='loss'?'finished':'attack',outcome}};
+      phase:outcome==='loss'?'finished':'attack',outcome,
+      endReason:outcome==='loss'?'damage':null,victoryScore:null}};
   }
   if(action.type==='discard') {
     const damages=[...state.damages,action.cardId];
     const outcome=damages.length===7?'loss':'in-progress';
     return {accepted:true,state:{...state,hand:state.hand.filter(id=>id!==action.cardId),damages,
-      outcome,phase:outcome==='loss'?'finished':'attack'}};
+      outcome,phase:outcome==='loss'?'finished':'attack',
+      endReason:outcome==='loss'?'damage':null,victoryScore:null}};
   }
   if(action.type==='end-hand') {
     const attacks=state.attacks.map(a=>({monsterId:a.monsterId,powers:a.powers.map(p=>({...p}))}));
-    if(state.drawPile.length===0) return {accepted:true,state:{...state,attacks,phase:'finished',outcome:'loss'}};
+    if(state.drawPile.length===0) return {accepted:true,state:{...state,attacks,phase:'finished',outcome:'loss',endReason:'exhaustion',victoryScore:null}};
     const next=state.drawPile.slice(0,3);
     return {accepted:true,state:{...state,attacks,hand:next,drawPile:state.drawPile.slice(next.length),handNumber:state.handNumber+1}};
   }
@@ -214,7 +228,8 @@ function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveActi
       hand:state.hand.filter(id=>id!==action.cardId),
       attacks:state.attacks.filter(a=>a.monsterId!==action.monsterId).map(a=>({monsterId:a.monsterId,powers:[...a.powers]})),
       defeated,removed:[...state.removed,...target.powers.map(p=>p.cardId),action.cardId],
-      outcome,phase:outcome==='win'?'finished':'attack'}};
+      outcome,phase:outcome==='win'?'finished':'attack',
+      endReason:outcome==='win'?'victory':null,victoryScore:outcome==='win'?state.drawPile.length:null}};
   }
   return refused('unknown action');
 }
