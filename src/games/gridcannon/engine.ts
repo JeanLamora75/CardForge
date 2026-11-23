@@ -17,6 +17,8 @@ export interface ThunderfighterState {
   grid: string[][];
   /** Fixed twelve outer positions, three on each side, including defeated figures later. */
   figureSlots: (string | null)[];
+  /** Defeated figures still occupy their original exterior slots. */
+  defeatedFigures?: string[];
   pendingFigures: string[];
   drawPile: string[];
   specialReserve: string[];
@@ -63,23 +65,45 @@ function similar(figureId: string, numberId: string): number {
   return category * 100 + n.rank;
 }
 
-/** Only currently free exterior positions adjacent to the best eligible perimeter cards. */
-export function availableFigureSlots(state: Readonly<ThunderfighterState>): number[] {
-  if (!state.pendingFigures.length) return [];
+export type FigurePlacementMode = 'normal' | 'rescue' | 'blocked' | 'none';
+export interface FigurePlacementOptions {
+  mode: FigurePlacementMode;
+  slots: number[];
+}
+
+/** Occupancy is independent of whether a figure is alive or defeated. */
+export function getFigureSlotStatus(
+  state: Readonly<ThunderfighterState>,
+  slot: number,
+): 'empty' | 'alive' | 'defeated' {
+  if (!Number.isInteger(slot) || slot < 0 || slot >= 12) throw new RangeError('Invalid figure slot');
+  const id = state.figureSlots[slot];
+  if (id === null) return 'empty';
+  return state.defeatedFigures?.includes(id) ? 'defeated' : 'alive';
+}
+
+/** Normal similarity excludes the centre; rescue is used only if no normal destination exists. */
+export function getFigurePlacementOptions(state: Readonly<ThunderfighterState>): FigurePlacementOptions {
+  if (!state.pendingFigures.length) return { mode: 'none', slots: [] };
   const figure = state.pendingFigures[0];
   let best = -1;
   const results = new Set<number>();
   for (const cell of peripheral) {
     const top = state.grid[cell]?.at(-1);
-    const available = adjacent[cell].filter(slot => state.figureSlots[slot] === null);
+    const available = adjacent[cell].filter(slot => getFigureSlotStatus(state, slot) === 'empty');
     if (!top || !available.length) continue;
     const score = similar(figure, top);
     if (score < best) continue;
     if (score > best) { best = score; results.clear(); }
     for (const slot of available) results.add(slot);
   }
-  if (results.size) return [...results].sort((a, b) => a - b);
-  return state.figureSlots.flatMap((id, index) => id === null ? [index] : []);
+  if (results.size) return { mode: 'normal', slots: [...results].sort((a, b) => a - b) };
+  const free = state.figureSlots.flatMap((id, index) => id === null ? [index] : []);
+  return free.length ? { mode: 'rescue', slots: free } : { mode: 'blocked', slots: [] };
+}
+
+export function availableFigureSlots(state: Readonly<ThunderfighterState>): number[] {
+  return getFigurePlacementOptions(state).slots;
 }
 function validate(value: unknown): ValidationResult {
   const errors: string[] = [];
@@ -101,6 +125,12 @@ function validate(value: unknown): ValidationResult {
       state.grid.some(p => p.length > 1)) errors.push('invalid preparation grid occupancy');
   if (state.pendingFigures.some(id => typeof id !== 'string' || !isFigure(id)) ||
       state.figureSlots.some(id => id !== null && (typeof id !== 'string' || !isFigure(id)))) errors.push('invalid figure zone');
+  if (state.defeatedFigures !== undefined &&
+      (!Array.isArray(state.defeatedFigures) ||
+       state.defeatedFigures.some(id => typeof id !== 'string' || !isFigure(id)) ||
+       new Set(state.defeatedFigures).size !== state.defeatedFigures.length ||
+       state.defeatedFigures.some(id => !state.figureSlots.includes(id))))
+    errors.push('invalid defeated figure status');
   if ([...state.specialReserve, ...state.spentSpecials].some(id => typeof id !== 'string' || !isSpecial(id)))
     errors.push('invalid special zone');
   if (state.spentSpecials.length) errors.push('special actions forbidden in preparation');
@@ -145,7 +175,7 @@ function createInitialState(setup: ThunderfighterSetup): ThunderfighterState {
   }
   const state: ThunderfighterState = {
     rulesVersion: THUNDERFIGHTER_RULES_VERSION, phase: pendingFigures.length ? 'initial-figures' : 'replacement-offer',
-    outcome: 'in-progress', grid, figureSlots: Array(12).fill(null), pendingFigures,
+    outcome: 'in-progress', grid, figureSlots: Array(12).fill(null), defeatedFigures: [], pendingFigures,
     drawPile: shuffled.slice(cursor), specialReserve, spentSpecials: [],
     replacementSlot: null, replacementUsed: false,
   };
