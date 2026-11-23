@@ -26,6 +26,7 @@ export interface GrimDelveState {
 }
 export type GrimDelveAction =
   | Readonly<{ type: 'discard'; cardId: string }>
+  | Readonly<{ type: 'discard-remaining' }>
   | Readonly<{ type: 'end-hand' }>
   | Readonly<{ type: 'place-power'; cardId: string; monsterId: string }>
   | Readonly<{ type: 'take-back'; cardId: string }>
@@ -129,6 +130,7 @@ function createInitialState(setup: GrimDelveSetup): GrimDelveState {
 function getLegalActions(state: Readonly<GrimDelveState>): readonly GrimDelveAction[] {
   if(!validate(state).valid||state.outcome!=='in-progress') return [];
   const actions:GrimDelveAction[]=state.hand.map(cardId=>({type:'discard',cardId}));
+  if(state.hand.length) actions.push({type:'discard-remaining'});
   for(const monsterId of state.visibleMonsters) {
     if(!monsterId) continue;
     const attack=state.attacks.find(item=>item.monsterId===monsterId);
@@ -159,12 +161,19 @@ function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveActi
   if(state.outcome!=='in-progress') return refused('game finished');
   if(!record(action) ||
      Object.keys(action).some(key=>!['type','cardId','monsterId'].includes(key)) ||
-     (action.type==='end-hand' && Object.keys(action).length!==1) ||
+     (['end-hand','discard-remaining'].includes(String(action.type)) && Object.keys(action).length!==1) ||
      (['discard','take-back'].includes(String(action.type)) && Object.keys(action).length!==2) ||
      (['place-power','move-power','trigger-attack'].includes(String(action.type)) && Object.keys(action).length!==3) ||
      !getLegalActions(state).some(legal=>legal.type===action.type &&
       (('cardId' in legal ? legal.cardId : undefined)===('cardId' in action ? action.cardId : undefined)) &&
       (('monsterId' in legal ? legal.monsterId : undefined)===('monsterId' in action ? action.monsterId : undefined)))) return refused('illegal action');
+  if(action.type==='discard-remaining') {
+    const count=Math.min(state.hand.length,7-state.damages.length);
+    const damages=[...state.damages,...state.hand.slice(0,count)];
+    const outcome=damages.length===7?'loss':'in-progress';
+    return {accepted:true,state:{...state,hand:state.hand.slice(count),damages,
+      phase:outcome==='loss'?'finished':'attack',outcome}};
+  }
   if(action.type==='discard') {
     const damages=[...state.damages,action.cardId];
     const outcome=damages.length===7?'loss':'in-progress';
