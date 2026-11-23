@@ -16,7 +16,7 @@ export interface GameSummary {
 }
 
 export function makeGrimDelveSummary(state: {
-  outcome: "in-progress" | "win" | "loss";
+  outcome: "in-progress" | "win" | "loss" | "abandoned";
   defeated: readonly string[];
   damages: readonly unknown[];
   handNumber: number;
@@ -24,7 +24,7 @@ export function makeGrimDelveSummary(state: {
   endReason?: string | null;
   victoryScore?: number | null;
 }): GameSummary | null {
-  if (state.outcome === "in-progress") return null;
+  if (state.outcome !== "win" && state.outcome !== "loss") return null;
   return {
     gameId: "clear-the-dungeon", outcome: state.outcome,
     title: state.outcome === "win" ? "Victoire · Le donjon est libéré" : "Défaite · L'expédition s'achève",
@@ -48,7 +48,7 @@ export function makeThunderfighterSummary(state: {
   lossReason?: "armor" | "stalemate" | null;
   victoryScore?: number | null;
 }): GameSummary | null {
-  if (state.outcome === "in-progress") return null;
+  if (state.outcome !== "win" && state.outcome !== "loss") return null;
   return {
     gameId: "gridcannon", outcome: state.outcome,
     title: state.outcome === "win" ? "Victoire · La flotte triomphe" : "Défaite · Fin de mission",
