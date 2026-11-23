@@ -1,4 +1,3 @@
-import type { GameId } from "../catalog.ts";
 import type { GameStatistics } from "../ports/local-storage.ts";
 import { victoryRate } from "./catalog-navigation.ts";
 import { getNewGameChoice, confirmNewGame } from "./new-game-choice.ts";
