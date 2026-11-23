@@ -7,7 +7,7 @@ import { thunderfighterEngine } from "../src/games/gridcannon/engine.ts";
 const allCards = makeDeckWithJokers().map(card => card.id).sort();
 const zones = {
   "clear-the-dungeon": state => [
-    ...state.columns.flat(),
+    ...state.columns.flat(), ...state.defeated,
     ...state.hand, ...state.drawPile, ...state.damages, ...state.removed,
     ...state.attacks.flatMap(attack => attack.powers.map(card => card.cardId)),
   ],
