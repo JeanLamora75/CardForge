@@ -1,186 +1,247 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
-import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import {
   availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress, victoryRate,
   type CatalogGameProgress,
 } from "./application/catalog-navigation";
+import {
+  backRoute, HOME, parseCatalogRoute, routeHash, type CatalogRoute, type GameSection,
+} from "./application/catalog-route";
+import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 
-type DetailView = "overview" | "rules" | "statistics" | "credits";
-type ProgressMap = Partial<Record<GameId, CatalogGameProgress>>;
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
     game.status === "in-development" ? "En développement" : "À venir";
 
-const views: readonly { id: DetailView; label: string }[] = [
-  { id: "overview", label: "Présentation" },
-  { id: "rules", label: "Règles" },
-  { id: "statistics", label: "Statistiques" },
-  { id: "credits", label: "Crédits" },
-];
+type ProgressByGame = Partial<Record<GameId, CatalogGameProgress>>;
+
+function useCatalogProgress(): {
+  progress: ProgressByGame;
+  error: string | null;
+  refresh: () => void;
+} {
+  const [progress, setProgress] = useState<ProgressByGame>({});
+  const [error, setError] = useState<string | null>(null);
+  const [revision, setRevision] = useState(0);
+  const refresh = useCallback(() => setRevision(rev => rev + 1), []);
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const storage = createIndexedDbGameStorage();
+        const results = await Promise.all(games.map(async game => ({
+          id: game.id,
+          overview: await readCatalogGameProgress(storage, game.id),
+        })));
+        if (cancelled) return;
+        setProgress(Object.fromEntries(results.map(({ id, overview }) => [id, overview])) as ProgressByGame);
+        setError(null);
+      } catch {
+        if (!cancelled) {
+          setProgress({});
+          setError("Les sauvegardes et statistiques locales ne peuvent pas être consultées sur cet appareil.");
+        }
+      }
+    }
+    void load();
+    return () => { cancelled = true; };
+  }, [revision]);
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [refresh]);
+  return { progress, error, refresh };
+}
+
+const ruleReference: Record<GameId, string> = {
+  "clear-the-dungeon": "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/clear-the-dungeon.md",
+  gridcannon: "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/gridcannon.md",
+  "card-capture": "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/card-capture.md",
+  "loot-the-loop": "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/loot-the-loop.md",
+  regicide: "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/regicide.md",
+};
 
 function GameDetail({
-  game, progress, loading, error, onClose,
+  game, section, progress, onNavigate, onBack,
 }: {
   game: GameEntry;
+  section: GameSection;
   progress: CatalogGameProgress;
-  loading: boolean;
-  error: boolean;
-  onClose: () => void;
+  onNavigate: (route: CatalogRoute) => void;
+  onBack: () => void;
 }) {
-  const [view, setView] = useState<DetailView>("overview");
-  const closeButton = useRef<HTMLButtonElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
-
-  useEffect(() => {
-    closeButton.current?.focus();
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onEscape);
-    return () => window.removeEventListener("keydown", onEscape);
-  }, [onClose]);
-
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { titleRef.current?.focus(); }, [section, game.id]);
   const actions = availableGameActions(game, progress);
-  const stats = progress.statistics;
-  const active = progress.indicator === "active";
+  const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
+  const subPage = section !== "detail";
+
   return (
     <section className={`detail ${game.accent}`} aria-labelledby="game-title">
       <div className="detail-navigation">
-        <button ref={closeButton} className="back-link" onClick={onClose} type="button">
-          <span aria-hidden="true">←</span> Retour au catalogue
+        <button className="back-link" type="button" onClick={onBack}>
+          <span aria-hidden="true">←</span> {subPage ? `Retour à ${game.title}` : "Retour au catalogue"}
         </button>
         <span className="status" data-status={game.status}>{statusLabel(game)}</span>
       </div>
-      <div className="detail-layout">
-        <div className="detail-art" aria-hidden="true"><span>{game.icon}</span></div>
-        <div className="detail-copy">
-          <span className="eyebrow">Un univers CardForge</span>
-          <h1 id="game-title" ref={heading} tabIndex={-1}>{game.title}</h1>
-          <p className="setting">{game.setting}</p>
-          {active && <p className="session-indicator"><span aria-hidden="true">● </span>Partie sauvegardée en cours</p>}
-          <nav aria-label={`Sections de ${game.title}`} className="detail-tabs">
-            {views.map(item => (
-              <button key={item.id} type="button" className="detail-tab"
-                aria-current={view === item.id ? "page" : undefined}
-                onClick={() => setView(item.id)}>
-                {item.label}
-              </button>
-            ))}
-          </nav>
-          {view === "overview" && (
-            <div className="detail-section">
-              <p className="detail-description">{game.description}</p>
-              <h2>Comment se joue cet univers ?</h2>
-              <p>{game.mechanics}</p>
-              <p className="availability-note" role="status">
-                <strong>{statusLabel(game)}</strong> — L’interface de partie n’est pas encore disponible.
-                Les moteurs existants restent en développement et aucune commande de jeu n’est ouverte.
-              </p>
-              {actions.play && (
-                <p className="action-row">
-                  <a className="primary-action" href={game.playableRoute!}>Jouer</a>
-                  {actions.resume && <a className="secondary-action" href={game.playableRoute!}>Reprendre</a>}
-                  {actions.newGame && <span className="action-hint">Nouvelle partie : confirmation requise avant remplacement.</span>}
-                </p>
-              )}
-              <p className="feature-pending">Tutoriel interactif : en préparation. Aucun tutoriel fictif n’est lancé.</p>
+      {section === "detail" ? (
+        <div className="detail-layout">
+          <div className="detail-art" aria-hidden="true"><span>{game.icon}</span></div>
+          <div className="detail-copy">
+            <span className="eyebrow">Un univers CardForge</span>
+            <h1 id="game-title" ref={titleRef} tabIndex={-1}>{game.title}</h1>
+            <p className="setting">{game.setting}</p>
+            <p className="detail-description">{game.description}</p>
+            {progress.indicator === "active" ? (
+              <p className="save-indicator" role="status">● Une partie enregistrée est présente sur cet appareil.</p>
+            ) : null}
+            <h2>Découvrez les mécanismes</h2>
+            <p>{game.mechanics}</p>
+            <div className="context-actions" aria-label={`Actions pour ${game.title}`}>
+              {actions.resume && game.playableRoute ? (
+                <a className="primary-action" href={game.playableRoute}>Reprendre</a>
+              ) : null}
+              {actions.newGame && game.playableRoute && progress.indicator !== "active" ? (
+                <a className="primary-action" href={game.playableRoute}>Jouer</a>
+              ) : null}
+              {actions.newGame && progress.indicator === "active" ? (
+                <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
+              ) : null}
+              <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
+              <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-          )}
-          {view === "rules" && (
-            <div className="detail-section">
-              <h2>Aperçu des règles</h2>
-              <p>{game.mechanics}</p>
-              <p>Les règles proviennent de <strong>{game.originalGame}</strong>. Leur adaptation conserve les mécaniques originales.</p>
-              <p className="feature-pending">La consultation détaillée et le tutoriel interactif seront ajoutés avec les écrans de jeu.</p>
-            </div>
-          )}
-          {view === "statistics" && (
-            <div className="detail-section" aria-live="polite">
-              <h2>Statistiques personnelles</h2>
-              {loading ? <p>Lecture des données locales…</p> : error ? (
-                <p role="alert">Les données locales sont indisponibles. Aucune sauvegarde n’a été modifiée.</p>
-              ) : (
-                <>
-                  <dl className="game-facts">
-                    <div><dt>Parties closes</dt><dd>{stats?.played ?? 0}</dd></div>
-                    <div><dt>Victoires</dt><dd>{stats?.won ?? 0}</dd></div>
-                    <div><dt>Défaites</dt><dd>{stats?.lost ?? 0}</dd></div>
-                    <div><dt>Abandons</dt><dd>{stats?.abandoned ?? 0}</dd></div>
-                    <div><dt>Taux de victoire</dt><dd>{victoryRate(stats)}</dd></div>
-                  </dl>
-                  <p className="feature-pending">Ces données sont enregistrées uniquement sur cet appareil et ce navigateur.</p>
-                </>
-              )}
-            </div>
-          )}
-          {view === "credits" && (
-            <div className="detail-section">
-              <h2>Origine et crédits</h2>
+            <p className="help-note">Tutoriel : disponible lors de l’ouverture d’un jeu jouable. L’accès au plateau et au tutoriel reste fermé tant que l’interface de partie n’est pas livrée.</p>
+            <details className="source-credits">
+              <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
                 <div><dt>Mode</dt><dd>Solo</dd></div>
-                <div><dt>Jeu source</dt><dd>{game.originalGame}</dd></div>
-                <div><dt>Auteurs</dt><dd>{game.authors}</dd></div>
+                <div><dt>Règles d’origine</dt><dd>{game.originalGame}</dd></div>
+                <div><dt>Crédits</dt><dd>{game.authors}</dd></div>
               </dl>
-              <p className="feature-pending">Les univers visuels sont des adaptations originales CardForge.</p>
-            </div>
-          )}
-          {loading && <p className="progress-hint" role="status">Vérification de la sauvegarde locale…</p>}
-          {!loading && error && view !== "statistics" && (
-            <p className="progress-hint" role="alert">État de sauvegarde indisponible. La navigation ne supprime aucune donnée.</p>
+            </details>
+            {!canPlay(game) ? (
+              <p className="availability-note" role="status">
+                <strong>{statusLabel(game)}</strong> — La partie jouable n’est pas encore disponible.
+                Aucun lancement de jeu n’est proposé.
+              </p>
+            ) : null}
+          </div>
+        </div>
+      ) : (
+        <div className="context-page">
+          <span className="eyebrow">{game.title}</span>
+          <h1 id="game-title" ref={titleRef} tabIndex={-1}>
+            {section === "rules" ? "Règles et mécanismes" : "Statistiques locales"}
+          </h1>
+          {section === "rules" ? (
+            <>
+              <p>{game.mechanics}</p>
+              <p className="help-note">Ce résumé présente les mécanismes. Le référentiel des règles détaille les actions et les conditions de victoire et de défaite.</p>
+              <a className="secondary-action" href={ruleReference[game.id]} target="_blank" rel="noopener noreferrer">
+                Consulter le référentiel des règles <span aria-hidden="true">↗</span>
+              </a>
+            </>
+          ) : (
+            <>
+              <p>Les compteurs sont lus sur cet appareil, sans modifier les sauvegardes ni les résultats.</p>
+              <dl className="game-facts stats-list">
+                <div><dt>Parties closes</dt><dd>{progress.statistics?.played ?? "—"}</dd></div>
+                <div><dt>Victoires</dt><dd>{progress.statistics?.won ?? "—"}</dd></div>
+                <div><dt>Défaites</dt><dd>{progress.statistics?.lost ?? "—"}</dd></div>
+                <div><dt>Abandons</dt><dd>{progress.statistics?.abandoned ?? "—"}</dd></div>
+                <div><dt>Taux de victoire</dt><dd>{victoryRate(progress.statistics)}</dd></div>
+              </dl>
+              <p className="help-note">« — » indique qu’aucune donnée statistique n’a été enregistrée localement ou n’est consultable.</p>
+            </>
           )}
         </div>
-      </div>
+      )}
+    </section>
+  );
+}
+
+function Settings({ onBack }: { onBack: () => void }) {
+  const title = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { title.current?.focus(); }, []);
+  return (
+    <section className="context-page" aria-labelledby="settings-title">
+      <button className="back-link" type="button" onClick={onBack}>← Retour au catalogue</button>
+      <h1 ref={title} tabIndex={-1} id="settings-title">Paramètres</h1>
+      <p>CardForge fonctionne sans compte et enregistre les parties dans le navigateur. La navigation entre les écrans n’abandonne jamais une partie.</p>
+      <p className="help-note">Les options de personnalisation et de langue seront proposées dans une version ultérieure. Aucun réglage local n’est modifié ici.</p>
     </section>
   );
 }
 
 export default function App() {
-  const [selected, setSelected] = useState<GameEntry | null>(null);
-  const [progress, setProgress] = useState<ProgressMap>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const lastTrigger = useRef<HTMLButtonElement | null>(null);
+  const [route, setRoute] = useState<CatalogRoute>(() => parseCatalogRoute(window.location.hash));
+  const { progress, error } = useCatalogProgress();
+  const lastTrigger = useRef<HTMLElement | null>(null);
+  const brandRef = useRef<HTMLButtonElement>(null);
+
+  const navigate = (next: CatalogRoute) => {
+    const hash = routeHash(next);
+    if (window.location.hash === hash || (!hash && !window.location.hash)) {
+      setRoute(next);
+    } else {
+      window.location.hash = hash || "#";
+    }
+  };
+  const back = () => navigate(backRoute(route));
 
   useEffect(() => {
-    let canceled = false;
-    try {
-      const storage = createIndexedDbGameStorage();
-      Promise.all(games.map(async game => [game.id, await readCatalogGameProgress(storage, game.id)] as const))
-        .then(rows => {
-          if (!canceled) {
-            setProgress(Object.fromEntries(rows) as ProgressMap);
-            setLoading(false);
-          }
-        }).catch(() => {
-          if (!canceled) { setError(true); setLoading(false); }
-        });
-    } catch {
-      if (!canceled) { setError(true); setLoading(false); }
-    }
-    return () => { canceled = true; };
+    const onHashChange = () => setRoute(parseCatalogRoute(window.location.hash));
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
+  useEffect(() => {
+    if (route.page === "catalog") {
+      const trigger = lastTrigger.current;
+      if (trigger?.isConnected) trigger.focus();
+      else brandRef.current?.focus();
+    }
+  }, [route]);
+  useEffect(() => {
+    if (route.page === "catalog") return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        back();
+      }
+    };
+    window.addEventListener("keydown", onEscape);
+    return () => window.removeEventListener("keydown", onEscape);
+  }, [route]);
 
   const openGame = (game: GameEntry, trigger: HTMLButtonElement) => {
     lastTrigger.current = trigger;
-    setSelected(game);
+    navigate({ page: "game", gameId: game.id, section: "detail" });
   };
-  const closeGame = useCallback(() => {
-    setSelected(null);
-    requestAnimationFrame(() => lastTrigger.current?.focus());
-  }, []);
+  const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
     <main className="shell">
       <header className="topbar">
-        <button className="brand" type="button" onClick={closeGame} aria-label="CardForge, retour au catalogue">
+        <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
+          aria-label="CardForge, retour au catalogue">
           <span className="brand-icon" aria-hidden="true">♠</span> CardForge
         </button>
-        <span className="pill">Collection solo · En création</span>
+        <div className="topbar-actions">
+          <span className="pill">Collection solo · En création</span>
+          <button className="settings-button" type="button" onClick={() => navigate({ page: "settings" })}
+            aria-label="Paramètres">⚙ Paramètres</button>
+        </div>
       </header>
-      {selected ? (
-        <GameDetail key={selected.id} game={selected} progress={progress[selected.id] ?? EMPTY_PROGRESS}
-          loading={loading} error={error} onClose={closeGame} />
+      {error ? <p className="storage-warning" role="alert">{error}</p> : null}
+      {route.page === "settings" ? <Settings onBack={back} /> :
+      currentGame && route.page === "game" ? (
+        <GameDetail game={currentGame} section={route.section}
+          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} />
       ) : (
         <>
           <section className="hero" aria-labelledby="heading">
@@ -206,25 +267,23 @@ export default function App() {
                       <span className="status" data-status={game.status}>{statusLabel(game)}</span>
                     </div>
                     <h3 id={`name-${game.id}`}>{game.title}</h3>
-                    {progress[game.id]?.indicator === "active" && (
-                      <p className="session-indicator"><span aria-hidden="true">● </span>Partie en cours</p>
-                    )}
                     <p>{game.description}</p>
+                    {(progress[game.id]?.indicator === "active") ?
+                      <p className="save-indicator">● Partie en cours sur cet appareil</p> : null}
                     <div className="card-actions">
                       <button className="secondary-action" type="button"
                         onClick={event => openGame(game, event.currentTarget)}
                         aria-label={`Découvrir ${game.title}`}>
                         Découvrir <span aria-hidden="true">↗</span>
                       </button>
-                      {canPlay(game) && <a className="primary-action" href={game.playableRoute!}>Jouer</a>}
+                      {canPlay(game) && game.playableRoute ? (
+                        <a className="primary-action" href={game.playableRoute}>Jouer</a>
+                      ) : null}
                     </div>
                   </div>
                 </article>
               ))}
             </div>
-            {!loading && error && <p className="progress-hint" role="alert">
-              Les sauvegardes locales ne peuvent pas être consultées actuellement ; aucun jeu n’a été modifié.
-            </p>}
           </section>
         </>
       )}
