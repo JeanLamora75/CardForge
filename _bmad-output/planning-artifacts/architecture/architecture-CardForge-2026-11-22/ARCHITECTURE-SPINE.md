@@ -7,15 +7,19 @@ paradigm: 'Architecture hexagonale légère, moteur fonctionnel déterministe'
 scope: 'Socle multiplateforme, moteurs de jeu, présentation, stockage local, tests et livraison Web/Android/iOS'
 status: final
 created: '2026-11-22'
-updated: '2026-11-22'
+updated: '2026-11-23'
 binds: ['AD-01','AD-02','AD-03','AD-04','AD-05','AD-06','AD-07','AD-08','AD-09','AD-10','AD-11','AD-12']
 sources:
   - '../../../../docs/cadrage.md'
   - '../../product-brief-cardforge.md'
   - '../../clear-the-dungeon-rule-test-matrix.md'
+  - '../../game-rules/clear-the-dungeon.md'
+  - '../../game-rules/gridcannon.md'
+  - '../../gridcannon-rule-test-matrix.md'
 companions:
   - '.memlog.md'
   - 'REVIEW.md'
+  - 'REVIEW-MVP-2026-11-23.md'
 ---
 
 # Architecture Spine — CardForge
@@ -159,10 +163,30 @@ public/            # assets par jeu, manifeste et ressources Web — à organise
 | Tests de règles et parcours | Tests métier / intégration / E2E | AD-06 |
 | Android et iOS | Capacitor + CI native | AD-01, AD-12 |
 
+## Contrats de cohérence du MVP — revue Winston du 23 novembre 2026
+
+Les points ci-dessous **précisent l'application des AD-01 à AD-12 existants** aux deux jeux retenus. Ils ne créent ni nouvelle règle de jeu ni nouvel AD adopté. Les signatures et formats détaillés restent à stabiliser avec Amelia avant développement.
+
+| Frontière | Contrat à respecter | Références |
+| --- | --- | --- |
+| Identité des cartes | `src/core/cards.ts` contient actuellement **52 cartes sans Joker** ; conserver ce modèle neutre et introduire pour les jeux un identifiant physique stable des jokers, distinct du rang et de la faction visuelle. Éviter d'ajouter une valeur universelle au Joker : son sens dépend du jeu. | AD-02/05 ; CTD Classic ; Gridcannon V2 |
+| Moteurs | Chaque moteur possède ses **phases, actions typées, validateurs d'état, transitions, calcul des coups légaux et issue**. Les outils communs sont des primitives, non une machine à états imposée à tous les jeux. Une action refusée ne modifie ni état, ni pioche, ni statistiques. | AD-02/03 ; PRD FR-05 à FR-09, FR-33 |
+| Clear the Dungeon | Modéliser les **14 arbitrages CTD-ARB-01 à 14** et le joker fixé à 10 comme comportements CardForge explicitement tracés, y compris attaques provisoires multi-mains, repositionnement avant clôture, pile de dégâts, clôture explicite de main vide et issues immédiates. Distinguer règles documentées et conventions CardForge dans les tests. | `game-rules/clear-the-dungeon.md` §11–25 |
+| Gridcannon V2 | Représenter la **grille 3×3 à piles ordonnées**, les figures vivantes/vaincues, armure, réserves d'As/Jokers, séquences de recherche et cartes temporairement écartées. Modéliser les phases de préparation, recherche, action normale et terminal comme états du jeu ; vérifier les invariants des **54 cartes physiques**. Les décisions GC-01 à GC-21 de mécanique priment sur les anciennes questions ouvertes. | `game-rules/gridcannon.md` §15–35, §68 |
+| Coup en deux temps | Une **prévisualisation/confirmation** (notamment Gridcannon GC-23/30/47/52) est une intention non persistée tant qu'aucune transition de jeu n'est validée ; ne pas déclencher de tir, coût, animation de résultat ni sauvegarde terminale au simple survol/sélection. Toute validation finale passe par l'orchestrateur AD-10. | AD-03/10 ; Gridcannon GC-23, GC-30, GC-47 |
+| Sauvegarde et résultats | Enveloppe versionnée par `gameId`, `sessionId`, version de schéma et de règles ; conserver **l'ordre physique complet**, phases transitoires légalement reprenables, états des cartes/ressources, et identifiant de résultat. Une seule sauvegarde active par jeu ; écriture atomique des transitions et du résultat (abandon compris), sans double comptage. | AD-04/09/10/11 ; PRD FR-16 à FR-20 |
+| Tests de non-divergence | Tester l'identité/conservation du paquet, les actions illégales, la pureté des transitions, les reprises exactes, les issues terminales et chaque convention CardForge contre les scénarios des matrices. Compléter les tests existants : `tests/cards.test.mjs` inspecte seulement du **texte source** et ne prouve pas le comportement réel du mélange. | AD-06 ; matrices Mary |
+| Localisation et univers | `gameId` logique stable même si le **titre affiché** change ; conserver `regicide` comme identifiant technique historique possible et afficher « Les Douze Tyrans » dans le catalogue futur. L'i18n FR/EN du MVP (repli anglais, dix langues à terme), les illustrations et sons restent exclusivement en présentation. | AD-05/07 ; PRD GC-27/28 ; `game-rules/regicide.md` §13 |
+
+**Proposition technique à faire valider avant codage :** stabiliser un contrat TypeScript commun avec `create`, `getLegalActions`, `applyAction`, `getOutcome`, `validateState` et un schéma de sauvegarde discriminé par jeu. Ces noms sont **indicatifs** et ne remplacent pas les AD existants. L'orchestrateur doit distinguer une intention UI de sa **commande métier confirmée**, et retourner un accusé de persistance ou une erreur catégorisée. Un état d'aperçu peut être recalculé sans mutation de la partie courante.
+
+**Constat du dépôt au 23 novembre 2026 :** `src/core/cards.ts` expose 52 cartes et `shuffle` avec source aléatoire injectable ; `src/catalog.ts` référence cinq jeux ; `src/App.tsx` ne rend que le catalogue ; aucun `src/games/`, `src/application/`, adaptateur IndexedDB ni service worker n'existe encore. `package.json` déclare React 19, TypeScript 5.7 et Vite 6, sans Capacitor. Il n'y a **pas** de CI applicative de build/test constatée : le seul workflow GitHub listé sert à synchroniser BMAD. Cet inventaire est une lecture de dépôt, pas un test exécuté.
+
 ## Deferred / Gates
 
-- **Moteur Clear the Dungeon :** ordre exact des phases, joker, épuisement de pioche et cas limites à confirmer d'après les règles primaires ; ne pas inventer d'arbitrage. Réserve facultative désactivée.
+- **Fidélité des règles (deux jeux) :** Mary a clos le cadrage documentaire Clear the Dungeon CTD-ARB-01 à 14 (+ Joker 10) et Gridcannon V2 (audit §68). Les **conventions CardForge** adoptées sur des silences des sources ne sont pas des confirmations d'auteur ; la confrontation finale aux sources primaires et les tests exécutables restent requis avant de déclarer les moteurs conformes. Réserve facultative CTD désactivée.
 - **Droits :** accord gratuit déclaré par le porteur ; périmètre exact (Web, Android/iOS, nom, crédits) à conserver comme point de vérification avant publication.
+- **Contrat moteur et sauvegarde détaillé :** fixer les types d'actions/états propres à chaque jeu, la représentation des jokers physiques, les schémas de version/migration et la politique d'idempotence ; évaluer la proposition GC-54 de compatibilité des sauvegardes avec Winston/Amelia, sans la présenter comme décision prise.
 - **Portabilité IndexedDB :** prototype réel Web + Android + iOS requis ; notamment persistance WebView après redémarrage, mise à jour, suspension, stockage saturé.
 - **PWA :** choix de l'outil de service worker, stratégie de mise à jour et version des assets à définir en implémentation ; garantir qu'une version cohérente de ressources est disponible.
 - **CI mobile :** compatibilité des runners macOS, quotas, certificats de signature Apple/Google, comptes éditeurs et coûts éventuels à vérifier avant pipeline ; pas de promesse de publication automatique.
@@ -170,12 +194,15 @@ public/            # assets par jeu, manifeste et ressources Web — à organise
 - **Déploiement Web :** hébergement, domaine, politique de cache et cadence de diffusion à choisir avant publication. Aucune API serveur nécessaire au solo MVP.
 - **Observabilité :** erreurs locales explicites, pas de télémétrie obligatoire ni de collecte distante décidée ; définir un diagnostic respectueux de la vie privée si nécessaire.
 - **Distribution :** Web/PWA en premier, builds mobiles ensuite ; matrice des appareils/support OS à valider.
-- **Validation BMAD :** lint/independent reviewers natifs non exécutés : scripts `uv` non exécutables sur GitHub et absence d'exécution de sous-agents dans cette session. Relecture documentaire manuelle consignée dans `REVIEW.md`.
+- **Validation BMAD :** scripts `uv`, `lint_spine.py` et sous-agents reviewers natifs non exécutés. Relecture documentaire manuelle du 22 novembre dans `REVIEW.md` et revue ciblée du 23 novembre dans `REVIEW-MVP-2026-11-23.md` ; aucune exécution de tests applicatifs n'est revendiquée.
 
 ## Vérification des sources internes
 
 - [Cadrage](../../../../docs/cadrage.md)
 - [Product Brief](../../product-brief-cardforge.md)
 - [Matrice Clear the Dungeon](../../clear-the-dungeon-rule-test-matrix.md)
+- [Règles Clear the Dungeon](../../game-rules/clear-the-dungeon.md)
+- [Règles Gridcannon Version 2 — audit §68](../../game-rules/gridcannon.md)
+- [PRD John](../../prds/prd-CardForge-2026-11-22/prd.md)
 - [Code source cartes](https://github.com/JeanLamora75/CardForge/blob/main/src/core/cards.ts)
 - [Dépôt GitHub](https://github.com/JeanLamora75/CardForge)
