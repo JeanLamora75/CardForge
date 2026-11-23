@@ -2,7 +2,7 @@
 
 **Agent :** Amelia — Senior Software Engineer (BMAD)  
 **Date :** 23 novembre 2026 · **Story :** CAR-30 / S23  
-**Statut technique :** code publié sur `main`, CI native **216/216 tests réussis** et build TypeScript/Web réussi. Qualification UI réelle encore nécessaire.
+**Statut technique :** code publié sur `main`, dernière CI native **226/226 tests réussis** et build TypeScript/Web réussi. Qualification UI réelle encore nécessaire.
 
 ## Références
 
@@ -42,3 +42,15 @@
 2. **Statistiques réelles consultables** : la vue lit IndexedDB mais n'a pas été testée dans un navigateur réel ni sous lecteur d'écran. Aucune sauvegarde n'est créée en naviguant.
 3. **Paramètres globaux** et **règles détaillées localisées** restent à développer ; le catalogue ne prétend pas leur présence.
 4. Les décisions fonctionnelles sur les noms et univers de Grim Delve, Thunderfighter, Skydeck, Midnight Syndicate et Les Douze Tyrans sont conservées sans modifier `gameId` ou les données physiques.
+
+## Complément de livraison et preuve finale CAR-30
+
+La version initiale de ce rapport décrivait un premier lot de navigation sur le commit `9e3d5bbf81f473b32a822bf803261f1c29b3b2f6`. Un second lot de fiabilisation a été publié sur `main` :
+
+- **`src/application/catalog-route.ts`** : itinéraires URL profonds `#game/:gameId`, `/rules`, `/statistics`, `#settings`, retour vers fiche ou catalogue ; restauration du contexte d'origine après ouverture des paramètres ; rejets des chemins inconnus.
+- **`src/App.tsx`** : les cinq fiches, règles (aperçu et lien au référentiel BMAD), statistiques locales, crédits séparés, informations paramètres et retours navigation/Échap/focus. Un retour ne modifie ni sauvegarde, ni statistiques.
+- **`src/application/catalog-navigation.ts`** : vérification supplémentaire de l'`outcome` du snapshot pour empêcher qu'une partie déjà gagnée/perdue, mais sans résultat terminal enregistré, soit présentée comme une reprise possible ; les snapshots sans `outcome` reconnu sont signalés comme incohérents et non modifiés.
+- **`tests/catalog-route.test.mjs`** : 10 scénarios sur les itinéraires, le retour paramètres, les sauvegardes, les compteurs et les faux boutons de jeu. Les fixtures de `tests/catalog-navigation.test.mjs` ont été réalignées sur de vrais états de moteur porteurs de `outcome`, sans affaiblir cette validation.
+- **Dernière CI native vérifiée : [#45259268422](https://github.com/JeanLamora75/CardForge/actions/runs/45259268422)**, commit `8ee214bafd8c0586b1e25c1864b1b3fb18678897` : **226 tests, 226 réussis, zéro échec, build TypeScript/Web réussi**, statut `completed/success` d'après les jobs et journaux GitHub Actions.
+- Deux CI intermédiaires ont échoué sur les fixtures sans `outcome` du premier lot. Elles ont été corrigées, puis la suite entière a été relancée avec succès.
+- **Limite maintenue :** aucune fiche n'est encore jouable ; Jouer/Reprendre/Nouvelle partie/tutoriel ne sont pas activés et nécessitent l'UI de plateau et sa qualification. Les règles intégrées restent un aperçu. Les tests E2E navigateur/lecteur d'écran et la recette IndexedDB multi-onglets restent non attestés. **AC1 est donc partiel**, pas validé de bout en bout.
