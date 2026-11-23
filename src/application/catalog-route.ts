@@ -1,6 +1,6 @@
 import { games, type GameId } from '../catalog.ts';
 
-export type GameSection = 'detail' | 'rules' | 'statistics';
+export type GameSection = 'detail' | 'rules' | 'statistics' | 'board';
 export type CatalogRoute =
   | Readonly<{ page: 'catalog' }>
   | Readonly<{ page: 'settings' }>
@@ -15,7 +15,7 @@ export function parseCatalogRoute(hash: string): CatalogRoute {
   if (fragments[0] !== 'game' || fragments.length < 2 || fragments.length > 3) return HOME;
   const game = games.find(entry => entry.id === fragments[1]);
   const section = fragments[2] ?? 'detail';
-  if (!game || !['detail','rules','statistics'].includes(section)) return HOME;
+  if (!game || !['detail','rules','statistics','board'].includes(section)) return HOME;
   return { page: 'game', gameId: game.id, section: section as GameSection };
 }
 
