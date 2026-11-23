@@ -2460,3 +2460,15 @@ La table §12 et certaines formules des §1–14 et des premiers GC conservent *
 **Cadrage des règles Gridcannon Version 2 : TERMINÉ sur le plan documentaire.** Le produit possède une spécification exploitable par les équipes d'architecture, développement et qualité. **Aucune nouvelle décision GC de règle n'est demandée à ce jour.** Les sujets UI/accessibilité/sauvegarde et la proposition GC-54 relèvent des travaux ultérieurs avec Sally, Winston et Amelia, sans prolonger artificiellement la série des arbitrages Mary.
 
 **Sources de vérification :** [publication originale Version 2 par Tom Francis](https://www.pentadact.com/2019-08-20-gridcannon-a-single-player-game-with-regular-playing-cards/) ; décisions et cas de test : présent document. **Niveau de confiance de l'audit documentaire : élevé pour la couverture interne ; modéré pour la fidélité absolue des conventions CardForge non attestées par la source.**
+
+## Mise à jour du nom public — 23 novembre 2026 (supplante GC-17 / G-06 pour le titre)
+
+**Décision explicite du porteur : le jeu de la collection s'appelle définitivement _Thunderfighter_ dans les spécifications produit.** Le titre provisoire **« Bastion Stellaire » est abandonné**. Les anciennes mentions GC-17 de « Bastion Stellaire » et leurs cas de tests décrivent l'**historique du choix** et non la règle d'affichage applicable après cette décision.
+
+- **Nom public d'affichage :** **Thunderfighter** (catalogue, fiche, écrans, tutoriel, résultats, statistiques, crédits et supports).
+- **Jeu source et attribution :** **Gridcannon Version 2**, créé par **Tom Francis** ; conserver une attribution explicite et le renvoi vers les règles originales. Le titre public ne prétend pas changer le nom du jeu source.
+- **Continuité technique :** conserver l'identifiant de jeu stable déjà adopté pour le moteur, les sauvegardes et statistiques ; aucun changement de règle, de ressources ou de pioche n'est induit. Ne pas créer de migration qui renomme une clé interne uniquement pour suivre le titre.
+- **Critère de test actualisé GC-V2-T176 :** l'écran de catalogue affiche Thunderfighter avec attribution à Gridcannon/Tom Francis et identifiant technique inchangé. Les scénarios GC-V2-T177 à T184 restent applicables lorsqu'ils ne dépendent pas du libellé.
+- **Point juridique avant diffusion :** vérifier l'absence de conflit avec le titre Thunderfighter et les autorisations/crédits nécessaires. Cette vérification **n'a pas été réalisée** ; elle n'invalide pas la décision de nom produit.
+
+Les §31, §68 et autres passages anciens mentionnant « Bastion Stellaire » restent des traces historiques, désormais **supplantées pour toute nouvelle production**.
