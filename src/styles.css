@@ -339,3 +339,13 @@ h1[tabindex="-1"]:focus { outline: none; }
   animation-duration: .01ms !important; animation-iteration-count: 1 !important;
   transition-duration: .01ms !important; scroll-behavior: auto !important;
 }
+
+
+/* Privacy inventory is purely informational until deletion scopes are approved. */
+.privacy-panel { max-width: 880px; margin: 32px 0 12px; border-top: 1px solid #6b758b; padding-top: 20px; }
+.privacy-panel h2 { margin-bottom: 12px; }
+.privacy-panel p { line-height: 1.65; }
+.privacy-inventory { padding: 0; margin: 12px 0 26px; list-style: none; display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,260px),1fr)); gap: 12px; }
+.privacy-inventory li { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid #77849a; border-radius: 12px; }
+.privacy-inventory span { line-height: 1.5; }
+.privacy-inventory small { align-self: flex-start; border-radius: 6px; padding: 3px 8px; border: 1px solid #77849a; font-size: .8rem; }
