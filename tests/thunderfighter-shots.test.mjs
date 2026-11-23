@@ -74,7 +74,7 @@ test('GC-V2-T28: a corner triggers horizontal and vertical victories simultaneou
   reject(done,{type:'place-number',cell:0});
 });
 test('GC-V2-T29/30: only the sufficient axis defeats its figure',()=>{
-  const grid=[...base];grid[6]='clubs-2';
+  const grid=[...base];grid[6]='clubs-3';
   const s=fixture({grid});
   const out=play(s,{type:'place-number',cell:0});
   assert.deepEqual(out.lastShot,['clubs-11']);
@@ -88,7 +88,7 @@ test('GC-V2-T31: insufficient shots keep both figures alive and preserve placed 
   assert.equal(out.grid[0].at(-1),'hearts-10');
 });
 test('GC-V2-T33: queen counts only same-color power and king only same-suit',()=>{
-  const grid=[...base];grid[1]='hearts-9';grid[2]='diamonds-5';grid[3]='clubs-9';grid[6]='hearts-7';grid[7]='spades-9';
+  const grid=[...base];grid[1]='hearts-9';grid[2]='diamonds-5';grid[3]='clubs-10';grid[6]='hearts-7';grid[7]='spades-9';
   const s=fixture({grid, targets:{3:'hearts-12',6:'clubs-13'}});
   const out=play(s,{type:'place-number',cell:0});
   assert.deepEqual(out.lastShot,['hearts-12']);
@@ -110,7 +110,7 @@ test('armor raises resistance; an eleven-power shot cannot defeat a J with +3 ar
 test('GC-V2-T35: ten already defeated figures plus double kill wins once and fixes special score',()=>{
   const figures=ids.filter(id=>/-(11|12|13)$/.test(id));
   const remaining=figures.filter(id=>!['clubs-11','spades-11'].includes(id));
-  const targets=Object.fromEntries([...remaining.map((id,i)=>[i<3?i:i<6?i+1:i+2,id]),[3,'clubs-11'],[6,'spades-11']]);
+  const targets=Object.fromEntries([...remaining.map((id,i)=>[[0,1,2,4,5,7,8,9,10,11][i],id]),[3,'clubs-11'],[6,'spades-11']]);
   // Ensure each of the twelve exterior slots is filled exactly once.
   assert.equal(Object.keys(targets).length,12);
   const s=fixture({targets,defeated:remaining,reserve:['joker-1','hearts-1']});
@@ -134,7 +134,7 @@ test('draw-card handles numbers, figures and specials without duplicating any ca
 test('cannot draw twice or place while a figure is pending, and attacks never fire in preparation',()=>{
   const s=fixture();
   reject(s,{type:'draw-card'});
-  const preparatory={...s,phase:'replacement-offer',pendingNumeric:null};
+  const preparatory={...s,phase:'replacement-offer',pendingNumeric:null,drawPile:[s.pendingNumeric,...s.drawPile]};
   assert.equal(engine.validateState(preparatory).valid,true);
   assert.deepEqual(getShotTargets(preparatory,0),[]);
   reject(preparatory,{type:'place-number',cell:0});
