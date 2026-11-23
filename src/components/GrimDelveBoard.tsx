@@ -6,6 +6,7 @@ import { resumePersistentGame, startPersistentGame, type PersistentGameSession }
 import { createTutorialSession } from "../application/learning.ts";
 import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
+import { playGameplayEffect } from "../application/audio.ts";
 import { translateUiText } from "../i18n/surface.ts";
 
 type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
@@ -124,6 +125,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
         setState(result.state);
         setLegal(session.current.getLegalActions());
         setSelected(null);
+        playGameplayEffect(result.state.outcome === "win" ? "victory" : result.state.outcome === "loss" ? "defeat" : "place");
         setNotice(result.state.outcome === "win" ? "Victoire ! Les 12 monstres sont vaincus." :
           result.state.outcome === "loss" ? "Défaite : " + (result.state.endReason === "damage" ? "7 dégâts." : "pioche épuisée.") :
           `${tutorial ? "Coup d’entraînement" : "Action enregistrée"} : ${actionName[action.type]}.`);
