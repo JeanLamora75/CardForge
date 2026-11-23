@@ -31,7 +31,7 @@ function twoTargets() {
   return {a:base.visibleMonsters[0],b:base.visibleMonsters[1],
     state:equip(base,['clubs-8','diamonds-9','hearts-10'])};
 }
-test('CTD-T31 / CTD-ARB-01 two distinct partial attacks retain physical card identities',()=>{
+test('CTD-T23 / CTD-T31 / CTD-ARB-01 two distinct partial attacks retain physical card identities',()=>{
   const {a,b,state}=twoTargets();
   let s=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
   s=act(s,{type:'place-power',cardId:'diamonds-9',monsterId:b});
@@ -48,7 +48,7 @@ test('CTD-T35/T36 current-hand power can move between targets and return',()=>{
   assert.deepEqual(s.attacks,[]);
   assert.deepEqual(s.hand,['diamonds-9','hearts-10','clubs-8']);
 });
-test('CTD-T37/T38 closing hand locks old cards and leaves new hand movable',()=>{
+test('CTD-T27/T32 / CTD-T37/T38 closing hand locks old cards and leaves new hand movable',()=>{
   const {a,b,state}=twoTargets();
   let s=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
   s=act(s,{type:'place-power',cardId:'diamonds-9',monsterId:b});
@@ -65,7 +65,7 @@ test('CTD-T37/T38 closing hand locks old cards and leaves new hand movable',()=>
   s=act(s,chosen);
   assert.ok(grimDelveEngine.getLegalActions(s).some(x=>x.type==='take-back'&&x.cardId===chosen.cardId));
 });
-test('CTD-T131 an empty hand remains open, recoverable before confirmation',()=>{
+test('CTD-T139 / CTD-T131 an empty hand remains open, recoverable before confirmation',()=>{
   const {a,b,state}=twoTargets();
   let s=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
   s=act(s,{type:'place-power',cardId:'diamonds-9',monsterId:b});
@@ -83,7 +83,7 @@ test('CTD-ARB-08/09 insufficient first or second power cannot be placed',()=>{
   s=act(s,{type:'place-power',cardId:'diamonds-3',monsterId:king});
   rejected(s,{type:'place-power',cardId:'hearts-5',monsterId:king});
 });
-test('CTD-ARB-07 a trigger requires two adequate preceding powers',()=>{
+test('CTD-T76 / CTD-T97 / CTD-ARB-07 a trigger requires two adequate preceding powers',()=>{
   const s=equip(first(),['clubs-8','diamonds-9','joker-1']);
   const monsterId=s.visibleMonsters[0];
   rejected(s,{type:'trigger-attack',cardId:'joker-1',monsterId});
@@ -113,7 +113,7 @@ test('CTD-ARB-10 joker triggers any suit while its physical identity is preserve
   assert.ok(s.removed.includes('joker-1'));
   assert.ok(physical(s).includes('joker-2'));
 });
-test('CTD-T39 serialized provisional placements restore identical legal actions',()=>{
+test('CTD-T33 / CTD-T39 serialized provisional placements restore identical legal actions',()=>{
   const {a,b,state}=twoTargets();
   let s=act(state,{type:'place-power',cardId:'clubs-8',monsterId:a});
   s=act(s,{type:'place-power',cardId:'diamonds-9',monsterId:b});
