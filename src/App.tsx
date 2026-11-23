@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
 import {
-  availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress, victoryRate,
+  availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress,
   type CatalogGameProgress,
 } from "./application/catalog-navigation";
 import {
@@ -9,6 +9,7 @@ import {
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
+import { GameStatisticsPanel } from "./components/GameResultPanel";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -50,9 +51,11 @@ function useCatalogProgress(): {
   useEffect(() => {
     const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
     window.addEventListener("focus", refresh);
+    window.addEventListener("hashchange", refresh);
     document.addEventListener("visibilitychange", onVisible);
     return () => {
       window.removeEventListener("focus", refresh);
+      window.removeEventListener("hashchange", refresh);
       document.removeEventListener("visibilitychange", onVisible);
     };
   }, [refresh]);
@@ -151,14 +154,8 @@ function GameDetail({
           ) : (
             <>
               <p>Les compteurs sont lus sur cet appareil, sans modifier les sauvegardes ni les résultats.</p>
-              <dl className="game-facts stats-list">
-                <div><dt>Parties closes</dt><dd>{progress.statistics?.played ?? "—"}</dd></div>
-                <div><dt>Victoires</dt><dd>{progress.statistics?.won ?? "—"}</dd></div>
-                <div><dt>Défaites</dt><dd>{progress.statistics?.lost ?? "—"}</dd></div>
-                <div><dt>Abandons</dt><dd>{progress.statistics?.abandoned ?? "—"}</dd></div>
-                <div><dt>Taux de victoire</dt><dd>{victoryRate(progress.statistics)}</dd></div>
-              </dl>
-              <p className="help-note">« — » indique qu’aucune donnée statistique n’a été enregistrée localement ou n’est consultable.</p>
+              <GameStatisticsPanel statistics={progress.statistics} />
+              <p className="help-note">Taux = victoires / (victoires + défaites). Les abandons et tutoriels sont exclus du taux. « — » indique qu’aucune victoire ou défaite n’est enregistrée.</p>
             </>
           )}
         </div>
