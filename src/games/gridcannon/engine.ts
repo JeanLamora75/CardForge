@@ -13,6 +13,13 @@ export interface ThunderfighterState {
   rulesVersion: typeof THUNDERFIGHTER_RULES_VERSION;
   phase: ThunderfighterPhase;
   outcome: GameOutcome;
+  /** Numeric card drawn for this turn but not yet placed on a grid pile. */
+  pendingNumeric?: string | null;
+  /** Armor cards stay linked to their physical target, never copied. */
+  armorCards?: { figureId: string; cardId: string }[];
+  /** Last successful targets from one simultaneous attack event. */
+  lastShot?: string[];
+  victoryScore?: number | null;
   /** Nine piles in reading order, index 4 being the centre; top card is last. */
   grid: string[][];
   /** Fixed twelve outer positions, three on each side, including defeated figures later. */
@@ -31,7 +38,9 @@ export type ThunderfighterAction =
   | Readonly<{ type: 'place-figure'; slot: number }>
   | Readonly<{ type: 'skip-replacement' }>
   | Readonly<{ type: 'start-replacement'; cell: number }>
-  | Readonly<{ type: 'draw-replacement' }>;
+  | Readonly<{ type: 'draw-replacement' }>
+  | Readonly<{ type: 'draw-card' }>
+  | Readonly<{ type: 'place-number'; cell: number }>;
 
 const cards = makeDeckWithJokers();
 const byId = new Map(cards.map(card => [card.id, card]));
@@ -56,6 +65,58 @@ const adjacent: readonly (readonly number[])[] = [
 function record(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
+const gridRows = [[0,1,2],[3,4,5],[6,7,8]] as const;
+const gridColumns = [[0,3,6],[1,4,7],[2,5,8]] as const;
+function value(id: string): number {
+  const card = byId.get(id);
+  return card && 'rank' in card ? card.rank : 0;
+}
+function suitOf(id: string): string {
+  const card = byId.get(id);
+  return card && 'suit' in card ? card.suit : '';
+}
+function isRed(suit: string): boolean {
+  return suit === 'hearts' || suit === 'diamonds';
+}
+function resistance(state: Readonly<ThunderfighterState>, figureId: string): number {
+  return value(figureId) + (state.armorCards ?? [])
+    .filter(armor => armor.figureId === figureId).reduce((sum, armor) => sum + value(armor.cardId), 0);
+}
+function shotPower(state: Readonly<ThunderfighterState>, figureId: string, middle: readonly number[]): number {
+  const rank = value(figureId);
+  const suit = suitOf(figureId);
+  return middle.reduce((sum, cell) => {
+    const top = state.grid[cell].at(-1);
+    if (!top) return sum;
+    const sourceSuit = suitOf(top);
+    if (rank === 12 && isRed(sourceSuit) !== isRed(suit)) return sum;
+    if (rank === 13 && sourceSuit !== suit) return sum;
+    return sum + value(top);
+  }, 0);
+}
+/** The trigger card is never part of the two intermediate cards. */
+export function getShotTargets(state: Readonly<ThunderfighterState>, cell: number): string[] {
+  if (state.phase !== 'playing' || !Number.isInteger(cell) || cell < 0 || cell > 8) return [];
+  const axes = [...gridRows, ...gridColumns];
+  const defeated = new Set(state.defeatedFigures ?? []);
+  const targets = new Set<string>();
+  for (const axis of axes) {
+    if (axis[0] !== cell && axis[2] !== cell) continue;
+    const slot = axis === gridRows[0] ? cell === 0 ? 3 : 9
+      : axis === gridRows[1] ? cell === 3 ? 4 : 10
+      : axis === gridRows[2] ? cell === 6 ? 5 : 11
+      : axis === gridColumns[0] ? cell === 0 ? 6 : 0
+      : axis === gridColumns[1] ? cell === 1 ? 7 : 1
+      : cell === 2 ? 8 : 2;
+    const figureId = state.figureSlots[slot];
+    if (!figureId || defeated.has(figureId)) continue;
+    const middle = axis[0] === cell ? [axis[1],axis[2]] : [axis[0],axis[1]];
+    // All endpoints and intermediate values are read from the same post-placement state.
+    if (shotPower(state, figureId, middle) >= resistance(state, figureId)) targets.add(figureId);
+  }
+  return [...targets];
+}
+
 function similar(figureId: string, numberId: string): number {
   const f = byId.get(figureId), n = byId.get(numberId);
   if (!f || !n || !('suit' in f) || !('suit' in n) || !('rank' in n)) return -1;
@@ -112,18 +173,34 @@ function validate(value: unknown): ValidationResult {
   if (s.rulesVersion !== THUNDERFIGHTER_RULES_VERSION) errors.push('incorrect rules version');
   if (!['initial-figures','replacement-offer','replacement-draw','replacement-figures','placing-figure','playing'].includes(String(s.phase)))
     errors.push('invalid preparation phase');
-  if (s.outcome !== 'in-progress') errors.push('unexpected terminal outcome');
+  if (s.outcome !== 'in-progress' && s.outcome !== 'win') errors.push('invalid outcome');
+  if (s.outcome === 'win' && s.phase !== 'playing') errors.push('invalid victory phase');
   if (!Array.isArray(s.grid) || s.grid.length !== 9 || !s.grid.every(p => Array.isArray(p))) errors.push('invalid grid');
   if (!Array.isArray(s.figureSlots) || s.figureSlots.length !== 12) errors.push('invalid exterior positions');
   if (!Array.isArray(s.drawPile) || !Array.isArray(s.pendingFigures) ||
-      !Array.isArray(s.specialReserve) || !Array.isArray(s.spentSpecials)) errors.push('invalid card zones');
+      !Array.isArray(s.specialReserve) || !Array.isArray(s.spentSpecials) ||
+      (s.armorCards !== undefined && !Array.isArray(s.armorCards)) ||
+      (s.lastShot !== undefined && !Array.isArray(s.lastShot))) errors.push('invalid card zones');
   if (errors.length) return { valid: false, errors };
   const state = s as unknown as ThunderfighterState;
   const empty = state.grid.flatMap((pile, cell) => pile.length ? [] : [cell]);
   if (state.grid.some(p => p.some(id => typeof id !== 'string' || !isNumber(id)))) errors.push('non-numeric grid card');
+  if (state.pendingNumeric !== undefined && state.pendingNumeric !== null &&
+      (!isNumber(state.pendingNumeric) || state.phase !== 'playing' || state.outcome !== 'in-progress'))
+    errors.push('invalid pending numeric');
+  if ((state.phase !== 'playing' && state.pendingNumeric != null)) errors.push('numeric drawn during preparation');
+  const armor = state.armorCards ?? [];
+  if (armor.some(item => !record(item) || !isFigure(item.figureId) || !isNumber(item.cardId) ||
+      !state.figureSlots.includes(item.figureId))) errors.push('invalid figure armor');
+  if (state.lastShot && (state.lastShot.some(id => !isFigure(id) ||
+      !(state.defeatedFigures ?? []).includes(id)) ||
+      new Set(state.lastShot).size !== state.lastShot.length)) errors.push('invalid shot history');
+  if (state.outcome === 'win' && ((state.defeatedFigures ?? []).length !== 12 ||
+      state.victoryScore !== state.specialReserve.length)) errors.push('invalid victory');
+  if (state.outcome === 'in-progress' && state.victoryScore != null) errors.push('premature score');
   const emptyIsAllowed = state.phase === 'replacement-draw' ? empty.length === 1
     : state.phase === 'playing' || state.phase === 'placing-figure' ? true : empty.length === 0;
-  if (!emptyIsAllowed || state.grid.some(p => p.length > 1))
+  if (!emptyIsAllowed || (state.phase !== 'playing' && state.phase !== 'placing-figure') && state.grid.some(p => p.length > 1))
     errors.push('invalid preparation grid occupancy');
   if (state.pendingFigures.some(id => typeof id !== 'string' || !isFigure(id)) ||
       state.figureSlots.some(id => id !== null && (typeof id !== 'string' || !isFigure(id)))) errors.push('invalid figure zone');
@@ -156,6 +233,7 @@ function validate(value: unknown): ValidationResult {
   const used = [
     ...state.grid.flat(), ...state.figureSlots.filter((id): id is string => typeof id === 'string'),
     ...state.pendingFigures, ...state.drawPile, ...state.specialReserve, ...state.spentSpecials,
+    ...(state.pendingNumeric ? [state.pendingNumeric] : []), ...armor.map(a => a.cardId),
   ];
   if (used.length !== 54 || new Set(used).size !== 54 || used.some(id => !allIds.has(id)))
     errors.push('missing, duplicate or unknown card');
@@ -179,18 +257,27 @@ function createInitialState(setup: ThunderfighterSetup): ThunderfighterState {
     rulesVersion: THUNDERFIGHTER_RULES_VERSION, phase: pendingFigures.length ? 'initial-figures' : 'replacement-offer',
     outcome: 'in-progress', grid, figureSlots: Array(12).fill(null), defeatedFigures: [], pendingFigures,
     drawPile: shuffled.slice(cursor), specialReserve, spentSpecials: [],
+    pendingNumeric: null, armorCards: [], lastShot: [], victoryScore: null,
     replacementSlot: null, replacementUsed: false,
   };
   if (!validate(state).valid) throw new Error('Invalid initial Gridcannon V2 state');
   return state;
 }
 function getLegalActions(s: Readonly<ThunderfighterState>): readonly ThunderfighterAction[] {
-  if (!validate(s).valid) return [];
+  if (!validate(s).valid || s.outcome !== 'in-progress') return [];
   if (s.phase === 'initial-figures' || s.phase === 'replacement-figures' || s.phase === 'placing-figure')
     return availableFigureSlots(s).map(slot => ({ type: 'place-figure', slot }));
   if (s.phase === 'replacement-offer')
     return [{ type: 'skip-replacement' }, ...s.grid.map((_, cell) => ({ type: 'start-replacement' as const, cell }))];
   if (s.phase === 'replacement-draw' && s.drawPile.length) return [{ type: 'draw-replacement' }];
+  if (s.phase === 'playing') {
+    if (s.pendingNumeric) {
+      const numeric = value(s.pendingNumeric);
+      return s.grid.flatMap((pile, cell) =>
+        !pile.length || value(pile.at(-1)!) <= numeric ? [{ type: 'place-number' as const, cell }] : []);
+    }
+    if (s.drawPile.length) return [{ type: 'draw-card' }];
+  }
   return [];
 }
 function transition(s: Readonly<ThunderfighterState>, action: Readonly<ThunderfighterAction>): TransitionResult<ThunderfighterState> {
@@ -199,6 +286,24 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
     a.type === action.type && Object.keys(a).length === Object.keys(action).length &&
     Object.entries(a).every(([key, value]) => (action as unknown as Record<string, unknown>)[key] === value)))
     return reject('illegal action or incomplete preparation');
+  if (action.type === 'draw-card') {
+    const id = s.drawPile[0], drawPile = s.drawPile.slice(1);
+    if (isFigure(id)) return { accepted: true, state: { ...s, drawPile,
+      pendingFigures: [id], phase: 'placing-figure', lastShot: [] } };
+    if (isSpecial(id)) return { accepted: true, state: { ...s, drawPile,
+      specialReserve: [...s.specialReserve,id], lastShot: [] } };
+    return { accepted: true, state: { ...s, drawPile, pendingNumeric: id, lastShot: [] } };
+  }
+  if (action.type === 'place-number') {
+    const grid = s.grid.map(p => [...p]);
+    grid[action.cell].push(s.pendingNumeric!);
+    const postPlacement: ThunderfighterState = { ...s, grid, pendingNumeric: null };
+    const targets = getShotTargets(postPlacement, action.cell);
+    const defeatedFigures = [...(s.defeatedFigures ?? []), ...targets];
+    const won = defeatedFigures.length === 12;
+    return { accepted: true, state: { ...postPlacement, defeatedFigures, lastShot: targets,
+      outcome: won ? 'win' : 'in-progress', victoryScore: won ? s.specialReserve.length : null } };
+  }
   if (action.type === 'place-figure') {
     const figureSlots = [...s.figureSlots]; figureSlots[action.slot] = s.pendingFigures[0];
     const pendingFigures = s.pendingFigures.slice(1);
