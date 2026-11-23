@@ -85,7 +85,7 @@ test('CTD-T28 / CTD-T94/T95: first Joker counts exactly 10 and numeric 3 reaches
   assert.equal(s.attacks[0].powers.length, 2);
   assert.equal(s.defeated.length, 0);
 });
-test('CTD-T30 / CTD-T74 / CTD-T102 / CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
+test('CTD-T21 / CTD-T30 / CTD-T74 / CTD-T102 / CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'diamonds-3', 'joker-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-3', monsterId });
@@ -232,4 +232,20 @@ test('CTD-T92: rejected first power followed by serialization creates no ghost a
  assert.deepEqual(saved.drawPile,state.drawPile);
  assert.deepEqual(saved.damages,[]);
  assert.deepEqual(engine.getLegalActions(saved),engine.getLegalActions(state));
+});
+
+test('CTD-T108: a Joker committed in an earlier hand combines with a distinct Joker trigger later',()=>{
+ const {state,monsterId}=prepare(13,['joker-1','clubs-4','hearts-3']);
+ const nextCards=['diamonds-5','joker-2','clubs-2'];
+ assert.ok(nextCards.every(id=>state.drawPile.includes(id)));
+ let next={...state,drawPile:[...nextCards,...state.drawPile.filter(id=>!nextCards.includes(id))]};
+ next=play(next,{type:'place-power',cardId:'joker-1',monsterId});
+ next=play(next,{type:'discard-remaining'});
+ next=play(next,{type:'end-hand'});
+ assert.equal(next.handNumber,2);
+ refuse(next,{type:'take-back',cardId:'joker-1'});
+ next=play(next,{type:'place-power',cardId:'diamonds-5',monsterId});
+ next=play(next,{type:'trigger-attack',cardId:'joker-2',monsterId});
+ assert.ok(next.defeated.includes(monsterId));
+ assert.deepEqual(next.removed,['joker-1','diamonds-5','joker-2']);
 });
