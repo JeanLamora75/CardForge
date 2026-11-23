@@ -856,7 +856,7 @@ En tant que joueur solo, je souhaite découvrir les univers et l'état de chaque
 ## Critères d'acceptation
 
 1. Les cinq jeux sont présentés avec titre, univers, courte description et statut ; seuls CTD et GC peuvent devenir Disponibles après validation.
-2. Card Capture, Loot the Loop et Les Douze Tyrans sont À venir ; Les Douze Tyrans apparaît dans l'univers Grèce antique, avec traçabilité Regicide en référentiel interne.
+2. Card Capture, Loot the Loop et Les Douze Tyrans sont À venir ; Les Douze Tyrans apparaît dans l'univers Wuxia / Chanbara — Asie féodale fantastique, avec traçabilité Regicide en référentiel interne.
 3. Aucun jeu indisponible n'expose d'action Jouer active ; le titre Bastion Stellaire reste provisoire tant que non validé.
 
 ## Dépendances
@@ -1343,3 +1343,10 @@ Tests ou vérifications explicitement attestés ; pas de conformité déduite d'
 **Conséquence pour le backlog :** les tickets **CAR-4, CAR-22 à CAR-28, CAR-32, CAR-39 et CAR-43** doivent être interprétés avec le titre public **Thunderfighter**. Les descriptions d'origine comportant « Bastion Stellaire reste provisoire » sont **des instantanés historiques non normatifs** dans cette copie du backlog ; les remplacer par Thunderfighter lors de la prochaine révision approuvée dans Jira. La vérification des droits et de la disponibilité du nom **reste un gate avant diffusion**.
 
 Aucune Story ni Epic Jira n'a été modifiée dans le cadre de cette **mise à jour documentaire BMAD**.
+
+
+## Décision produit confirmée — 23 novembre 2026 : Wuxia / Chanbara
+
+**Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
+
+Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
