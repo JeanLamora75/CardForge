@@ -395,9 +395,7 @@ function usefulArmorRecourses(s:Readonly<ThunderfighterState>, specials:readonly
     grid[action.to].push(card);
     const after:ThunderfighterState={...s,grid,
       specialReserve:s.specialReserve.filter(id=>id!==action.cardId)};
-    return numericCanPlace(after) ||
-      getShotTargets(after,action.to).length>0 ||
-      hasUsefulContinuation(after,'place');
+    return numericCanPlace(after) || hasUsefulContinuation(after,'place');
   });
 }
 function isDeadlock(s:Readonly<ThunderfighterState>):boolean {
