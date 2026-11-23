@@ -207,3 +207,49 @@ h1[tabindex="-1"]:focus { outline: none; }
 .grim-ending { padding: 16px; border-left: 4px solid #eab976; background: #342b30; font-size: 1.1rem; }
 @media (max-width: 850px) { .grim-columns { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 460px) { .grim-columns { gap: 8px; } .grim-column { padding: 8px; } .grim-hand { gap: 8px; } .grim-card { padding: 8px 4px; min-height: 160px; } .grim-card strong { font-size: .75rem; } .grim-card small { font-size: .66rem; } .grim-actions { flex-direction: column; } }
+
+
+/* Thunderfighter: stable directional battlefield with text labels for all states. */
+.thunder-board { padding: 18px 0 40px; }
+.thunder-board h2,.thunder-board h3 { font-family: Georgia,serif; }
+.thunder-board h3 { margin: 28px 0 12px; }
+.thunder-notice,.thunder-pending { padding: 13px 15px; background: #202e42; border: 1px solid #7894b7; border-radius: 10px; color: #f1f5ff; line-height: 1.6; }
+.thunder-metrics { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.thunder-metrics span { padding: 10px 13px; border: 1px solid #7e97ba; border-radius: 9px; background: #25334a; font-weight: 700; }
+.thunder-battlefield { max-width: 1080px; padding: 12px; border: 1px solid #465e7f; border-radius: 16px; background: radial-gradient(circle at center,#243452,#111823 85%); }
+.thunder-top-slots,.thunder-bottom-slots { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; width: 60%; margin: 0 auto; }
+.thunder-middle { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,3fr) minmax(0,1fr); gap: 8px; padding: 10px 0; }
+.thunder-side-slots { display: grid; grid-template-rows: repeat(3,minmax(0,1fr)); gap: 8px; }
+.thunder-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); grid-template-rows: repeat(3,minmax(0,1fr)); gap: 8px; }
+.thunder-slot,.thunder-pile { min-width: 0; display: flex; flex-direction: column; gap: 6px; justify-content: flex-start; padding: 7px; background: #17273b; border: 1px solid #536d8c; border-radius: 10px; }
+.thunder-slot > small,.thunder-pile > strong { font-size: .74rem; line-height: 1.3; }
+.thunder-slot > span:not(.thunder-card),.thunder-pile > span:not(.thunder-card) { color: #cbd8ed; font-size: .72rem; padding: 16px 2px; }
+.thunder-card { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; gap: 5px; min-height: 112px; padding: 7px 4px; background: linear-gradient(145deg,#415776,#1e304e); color: #faf1dc; border: 2px solid #c4b18c; border-radius: 8px; }
+.thunder-card[data-figure="true"] { background: linear-gradient(145deg,#785341,#2d304f); border-color: #e7b677; }
+.thunder-card[data-defeated="true"] { opacity: .77; background: #292c37; border-style: dashed; }
+.thunder-card strong { font-size: .75rem; line-height: 1.2; overflow-wrap: anywhere; }
+.thunder-card small { font-size: .65rem; line-height: 1.2; overflow-wrap: anywhere; }
+.thunder-emblem { font-size: 1.3rem; }
+.thunder-id { font-family: monospace; }
+.thunder-card b { font-size: .66rem; text-transform: uppercase; }
+.thunder-armor { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 8px; }
+.thunder-armor p { padding: 10px; margin: 0; border: 1px solid #576a8b; background: #243047; border-radius: 8px; font-size: .85rem; }
+.thunder-reserve { display: flex; flex-wrap: wrap; gap: 8px; }
+.thunder-reserve > .thunder-card { width: min(145px,30%); }
+.thunder-actions { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 10px; }
+.thunder-actions button { text-align: left; justify-content: flex-start; white-space: normal; }
+.thunder-confirm { margin: 22px 0; padding: 18px; border: 2px solid #d4b47e; background: #302a36; border-radius: 12px; display: flex; gap: 13px; flex-wrap: wrap; }
+.thunder-confirm h3,.thunder-confirm p { flex: 1 0 100%; margin: 0; line-height: 1.6; }
+.thunder-result { padding: 16px; border-left: 4px solid #d4b47e; background: #302a36; }
+.thunder-search { border: 1px solid #778caf; padding: 15px; border-radius: 12px; background: #202b3f; }
+@media (max-width:680px) {
+  .thunder-battlefield { padding: 5px; }
+  .thunder-top-slots,.thunder-bottom-slots { width: 66%; gap: 3px; }
+  .thunder-middle,.thunder-grid,.thunder-side-slots { gap: 3px; }
+  .thunder-slot,.thunder-pile { padding: 3px; gap: 3px; }
+  .thunder-card { min-height: 100px; padding: 5px 2px; }
+  .thunder-card strong { font-size: .63rem; }
+  .thunder-card small,.thunder-card b { font-size: .56rem; }
+  .thunder-slot > small,.thunder-pile > strong { font-size: .59rem; }
+  .thunder-emblem { font-size: 1rem; }
+}
