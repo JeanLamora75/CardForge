@@ -6,12 +6,12 @@ import { makeDeckWithJokers } from '../src/core/cards.ts';
 const allIds = makeDeckWithJokers().map(card=>card.id).sort();
 const owned = s => [...s.columns.flat(), ...s.drawPile, ...s.hand, ...s.damages, ...s.defeated, ...s.removed];
 
-test('Classic configuration is fixed and has no Advanced or reserve option',()=>{
+test('T-13: Classic configuration is fixed and has no Advanced or reserve option',()=>{
  assert.equal(GRIM_DELVE_RULES_VERSION,'classic-1.1.0');
  assert.throws(()=>grimDelveEngine.createInitialState({seed:12, mode:'advanced'}));
  assert.throws(()=>grimDelveEngine.createInitialState({seed:12, reserve:true}));
 });
-test('CTD-T10: 54 physical cards distribute as 12 monsters plus 39 draw + 3 hand',()=>{
+test('T-10 / CTD-T10: 54 physical cards distribute as 12 monsters plus 39 draw + 3 hand',()=>{
  const s=grimDelveEngine.createInitialState({seed:123});
  assert.equal(s.columns.length,4);
  assert.ok(s.columns.every(col=>col.length===3));
@@ -82,7 +82,7 @@ test('validator rejects duplicate, missing, malformed and altered face-up monste
  assert.equal(grimDelveEngine.validateState(visible).valid,false);
  assert.equal(grimDelveEngine.validateState({hello:'world'}).valid,false);
 });
-test('CTD-T22 / CTD-T58 / CTD-T126 / CTD-T138: seventh damage causes immediate loss and no subsequent legal actions',()=>{
+test('T-12 / CTD-T22 / CTD-T58 / CTD-T126 / CTD-T138: seventh damage causes immediate loss and no subsequent legal actions',()=>{
  let s=grimDelveEngine.createInitialState({seed:20});
  for(let i=0;i<6;i++){
    if(s.hand.length===0) s=grimDelveEngine.transition(s,{type:'end-hand'}).state;
