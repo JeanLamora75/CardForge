@@ -130,3 +130,22 @@ button.brand { border: 0; padding: 0; color: inherit; background: transparent; t
   .detail-navigation { flex-wrap: wrap; }
   .game-facts div { grid-template-columns: 1fr; gap: 2px; }
 }
+
+
+/* Contextual navigation lives in the game sheet, never above the playing surface. */
+.detail-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 22px; border-bottom: 1px solid #494151; padding-bottom: 12px; }
+.detail-tab { min-height: 44px; padding: 10px 13px; background: #302c39; color: #f5f0e8; border: 1px solid #665b6d; border-radius: 9px; font: inherit; font-size: .9rem; cursor: pointer; }
+.detail-tab[aria-current="page"] { background: #5a4434; color: #ffe1b1; border-color: #b58f62; }
+.detail-tab:hover { background: #4d404e; }
+.detail-tab:focus-visible, .back-link:focus-visible, .brand:focus-visible, .secondary-action:focus-visible { outline: 3px solid #f4d8a3; outline-offset: 3px; }
+.detail-section { min-height: 210px; }
+.detail-section h2 { margin-top: 18px; }
+.session-indicator { font-size: .84rem !important; color: #b4f2d0 !important; font-weight: 700; line-height: 1.35 !important; margin: 8px 0 12px !important; flex: 0 0 auto !important; }
+.feature-pending { font-size: .87rem !important; color: #c6bccc !important; }
+.progress-hint { color: #f4d8a3; font-size: .85rem; line-height: 1.6; }
+.action-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.action-hint { color: #cfc4d0; font-size: .85rem; }
+.detail-copy .availability-note { border-left: 3px solid #e8b777; }
+@media (max-width: 480px) {
+  .detail-tab { flex: 1 1 calc(50% - 4px); }
+}
