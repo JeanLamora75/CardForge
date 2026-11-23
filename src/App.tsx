@@ -183,6 +183,7 @@ export default function App() {
   const { progress, error } = useCatalogProgress();
   const lastTrigger = useRef<HTMLElement | null>(null);
   const brandRef = useRef<HTMLButtonElement>(null);
+  const settingsOrigin = useRef<CatalogRoute>(HOME);
 
   const navigate = (next: CatalogRoute) => {
     const hash = routeHash(next);
@@ -192,7 +193,7 @@ export default function App() {
       window.location.hash = hash || "#";
     }
   };
-  const back = () => navigate(backRoute(route));
+  const back = () => navigate(backRoute(route, settingsOrigin.current));
 
   useEffect(() => {
     const onHashChange = () => setRoute(parseCatalogRoute(window.location.hash));
@@ -233,7 +234,10 @@ export default function App() {
         </button>
         <div className="topbar-actions">
           <span className="pill">Collection solo · En création</span>
-          <button className="settings-button" type="button" onClick={() => navigate({ page: "settings" })}
+          <button className="settings-button" type="button" onClick={() => {
+            if (route.page !== "settings") settingsOrigin.current = route;
+            navigate({ page: "settings" });
+          }}
             aria-label="Paramètres">⚙ Paramètres</button>
         </div>
       </header>
