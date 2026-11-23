@@ -18,7 +18,7 @@ design: './DESIGN.md'
 
 ## Foundation
 
-**Produit :** collection de cinq jeux de cartes solo numériques ; MVP : **Clear the Dungeon Classic 1.1.0** sans réserve facultative et **Gridcannon Version 2** entièrement jouables. Card Capture, Loot the Loop et **Les Douze Tyrans** (adaptation de Regicide en Grèce antique) sont visibles mais « À venir ». **« Thunderfighter »** est le nom public validé de Gridcannon (remplace « Bastion Stellaire ») ; la disponibilité juridique du titre demeure à vérifier.
+**Produit :** collection de cinq jeux de cartes solo numériques ; MVP : **Clear the Dungeon Classic 1.1.0** sans réserve facultative et **Gridcannon Version 2** entièrement jouables. Card Capture, Loot the Loop et **Les Douze Tyrans** (adaptation de Regicide en Asie féodale fantastique Wuxia / Chanbara) sont visibles mais « À venir ». **« Thunderfighter »** est le nom public validé de Gridcannon (remplace « Bastion Stellaire ») ; la disponibilité juridique du titre demeure à vérifier.
 
 **Supports :** Web responsive/PWA mobile-first, tactile, clavier, souris, portrait/paysage ; préparation future Android/iOS mais aucun design natif livré pour le MVP. Toutes les interactions doivent fonctionner **hors ligne après préparation** et dans **les deux langues françaises et anglaises**. Une seule partie active par jeu, sauvegarde après coup confirmé, reprise à l'état exact, aucune donnée de partie stockée dans des animations.
 
@@ -327,3 +327,10 @@ Les décisions ci-dessous sont **déjà validées**, leur [référentiel Mary Gr
 **Thunderfighter** remplace définitivement le titre de travail « Bastion Stellaire » pour l'adaptation publique de Gridcannon Version 2 dans CardForge. Ce changement vaut pour l'ensemble des surfaces **UX-01 catalogue, UX-02 fiche, UX-04 plateau, UX-07 aide/règles, UX-08 tutoriel, UX-09 résultats, UX-10 statistiques et UX-12 crédits**. Conserver **Gridcannon** comme nom du jeu original de **Tom Francis**, cité dans les crédits/règles.
 
 Le moteur, le `gameId`, la reprise d'une partie et les compteurs restent inchangés. **Aucune vérification de disponibilité du nom n'a été effectuée** : le gate juridique avant publication reste ouvert. Les mentions antérieures de « Bastion Stellaire » et du caractère provisoire du nom sont des **états historiques supplantés**.
+
+
+## Décision produit confirmée — 23 novembre 2026 : Wuxia / Chanbara
+
+**Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
+
+Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
