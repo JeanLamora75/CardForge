@@ -1,4 +1,5 @@
 import type { GameId } from "../catalog.ts";
+import type { TransitionResult } from "../core/game-engine.ts";
 
 export type PlayableLearningGame = Extract<GameId, "clear-the-dungeon" | "gridcannon">;
 export type LearningChoice = "learn" | "play";
@@ -44,7 +45,7 @@ export function createTutorialSession<State, Action, Setup>(
     createInitialState(setup: Setup): State;
     validateState(state: unknown): { valid: boolean };
     getLegalActions(state: Readonly<State>): readonly Action[];
-    transition(state: Readonly<State>, action: Readonly<Action>): { accepted: boolean; state: State; reason?: string };
+    transition(state: Readonly<State>, action: Readonly<Action>): TransitionResult<State>;
   },
   setup: Setup,
 ) {
@@ -53,10 +54,11 @@ export function createTutorialSession<State, Action, Setup>(
   return {
     getState: (): State => structuredClone(state),
     getLegalActions: (): readonly Action[] => engine.getLegalActions(state),
-    dispatch: async (action: Readonly<Action>) => {
+    dispatch: async (action: Readonly<Action>): Promise<TransitionResult<State>> => {
       const next = engine.transition(structuredClone(state), structuredClone(action));
-      if (next.accepted) state = structuredClone(next.state);
-      return { ...next, state: structuredClone(state) };
+      if (!next.accepted) return { accepted: false, reason: next.reason, state: structuredClone(state) };
+      state = structuredClone(next.state);
+      return { accepted: true, state: structuredClone(state) };
     },
   };
 }
