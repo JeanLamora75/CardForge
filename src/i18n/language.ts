@@ -43,7 +43,6 @@ export const english: Readonly<Record<string, string>> = {
   "⚙ Paramètres":"⚙ Settings",
   "Un univers CardForge":"A CardForge universe",
   "Découvrez les mécanismes":"Discover the mechanics",
-  "Reprendre":"Resume",
   "Jouer":"Play",
   "Règles":"Rules",
   "Statistiques":"Statistics",
