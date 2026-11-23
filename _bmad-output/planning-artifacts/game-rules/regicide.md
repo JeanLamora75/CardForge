@@ -4,7 +4,7 @@
 **Étude :** 22 novembre 2026  
 **Version étudiée :** livret officiel *Regicide*, règles du **mode solo** pour un joueur  
 **Statut :** **cadrage fonctionnel documenté à partir du livret officiel ; prêt pour revue de conformité des règles**, sans implémentation ni tests exécutés  
-**Périmètre :** règles solo originales, sans ajout de pouvoirs, d'objets, de capacités ou de difficulté. **Décision produit validée : l'adaptation CardForge porte le nom « Les Douze Tyrans » et prend place dans un univers de Grèce antique.** Le thème n'a aucun effet sur le moteur. La disponibilité juridique du titre et les droits d'adaptation restent à vérifier avant diffusion.
+**Périmètre :** règles solo originales, sans ajout de pouvoirs, d'objets, de capacités ou de difficulté. **Décision produit validée : l'adaptation CardForge porte le nom « Les Douze Tyrans » et prend place dans un univers Wuxia / Chanbara d'Asie féodale fantastique (décision actualisée le 23 novembre 2026).** Le thème n'a aucun effet sur le moteur. La disponibilité juridique du titre et les droits d'adaptation restent à vérifier avant diffusion.
 
 ## 1. Sources, version, provenance et périmètre
 
@@ -224,7 +224,7 @@ La source est claire sur les mécaniques fondamentales. Les vérifications suiva
 **Décision VALIDÉE par le porteur :**
 
 - **Nom public retenu pour CardForge : « Les Douze Tyrans ».**
-- **Univers retenu : la Grèce antique.**
+- **Univers retenu : Wuxia / Chanbara, Asie féodale fantastique (actualisation du 23 novembre 2026).**
 - **Jeu de référence mécanique : Regicide, mode solo officiel.**
 - **Principe impératif : conserver toutes les règles originales sans modification.**
 
@@ -233,7 +233,7 @@ Ces deux choix sont **définitivement validés au niveau du cadrage produit**, e
 **Frontière fonctionnelle à respecter :**
 - La préparation, les 54 cartes physiques, la main de huit cartes, la hiérarchie des douze ennemis, les valeurs, les quatre pouvoirs, les combinaisons, les immunités, les ripostes, les Jokers solo et les médailles de victoire restent **inchangés**.
 - Les catégories de cartes (J/Q/K, 2–10, As, Joker), leurs nombres et leurs identifiants fonctionnels restent strictement identiques dans le moteur.
-- Les illustrations, personnages, lieux, factions et appellations pourront être réinterprétés selon la **Grèce antique**, mais sans apporter de capacités ni d'exceptions aux règles.
+- Les illustrations, personnages, lieux, factions et appellations pourront être réinterprétés selon l'**Asie féodale fantastique Wuxia / Chanbara**, mais sans apporter de capacités ni d'exceptions aux règles.
 - Les quatre domaines de pouvoir antiques devront correspondre **un pour un** aux enseignes originales (♥ recyclage, ♦ pioche, ♣ dégâts doublés, ♠ protection cumulative) ; aucune substitution n'en change les calculs.
 - La déclinaison artistique détaillée et les choix de représentation relèveront de Sally, sans rouvrir les décisions de mécanique avec Mary.
 - Le document reste nommé `regicide.md` pour conserver une traçabilité claire vers les règles originales ; le produit est présenté au public sous le nom **Les Douze Tyrans**, sous réserve des vérifications juridiques.
@@ -252,3 +252,10 @@ Ces deux choix sont **définitivement validés au niveau du cadrage produit**, e
 **Les mécanismes fondamentaux du mode solo sont documentés et reliés directement au livret officiel.** Le cadrage permet l'étude d'architecture et l'élaboration des tests. Avant de déclarer le moteur pleinement conforme, **clarifier le seul vrai doute de règle REG-R01 (droit de passer en solo)** et exécuter les cas de test ; avant diffusion, **vérifier séparément les autorisations de l'adaptation numérique**.
 
 **Confiance : élevée** pour la préparation, les pouvoirs, combinaisons, immunités, ripostes, Jokers solo et médailles (tous présents dans les deux pages officielles) ; **modérée** pour la règle générale du passage transposée au solo, faute d'explicitation directe. **Aucun développement ni test exécuté pendant cette étude.**
+
+
+## Décision produit confirmée — 23 novembre 2026 : Wuxia / Chanbara
+
+**Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
+
+Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
