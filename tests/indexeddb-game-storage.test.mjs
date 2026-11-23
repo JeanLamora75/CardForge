@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createIndexedDbGameStorage } from '../src/adapters/indexeddb-game-storage.ts';
 import { LocalStorageError, stableResultId } from '../src/ports/local-storage.ts';
 import { startPersistentGame, resumePersistentGame } from '../src/application/persistent-game-session.ts';
+import { getNewGameChoice, confirmNewGame } from '../src/application/new-game-choice.ts';
 
 // In-memory IDB-compatible transaction harness: requests are asynchronous,
 // writes are staged and only made visible by the transaction complete event.
@@ -234,4 +235,90 @@ test('terminal result from a stale session cannot corrupt the current game', asy
   const result = { id: stableResultId('grim', 'stale'), gameId: 'grim', sessionId: 'stale', outcome: 'win' };
   await assert.rejects(() => storage.commitTerminal({ save, result }), e => e.code === 'write-failed');
   assert.equal(await storage.readResult(result.id), undefined);
+});
+
+
+test('new game cancellation preserves both the old save and its counters', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  assert.deepEqual(choice, { kind: 'confirmation-required', existingSessionId: 's-grim' });
+  assert.equal(await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, false), undefined);
+  assert.equal((await storage.readGame('grim')).sessionId, 's-grim');
+  assert.equal(await storage.readStatistics('grim'), undefined);
+  assert.equal(await storage.readResult(stableResultId('grim', 's-grim')), undefined);
+});
+
+test('confirmation replaces an active game atomically and records abandonment, not loss', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  const session = await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, true);
+  assert.equal(session.getSaveStatus(), 'saved');
+  assert.equal((await storage.readGame('grim')).sessionId, 'next');
+  assert.equal((await storage.readResult(stableResultId('grim', 's-grim'))).outcome, 'abandoned');
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 0, 0, 1));
+});
+
+test('double confirmation cannot replace a newer game or count abandonment twice', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, true);
+  await assert.rejects(() => confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'different' }, undefined, choice, true));
+  assert.equal((await storage.readGame('grim')).sessionId, 'next');
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 0, 0, 1));
+});
+
+test('rollback on statistics write failure keeps old save and allows retry', async () => {
+  const { factory, storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  const next = { ...terminalOptions('grim'), sessionId: 'next' };
+  factory.failStats(true);
+  await assert.rejects(() => confirmNewGame(terminalEngine(), storage, next, undefined, choice, true));
+  assert.equal((await storage.readGame('grim')).sessionId, 's-grim');
+  assert.equal(await storage.readResult(stableResultId('grim', 's-grim')), undefined);
+  assert.equal(await storage.readStatistics('grim'), undefined);
+  factory.failStats(false);
+  await confirmNewGame(terminalEngine(), storage, next, undefined, choice, true);
+  assert.equal((await storage.readStatistics('grim')).abandoned, 1);
+});
+
+test('replacing one game does not affect the other game', async () => {
+  const { storage } = terminalEnvironment();
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  await startPersistentGame(terminalEngine(), storage, terminalOptions('thunder'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, true);
+  assert.equal((await storage.readGame('thunder')).sessionId, 's-thunder');
+  assert.equal(await storage.readStatistics('thunder'), undefined);
+});
+
+test('an old in-memory session cannot overwrite the newly confirmed game', async () => {
+  const { storage } = terminalEnvironment();
+  const old = await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  const choice = await getNewGameChoice(storage, 'grim');
+  await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, true);
+  await assert.rejects(() => old.dispatch({ type: 'finish' }));
+  assert.equal((await storage.readGame('grim')).sessionId, 'next');
+  assert.equal((await storage.readStatistics('grim')).abandoned, 1);
+});
+
+test('restarting a previously finished game does not falsely record abandonment', async () => {
+  const { storage } = terminalEnvironment();
+  const old = await startPersistentGame(terminalEngine(), storage, terminalOptions('grim'), undefined);
+  await old.dispatch({ type: 'finish' });
+  const choice = await getNewGameChoice(storage, 'grim');
+  await confirmNewGame(terminalEngine(), storage, { ...terminalOptions('grim'), sessionId: 'next' }, undefined, choice, true);
+  assert.deepEqual(await storage.readStatistics('grim'), expectedStats('grim', 1, 1, 0, 0));
+});
+
+test('first game starts without abandonment or confirmation dialog', async () => {
+  const { storage } = terminalEnvironment();
+  const choice = await getNewGameChoice(storage, 'grim');
+  assert.deepEqual(choice, { kind: 'start' });
+  const session = await confirmNewGame(terminalEngine(), storage, terminalOptions('grim'), undefined, choice, true);
+  assert.equal(session.getSaveStatus(), 'saved');
+  assert.equal(await storage.readStatistics('grim'), undefined);
 });
