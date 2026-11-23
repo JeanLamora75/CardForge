@@ -366,3 +366,23 @@ h1[tabindex="-1"]:focus { outline: none; }
 .privacy-confirm-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .privacy-confirm-actions button { min-height: 44px; }
 @media (max-width: 570px) { .privacy-confirm-actions button { flex: 1 1 100%; } }
+
+
+/* Read-only public attribution, independent of the game engine and saves. */
+.app-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; }
+.credits-footer-link { color:#f2c891; background:none; border:0; border-bottom:1px solid currentColor; min-height:44px; padding:6px 2px; font:inherit; cursor:pointer; }
+.credits-footer-link:focus-visible { outline:3px solid #f4cd92; outline-offset:4px; }
+.credits-page { max-width:1030px; }
+.credits-page > p, .credits-page > ul { line-height:1.7; }
+.credits-grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr)); margin:18px 0 30px; }
+.credits-item { border:1px solid #6f677a; border-radius:15px; padding:20px; background:#211d2b; min-width:0; }
+.credits-item h3 { margin:0 0 14px; font-size:1.35rem; }
+.credits-item h4 { margin:20px 0 7px; font-size:1rem; }
+.credits-item dl { margin:0; }
+.credits-item dl > div { margin:0 0 12px; }
+.credits-item dt { font-size:.84rem; color:#cfc3d9; font-weight:700; }
+.credits-item dd { margin:4px 0 0; line-height:1.55; }
+.credits-item p { line-height:1.65; }
+.credits-item a, .credits-references a { color:#f1c98d; text-decoration:underline; text-underline-offset:3px; overflow-wrap:anywhere; }
+.credits-warning { border-inline-start:3px solid #f1c98d; padding-inline-start:12px; }
+.credits-references li { padding:4px 0; }
