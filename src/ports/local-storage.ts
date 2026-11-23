@@ -12,6 +12,8 @@ export interface GameResult {
   gameId: string;
   sessionId: string;
   outcome: 'win' | 'loss' | 'abandoned';
+  /** Official result score, present only for a won game when supported by its engine. */
+  score?: number;
 }
 
 export interface GameStatistics {
