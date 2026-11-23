@@ -282,6 +282,16 @@ function validate(value: unknown): ValidationResult {
       new Set(state.lastShot).size !== state.lastShot.length)) errors.push('invalid shot history');
   if (state.outcome === 'win' && ((state.defeatedFigures ?? []).length !== 12 ||
       state.victoryScore !== state.specialReserve.length)) errors.push('invalid victory');
+  if (state.outcome !== 'win' && (state.defeatedFigures ?? []).length === 12)
+    errors.push('twelfth defeated figure requires immediate victory');
+  if (state.outcome === 'win' && (state.pendingNumeric != null || state.pendingFigures.length))
+    errors.push('victory with unresolved draw or figure');
+  if (state.outcome === 'loss' && state.lossReason === 'armor' &&
+      !(state.armorCards ?? []).some(armor =>
+        state.figureSlots.includes(armor.figureId) &&
+        resistance(state, armor.figureId) >= (value(armor.figureId) === 13 ? 19 : 20)))
+    errors.push('armor loss without excessive resistance');
+
   if (state.outcome === 'in-progress' && state.victoryScore != null) errors.push('premature score');
   const emptyIsAllowed = state.phase === 'replacement-draw' ? empty.length === 1
     : state.phase === 'playing' || state.phase === 'placing-figure' || state.phase === 'searching' ? true : empty.length === 0;
@@ -576,7 +586,32 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
   }
   return reject('unknown action');
 }
+/** Read-only official outcome: only undepended As/Jokers in reserve score. */
+export interface ThunderfighterResult {
+  outcome: GameOutcome;
+  reason: 'victory' | 'armor' | 'stalemate' | null;
+  officialScore: number | null;
+  defeatedCount: number;
+  physicalCardCount: number;
+}
+export function getThunderfighterResult(state: Readonly<ThunderfighterState>): ThunderfighterResult {
+  const checked=validate(state);
+  if (!checked.valid) throw new TypeError('Cannot report an invalid Thunderfighter state');
+  const count=(state.defeatedFigures ?? []).length;
+  const physical=state.grid.flat().length + state.figureSlots.filter(Boolean).length +
+    state.pendingFigures.length + state.drawPile.length + state.specialReserve.length +
+    state.spentSpecials.length + (state.pendingNumeric ? 1 : 0) +
+    (state.searchBuffer ?? []).length + (state.armorCards ?? []).length;
+  return {
+    outcome:state.outcome,reason:state.outcome === 'win' ? 'victory' :
+      state.outcome === 'loss' ? (state.lossReason ?? null) : null,
+    officialScore:state.outcome === 'win' ? state.victoryScore ?? null : null,
+    defeatedCount:count,physicalCardCount:physical,
+  };
+}
 export const thunderfighterEngine: GameEngine<ThunderfighterState, ThunderfighterAction, ThunderfighterSetup> = {
   createInitialState, getLegalActions, transition,
-  getOutcome: state => state.outcome, validateState: validate,
+  getOutcome: state => state.outcome,
+  getVictoryScore: state => state.outcome === 'win' ? state.victoryScore ?? null : null,
+  validateState: validate,
 };
