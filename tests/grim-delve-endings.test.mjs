@@ -28,7 +28,7 @@ function nearVictory(score=5) {
 function run(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,true,JSON.stringify(r));assert.deepEqual(s,prev);assert.equal(engine.validateState(r.state).valid,true,JSON.stringify(engine.validateState(r.state)));return r.state;}
 function refuse(s,action) {const prev=structuredClone(s);const r=engine.transition(s,action);assert.equal(r.accepted,false);assert.strictEqual(r.state,s);assert.deepEqual(s,prev);}
 
-test('CTD-T113 / CTD-T66 / CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
+test('T-15 / CTD-T113 / CTD-T66 / CTD-T114: twelfth monster wins immediately and scores only five remaining draw cards',()=>{
  const {s,monsterId}=nearVictory(5);
  const final=run(s,{type:'trigger-attack',cardId:'joker-2',monsterId});
  assert.equal(final.defeated.length,12);
@@ -37,14 +37,14 @@ test('CTD-T113 / CTD-T66 / CTD-T114: twelfth monster wins immediately and scores
  assert.equal(final.phase,'finished');assert.deepEqual(engine.getLegalActions(final),[]);
  refuse(final,{type:'end-hand'});refuse(final,{type:'trigger-attack',cardId:'joker-2',monsterId});
 });
-test('CTD-T16 / CTD-T50 / CTD-T51 / CTD-T115/T56: victory with exhausted deck scores zero, not an exhaustion loss',()=>{
+test('T-16 / CTD-T16 / CTD-T50 / CTD-T51 / CTD-T115/T56: victory with exhausted deck scores zero, not an exhaustion loss',()=>{
  const {s,monsterId}=nearVictory(0);
  const final=run(s,{type:'trigger-attack',cardId:'joker-2',monsterId});
  assert.equal(final.outcome,'win');assert.equal(final.endReason,'victory');assert.equal(final.victoryScore,0);
  assert.equal(final.drawPile.length,0);assert.ok(final.hand.length>0);
  refuse(final,{type:'end-hand'});
 });
-test('CTD-T34 / CTD-T62/64: defeat of an exposed monster reveals next while other attacks are intact',()=>{
+test('T-11 / CTD-T34 / CTD-T62/64: defeat of an exposed monster reveals next while other attacks are intact',()=>{
  const s=engine.createInitialState({seed:80});const monsterId=s.visibleMonsters[0],other=s.visibleMonsters[1];
  const ids=['joker-1','clubs-8','joker-2'];const pool=[...s.hand,...s.drawPile];
  const prepared={...s,hand:ids,drawPile:pool.filter(x=>!ids.includes(x)),
@@ -81,7 +81,7 @@ test('terminal metadata validation rejects score after a loss and mismatched vic
  const lost=engine.createInitialState({seed:15});
  assert.equal(engine.validateState({...lost,victoryScore:10}).valid,false);
 });
-test('CTD-T19 / CTD-T68 / CTD-T120: persisted terminal result and official score are not recomputed on retry/reload',async()=>{
+test('T-19 / CTD-T19 / CTD-T68 / CTD-T120: persisted terminal result and official score are not recomputed on retry/reload',async()=>{
  const {s,monsterId}=nearVictory(5);
  const options={gameId:'clear-the-dungeon',rulesVersion:GRIM_DELVE_RULES_VERSION,formatVersion:1};
  let saved={...options,sessionId:'game-1',state:structuredClone(s)};
