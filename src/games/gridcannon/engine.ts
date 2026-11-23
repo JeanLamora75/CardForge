@@ -351,7 +351,7 @@ function transition(s: Readonly<ThunderfighterState>, action: Readonly<Thunderfi
     const removed=grid[action.cell];
     grid[action.cell]=[];
     const reserve=s.specialReserve.filter(id=>id!==action.cardId);
-    return {accepted:true,state:{...s,grid,drawPile:[...s.drawPile,...removed.toReversed()],
+    return {accepted:true,state:{...s,grid,drawPile:[...s.drawPile,...removed.slice().reverse()],
       specialReserve:reserve,spentSpecials:[...s.spentSpecials,action.cardId],lastShot:[]}};
   }
   if (action.type === 'reassign') {
