@@ -7,6 +7,10 @@ on:
       - "src/**"
       - "tests/**"
       - "package.json"
+      - "vite.config.ts"
+      - "index.html"
+      - "public/**"
+      - "scripts/verify-pwa-build.mjs"
       - "tsconfig*.json"
       - ".github/workflows/cardforge-tests.yml"
   pull_request:
@@ -14,6 +18,10 @@ on:
       - "src/**"
       - "tests/**"
       - "package.json"
+      - "vite.config.ts"
+      - "index.html"
+      - "public/**"
+      - "scripts/verify-pwa-build.mjs"
       - "tsconfig*.json"
       - ".github/workflows/cardforge-tests.yml"
 
@@ -34,3 +42,5 @@ jobs:
         run: npm test
       - name: TypeScript and Web build
         run: npm run build
+      - name: Verify installable offline bundle
+        run: npm run verify:pwa
