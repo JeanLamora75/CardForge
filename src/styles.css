@@ -279,3 +279,29 @@ h1[tabindex="-1"]:focus { outline: none; }
 .learning-rulebook p { line-height: 1.7; color: #e2d9e5; }
 .learning-rulebook a { text-decoration: underline; color: #ffdfa8; }
 @media (max-width: 540px) { .learning-toolbar > button { flex: 1 1 100%; } .learning-mode, .learning-hints { width: 100%; } }
+
+
+/* Clear, readable terminal state — outcome is not communicated by colour alone. */
+.game-final-screen { margin: 22px 0 30px; padding: clamp(18px,3.5vw,36px); border: 2px solid #b9a48c; border-radius: 16px; background: radial-gradient(ellipse at top right, #39445e, #221e30 72%); color: #faf5eb; }
+.game-final-screen[data-result="loss"] { border-style: dashed; background: linear-gradient(150deg,#412d39,#25212e); }
+.game-final-eyebrow { letter-spacing: .09em; text-transform: uppercase; font-size: .82rem; font-weight: 800; color: #ebd8a9; }
+.game-final-screen h2 { font: 750 clamp(1.6rem,3.8vw,2.5rem)/1.18 Georgia,serif; margin: 12px 0; color: #fff5dd; }
+.game-final-screen h2:focus { outline: none; }
+.game-final-explanation { font-size: 1.08rem; line-height: 1.55; }
+.game-final-facts { display: flex; flex-wrap: wrap; gap: 10px; padding: 0; margin: 20px 0; list-style: none; }
+.game-final-facts li { border-radius: 9px; border: 1px solid #827e8f; background: #322e43; padding: 10px 14px; }
+.game-final-score { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 14px; border-radius: 12px; background: #453a42; border: 1px solid #e6c28a; }
+.game-final-score strong { font-size: 2.4rem; font-variant-numeric: tabular-nums; }
+.game-final-score span { font-weight: 700; }
+.game-final-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+.game-final-actions button,.game-final-actions a { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; white-space: normal; text-align: center; }
+.result-statistics { max-width: 850px; }
+.game-final-screen:focus-within { scroll-margin-top: 80px; }
+@media (max-width: 620px) {
+  .game-final-actions > * { width: 100%; }
+  .game-final-facts { display: grid; }
+  .game-final-score { gap: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
