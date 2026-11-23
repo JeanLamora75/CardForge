@@ -2,14 +2,14 @@
 
 **Agent :** Amelia — Senior Software Engineer (BMAD)  
 **Date :** 23 novembre 2026 · **Story :** CAR-29 / S22  
-**État :** catalogue et fiches publiés sur `main`, CI GitHub Actions native vérifiée sur le commit de tests `b8841af6cc43a4242b5a9b785b4a51ff7e0ce195`.
+**État :** catalogue et fiches publiés sur `main`, CI GitHub Actions native vérifiée sur le commit comprenant également la réconciliation des styles `aeecdb718121a4051156197d0f05e27b776cd679`.
 
 ## Références
 - [Jira CAR-29](https://lmn24.atlassian.net/browse/CAR-29)
 - [Décisions de cadrage](../../docs/cadrage.md) — nommage, navigation contextuelle, catalogue immersif, gratuité, accessibilité
 - [Sally — Direction UX](../planning-artifacts/ux-designs/ux-CardForge-2026-11-23/DESIGN.md)
 - [Règles d'origine](../planning-artifacts/game-rules/gridcannon.md), [Clear the Dungeon](../planning-artifacts/game-rules/clear-the-dungeon.md)
-- [CI native #45256746054](https://github.com/JeanLamora75/CardForge/actions/runs/45256746054), `main` commit `b8841af6cc43a4242b5a9b785b4a51ff7e0ce195`.
+- [CI native #45256876896](https://github.com/JeanLamora75/CardForge/actions/runs/45256876896), `main` commit `aeecdb718121a4051156197d0f05e27b776cd679`.
 
 ## AC1 — Cinq jeux, intitulés validés et état honnête
 
@@ -49,7 +49,7 @@ Chaque entrée précise les règles source, l'attribution disponible, le context
 
 - `tests/catalog.test.mjs` — **6 nouveaux tests** : liste exacte des cinq IDs et cinq noms, attribution des règles source, univers, trois projets futurs, état des deux MVP, aucune action active et garde stricte sur routes jouables.
 - Première CI avec tests [#45256544274](https://github.com/JeanLamora75/CardForge/actions/runs/45256544274) : 206/207 succès, test trop strict exigeant un nom de plus de 8 caractères (Skydeck). Première correction insuffisante pour Regicide (nom source de 8 caractères) ; après adaptation du test, nouvelle CI complètement verte. Aucune modification des noms validés n'a été faite pour satisfaire ces tests.
-- **CI native finale [#45256746054](https://github.com/JeanLamora75/CardForge/actions/runs/45256746054)** sur `b8841af6cc43a4242b5a9b785b4a51ff7e0ce195` : **207 tests, 207 pass, 0 fail** selon les logs ; étapes `Unit tests` et `TypeScript and Web build` toutes **success**, run `completed/success`.
+- **CI de référence [#45256746054](https://github.com/JeanLamora75/CardForge/actions/runs/45256746054)** sur `b8841af6cc43a4242b5a9b785b4a51ff7e0ce195` : **207/207 tests pass** et build Web/TypeScript réussi. **CI après réconciliation UI/CSS [#45256876896](https://github.com/JeanLamora75/CardForge/actions/runs/45256876896)** sur `aeecdb718121a4051156197d0f05e27b776cd679` : **207/207 tests pass**, étapes `Unit tests` et `TypeScript and Web build` **success**, run `completed/success`. La correction additionnelle adapte les styles aux classes réelles de la fiche et des boutons `Découvrir` / `Retour au catalogue`, sans écraser le fonctionnement déjà livré.
 - Aucun script BMAD `uv` exécuté ; adaptation manuelle aux connecteurs GitHub et Jira.
 
 ## Réserves et suite
