@@ -99,7 +99,7 @@ CardForge est une bibliothèque de mondes : le catalogue relie cinq jeux de cart
 
 **Déjà décidé :** esthétique immersive, illustration **fixe** par carte dans le MVP, cartes non limitées à un habillage de carte traditionnelle, distinction claire entre présentation et modèle métier (AD-05). **[PROPOSITION SALLY]** : conserver le socle sombre et les accents dorés actuellement présents dans le prototype comme identité « cadre » de la collection ; chaque monde peut avoir ses propres images, motifs de fond et accent secondaire, sans modifier le contraste ni les composants de commande.
 
-Les univers recensés dans le catalogue actuel restent des références provisoires ; **« Les Douze Tyrans » / Grèce antique** est le titre et l'univers validés, malgré la présentation historique « Regicide / Fantasy héroïque » encore dans le code. **« Bastion Stellaire »** reste le titre public **provisoire** de Gridcannon V2.
+Les univers recensés dans le catalogue actuel restent des références provisoires ; **« Les Douze Tyrans » / Grèce antique** est le titre et l'univers validés, malgré la présentation historique « Regicide / Fantasy héroïque » encore dans le code. **« Thunderfighter »** est le titre public **validé le 23 novembre 2026** pour Gridcannon V2 ; « Bastion Stellaire » est abandonné.
 
 ## Colors
 
