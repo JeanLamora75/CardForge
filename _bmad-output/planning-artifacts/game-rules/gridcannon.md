@@ -155,7 +155,7 @@ Les scénarios portent sur **des exigences de tests**, pas sur des tests exécut
 
 Cette déclaration publique est une autorisation exprimée en langage naturel ; elle ne constitue pas un contrat exhaustif couvrant toutes les marques, illustrations tierces et boutiques. La gratuité de CardForge est cohérente avec cette invitation, mais il faut conserver la source et vérifier l'identité publique finale.
 
-**GC-17 / G-06 — Décision validée le 22 novembre 2026 :** le titre public **de travail** est « **Bastion Stellaire** », avec crédit explicite à **Gridcannon** et **Tom Francis**. Le porteur conserve expressément **la possibilité de changer le nom ultérieurement** sans modifier l'identifiant interne du jeu ni ses sauvegardes et statistiques. Voir §31 pour la formule, les emplacements du crédit et les vérifications à faire avant diffusion.
+**GC-17 / G-06 — Décision actualisée le 23 novembre 2026 :** le titre public validé est « **Thunderfighter** » (il remplace le nom de travail « Bastion Stellaire »), avec crédit explicite à **Gridcannon** et **Tom Francis**. Le porteur conserve expressément **la possibilité de changer le nom ultérieurement** sans modifier l'identifiant interne du jeu ni ses sauvegardes et statistiques. Voir §31 pour la formule, les emplacements du crédit et les vérifications à faire avant diffusion.
 
 Les illustrations originales de CardForge ne réutiliseront pas celles d'applications tierces.
 
@@ -197,7 +197,7 @@ Les illustrations originales de CardForge ne réutiliseront pas celles d'applica
 | G-03 | **Deux tirs potentiels depuis un coin sont attestés** ; ordre terminal et interactions simultanées non précisées | **Partiellement confirmé** |
 | G-04 | La pile extraite est déposée **face cachée au bas de la pioche** ; ordre interne de la pile et orientation des cartes non explicités | **Partiellement confirmé** |
 | G-05 | Conditions d'armure, seuils et possibilité d'utiliser les actions spéciales après fin de pioche confirmées ; cas limites d'absence de cible / recours utile à préciser | **Partiellement confirmé** |
-| G-06 | Invitation publique à créer des adaptations, crédit à Tom Francis recommandé et nom public différent de « Gridcannon » seul recommandé | **GC-17 validé : Bastion Stellaire (titre provisoire et révisable), attribution Gridcannon / Tom Francis ; vérification du titre avant diffusion** |
+| G-06 | Invitation publique à créer des adaptations, crédit à Tom Francis recommandé et nom public différent de « Gridcannon » seul recommandé | **GC-17 actualisé le 23/11 : Thunderfighter, remplaçant Bastion Stellaire ; attribution Gridcannon / Tom Francis ; vérification du titre avant diffusion** |
 
 ### Suites obligatoires
 
