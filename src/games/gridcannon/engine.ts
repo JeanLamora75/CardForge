@@ -7,7 +7,7 @@ export const THUNDERFIGHTER_RULES_VERSION = 'v2' as const;
 
 export type ThunderfighterPhase =
   | 'initial-figures' | 'replacement-offer'
-  | 'replacement-draw' | 'replacement-figures' | 'playing';
+  | 'replacement-draw' | 'replacement-figures' | 'placing-figure' | 'playing';
 
 export interface ThunderfighterState {
   rulesVersion: typeof THUNDERFIGHTER_RULES_VERSION;
@@ -110,7 +110,7 @@ function validate(value: unknown): ValidationResult {
   if (!record(value)) return { valid: false, errors: ['state must be an object'] };
   const s = value;
   if (s.rulesVersion !== THUNDERFIGHTER_RULES_VERSION) errors.push('incorrect rules version');
-  if (!['initial-figures','replacement-offer','replacement-draw','replacement-figures','playing'].includes(String(s.phase)))
+  if (!['initial-figures','replacement-offer','replacement-draw','replacement-figures','placing-figure','playing'].includes(String(s.phase)))
     errors.push('invalid preparation phase');
   if (s.outcome !== 'in-progress') errors.push('unexpected terminal outcome');
   if (!Array.isArray(s.grid) || s.grid.length !== 9 || !s.grid.every(p => Array.isArray(p))) errors.push('invalid grid');
@@ -121,8 +121,10 @@ function validate(value: unknown): ValidationResult {
   const state = s as unknown as ThunderfighterState;
   const empty = state.grid.flatMap((pile, cell) => pile.length ? [] : [cell]);
   if (state.grid.some(p => p.some(id => typeof id !== 'string' || !isNumber(id)))) errors.push('non-numeric grid card');
-  if (empty.length !== (state.phase === 'replacement-draw' ? 1 : 0) ||
-      state.grid.some(p => p.length > 1)) errors.push('invalid preparation grid occupancy');
+  const emptyIsAllowed = state.phase === 'replacement-draw' ? empty.length === 1
+    : state.phase === 'playing' || state.phase === 'placing-figure' ? true : empty.length === 0;
+  if (!emptyIsAllowed || state.grid.some(p => p.length > 1))
+    errors.push('invalid preparation grid occupancy');
   if (state.pendingFigures.some(id => typeof id !== 'string' || !isFigure(id)) ||
       state.figureSlots.some(id => id !== null && (typeof id !== 'string' || !isFigure(id)))) errors.push('invalid figure zone');
   if (state.defeatedFigures !== undefined &&
@@ -144,13 +146,13 @@ function validate(value: unknown): ValidationResult {
       errors.push('replacement phase mismatch');
   }
   if (state.phase === 'replacement-draw' && empty[0] !== state.replacementSlot) errors.push('wrong empty replacement cell');
-  if ((state.phase === 'initial-figures' || state.phase === 'replacement-figures') && !state.pendingFigures.length)
+  if ((state.phase === 'initial-figures' || state.phase === 'replacement-figures' || state.phase === 'placing-figure') && !state.pendingFigures.length)
     errors.push('figure phase without pending figure');
   if ((state.phase === 'replacement-offer' || state.phase === 'playing') && state.pendingFigures.length)
     errors.push('unplaced figures outside placement phase');
   if (state.phase === 'replacement-offer' && state.replacementUsed) errors.push('replacement already used');
   if (state.phase === 'initial-figures' && state.replacementUsed) errors.push('replacement too early');
-  if (state.phase === 'playing' && state.replacementSlot !== null) errors.push('replacement not finished');
+  if ((state.phase === 'playing' || state.phase === 'placing-figure') && state.replacementSlot !== null) errors.push('replacement not finished');
   const used = [
     ...state.grid.flat(), ...state.figureSlots.filter((id): id is string => typeof id === 'string'),
     ...state.pendingFigures, ...state.drawPile, ...state.specialReserve, ...state.spentSpecials,
@@ -184,7 +186,7 @@ function createInitialState(setup: ThunderfighterSetup): ThunderfighterState {
 }
 function getLegalActions(s: Readonly<ThunderfighterState>): readonly ThunderfighterAction[] {
   if (!validate(s).valid) return [];
-  if (s.phase === 'initial-figures' || s.phase === 'replacement-figures')
+  if (s.phase === 'initial-figures' || s.phase === 'replacement-figures' || s.phase === 'placing-figure')
     return availableFigureSlots(s).map(slot => ({ type: 'place-figure', slot }));
   if (s.phase === 'replacement-offer')
     return [{ type: 'skip-replacement' }, ...s.grid.map((_, cell) => ({ type: 'start-replacement' as const, cell }))];
