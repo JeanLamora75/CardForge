@@ -51,7 +51,7 @@ function refuse(state, slot) {
   assert.deepEqual(state, previous);
 }
 
-test('GC-01: the centre is excluded even if it exactly matches the figure suit and has the highest rank', () => {
+test('GC-T32 / GC-01: the centre is excluded even if it exactly matches the figure suit and has the highest rank', () => {
   const grid = [...defaultGrid]; grid[4] = 'hearts-10';
   const state = fixture({ grid });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [7] });
@@ -72,7 +72,7 @@ test('GC-01: within the same suit the higher number is preferred', () => {
   const state = fixture({ grid });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [2, 3] });
 });
-test('GC-01: tied candidates and a corner offer all adjacent legal slots for explicit choice', () => {
+test('GC-T04 / GC-01: tied candidates and a corner offer all adjacent legal slots for explicit choice', () => {
   // A real deck contains only one card per suit and value. A corner provides the two legal ties.
   const grid = [...defaultGrid]; grid[0] = 'hearts-8'; grid[2] = 'clubs-10';
   const state = fixture({ grid });
@@ -82,7 +82,7 @@ test('GC-01: tied candidates and a corner offer all adjacent legal slots for exp
   assert.equal(getFigureSlotStatus(chosen, 9), 'alive');
   assert.equal(chosen.figureSlots[0], null);
 });
-test('GC-02: if the best suit-matched number has no adjacent slot, next available suit candidate wins', () => {
+test('GC-T05 / GC-T33 / GC-02: if the best suit-matched number has no adjacent slot, next available suit candidate wins', () => {
   const grid = [...defaultGrid]; grid[0] = 'hearts-10'; grid[2] = 'hearts-8';
   const occupied = { 0: 'clubs-11', 9: 'spades-12' };
   const state = fixture({ grid, occupied });
@@ -142,7 +142,7 @@ test('figure status is persisted without freeing occupied slots; bad status meta
   assert.equal(engine.validateState({ ...state, defeatedFigures: ['hearts-13'] }).valid, false);
   assert.equal(engine.validateState({ ...state, defeatedFigures: ['clubs-11', 'clubs-11'] }).valid, false);
 });
-test('a repeated placement is rejected and never duplicates a figure or a slot', () => {
+test('GC-T06: a repeated placement is rejected and never duplicates a figure or a slot', () => {
   const state = fixture({ occupied: { 0: 'clubs-11' } });
   const options = getFigurePlacementOptions(state);
   const chosen = options.slots[0];
