@@ -321,3 +321,9 @@ Les décisions ci-dessous sont **déjà validées**, leur [référentiel Mary Gr
 5. Soumettre les deux variantes V2 à une nouvelle revue utilisateur avant de promouvoir une disposition en référence définitive.
 
 **Périmètre de cette mise à jour :** documentation du retour et préparation de V2 uniquement. Les prototypes HTML V1 déjà livrés ne sont pas renommés « V2 », et aucun nouveau rendu visuel ni test de jouabilité n'est revendiqué.
+
+## Décision utilisateur — nom public de l'interface (23 novembre 2026)
+
+**Thunderfighter** remplace définitivement le titre de travail « Bastion Stellaire » pour l'adaptation publique de Gridcannon Version 2 dans CardForge. Ce changement vaut pour l'ensemble des surfaces **UX-01 catalogue, UX-02 fiche, UX-04 plateau, UX-07 aide/règles, UX-08 tutoriel, UX-09 résultats, UX-10 statistiques et UX-12 crédits**. Conserver **Gridcannon** comme nom du jeu original de **Tom Francis**, cité dans les crédits/règles.
+
+Le moteur, le `gameId`, la reprise d'une partie et les compteurs restent inchangés. **Aucune vérification de disponibilité du nom n'a été effectuée** : le gate juridique avant publication reste ouvert. Les mentions antérieures de « Bastion Stellaire » et du caractère provisoire du nom sont des **états historiques supplantés**.
