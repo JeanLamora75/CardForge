@@ -15,9 +15,9 @@ const tests=testFiles.flatMap(file=>{
 });
 function statedIds(title) {
   const found = new Set();
-  for (const m of title.matchAll(/\b(CTD-T|GC-T)(\d{1,3})((?:\/\d{1,3})*)/g)) {
+  for (const m of title.matchAll(/\b(CTD-T|GC-T)(\d{1,3})((?:\/(?:T)?\d{1,3})*)/g)) {
     found.add(m[1]+m[2]);
-    for (const extra of m[3].split("/").filter(Boolean)) found.add(m[1]+extra);
+    for (const extra of m[3].split("/").filter(Boolean)) found.add(m[1]+extra.replace(/^T/, ""));
   }
   for (const m of title.matchAll(/\bT-\d{2,3}\b/g)) found.add(m[0]);
   return found;
