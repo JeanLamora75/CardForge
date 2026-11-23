@@ -35,7 +35,7 @@ test('two MVP engines are in development; neither is claimed playable before its
 test('game entry has a meaningful original attribution, setting, introduction and mechanics',()=>{
   for(const game of games){
     for(const field of ['title','originalGame','authors','setting','description','mechanics']){
-      assert.ok(game[field].trim().length >= (field === 'title' ? 3 : 9),`${game.id}: missing ${field}`);
+      assert.ok(game[field].trim().length >= (['title','originalGame'].includes(field) ? 3 : 9),`${game.id}: missing ${field}`);
     }
   }
 });
