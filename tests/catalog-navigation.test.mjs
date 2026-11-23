@@ -29,17 +29,17 @@ test('CAR-30: opening a game with no save reads only game and statistics, never 
   assert.deepEqual(writes,[]);
 });
 test('CAR-30: active save is shown without starting, abandoning or resuming it', async () => {
-  const game={gameId:'clear-the-dungeon',sessionId:'active-42',state:{step:9}};
+  const game={gameId:'clear-the-dungeon',sessionId:'active-42',state:{outcome:'in-progress',step:9}};
   const { storage,reads,writes }=storageFixture({game});
   assert.deepEqual(await readCatalogGameProgress(storage,'clear-the-dungeon'),{
     indicator:'active',statistics:null,
   });
   assert.ok(reads.some(x=>x[0]==='result'&&x[1]===stableResultId('clear-the-dungeon','active-42')));
   assert.deepEqual(writes,[]);
-  assert.deepEqual(game.state,{step:9});
+  assert.deepEqual(game.state,{outcome:'in-progress',step:9});
 });
 test('CAR-30: a saved terminal result does not count as a resumable active game', async () => {
-  const game={gameId:'gridcannon',sessionId:'finished'};
+  const game={gameId:'gridcannon',sessionId:'finished',state:{outcome:'win'}};
   const result={id:stableResultId('gridcannon','finished'),gameId:'gridcannon',sessionId:'finished',outcome:'win'};
   const stats={gameId:'gridcannon',played:1,won:1,lost:0,abandoned:0};
   const {storage,writes}=storageFixture({game,result,statistics:stats});
