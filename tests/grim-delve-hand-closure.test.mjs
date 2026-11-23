@@ -58,7 +58,7 @@ test('CTD-T57/T136/T137 final empty draw pile loses only after explicit closure'
  const n=play(s,{type:'end-hand'});
  assert.equal(n.outcome,'loss');assert.equal(n.phase,'finished');refuse(n,{type:'end-hand'});
 });
-test('CTD-T134/T140 duplicate closure cannot create two hands',()=>{
+test('CTD-T60 / CTD-T134/T140 duplicate closure cannot create two hands',()=>{
  const s=finalHand(2),n=play(s,{type:'end-hand'});
  refuse(n,{type:'end-hand'});assert.equal(n.handNumber,s.handNumber+1);
  assert.equal(n.drawPile.length,0);
