@@ -30,7 +30,7 @@ test('the existing shuffle still accepts an injected random source without mutat
   assert.deepEqual(ids(cards), original);
 });
 
-test('serialized snapshot restores exact order, without using RNG', () => {
+test('T-17: serialized snapshot restores exact order, without using RNG', () => {
   const deck = createSeededDeck(42);
   const snapshot = JSON.parse(JSON.stringify(snapshotDeckOrder(deck)));
   const priorRandom = Math.random;
@@ -52,7 +52,7 @@ test('corrupt deck snapshots are rejected instead of being silently reshuffled',
   assert.throws(() => restoreDeckOrder([...order.slice(0, -1), 'invented-card']), RangeError);
 });
 
-test('identical state/action sequences give identical outcomes and do not mutate inputs', () => {
+test('T-20: identical state/action sequences give identical outcomes and do not mutate inputs', () => {
   const engine = {
     createInitialState(setup) { return { phase: 'draw', pile: snapshotDeckOrder(createSeededDeck(setup.seed)), hand: [] }; },
     getLegalActions(state) { return state.pile.length ? [{ type: 'draw' }] : []; },
