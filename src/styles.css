@@ -176,3 +176,34 @@ h1[tabindex="-1"]:focus { outline: none; }
   .context-actions { flex-direction: column; align-items: stretch; }
   .context-actions > * { width: 100%; }
 }
+
+
+/* Grim Delve playing surface: readable suits, ranks and controls without color cues. */
+.board-page { max-width: 1180px; margin: 24px auto 60px; }
+.board-page > h1 { font: 700 clamp(2rem,4vw,3rem)/1.15 Georgia,serif; }
+.grim-board { padding: 20px 0 36px; }
+.grim-board h2,.grim-board h3 { font-family: Georgia,serif; }
+.grim-board h3 { margin: 28px 0 14px; }
+.grim-notice { border: 1px solid #9b8060; border-radius: 10px; background: #33271e; color: #ffe7c3; padding: 14px; line-height: 1.5; }
+.grim-counters { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
+.grim-counters span { padding: 10px 13px; border: 1px solid #8b785f; border-radius: 8px; background: #2e2530; font-weight: 700; }
+.grim-columns { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; }
+.grim-column { min-width: 0; padding: 12px; border: 1px solid #655362; border-radius: 14px; background: #201a25; display: flex; flex-direction: column; gap: 10px; }
+.grim-column h4 { margin: 0; font-size: .92rem; }
+.grim-column > small,.grim-placed > small { color: #ded0dd; }
+.grim-placed { border-top: 1px dashed #ad916b; padding-top: 10px; }
+.grim-card { min-width: 0; width: 100%; min-height: 154px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 6px; padding: 12px 8px; color: #faead1; border: 2px solid #b99b71; border-radius: 12px; background: radial-gradient(circle at 50% 25%,#68453d,#291d26 72%); text-align: center; box-shadow: inset 0 0 0 2px #0007; }
+.grim-card[data-monster="true"] { min-height: 180px; border-color: #d4ac75; background: radial-gradient(circle at 50% 25%,#804a43,#341d29 72%); }
+.grim-card:disabled { opacity: 1; cursor: default; }
+.grim-card[aria-pressed="true"] { outline: 4px solid #f9dc96; outline-offset: 2px; }
+.grim-card-crest { font-size: 2.2rem; line-height: 1; }
+.grim-card strong { font-size: .86rem; overflow-wrap: anywhere; }
+.grim-card small { font-size: .75rem; }
+.grim-card-id { font-family: monospace; opacity: .85; overflow-wrap: anywhere; }
+.grim-hand { display: grid; grid-template-columns: repeat(3,minmax(0,180px)); gap: 14px; }
+.grim-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 22px 0; padding: 16px; border: 1px solid #5a4b57; border-radius: 12px; }
+.grim-actions h3 { width: 100%; margin: 0; }
+.grim-actions p { width: 100%; }
+.grim-ending { padding: 16px; border-left: 4px solid #eab976; background: #342b30; font-size: 1.1rem; }
+@media (max-width: 850px) { .grim-columns { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 460px) { .grim-columns { gap: 8px; } .grim-column { padding: 8px; } .grim-hand { gap: 8px; } .grim-card { padding: 8px 4px; min-height: 160px; } .grim-card strong { font-size: .75rem; } .grim-card small { font-size: .66rem; } .grim-actions { flex-direction: column; } }
