@@ -143,3 +143,61 @@ test('joker power/suit cannot be overridden by unrecognized action arguments', (
   refuse(state, { type: 'set-joker-suit', cardId: 'joker-1', suit: 'hearts' });
   refuse(state, { type: 'place-power', cardId: 'joker-1', monsterId, value: 1 });
 });
+
+test('CTD-T79 / T-01: 5+6 exactly meets Jack resistance while awaiting a real trigger',()=>{
+  const {state,monsterId}=prepare(11,['clubs-5','diamonds-6','joker-1']);
+  let next=play(state,{type:'place-power',cardId:'clubs-5',monsterId});
+  next=play(next,{type:'place-power',cardId:'diamonds-6',monsterId});
+  assert.equal(next.defeated.length,0);
+  assert.equal(next.attacks[0].powers.length,2);
+  const won=play(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
+  assert.ok(won.defeated.includes(monsterId));
+});
+test('CTD-T81 / CTD-T99: King accepts 5 plus fixed Joker 10 regardless of power suit',()=>{
+  const {state,monsterId}=prepare(13,['diamonds-5','joker-1','clubs-2']);
+  let next=play(state,{type:'place-power',cardId:'diamonds-5',monsterId});
+  next=play(next,{type:'place-power',cardId:'joker-1',monsterId});
+  assert.equal(next.defeated.length,0);
+  assert.deepEqual(next.attacks[0].powers.map(p=>p.cardId),['diamonds-5','joker-1']);
+});
+test('CTD-T87/T88/T89/T90: first-power lower bound is rank + the maximum second card 10',()=>{
+  const cases=[
+    [12,'hearts-1',false],
+    [12,'hearts-2',true],
+    [11,'hearts-1',true],
+    [13,'joker-1',true],
+  ];
+  for(const [rank,cardId,accepted] of cases){
+    const {state,monsterId}=prepare(rank,[cardId,'clubs-9']);
+    const action={type:'place-power',cardId,monsterId};
+    if(accepted){
+      const next=play(state,action);
+      assert.deepEqual(next.attacks[0].powers.map(p=>p.cardId),[cardId]);
+    }else refuse(state,action);
+  }
+});
+test('CTD-T83/T84: refused insufficient power remains in saved hand; third power never repairs an attack',()=>{
+  const {state,monsterId}=prepare(13,['clubs-5','diamonds-7','hearts-10']);
+  let next=play(state,{type:'place-power',cardId:'clubs-5',monsterId});
+  refuse(next,{type:'place-power',cardId:'diamonds-7',monsterId});
+  const restored=JSON.parse(JSON.stringify(next));
+  assert.deepEqual(engine.getLegalActions(restored),engine.getLegalActions(next));
+  assert.ok(restored.hand.includes('diamonds-7'));
+  next=play(restored,{type:'place-power',cardId:'hearts-10',monsterId});
+  assert.deepEqual(next.attacks[0].powers.map(p=>p.cardId),['clubs-5','hearts-10']);
+  refuse(next,{type:'place-power',cardId:'diamonds-7',monsterId});
+});
+test('CTD-T96: a Joker triggers a completed Queen attack without altering its fixed physical ID',()=>{
+  const {state,monsterId}=prepare(12,['clubs-6','diamonds-6','joker-1']);
+  let next=play(state,{type:'place-power',cardId:'clubs-6',monsterId});
+  next=play(next,{type:'place-power',cardId:'diamonds-6',monsterId});
+  next=play(next,{type:'trigger-attack',cardId:'joker-1',monsterId});
+  assert.ok(next.defeated.includes(monsterId));
+  assert.ok(next.removed.includes('joker-1'));
+});
+test('CTD-T112: two Jokers cannot bypass the second power strength requirement',()=>{
+  const {state,monsterId}=prepare(13,['joker-1','joker-2','clubs-2']);
+  const next=play(state,{type:'place-power',cardId:'joker-1',monsterId});
+  refuse(next,{type:'place-power',cardId:'clubs-2',monsterId});
+  refuse(next,{type:'trigger-attack',cardId:'joker-2',monsterId});
+});
