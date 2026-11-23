@@ -47,7 +47,7 @@ function reject(s,action){
   const before=structuredClone(s),r=engine.transition(s,action);
   assert.equal(r.accepted,false);assert.strictEqual(r.state,s);assert.deepEqual(s,before);
 }
-test('GC-08: victory on twelfth figure only, with official score of unspent specials',()=>{
+test('GC-T22 / GC-08: victory on twelfth figure only, with official score of unspent specials',()=>{
   const s=nearVictory();
   assert.deepEqual(getThunderfighterResult(s),{
     outcome:'in-progress',reason:null,officialScore:null,defeatedCount:10,physicalCardCount:54,
@@ -121,7 +121,7 @@ test('GC-12/54 cards: all phases preserve identities while moving cards between 
   }
   physical(s);
 });
-test('terminal result stores score exactly once and restores same score without reroll',async()=>{
+test('GC-T25: terminal result stores score exactly once and restores same score without reroll',async()=>{
   const state=nearVictory({reserve:['joker-1','hearts-1']});
   const options={gameId:'gridcannon',rulesVersion:'v2',formatVersion:1};
   let saved={...options,sessionId:'game-car28',state:structuredClone(state)};
