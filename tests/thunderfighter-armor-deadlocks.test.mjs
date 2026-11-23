@@ -165,3 +165,39 @@ test('armor choice survives JSON save and restore without assigning twice',()=>{
   reject(next,{type:'assign-armor',figureId:'spades-11'});
   assert.equal(next.armorCards.length,1);
 });
+
+
+test('GC-20: a legal Joker double-axis shot at empty draw can finish the twelfth figure',()=>{
+  const others=figures.filter(id=>id!=='clubs-11');
+  const slots=[0,1,2,4,5,6,7,8,9,10,11];
+  const targets={3:'clubs-11'};
+  others.forEach((id,index)=>{targets[slots[index]]=id});
+  const grid=Array.from({length:9},()=>[]);
+  grid[1]=['clubs-8'];grid[2]=['diamonds-6'];
+  grid[4]=numerics.filter(id=>id!=='clubs-8'&&id!=='diamonds-6');
+  const s=fixture({grid,targets,pending:null,reserve:['joker-1'],
+    spent:specials.filter(id=>id!=='joker-1'),defeated:others,drawPile:[]});
+  assert.equal(s.outcome,'in-progress');
+  assert.ok(actions(s,'reassign').some(a=>a.from===4&&a.to===0));
+  const done=apply(s,{type:'reassign',cardId:'joker-1',from:4,to:0});
+  assert.equal(done.outcome,'win');
+  assert.equal(done.victoryScore,0);
+  assert.equal(done.defeatedFigures.length,12);
+  assert.deepEqual(engine.getLegalActions(done),[]);
+});
+test('GC-20: placing the last figure with no draw and no usable resources gives a confirmed stalemate',()=>{
+  const others=figures.filter(id=>id!=='clubs-11');
+  const targets=Object.fromEntries(others.map((id,index)=>[index,id]));
+  const grid=[numerics,[],[],[],[],[],[],[],[]];
+  const base=fixture({grid,targets,pending:null,reserve:[],spent:specials,
+    defeated:others,drawPile:['clubs-11']});
+  const pending={...base,drawPile:[],pendingFigures:['clubs-11'],
+    phase:'placing-figure',placingFromSearch:true};
+  assert.deepEqual(engine.validateState(pending),{valid:true});
+  const choices=actions(pending,'place-figure');
+  assert.equal(choices.length,1);
+  const result=apply(pending,choices[0]);
+  assert.equal(result.outcome,'loss');
+  assert.equal(result.lossReason,'stalemate');
+  assert.equal(result.victoryScore,null);
+});
