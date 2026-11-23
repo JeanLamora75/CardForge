@@ -1,0 +1,20 @@
+{
+  "name": "CardForge — Collection de jeux de cartes solo",
+  "short_name": "CardForge",
+  "description": "Cinq univers illustrés, deux plateaux solo en préversion, sans publicité.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#12111b",
+  "theme_color": "#12111b",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "./icons/cardforge.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
