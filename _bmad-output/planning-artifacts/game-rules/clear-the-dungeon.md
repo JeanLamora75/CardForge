@@ -411,3 +411,20 @@ Cette validation ne modifie pas les règles CTD-ARB-01/02 : la première puissan
 **Statut : CTD-14 / CTD-ARB-14 CLOS pour CardForge.** Cet arbitrage est une décision de contrôle d'interface et de séquencement de tour, **non attribuée comme règle littérale de Mark S. Ball**. Les scénarios sont spécifiés et non exécutés.
 
 **Relais recommandé :** les **14 arbitrages CTD-01 à CTD-14** sont validés pour le cadrage fonctionnel, sous réserve d'une revue globale de cohérence et de la suite de tests exécutable, qui **n'ont pas encore été réalisées**. Plutôt que d'inventer des questions de détails déjà couverts, poursuivre les **ambiguïtés bloquantes de Gridcannon Version 2**, en commençant par **GC-01 / G-01a** : emplacement d'une figure si la carte de grille la plus semblable est au centre.
+
+
+## Décision de nomenclature produit — 23 novembre 2026 (fait foi pour tous les futurs livrables)
+
+Le porteur de CardForge valide explicitement les titres publics suivants :
+
+| Jeu original et référentiel Mary | **Nom public CardForge** | Univers graphique validé | Statut de livraison |
+| --- | --- | --- | --- |
+| *Clear the Dungeon* Classic 1.1.0 | **Grim Delve** | Donjon dark fantasy, monstres illustrés | MVP |
+| *Gridcannon* Version 2, Tom Francis | **Thunderfighter** | Science-fiction spatiale pulp rétrofuturiste | MVP |
+| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | Après MVP |
+| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | Après MVP |
+| *Regicide* | **Les Douze Tyrans** | Wuxia / Chanbara, Asie féodale fantastique | Après MVP |
+
+**Important :** la formulation « Loop the Loot » employée lors de la validation désigne le jeu original documenté par Mary sous son titre exact ***Loot the Loop***. **Midnight Syndicate** est le titre public voulu, sans changement des règles originales. Les titres antérieurs de travail « Bastion Stellaire », « Corsaires du ciel » ou les autres libellés provisoires ne doivent pas remplacer les noms publics ci-dessus dans les nouveaux écrans et maquettes ; « Corsaires du ciel » reste un **univers**, non le nom du jeu.
+
+Les noms des jeux originaux sont **conservés dans les références aux sources, la traçabilité juridique, les identifiants stables et les noms des documents de règles**. Il ne faut pas renommer les `gameId`, les répertoires internes, les sauvegardes, les statistiques ou les moteurs du seul fait d'un changement de titre public. Tous les jeux reprennent les **règles originales documentées par Mary**, sans nouveau pouvoir associé au thème. Le catalogue, les fiches, les interfaces, l'aide, les traductions et les crédits affichent leurs noms publics respectifs et l'attribution au jeu source. **La disponibilité des nouveaux titres et les droits d'adaptation restent à vérifier avant toute diffusion publique : aucune vérification juridique n'est revendiquée.**
