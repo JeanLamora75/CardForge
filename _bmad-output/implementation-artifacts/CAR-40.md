@@ -38,6 +38,6 @@ Les fichiers de moteurs et règles n’ont pas été modifiés pour cette Story.
 
 ## CI et publication
 
-CI de référence : à renseigner après exécution du commit final incluant le mode strict et son test négatif. Commandes exécutées en CI : `npm test` ; `npm run audit:rules` (**strict**) ; `npm run build` ; `npm run verify:pwa`.
+**CI verte vérifiée : [GitHub Actions #45276707360](https://github.com/JeanLamora75/CardForge/actions/runs/45276707360), commit `60bd074d4067c7b73a67c9611fdbe42c49cf30f5`.** Résultats : **298 tests exécutés, 298 réussis, 0 échec** ; audit strict **121/121 CTD-T, 35/35 GC-T et 21/21 T- historiques** ; build TypeScript/Vite réussi ; 8 ressources PWA vérifiées. Le test du garde CI réussit lorsqu'un identifiant sans test provoque effectivement un code de retour non nul. Commandes exécutées en CI : `npm test` ; `npm run audit:rules` (**strict**) ; `npm run build` ; `npm run verify:pwa`.
 
 Aucune mise à jour du statut Jira effectuée sans autorisation.
