@@ -180,3 +180,9 @@ Les univers recensés dans le catalogue actuel restent des références provisoi
 ## Statut de validation
 
 Les **principes** de collection, de cartes illustrées, d'univers indépendants et d'accessibilité sont hérités de décisions déjà prises. La **palette complète, la taille des cartes, le détail des motifs et la direction artistique finalisée** restent à valider sur maquettes auprès du porteur ; les chiffres CSS repris du prototype ne sont pas une homologation de charte. Aucun mock, test de contraste ou essai utilisateur n'a été exécuté. Ce document forme avec [EXPERIENCE.md](./EXPERIENCE.md) la base contractuelle UX à consolider par Sally avant développement d'interface.
+
+## Mise à jour validée — titre et univers Thunderfighter (23 novembre 2026)
+
+**Thunderfighter** est le **nom public désormais validé** de l'adaptation Gridcannon V2 ; **Bastion Stellaire est abandonné**. La direction graphique **rétrofuturiste pulp spatiale, évoquant l'esprit Buck Rogers**, a été appréciée et validée comme ambiance générale, avec l'organisation des écrans, lors de la revue visuelle du 23 novembre. Cette inspiration n'autorise pas la reproduction d'éléments graphiques protégés d'une franchise ; privilégier des illustrations originales.
+
+Dans les nouveaux écrans, afficher **Thunderfighter** et conserver « Gridcannon, créé par Tom Francis » dans les crédits et informations de règles. Le choix du nom n'implique **aucune modification des règles, cartes ou statistiques**. Les mentions anciennes de « Bastion Stellaire » dans ce document décrivent l'état antérieur de la conception.
