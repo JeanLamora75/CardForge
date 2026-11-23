@@ -176,6 +176,63 @@ export function getFigurePlacementOptions(state: Readonly<ThunderfighterState>):
 export function availableFigureSlots(state: Readonly<ThunderfighterState>): number[] {
   return getFigurePlacementOptions(state).slots;
 }
+export interface SearchIntegrityDiagnostic {
+  status: 'ok' | 'pending-placement' | 'invalid';
+  issues: string[];
+  /** Only identifiers implicated in corruption, not the hidden future deck. */
+  missingFigures: string[];
+  duplicatedFigures: string[];
+}
+/**
+ * GC-12 is an integrity error, not a game outcome.
+ * Do not change the saved state or declare a synthetic win/loss.
+ */
+export function diagnoseSearchIntegrity(state: unknown): SearchIntegrityDiagnostic {
+  if (!record(state)) return {
+    status:'invalid', issues:['state is not an object'],missingFigures:[],duplicatedFigures:[],
+  };
+  const s=state as Partial<ThunderfighterState>;
+  const valid=validate(state);
+  const zones=[
+    ...(Array.isArray(s.figureSlots)?s.figureSlots:[]),
+    ...(Array.isArray(s.pendingFigures)?s.pendingFigures:[]),
+    ...(Array.isArray(s.drawPile)?s.drawPile:[]),
+  ];
+  const figureIds=cards.filter(c=>isFigure(c.id)).map(c=>c.id);
+  const missingFigures=figureIds.filter(id=>!zones.includes(id));
+  const duplicatedFigures=figureIds.filter(id=>zones.filter(x=>x===id).length>1);
+  const issues=valid.valid?[]:[...valid.errors];
+  if (missingFigures.length) issues.push('missing physical figure identifiers');
+  if (duplicatedFigures.length) issues.push('duplicated physical figure identifiers');
+  const pending= s.phase==='placing-figure' && Array.isArray(s.pendingFigures) &&
+    s.pendingFigures.length>0 && !!s.placingFromSearch;
+  if (s.phase==='searching' && !pending && Array.isArray(s.drawPile) &&
+      !s.drawPile.some(id=>typeof id==='string'&&isFigure(id)) &&
+      Array.isArray(s.defeatedFigures) && s.defeatedFigures.length<12) {
+    issues.push('search cannot reveal any remaining figure');
+  }
+  return { status:issues.length?'invalid':pending?'pending-placement':'ok',
+    issues:[...new Set(issues)],missingFigures,duplicatedFigures };
+}
+export interface SearchPresentation {
+  visible: boolean;
+  revealedNumerics: string[];
+  nextCardAvailable: boolean;
+  specialActionsAvailable: boolean;
+  integrityStatus: SearchIntegrityDiagnostic['status'];
+}
+/** GC-18/19: expose only already revealed cards, never the hidden draw order. */
+export function getSearchPresentation(state: Readonly<ThunderfighterState>): SearchPresentation {
+  const visible=state.phase==='searching'||state.phase==='placing-figure'&&!!state.placingFromSearch;
+  const integrity=diagnoseSearchIntegrity(state);
+  const legal=integrity.status==='invalid'?[]:getLegalActions(state);
+  return {
+    visible, revealedNumerics:visible?[...(state.searchBuffer??[])]:[],
+    nextCardAvailable:visible&&state.phase==='searching'&&legal.some(a=>a.type==='draw-search'),
+    specialActionsAvailable:visible&&legal.some(a=>a.type==='extract'||a.type==='reassign'),
+    integrityStatus:integrity.status,
+  };
+}
 function validate(value: unknown): ValidationResult {
   const errors: string[] = [];
   if (!record(value)) return { valid: false, errors: ['state must be an object'] };
@@ -209,6 +266,10 @@ function validate(value: unknown): ValidationResult {
       state.pendingNumeric != null || state.pendingFigures.length || state.outcome !== 'in-progress' ||
       state.figureSlots.some(id => id !== null && !(state.defeatedFigures ?? []).includes(id))))
     errors.push('invalid search phase');
+  if (state.phase === 'searching' && (state.defeatedFigures??[]).length===12)
+    errors.push('search after all figures defeated');
+  if (state.phase === 'searching' && state.drawPile.every(id=>!isFigure(id)))
+    errors.push('search lacks a remaining figure');
   if ((state.searchBuffer?.length ?? 0) > 0 && state.phase !== 'searching' &&
       !(state.phase === 'placing-figure' && state.placingFromSearch))
     errors.push('orphaned search buffer');
