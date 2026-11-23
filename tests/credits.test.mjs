@@ -35,7 +35,7 @@ test("no licence notice presents unverified adaptation or public-name clearance 
   const combined=ATTRIBUTIONS.map(x=>x.permissionEn).join(" ");
   assert.ok(combined.includes("not cleared"));
   assert.ok(combined.includes("not legally cleared"));
-  assert.ok(combined.includes("not verified") || combined.includes("not independently verified"));
+  assert.match(combined,/not (?:been )?(?:independently )?verified/);
   const grim=ATTRIBUTIONS[0];
   assert.match(grim.licenceFr,/BY-NC-ND 4\.0/);
   assert.match(grim.permissionFr,/déclaré/);
