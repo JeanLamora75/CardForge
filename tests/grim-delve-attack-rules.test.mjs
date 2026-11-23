@@ -41,14 +41,14 @@ test('CTD-T25 / CTD-T71: exact threshold 6+5=11 defeats Jack with Joker trigger'
   s = play(s, { type: 'trigger-attack', cardId: 'joker-1', monsterId });
   assert.deepEqual(s.defeated, [monsterId]);
 });
-test('CTD-T80: above-threshold 8+6=14 defeats Jack without strict equality', () => {
+test('T-02 / CTD-T80: above-threshold 8+6=14 defeats Jack without strict equality', () => {
   const { state, monsterId } = prepare(11, ['clubs-8', 'diamonds-6', 'joker-2']);
   let s = play(state, { type: 'place-power', cardId: 'clubs-8', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-6', monsterId });
   s = play(s, { type: 'trigger-attack', cardId: 'joker-2', monsterId });
   assert.equal(s.defeated.length, 1);
 });
-test('CTD-T73: incorrect suit cannot trigger even with enough strength', () => {
+test('T-04 / CTD-T73: incorrect suit cannot trigger even with enough strength', () => {
   const { state, monsterId, suit } = prepare(12, ['clubs-8', 'diamonds-5', 'spades-2']);
   let s = play(state, { type: 'place-power', cardId: 'clubs-8', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-5', monsterId });
@@ -78,14 +78,14 @@ test('CTD-T91 / CTD-T85/T86: first 2 cannot reach K13 but first 3 can', () => {
   const s = play(state, { type: 'place-power', cardId: 'diamonds-3', monsterId });
   assert.equal(s.attacks[0].powers[0].cardId, 'diamonds-3');
 });
-test('CTD-T28 / CTD-T94/T95: first Joker counts exactly 10 and numeric 3 reaches K13', () => {
+test('T-09 / CTD-T28 / CTD-T94/T95: first Joker counts exactly 10 and numeric 3 reaches K13', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'diamonds-3', 'clubs-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-3', monsterId });
   assert.equal(s.attacks[0].powers.length, 2);
   assert.equal(s.defeated.length, 0);
 });
-test('CTD-T21 / CTD-T30 / CTD-T74 / CTD-T102 / CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
+test('T-08 / CTD-T21 / CTD-T30 / CTD-T74 / CTD-T102 / CTD-T104: Joker A + numeric 3 power, Joker B trigger defeats King', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'diamonds-3', 'joker-2']);
   let s = play(state, { type: 'place-power', cardId: 'joker-1', monsterId });
   s = play(s, { type: 'place-power', cardId: 'diamonds-3', monsterId });
@@ -137,7 +137,7 @@ test('CTD-T109: both Jokers can be assigned to two different targets', () => {
   next = play(next, { type: 'place-power', cardId: 'joker-2', monsterId: s.visibleMonsters[1] });
   assert.equal(next.attacks.length, 2);
 });
-test('CTD-T103: joker power/suit cannot be overridden by unrecognized action arguments', () => {
+test('T-28 / CTD-T103: joker power/suit cannot be overridden by unrecognized action arguments', () => {
   const { state, monsterId } = prepare(13, ['joker-1', 'joker-2', 'diamonds-3']);
   refuse(state, { type: 'set-joker-value', cardId: 'joker-1', value: 1 });
   refuse(state, { type: 'set-joker-suit', cardId: 'joker-1', suit: 'hearts' });
@@ -187,7 +187,7 @@ test('CTD-T83/T84: refused insufficient power remains in saved hand; third power
   assert.deepEqual(next.attacks[0].powers.map(p=>p.cardId),['clubs-5','hearts-10']);
   refuse(next,{type:'place-power',cardId:'diamonds-7',monsterId});
 });
-test('CTD-T96: a Joker triggers a completed Queen attack without altering its fixed physical ID',()=>{
+test('T-05 / CTD-T96: a Joker triggers a completed Queen attack without altering its fixed physical ID',()=>{
   const {state,monsterId}=prepare(12,['clubs-6','diamonds-6','joker-1']);
   let next=play(state,{type:'place-power',cardId:'clubs-6',monsterId});
   next=play(next,{type:'place-power',cardId:'diamonds-6',monsterId});
