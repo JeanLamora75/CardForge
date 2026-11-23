@@ -41,6 +41,14 @@ export function stableResultId(gameId: string, sessionId: string): string {
   return JSON.stringify([gameId, sessionId]);
 }
 
+export interface ReplaceGameCommit<State = unknown> {
+  expectedSessionId: string;
+  replacement: SavedGame<State>;
+}
+
+/** The old session is finalized only when no terminal result exists yet. */
+export type ReplaceGameResult = 'replaced-abandoned' | 'replaced-finished';
+
 export interface LocalGameStorage {
   readGame<State = unknown>(gameId: string): Promise<SavedGame<State> | undefined>;
   readResult(resultId: string): Promise<GameResult | undefined>;
@@ -49,6 +57,7 @@ export interface LocalGameStorage {
   commit<State>(update: GameCommit<State>): Promise<void>;
   /** Atomic deduplication and statistics update owned by the storage adapter. */
   commitTerminal<State>(update: TerminalGameCommit<State>): Promise<TerminalCommitResult>;
+  replaceGame<State>(update: ReplaceGameCommit<State>): Promise<ReplaceGameResult>;
 }
 
 export type StorageErrorCode = 'unavailable' | 'read-failed' | 'write-failed';
