@@ -303,3 +303,21 @@ Les décisions ci-dessous sont **déjà validées**, leur [référentiel Mary Gr
 **Question produit préexistante :** suppression de toutes les données ou granularité par jeu (PRD A-01). **Question technique préexistante :** compatibilité et format de sauvegarde GC-54 sous Winston/Amelia, sans redéfinir les règles de Mary.
 
 **Limitations de réalisation :** aucune maquette ou test utilisateur n'a été rendu/exécuté, pas de test WCAG ni de build, pas de vérification technique des WebViews et aucun code ou ticket Jira modifié. Le présent document et [DESIGN.md](./DESIGN.md) sont des **spécifications documentaires** publiées pour préparer les maquettes et l'implémentation, sans se présenter comme interfaces développées.
+
+## Revue des maquettes V1 — retour du porteur et préparation V2 (23 novembre 2026)
+
+**Retour explicite, applicable aux deux maquettes :** « disposition intéressante, à améliorer » ; **aucun commentaire complémentaire**. Les maquettes sont des prototypes de travail, **non validés comme référence finale**. Les pistes ci-dessous sont des **propositions de Sally** issues des risques déjà recensés ; elles ne doivent pas être attribuées au porteur comme de nouveaux arbitrages UX.
+
+| Maquette | Évaluation | Travail ciblé pour la V2 | Critère de revue |
+| --- | --- | --- | --- |
+| Clear the Dungeon | À améliorer | Tester en priorité un affichage plus lisible des **quatre colonnes**, de la main, des cartes provisoires/verrouillées et des actions de défausse/clôture, surtout sur smartphone portrait | Les quatre monstres et le statut d'engagement sont identifiables ; les commandes nécessaires restent accessibles sans ambiguïté |
+| Gridcannon | À améliorer | Améliorer la place accordée aux **douze figures périphériques**, à leurs **résistance/armure**, à la grille 3×3 complète et à la réserve ; rendre l'aperçu de tir consultable sans couvrir la cible ou le bouton de confirmation | Les valeurs et les deux axes d'un éventuel double tir sont lisibles ; la sélection et la confirmation restent non destructives jusqu'à validation |
+
+**Plan de conception V2 :**
+1. Comparer deux variantes de composition **mobile portrait** pour chaque plateau, en gardant la même information et les décisions Mary. Vérifier ensuite paysage et bureau.
+2. Distinguer dans les écrans les **valeurs toujours visibles** (résistance/armure, pioche, dégâts, phase) des **détails consultables à la demande** (inspection des cartes et piles, rappel des règles, historique immédiat).
+3. Vérifier les étapes « sélectionner → prévisualiser → confirmer/annuler → sauvegarder », incluant la **main vide encore ouverte** pour CTD et le **double tir de coin** pour Gridcannon.
+4. Contrôler le clavier, le tactile, le zoom, les libellés FR/EN et la réduction des animations sur les nouvelles variantes. Ne pas tester des mécaniques inventées.
+5. Soumettre les deux variantes V2 à une nouvelle revue utilisateur avant de promouvoir une disposition en référence définitive.
+
+**Périmètre de cette mise à jour :** documentation du retour et préparation de V2 uniquement. Les prototypes HTML V1 déjà livrés ne sont pas renommés « V2 », et aucun nouveau rendu visuel ni test de jouabilité n'est revendiqué.
