@@ -75,8 +75,8 @@ export default function GameLearning({ gameId }: { gameId: PlayableLearningGame 
       {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
       {showRules ? <Rulebook gameId={gameId} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
-        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={preferences.hintsEnabled} /> :
-          <ThunderfighterBoard tutorial hintsEnabled={preferences.hintsEnabled} />}
+        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={preferences.hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
+          <ThunderfighterBoard tutorial hintsEnabled={preferences.hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard hintsEnabled={preferences.hintsEnabled} /> :
         <ThunderfighterBoard hintsEnabled={preferences.hintsEnabled} />}
