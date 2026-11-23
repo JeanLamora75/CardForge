@@ -1,73 +1,69 @@
-/** Public names and worlds are presentation-only; engine identifiers never change. */
+/** Presentation data only: these stable IDs are also used by saves and statistics. */
 export type GameId = "clear-the-dungeon" | "gridcannon" | "card-capture" | "loot-the-loop" | "regicide";
-export type GameStatus = "in-development" | "coming-soon";
+export type GameStatus = "in-development" | "coming-soon" | "available";
 export type GameEntry = Readonly<{
   id: GameId;
   title: string;
-  sourceGame: string;
+  originalGame: string;
+  authors: string;
   setting: string;
   description: string;
+  mechanics: string;
   icon: string;
-  accent: "ember" | "cosmos" | "sky" | "noir" | "wuxia";
+  accent: string;
   status: GameStatus;
-  /** Only these two titles are candidates for release after separate acceptance. */
-  mvpCandidate: boolean;
-  /** Never claim availability until all launch criteria are actually met. */
-  playable: false;
+  playableRoute: string | null;
 }>;
 
 export const games: readonly GameEntry[] = [
   {
-    id: "clear-the-dungeon",
-    title: "Grim Delve",
-    sourceGame: "Clear the Dungeon Classic 1.1.0",
-    setting: "Dark fantasy · Donjons et monstres",
-    description: "Descendez dans un donjon obscur et affrontez ses monstres dans un jeu de cartes tactique en solitaire.",
-    icon: "⚔️", accent: "ember", status: "in-development", mvpCandidate: true, playable: false,
+    id: "clear-the-dungeon", title: "Grim Delve",
+    originalGame: "Clear the Dungeon", authors: "Jeu original : Clear the Dungeon",
+    setting: "Dark fantasy · Donjons et créatures",
+    description: "Descendez dans les profondeurs d’un donjon et construisez vos attaques contre les monstres de quatre colonnes.",
+    mechanics: "Attaques progressives, gestion de la main, pouvoirs des Jokers.",
+    icon: "⚔️", accent: "ember", status: "in-development", playableRoute: null,
   },
   {
-    id: "gridcannon",
-    title: "Thunderfighter",
-    sourceGame: "Gridcannon Version 2",
-    setting: "Science-fiction pulp · Aventure spatiale rétrofuturiste",
-    description: "Défendez votre position dans une aventure spatiale où chaque carte placée peut déclencher un tir.",
-    icon: "🚀", accent: "cosmos", status: "in-development", mvpCandidate: true, playable: false,
+    id: "gridcannon", title: "Thunderfighter",
+    originalGame: "Gridcannon Version 2", authors: "Jeu original : Tom Francis",
+    setting: "Science-fiction pulp · Aventure spatiale",
+    description: "Commandez une escadrille rétrofuturiste, déployez votre grille et neutralisez douze adversaires.",
+    mechanics: "Placement de cartes, tirs sur deux axes, pouvoirs des As et Jokers.",
+    icon: "🚀", accent: "cosmos", status: "in-development", playableRoute: null,
   },
   {
-    id: "card-capture",
-    title: "Skydeck",
-    sourceGame: "Card Capture",
+    id: "card-capture", title: "Skydeck",
+    originalGame: "Card Capture", authors: "Jeu original : Lucas Gentry",
     setting: "Corsaires du ciel · Îles flottantes",
-    description: "Prenez de la hauteur entre flottes aériennes, abordages et îles suspendues dans les nuages.",
-    icon: "☁️", accent: "sky", status: "coming-soon", mvpCandidate: false, playable: false,
+    description: "À bord d’une flotte aérienne, partez à l’abordage dans un univers de sky-fantasy.",
+    mechanics: "Adaptation des règles de Card Capture en préparation.",
+    icon: "🛩️", accent: "neon", status: "coming-soon", playableRoute: null,
   },
   {
-    id: "loot-the-loop",
-    title: "Midnight Syndicate",
-    sourceGame: "Loot the Loop",
-    setting: "Prohibition · Dieselpunk · Pulp des années 1930",
-    description: "Explorez les secrets d'une métropole clandestine, entre speakeasies, artefacts et passages en boucle.",
-    icon: "🎩", accent: "noir", status: "coming-soon", mvpCandidate: false, playable: false,
+    id: "loot-the-loop", title: "Midnight Syndicate",
+    originalGame: "Loot the Loop", authors: "Jeu original : Wil Su / Isaludo",
+    setting: "Années 1930 · Prohibition et dieselpunk",
+    description: "Explorez une métropole clandestine entre speakeasies, ruelles et boucles mystérieuses.",
+    mechanics: "Adaptation des règles de Loot the Loop en préparation.",
+    icon: "🎩", accent: "sand", status: "coming-soon", playableRoute: null,
   },
   {
-    id: "regicide",
-    title: "Les Douze Tyrans",
-    sourceGame: "Regicide",
-    setting: "Wuxia · Chanbara · Asie féodale fantastique",
-    description: "Après la chute de l'Empereur, défiez douze seigneurs et maîtres martiaux dans un empire imaginaire.",
-    icon: "⚔", accent: "wuxia", status: "coming-soon", mvpCandidate: false, playable: false,
+    id: "regicide", title: "Les Douze Tyrans",
+    originalGame: "Regicide", authors: "Jeu original : Paul Abrahams, Luke Badger et Andy Richdale",
+    setting: "Asie féodale fantastique · Wuxia / Chanbara",
+    description: "Après la chute de l’Empereur, affrontez douze seigneurs et maîtres martiaux dans un empire imaginaire.",
+    mechanics: "Adaptation des règles de Regicide en préparation.",
+    icon: "⚔️", accent: "royal", status: "coming-soon", playableRoute: null,
   },
 ];
 
-/**
- * Source of truth for UI access. A ready engine is not sufficient to expose Play:
- * integration, UX, conformity and legal release gates remain pending (CAR-30..43).
- */
-export function canPlay(game: GameEntry): boolean {
-  return game.mvpCandidate && game.playable;
+/** Only a verified working game route may unlock a Play action. */
+export function canPlay(game: Pick<GameEntry, "status" | "playableRoute">): boolean {
+  return game.status === "available" && typeof game.playableRoute === "string" &&
+    game.playableRoute.startsWith("/") && !game.playableRoute.startsWith("//");
 }
 
-export function statusLabel(game: GameEntry): string {
-  return canPlay(game) ? "Disponible" :
-    game.status === "in-development" ? "En développement" : "À venir";
+export function getGame(id: GameId): GameEntry | undefined {
+  return games.find(game => game.id === id);
 }
