@@ -9,6 +9,7 @@ import {
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GrimDelveBoard from "./components/GrimDelveBoard";
+import ThunderfighterBoard from "./components/ThunderfighterBoard";
 
 const statusLabel = (game: GameEntry) =>
   canPlay(game) ? "Disponible" :
@@ -113,11 +114,11 @@ function GameDetail({
               {actions.newGame && progress.indicator === "active" ? (
                 <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
               ) : null}
-              {game.id === "clear-the-dungeon" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau Grim Delve</button> : null}
+              {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-            <p className="help-note">Le plateau Grim Delve est accessible en préversion. Les tutoriels et la publication complète des jeux viendront ultérieurement.</p>
+            <p className="help-note">Les plateaux Grim Delve et Thunderfighter sont accessibles en préversion depuis leurs fiches. Les tutoriels et la publication complète viendront ultérieurement.</p>
             <details className="source-credits">
               <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
@@ -129,7 +130,7 @@ function GameDetail({
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
                 <strong>{statusLabel(game)}</strong> — La partie jouable n’est pas encore disponible.
-                {game.id === "clear-the-dungeon" ? "Le plateau est accessible en préversion depuis cette fiche." : "Aucun lancement de jeu n’est proposé."}
+                {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? "Le plateau est accessible en préversion depuis cette fiche." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
@@ -140,7 +141,7 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && game.id === "clear-the-dungeon" ? <GrimDelveBoard /> : section === "rules" ? (
+          {section === "board" && game.id === "clear-the-dungeon" ? <GrimDelveBoard /> : section === "board" && game.id === "gridcannon" ? <ThunderfighterBoard /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               <p className="help-note">Ce résumé présente les mécanismes. Le référentiel des règles détaille les actions et les conditions de victoire et de défaite.</p>
@@ -293,7 +294,7 @@ export default function App() {
           </section>
         </>
       )}
-      <footer>CardForge · Collection en construction · Plateau Grim Delve en préversion</footer>
+      <footer>CardForge · Collection en construction · Plateaux Grim Delve et Thunderfighter en préversion</footer>
     </main>
   );
 }
