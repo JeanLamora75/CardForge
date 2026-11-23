@@ -24,6 +24,10 @@ export function translateUiText(text: string, locale: Locale): string {
     const expression = new RegExp(`(?<![\\p{L}\\p{N}])${escaped(source)}(?![\\p{L}\\p{N}])`, "gu");
     result = result.replace(expression, translated);
   }
+  // Card labels combine physical rank and suit at runtime. Translate the
+  // grammatical connector without changing the stable physical card ID.
+  result = result.replace(/\\b(As|Ace|Jack|Queen|King|[0-9]{1,2}) de (Hearts|Diamonds|Clubs|Spades)\\b/g,
+    (_, rank: string, suit: string) => `${rank === "As" ? "Ace" : rank} of ${suit}`);
   return result;
 }
 
