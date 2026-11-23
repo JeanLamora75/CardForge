@@ -22,3 +22,12 @@
 5. **Procédure BMAD :** scripts `uv` et sous-agents BMAD indisponibles dans le contexte connecté ; aucun faux compte-rendu d'exécution.
 
 **Verdict :** les spécifications documentaires UX pour préparer les maquettes, les tests et le développement du MVP sont **rédigées**. Elles demeurent **en projet pour validation visuelle**, et ne constituent ni un design final approuvé ni une interface implémentée.
+
+## Complément de revue — feedback des maquettes V1 (23 novembre 2026)
+
+- **Clear the Dungeon :** « à améliorer » ; pas de commentaire détaillé fourni.
+- **Gridcannon :** « à améliorer » ; pas de commentaire détaillé fourni.
+- **Statut de la revue :** les deux dispositions sont des bases de travail, **pas des maquettes approuvées**.
+- **Points de contrôle UX V2 proposés** : lisibilité des colonnes/attaques/main CTD ; lisibilité des figures/résistance/armure et non-recouvrement de l'aperçu Gridcannon ; portrait mobile, puis paysage/desktop.
+- **Limite** : aucun arbitrage détaillé ne peut être déduit du seul choix « à améliorer ». La prochaine itération devra présenter des variantes puis recueillir un choix explicite.
+- **Aucune modification** apportée au code des jeux ou aux tickets Jira dans cette mise à jour documentaire.
