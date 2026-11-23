@@ -193,3 +193,20 @@ Dans les nouveaux écrans, afficher **Thunderfighter** et conserver « Gridcanno
 **Validé explicitement par le porteur : l'univers officiel des « Les Douze Tyrans » devient l'Asie féodale fantastique, d'inspiration Wuxia / Chanbara, dans un empire fictif fracturé après la chute de l'Empereur.** La **Grèce antique est abandonnée** pour ce jeu : ses mentions anciennes ne sont conservées que comme historique et ne doivent plus guider les nouveaux visuels, spécifications ni textes de catalogue.
 
 Les douze adversaires sont des seigneurs de guerre, maîtres martiaux ou gouverneurs tyranniques ; temples de montagne, bambouseraies, bannières, sabres, calligraphie, armures lamellaires et esprits folkloriques constituent la direction visuelle. Les références culturelles et artistiques citées sont des inspirations, **sans reprise d'éléments protégés**. Le nom public **Les Douze Tyrans** ne change pas. La transposition est **exclusivement esthétique** : le paquet de 54 cartes physiques, les 12 adversaires, les quatre pouvoirs d'enseigne, leurs valeurs et toutes les règles solo originales de Regicide restent inchangés. La disponibilité du nom et les droits d'adaptation demeurent à vérifier avant diffusion.
+
+
+## Décision de nomenclature produit — 23 novembre 2026 (fait foi pour tous les futurs livrables)
+
+Le porteur de CardForge valide explicitement les titres publics suivants :
+
+| Jeu original et référentiel Mary | **Nom public CardForge** | Univers graphique validé | Statut de livraison |
+| --- | --- | --- | --- |
+| *Clear the Dungeon* Classic 1.1.0 | **Grim Delve** | Donjon dark fantasy, monstres illustrés | MVP |
+| *Gridcannon* Version 2, Tom Francis | **Thunderfighter** | Science-fiction spatiale pulp rétrofuturiste | MVP |
+| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | Après MVP |
+| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | Après MVP |
+| *Regicide* | **Les Douze Tyrans** | Wuxia / Chanbara, Asie féodale fantastique | Après MVP |
+
+**Important :** la formulation « Loop the Loot » employée lors de la validation désigne le jeu original documenté par Mary sous son titre exact ***Loot the Loop***. **Midnight Syndicate** est le titre public voulu, sans changement des règles originales. Les titres antérieurs de travail « Bastion Stellaire », « Corsaires du ciel » ou les autres libellés provisoires ne doivent pas remplacer les noms publics ci-dessus dans les nouveaux écrans et maquettes ; « Corsaires du ciel » reste un **univers**, non le nom du jeu.
+
+Les noms des jeux originaux sont **conservés dans les références aux sources, la traçabilité juridique, les identifiants stables et les noms des documents de règles**. Il ne faut pas renommer les `gameId`, les répertoires internes, les sauvegardes, les statistiques ou les moteurs du seul fait d'un changement de titre public. Tous les jeux reprennent les **règles originales documentées par Mary**, sans nouveau pouvoir associé au thème. Le catalogue, les fiches, les interfaces, l'aide, les traductions et les crédits affichent leurs noms publics respectifs et l'attribution au jeu source. **La disponibilité des nouveaux titres et les droits d'adaptation restent à vérifier avant toute diffusion publique : aucune vérification juridique n'est revendiquée.**
