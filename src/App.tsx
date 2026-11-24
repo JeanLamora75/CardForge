@@ -18,9 +18,7 @@ import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
 
-const statusLabel = (game: GameEntry) =>
-  canPlay(game) ? "Disponible" :
-    game.status === "in-development" ? "En développement" : "À venir";
+const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
 type ProgressByGame = Partial<Record<GameId, CatalogGameProgress>>;
 
@@ -140,8 +138,8 @@ function GameDetail({
             </details>
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
-                <strong>{statusLabel(game)}</strong> — La partie jouable n’est pas encore disponible.
-                {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? "Le plateau est accessible en préversion depuis cette fiche." : "Aucun lancement de jeu n’est proposé."}
+                <strong>{statusLabel(game)}</strong> — La publication officielle n’est pas encore autorisée.
+                {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
