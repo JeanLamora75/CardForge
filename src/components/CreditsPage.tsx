@@ -18,6 +18,7 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
     <div className="credits-grid">
       {ATTRIBUTIONS.map(item => <article className="credits-item" key={item.gameId}>
         <h3>{item.publicName}</h3>
+        {item.gameId === "loot-the-loop" ? <p>{en ? "Based on Loot the Loop, Wil Su (Isaludo)" : "d’après Loot the Loop, Wil Su (Isaludo)"}</p> : null}
         <dl>
           <div><dt>{en ? "Original game" : "Jeu source"}</dt><dd>{item.originalTitle}</dd></div>
           <div><dt>{en ? "Original creator(s)" : "Auteur(s) du jeu source"}</dt><dd>{item.originalAuthors}</dd></div>
