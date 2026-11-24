@@ -106,9 +106,19 @@ function getLegalActions(state: Readonly<MidnightSyndicateState>): readonly Midn
 }
 function transition(
   state: Readonly<MidnightSyndicateState>,
-  _action: Readonly<MidnightSyndicateAction>,
+  action: Readonly<MidnightSyndicateAction>,
 ): TransitionResult<MidnightSyndicateState> {
-  return {accepted:false,state:state as MidnightSyndicateState,reason:'action not yet implemented'};
+  if (!validateState(state).valid || state.outcome !== 'in-progress') {
+    return {accepted:false,state:state as MidnightSyndicateState,reason:'invalid or finished game'};
+  }
+  if (!action || action.type !== 'look-around' || Object.keys(action).length !== 1 ||
+      !state.deck[0] || state.deck[0].faceUp) {
+    return {accepted:false,state:state as MidnightSyndicateState,reason:'look-around is not legal'};
+  }
+  const deck = state.deck.map((card,index) =>
+    index < 2 && !card.faceUp ? {...card,faceUp:true} : card,
+  );
+  return {accepted:true,state:{...state,deck}};
 }
 
 export const midnightSyndicateEngine: GameEngine<
