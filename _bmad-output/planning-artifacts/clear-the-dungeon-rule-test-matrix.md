@@ -308,12 +308,14 @@ Les points « à préciser » doivent être tranchés par le texte original ou p
 | --- | --- | --- | --- |
 | CTD-T114 | 12e monstre vaincu, 5 cartes dans la pioche et 2 en main | Victoire avec score officiel **5**, pas 7 | Spécifié, non exécuté |
 | CTD-T115 | 12e monstre vaincu, pioche vide, main encore non vide | Victoire avec score officiel **0**, sans défaite d'épuisement | Spécifié, non exécuté |
-| CTD-T116 | 12e monstre vaincu, 8 cartes en pioche, 3 cartes affectées à d'autres attaques partielles | Score officiel **8**, excluant les attaques partielles | Spécifié, non exécuté |
+| CTD-T116 | **Cas historique requalifié par décision PO du 24/11/2026 :** les « 3 cartes sur d'autres attaques partielles » après la victoire sur le 12e et dernier monstre sont **non applicables** (aucune autre cible vivante possible). Cas applicable associé : 12e monstre vaincu et **8 cartes encore dans la pioche**. | **Score officiel 8** sans ajouter les cartes hors pioche ; les attaques sur des monstres déjà vaincus sont invalides. | **Validé PO, avis Mary documenté, tests exécutables vérifiés (CI #45336289565)** |
 | CTD-T117 | 12e monstre vaincu, 4 cartes en pioche, 6 cartes dans la pile de dégâts | Score officiel **4**, aucun bonus/malus de dégâts | Spécifié, non exécuté |
 | CTD-T118 | Partie perdue au 7e dégât, pioche non vide | Résultat défaite, **aucun score officiel de victoire** | Spécifié, non exécuté |
 | CTD-T119 | Partie perdue par épuisement, monstres encore vivants | Résultat défaite, aucun score officiel de victoire | Spécifié, non exécuté |
 | CTD-T120 | 12e monstre vaincu ; double clic/rechargement/réouverture de partie | Score figé, un seul événement de victoire et aucune duplication statistique | Spécifié, non exécuté |
 | CTD-T121 | Score officiel et statistiques complémentaires CardForge sur le même écran | Score officiel séparé et identifié ; autres indicateurs n'en modifient pas le calcul | Spécifié, non exécuté |
+
+**Décision PO — CTD-T116 (24 novembre 2026) :** l'utilisateur valide explicitement la requalification proposée par Mary. Le score 8 reste un résultat de test applicable. La précondition « 3 cartes dans d'autres attaques partielles au moment de la victoire sur le 12e monstre » est impossible et classée **non applicable**, sans changement du moteur. Justification : [avis fonctionnel Mary](./game-rules/ctd-t116-mary-validation-2026-11-24.md). Preuve de tests : [CI CAR-40 #45336289565](https://github.com/JeanLamora75/CardForge/actions/runs/45336289565). Cette décision n'implique aucune validation automatique des autres scénarios ni clôture Jira.
 
 **Prochain point CTD-13 :** moment où les défausses explicites sont permises dans la main, et possibilité ou non de reprendre les attaques après une première défausse. CTD-03 ne tranchait que l'obligation de défausse explicite avant la pioche suivante.
 
