@@ -20,6 +20,7 @@ test("generated worker precaches complete shell, build chunks, manifest and icon
   assert.ok(output.includes("event.ports[0]?.postMessage"));
   assert.ok(output.includes("event.request"));
   assert.ok(output.includes("return shell"));
+  assert.ok(output.includes("cache.match(url.href, { ignoreVary: true })"),"immutable JS/CSS must use URL-exact cache lookup across varying request headers");
   assert.ok(output.includes("keys.filter(key => key.startsWith(PREFIX)"));
   assert.doesNotMatch(output,/indexedDB\.|localStorage\.|caches\.delete\("cardforge"\)/);
 });
