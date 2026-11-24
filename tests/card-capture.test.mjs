@@ -225,3 +225,91 @@ test('CC-R02: insufficient personal cards preserve state without inventing defea
   assert.deepEqual(d,before);
   assert.equal(skydeckEngine.getOutcome(d),'in-progress');
 });
+
+function captureFixture(target,hand,position=2,last=false){
+  const otherEnemies=initialEnemy.filter(id=>id!==target&&!hand.includes(id));
+  const line=last?[target,null,null,null]:otherEnemies.slice(0,3);
+  if(!last)line.splice(position-1,0,target);
+  const enemyDeck=last?[]:otherEnemies.slice(3);
+  const used=new Set([...hand,...line.filter(id=>id!==null),...enemyDeck]);
+  return {...skydeckEngine.createInitialState({seed:7}),round:2,phase:'capture',
+    hand,enemyLine:line,enemyDeck,playerDeck:canonical.map(c=>c.id).filter(id=>!used.has(id)),
+    discard:[],enemyCapture:[]};
+}
+test('CC-T07: exact and excess same-suit sums capture exactly one enemy into personal discard',()=>{
+  for(const hand of [['hearts-4','hearts-5','clubs-2','spades-3'],['hearts-4','hearts-6','clubs-2','spades-3']]){
+    const s=captureFixture('hearts-9',hand);
+    const action={type:'capture-a',targetPosition:2,cardIds:hand.slice(0,2).reverse()};
+    const n=act(s,action);
+    assert.deepEqual(n.hand,hand.slice(2));
+    assert.deepEqual(n.discard,[...hand.slice(0,2),'hearts-9']);
+    assert.deepEqual(n.enemyCapture,s.enemyCapture);
+    assert.deepEqual(n.enemyDeck,s.enemyDeck);
+    assert.deepEqual(n.enemyLine,s.enemyLine.map((id,i)=>i===1?null:id));
+    assert.equal(n.round,s.round+1);
+    assert.equal(n.phase,'enemy');
+  }
+});
+test('CC-T08: wrong suit, insufficient strength, duplicates, missing cards and invalid positions are rejected',()=>{
+  const s=captureFixture('hearts-9',['spades-4','hearts-5','hearts-4','joker-1']);
+  const bad=[
+    {targetPosition:2,cardIds:['spades-4','hearts-5']},
+    {targetPosition:2,cardIds:['hearts-5']},
+    {targetPosition:2,cardIds:['hearts-5','hearts-5']},
+    {targetPosition:2,cardIds:['hearts-10']},
+    {targetPosition:2,cardIds:[]},
+    {targetPosition:2,cardIds:['joker-1','hearts-5']},
+    {targetPosition:0,cardIds:['hearts-4','hearts-5']},
+    {targetPosition:5,cardIds:['hearts-4','hearts-5']},
+    {targetPosition:2.5,cardIds:['hearts-4','hearts-5']},
+    {targetPosition:2,cardIds:new Array(2)},
+  ];
+  for(const action of bad){
+    const before=structuredClone(s);
+    const r=skydeckEngine.transition(s,{type:'capture-a',...action});
+    assert.equal(r.accepted,false,JSON.stringify(action));
+    assert.equal(r.state,s);
+    assert.deepEqual(s,before);
+  }
+  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.targetPosition===2&&a.cardIds.includes('joker-1')),false);
+});
+test('CC-T09: figures and ace use values 11, 12, 13 and 14, not raw ace rank',()=>{
+  for(const [target,good,bad] of [
+    ['hearts-11',['hearts-5','hearts-6'],['hearts-4','hearts-6']],
+    ['hearts-12',['hearts-5','hearts-7'],['hearts-4','hearts-7']],
+    ['hearts-13',['hearts-6','hearts-7'],['hearts-5','hearts-7']],
+    ['hearts-1',['hearts-6','hearts-8'],['hearts-5','hearts-8']],
+    ['hearts-13',['hearts-1'],['hearts-2']],
+  ]){
+    for(const [cards,accepted] of [[good,true],[bad,false]]){
+      const hand=[...cards,...['clubs-2','clubs-3','clubs-4'].slice(0,4-cards.length)];
+      const s=captureFixture(target,hand);
+      const a={type:'capture-a',targetPosition:2,cardIds:cards};
+      if(accepted)assert.equal(act(s,a).discard.includes(target),true);
+      else assert.equal(skydeckEngine.transition(s,a).accepted,false);
+    }
+  }
+});
+test('CC-T14: one successful capture ends the capture phase and next enemy phase refills',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3']);
+  const a={type:'capture-a',targetPosition:2,cardIds:['hearts-4','hearts-5']};
+  const n=act(s,a);
+  assert.equal(skydeckEngine.transition(n,a).accepted,false);
+  assert.equal(skydeckEngine.transition(n,{type:'capture-b'}).accepted,false);
+  assert.equal(skydeckEngine.transition(n,{type:'capture-c'}).accepted,false);
+  assert.deepEqual(skydeckEngine.getLegalActions(n),[{type:'advance-enemy'}]);
+  const next=apply(n,'advance-enemy');
+  assert.equal(next.enemyLine.every(id=>id!==null),true);
+  assert.equal(next.phase,'discard');
+});
+test('CC-T15: last enemy captured by action A wins, remaining personal cards are retained',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1,true);
+  assert.equal(skydeckEngine.transition(s,{type:'capture-a',targetPosition:2,cardIds:['hearts-4','hearts-5']}).accepted,false);
+  const n=act(s,{type:'capture-a',targetPosition:1,cardIds:['hearts-4','hearts-5']});
+  assert.equal(n.outcome,'win');
+  assert.equal(n.phase,'finished');
+  assert.deepEqual(n.hand,['clubs-2','spades-3']);
+  assert.deepEqual(n.enemyLine,[null,null,null,null]);
+  assert.deepEqual(skydeckEngine.getLegalActions(n),[]);
+  assert.equal(skydeckEngine.transition(n,{type:'advance-enemy'}).accepted,false);
+});
