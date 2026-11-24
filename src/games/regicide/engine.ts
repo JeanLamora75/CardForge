@@ -25,7 +25,7 @@ export interface RegicideState {
   combat: string[];
   jokers: { id: string; used: boolean }[];
 }
-export type RegicideAction = Readonly<{ type: 'play'; cardIds: readonly string[] } | { type: 'resolve-powers' | 'resolve-damage' } | { type: 'retaliate'; cardIds: readonly string[] }>;
+export type RegicideAction = Readonly<{ type: 'play'; cardIds: readonly string[] } | { type: 'resolve-powers' | 'resolve-damage' } | { type: 'retaliate'; cardIds: readonly string[] } | { type: 'use-joker'; jokerId: string } | { type: 'accept-defeat' }>;
 const canonical = makeDeckWithJokers();
 const allIds = new Set(canonical.map(c => c.id));
 const rankIds = (rank: number) => canonical.filter(c => !isJokerCard(c) && c.rank === rank).map(c => c.id);
@@ -99,11 +99,12 @@ function validateState(value: unknown): ValidationResult {
   }
   if((value.phase==='powers'||value.phase==='damage')!== (pending.length>0)||!(!pending.length||validPlay(pending)))return invalid('invalid pending play');
   const jokers=value.jokers;
-  if(!Array.isArray(jokers)||jokers.length!==2||!Array.from(jokers).every((j,i)=>record(j)&&Object.keys(j).length===2&&j.id==='joker-'+(i+1)&&j.used===false))return invalid('invalid jokers');
+  if(!Array.isArray(jokers)||jokers.length!==2||!Array.from(jokers).every((j,i)=>record(j)&&Object.keys(j).length===2&&j.id==='joker-'+(i+1)&&typeof j.used==='boolean'))return invalid('invalid jokers');
+  if(value.outcome==='loss'&&(sum(hand)>=Math.max(0,value.enemyAttack-value.shield)))return invalid('defeat requires insufficient defence');
   const physical=[...(active===null?[]:[active]),...zones.flat(),...jokers.map(j=>j.id)];
   if(physical.length!==54||new Set(physical).size!==54||!physical.every(id=>typeof id==='string'&&allIds.has(id)))return invalid('invalid physical partition');
   if(value.turn===1&&value.phase==='play'&&(castle.length!==11||hand.length!==8||tavern.length!==32||discard.length||combat.length||
-    value.enemyHealth!==20||value.shield!==0||value.recycleCount!==0||![...tavern,...hand].every(id=>tavernSet.has(id))))return invalid('invalid opening');
+    value.enemyHealth!==20||value.shield!==0||value.recycleCount!==0||jokers.some(j=>j.used)||![...tavern,...hand].every(id=>tavernSet.has(id))))return invalid('invalid opening');
   return {valid:true};
 }
 function subsets(hand: readonly string[]): string[][] {
@@ -117,7 +118,11 @@ function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] 
     case 'damage': return [{type:'resolve-damage'}];
     case 'retaliation': {
       const cost=Math.max(0,s.enemyAttack-s.shield);
-      return subsets(s.hand).filter(ids=>cost===0?ids.length===0:sum(ids)>=cost&&ids.some(id=>sum(ids)-valueOf(id)<cost)).map(cardIds=>({type:'retaliate',cardIds}));
+      if(cost===0)return [{type:'retaliate',cardIds:[]}];
+      const choices:RegicideAction[]=subsets(s.hand).filter(ids=>sum(ids)>=cost&&ids.some(id=>sum(ids)-valueOf(id)<cost)).map(cardIds=>({type:'retaliate',cardIds}));
+      for(const j of s.jokers)if(!j.used)choices.push({type:'use-joker',jokerId:j.id});
+      if(sum(s.hand)<cost)choices.push({type:'accept-defeat'});
+      return choices;
     }
     default:return [];
   }
@@ -159,6 +164,8 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
   if(a.type==='play'||a.type==='retaliate'){
     if(Object.keys(a).length!==2||!Array.isArray(a.cardIds)||!Array.from(a.cardIds).every(id=>typeof id==='string')||
       new Set(a.cardIds).size!==a.cardIds.length||!legal.some(b=>b.type===a.type&&'cardIds' in b&&same(b.cardIds,a.cardIds)))return reject('illegal card selection or phase');
+  }else if(a.type==='use-joker'){
+    if(Object.keys(a).length!==2||!legal.some(b=>b.type==='use-joker'&&b.jokerId===a.jokerId))return reject('illegal joker');
   }else if(Object.keys(a).length!==1||!legal.some(b=>b.type===a.type))return reject('illegal phase');
   const n:RegicideState={...s,castle:[...s.castle],tavern:[...s.tavern],hand:[...s.hand],discard:[...s.discard],combat:[...s.combat],pending:[...s.pending],jokers:s.jokers.map(j=>({...j}))};
   if(a.type==='play'){
@@ -177,6 +184,12 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
     n.phase='damage';
   }else if(a.type==='resolve-damage'){
     resolveDamage(n);
+  }else if(a.type==='use-joker'){
+    n.jokers=n.jokers.map(j=>j.id===a.jokerId?{...j,used:true}:j);
+    n.discard.push(...n.hand);
+    n.hand=n.tavern.splice(0,8);
+  }else if(a.type==='accept-defeat'){
+    n.phase='finished';n.outcome='loss';
   }else if(a.type==='retaliate'){
     n.discard.push(...n.hand.filter(id=>a.cardIds.includes(id)));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='play';n.turn++;
   }
