@@ -101,7 +101,7 @@ for(const [label,engine,opts,fixture] of [
   assert.equal((await db.connect().readStatistics(opts.gameId)).played,1);
  });
 }
-test('CAR-41: IndexedDB rejects an asynchronous unique-key conflict and rolls back whole result/stat transaction',async()=>{
+test('CAR-41: real IndexedDB async ConstraintError aborts all three stores, preserving committed data',async()=>{
  const db=isolatedStorage(),storage=db.connect(),opts=options[0];
  const initial=grimDelveEngine.createInitialState({seed:100});
  const save={gameId:opts.gameId,sessionId:opts.sessionId,formatVersion:1,rulesVersion:opts.rulesVersion,state:initial};
@@ -110,8 +110,21 @@ test('CAR-41: IndexedDB rejects an asynchronous unique-key conflict and rolls ba
  await storage.commit({save,result,statistics:stats});
  const previous=await storage.readGame(opts.gameId);
  const newer={...save,state:grimDelveEngine.createInitialState({seed:999})};
- // A request-level ConstraintError must abort the three-store transaction asynchronously.
- await assert.rejects(()=>storage.commit({save:newer,result,statistics:{...stats,played:2,won:2}}));
+ const opened=await new Promise((resolve,reject)=>{
+   const req=db.factory.open(db.name,1);
+   req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+ });
+ try {
+   await assert.rejects(()=>new Promise((resolve,reject)=>{
+     const tx=opened.transaction(['sessions','results','statistics'],'readwrite');
+     tx.oncomplete=()=>resolve();
+     tx.onabort=()=>reject(tx.error);
+     tx.objectStore('sessions').put(newer);
+     tx.objectStore('statistics').put({...stats,played:2,won:2});
+     // This errors ASYNCHRONOUSLY, after the first two writes are queued.
+     tx.objectStore('results').add(result);
+   }),error=>error?.name==='ConstraintError');
+ }finally{opened.close();}
  assert.deepEqual(await storage.readGame(opts.gameId),previous);
  assert.deepEqual(await storage.readResult(result.id),result);
  assert.deepEqual(await storage.readStatistics(opts.gameId),stats);
