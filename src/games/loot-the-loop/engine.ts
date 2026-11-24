@@ -139,8 +139,18 @@ function transition(
     )) return {accepted:false,state:state as MidnightSyndicateState,reason:'explore is not legal'};
     const offset = action.distance % state.deck.length;
     const deck = [...state.deck.slice(offset), ...state.deck.slice(0,offset)];
-    // CAR-49 will resolve visible destinations; hidden destinations have no effect.
-    return {accepted:true,state:{...state,deck}};
+    const destination = deck[0];
+    const next = {...state,deck};
+    if (!destination?.faceUp) return {accepted:true,state:next};
+    if (destination.id === 'joker-1') {
+      const collectedAllAces = [...aces].every(id => state.loot.some(card => card.id === id));
+      return {accepted:true,state:collectedAllAces ? {...next,phase:'finished',outcome:'win'} : next};
+    }
+    if (aces.has(destination.id) || isNumeric(destination.id)) {
+      return {accepted:true,state:{...next,deck:deck.slice(1),loot:[...state.loot,destination]}};
+    }
+    // The remaining canonical cards are J/Q/K. Only landing on a visible one is fatal.
+    return {accepted:true,state:{...next,phase:'finished',outcome:'loss'}};
   }
   if (!action || action.type !== 'look-around' || Object.keys(action).length !== 1 ||
       !state.deck[0] || state.deck[0].faceUp) {
