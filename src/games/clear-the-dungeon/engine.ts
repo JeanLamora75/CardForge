@@ -236,5 +236,7 @@ function transition(state:Readonly<GrimDelveState>,action:Readonly<GrimDelveActi
 
 /** Each step is derived from legal actions; no UI-specific rule is used. */
 export const grimDelveEngine: GameEngine<GrimDelveState,GrimDelveAction,GrimDelveSetup>={
-  createInitialState,getLegalActions,transition,getOutcome:state=>state.outcome,validateState:validate,
+  createInitialState,getLegalActions,transition,getOutcome:state=>state.outcome,
+  getVictoryScore: state=>state.outcome==='win' ? state.victoryScore ?? null : null,
+  validateState:validate,
 };
