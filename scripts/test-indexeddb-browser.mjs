@@ -111,8 +111,33 @@ try{
   assert.equal(final.result?.score,5);
   assert.deepEqual(final.stats,{gameId:'clear-the-dungeon',played:1,won:1,lost:0,abandoned:0});
   assert.deepEqual(final.other.state,saved.thunder);
+  // UI-level error handling: an incompatible snapshot remains intact and is explained to the player.
+  const ui=await context.newPage();
+  await ui.goto(base);
+  const incompatible=await ui.evaluate(async()=>{
+    const [{createIndexedDbGameStorage},{grimDelveEngine}]=await Promise.all([
+      import('/src/adapters/indexeddb-game-storage.ts'),
+      import('/src/games/clear-the-dungeon/engine.ts')]);
+    const storage=createIndexedDbGameStorage();
+    const save={gameId:'clear-the-dungeon',sessionId:'ui-incompatible',
+      rulesVersion:'unknown-future-rules',formatVersion:1,
+      state:grimDelveEngine.createInitialState({seed:19})};
+    await storage.commit({save});
+    localStorage.setItem('cardforge.learning.v1.clear-the-dungeon',
+      JSON.stringify({choice:'play',hintsEnabled:true}));
+    return save;
+  });
+  await ui.goto(base+'#game/clear-the-dungeon/board');
+  await ui.getByText('Cette sauvegarde utilise des règles incompatibles ou un format inconnu.',{exact:false})
+    .waitFor({state:'visible',timeout:20000});
+  const retained=await ui.evaluate(async()=>{
+    const {createIndexedDbGameStorage}=await import('/src/adapters/indexeddb-game-storage.ts');
+    return createIndexedDbGameStorage().readGame('clear-the-dungeon');
+  });
+  assert.deepEqual(retained,incompatible,'UI refusal must preserve the incompatible durable snapshot');
+  await ui.close();
   await tab1.close();await tab2.close();await context.close();
-  console.log('CAR-41 Chromium: both games restored after tab closure; concurrent terminal wrote one result and one statistic; other game unaffected.');
+  console.log('CAR-41 Chromium: both games restored; two tabs wrote one terminal result/statistic; incompatible save visibly explained and preserved.');
 }finally{
   if(browser)await browser.close();
   await server.close();
