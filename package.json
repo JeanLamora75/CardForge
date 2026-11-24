@@ -10,7 +10,8 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "verify:pwa": "node scripts/verify-pwa-build.mjs",
     "audit:rules": "node scripts/audit-rule-coverage.mjs --require-complete",
-    "test:browser": "node scripts/test-indexeddb-browser.mjs"
+    "test:browser": "node scripts/test-indexeddb-browser.mjs",
+    "test:e2e:production": "node scripts/test-production-e2e.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
