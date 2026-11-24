@@ -44,7 +44,13 @@ async function waitSavedChanged(page,id,before){
 async function interact(page,locator,mobile,key='Enter'){
   await locator.waitFor({state:'visible',timeout:15000});
   if(mobile)await locator.tap();
-  else{await locator.focus();await page.keyboard.press(key);}
+  else{
+    // Keyboard activation does not auto-wait for enabled controls, unlike click/tap.
+    // The real board starts disabled while its asynchronous IndexedDB lookup finishes.
+    await locator.click({trial:true,timeout:15000});
+    await locator.focus();
+    await page.keyboard.press(key);
+  }
 }
 async function ready(page){
   await page.locator('[data-offline-phase="ready"]').waitFor({timeout:30000}).catch(async()=>{
