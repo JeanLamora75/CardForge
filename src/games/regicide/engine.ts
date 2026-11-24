@@ -199,10 +199,21 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
   return validateState(n).valid?{accepted:true,state:n}:reject('invalid resulting state');
 }
 
+export type RegicideMedal = 'gold' | 'silver' | 'bronze';
+/** Official solo distinction, not a numerical score. Invalid saves are not losses. */
+export function getRegicideResult(state: Readonly<RegicideState>) {
+  if(!validateState(state).valid)throw new TypeError('invalid Regicide state');
+  const jokersUsed=state.jokers.filter(j=>j.used).length;
+  const medal:RegicideMedal|null=state.outcome==='win'?(['gold','silver','bronze'] as const)[jokersUsed]:null;
+  return {outcome:state.outcome,medal,jokersUsed};
+}
+
 export function inspectRegicide(state: Readonly<RegicideState>) {
   if (!validateState(state).valid) throw new TypeError('invalid Regicide state');
   return {
     phase: state.phase, outcome: state.outcome, activeEnemy: state.activeEnemy,
+    result: getRegicideResult(state),
+    blockedReason: state.outcome==='in-progress'&&state.phase==='play'&&state.hand.length===0&&state.jokers.every(j=>j.used)?'unconfirmed-solo-pass':null,
     enemyHealth: state.enemyHealth, enemyAttack: state.enemyAttack, shield: state.shield,
     hand: [...state.hand], jokers: state.jokers.map(j => ({...j})),
     counts: {castle:state.castle.length,tavern:state.tavern.length,discard:state.discard.length},
@@ -212,6 +223,6 @@ export function inspectRegicide(state: Readonly<RegicideState>) {
 export const regicideEngine: GameEngine<RegicideState,RegicideAction,RegicideSetup> = {
   createInitialState, validateState,
   getLegalActions,
-  getOutcome: (state): GameOutcome => state.outcome,
+  getOutcome: (state): GameOutcome => getRegicideResult(state).outcome,
   transition,
 };
