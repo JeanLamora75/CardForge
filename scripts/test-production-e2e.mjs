@@ -141,7 +141,15 @@ async function journey(locale,mobile){
     const offline=await context.newPage();
     try{
       await offline.goto(HOST,{waitUntil:'domcontentloaded',timeout:15000});
-      await offline.locator('[data-offline-phase="ready"]').waitFor({timeout:20000});
+      await offline.locator('[data-offline-phase="ready"]').waitFor({timeout:20000}).catch(async error=>{
+        const diagnostic=await offline.evaluate(()=>({
+          controller:!!navigator.serviceWorker?.controller,
+          online:navigator.onLine,
+          visiblePhase:document.querySelector('[data-offline-phase]')?.getAttribute('data-offline-phase') ?? null,
+          cacheKeys:typeof caches==='undefined'?[]:[],
+        }));
+        throw new Error('Offline cold restart did not become ready: '+JSON.stringify(diagnostic),{cause:error});
+      });
       await offline.locator('.offline-readiness').getByText(locale==='fr'?'Hors connexion':'Offline').waitFor();
       for(const game of GAMES){
         await offline.goto(HOST+'#game/'+game.id+'/board',{waitUntil:'domcontentloaded',timeout:15000});
