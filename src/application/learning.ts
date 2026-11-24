@@ -1,7 +1,7 @@
 import type { GameId } from "../catalog.ts";
 import type { TransitionResult } from "../core/game-engine.ts";
 
-export type PlayableLearningGame = Extract<GameId, "clear-the-dungeon" | "gridcannon">;
+export type PlayableLearningGame = Extract<GameId, "clear-the-dungeon" | "gridcannon" | "loot-the-loop">;
 export type LearningChoice = "learn" | "play";
 export interface LearningPreferences {
   choice: LearningChoice | null;
