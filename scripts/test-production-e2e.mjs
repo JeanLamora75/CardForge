@@ -245,6 +245,15 @@ async function journey(locale,mobile){
     await ldt.locator('.ldt-resumed').waitFor();
     assert.deepEqual(await readSaved(page,'regicide'),regicideSave);
     saved.regicide=regicideSave;
+    await interact(page,page.getByRole('button',{name:locale==='fr'?'Recrutement exact':'Exact recruitment'}),mobile);
+    await ldt.locator('.ldt-hand button').first().waitFor();
+    await interact(page,ldt.locator('.ldt-hand button').first(),mobile);
+    await interact(page,ldt.locator('.ldt-preview'),mobile);
+    await interact(page,ldt.locator('.ldt-confirm .primary-action'),mobile);
+    await ldt.locator('.ldt-next').waitFor();
+    assert.deepEqual(await readSaved(page,'regicide'),regicideSave);
+    await interact(page,page.getByRole('button',{name:locale==='fr'?'Partie normale':'Normal game',exact:true}),mobile);
+    await ldt.locator('.ldt-resumed').waitFor();
     assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+4));
     await page.close();
     await context.setOffline(true);
@@ -282,6 +291,11 @@ async function journey(locale,mobile){
         await offline.goto(HOST+'#game/'+game.id+'/rules',{waitUntil:'domcontentloaded'});
         await offline.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       }
+      await offline.goto(HOST+'#game/regicide/board');
+      await offline.locator('.ldt-resumed').waitFor();
+      assert.deepEqual(await readSaved(offline,'regicide'),saved.regicide);
+      await offline.goto(HOST+'#game/regicide/rules');
+      await offline.getByRole('heading',{name:locale==='fr'?'Règles des Douze Tyrans':'Twelve Tyrants rules'}).waitFor();
       await offline.goto(HOST+'#game/card-capture/board',{waitUntil:'domcontentloaded'});
       await offline.locator('.sd-resumed').waitFor();
       assert.deepEqual(await readSaved(offline,'card-capture'),saved['card-capture']);

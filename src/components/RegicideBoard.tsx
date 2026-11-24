@@ -6,8 +6,10 @@ import {createIndexedDbGameStorage} from '../adapters/indexeddb-game-storage.ts'
 import {startRegicide,resumeRegicide,getRegicideNewGameChoice,confirmRegicideNewGame} from '../games/regicide/persistence.ts';
 import type {NewGameChoice} from '../application/new-game-choice.ts';
 import type {PersistentGameSession} from '../application/persistent-game-session.ts';
+import {practiceRegicide,type RegicideLesson} from '../games/regicide/tutorial.ts';
+import RegicideRulebook from './RegicideRulebook.tsx';
 
-export default function RegicideBoard({language,hintsEnabled=true}:{language:Locale;hintsEnabled?:boolean}){
+export default function RegicideBoard({language,hintsEnabled=true,lesson}:{language:Locale;hintsEnabled?:boolean;lesson?:RegicideLesson}){
  const tr=(fr:string,en:string)=>language==='fr'?fr:en;
  const [state,setState]=useState<RegicideState|null>(null);
  const [selected,setSelected]=useState<string[]>([]);
@@ -17,25 +19,26 @@ export default function RegicideBoard({language,hintsEnabled=true}:{language:Loc
  const confirmRef=useRef<HTMLButtonElement>(null);
  const actionRef=useRef<HTMLHeadingElement>(null);
  const lock=useRef(false);
- const session=useRef<PersistentGameSession<RegicideState,RegicideAction>|null>(null);
+ const session=useRef<Pick<PersistentGameSession<RegicideState,RegicideAction>,'getState'|'dispatch'>|null>(null);
  const replacement=useRef<NewGameChoice|null>(null);
  const mounted=useRef(false);
  const [busy,setBusy]=useState(true);
  const [blocked,setBlocked]=useState(false);
  const [storageError,setStorageError]=useState(false);
  const [resumed,setResumed]=useState(false);
+ const [showRules,setShowRules]=useState(false);
  useEffect(()=>{let cancelled=false;mounted.current=true;
-  void(async()=>{try{const existing=await resumeRegicide(createIndexedDbGameStorage());if(cancelled)return;session.current=existing??null;setState(existing?.getState()??null);setResumed(!!existing);}catch{if(!cancelled){setBlocked(true);setStorageError(true);}}finally{if(!cancelled)setBusy(false);}})();
+  void(async()=>{try{const existing=lesson?practiceRegicide(lesson):await resumeRegicide(createIndexedDbGameStorage());if(cancelled)return;session.current=existing??null;setState(existing?.getState()??null);setResumed(!!existing&&!lesson);}catch{if(!cancelled){setBlocked(true);setStorageError(true);}}finally{if(!cancelled)setBusy(false);}})();
   return()=>{cancelled=true;mounted.current=false;};
- },[]);
+ },[lesson]);
  async function run(work:()=>Promise<void>){if(lock.current||busy||blocked)return;lock.current=true;setBusy(true);setStorageError(false);try{await work();}catch{if(mounted.current)setStorageError(true);}finally{lock.current=false;if(mounted.current)setBusy(false);}}
  const setup=()=>({seed:crypto.getRandomValues(new Uint32Array(1))[0]});
- function install(next:PersistentGameSession<RegicideState,RegicideAction>){session.current=next;setState(next.getState());setPending(null);setSelected([]);setError(false);setRestart(false);setResumed(false);}
+ function install(next:Pick<PersistentGameSession<RegicideState,RegicideAction>,'getState'|'dispatch'>){session.current=next;setState(next.getState());setPending(null);setSelected([]);setError(false);setRestart(false);setResumed(false);}
 
  useEffect(()=>{if(pending||restart)confirmRef.current?.focus();},[pending,restart]);
- const start=()=>void run(async()=>{const next=await startRegicide(createIndexedDbGameStorage(),crypto.randomUUID(),setup());if(mounted.current)install(next);});
- const requestRestart=()=>void run(async()=>{replacement.current=await getRegicideNewGameChoice(createIndexedDbGameStorage());if(mounted.current)setRestart(true);});
- const replace=()=>void run(async()=>{if(!replacement.current)return;const next=await confirmRegicideNewGame(createIndexedDbGameStorage(),crypto.randomUUID(),setup(),replacement.current,true);if(next&&mounted.current)install(next);});
+ const start=()=>void run(async()=>{const next=lesson?practiceRegicide(lesson):await startRegicide(createIndexedDbGameStorage(),crypto.randomUUID(),setup());if(mounted.current)install(next);});
+ const requestRestart=()=>void run(async()=>{if(!lesson)replacement.current=await getRegicideNewGameChoice(createIndexedDbGameStorage());if(mounted.current)setRestart(true);});
+ const replace=()=>void run(async()=>{if(lesson){if(mounted.current)install(practiceRegicide(lesson));return;}if(!replacement.current)return;const next=await confirmRegicideNewGame(createIndexedDbGameStorage(),crypto.randomUUID(),setup(),replacement.current,true);if(next&&mounted.current)install(next);});
  const view=state?inspectRegicide(state):null;
  const legal=state?regicideEngine.getLegalActions(state):[];
  const suits={hearts:{symbol:'♥',name:tr('Cœur','Hearts'),domain:tr('Jade · Guérison','Jade · Healing')},diamonds:{symbol:'♦',name:tr('Carreau','Diamonds'),domain:tr('Vent · Pioche','Wind · Draw')},clubs:{symbol:'♣',name:tr('Trèfle','Clubs'),domain:tr('Lame · Double dégâts','Blade · Double damage')},spades:{symbol:'♠',name:tr('Montagne · Pique','Mountain · Spades'),domain:tr('Montagne · Bouclier','Mountain · Shield')}};
@@ -51,7 +54,9 @@ export default function RegicideBoard({language,hintsEnabled=true}:{language:Loc
  const cancel=()=>{setPending(null);setRestart(false);requestAnimationFrame(()=>actionRef.current?.focus());};
  return <section className="ldt-board" data-i18n-ignore aria-label={tr('Plateau Les Douze Tyrans','Twelve Tyrants board')} onKeyDown={e=>{if(e.key==='Escape'&&(pending||restart)){e.stopPropagation();e.preventDefault();cancel();}}}>
  <p className="ldt-kicker">LES DOUZE TYRANS · WUXIA / CHANBARA</p>
- <p>{tr('Préversion interne · sauvegarde locale automatique.','Internal preview · automatic local save.')}</p>
+ <p>{lesson?tr('Entraînement isolé · aucune sauvegarde ni statistique.','Isolated practice · no save or statistics.'):tr('Préversion interne · sauvegarde locale automatique.','Internal preview · automatic local save.')}</p>
+ <button className="secondary-action" aria-expanded={showRules} onClick={()=>setShowRules(v=>!v)}>{showRules?tr('Masquer les règles','Hide rules'):tr('Consulter les règles','Read rules')}</button>
+ {showRules?<RegicideRulebook language={language}/>:null}
  {resumed?<p className="ldt-resumed" role="status">{tr('Partie reprise · sauvegarde locale','Game resumed · local save')}</p>:null}
  {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Échec de l’enregistrement. État précédent conservé.','Save failed. Previous state preserved.')}</p>:null}
  {!state||!view?<button className="primary-action" disabled={busy||blocked} onClick={start}>{tr('Commencer une partie','Start a game')}</button>:<>
@@ -77,7 +82,7 @@ export default function RegicideBoard({language,hintsEnabled=true}:{language:Loc
  {error?<p role="alert">{tr('Action refusée. État conservé.','Action rejected. State preserved.')}</p>:null}
  {view.outcome==='in-progress'?<button className="secondary-action" disabled={busy||blocked||!!pending||restart} onClick={()=>setPending({type:'abandon'})}>{tr('Abandonner','Abandon')}</button>:null}
  <button className="secondary-action" disabled={busy||blocked||!!pending||restart} onClick={requestRestart}>{tr('Nouvelle partie','New game')}</button>
- {restart?<div className="ldt-confirm"><p>{tr('Remplacer cette partie enregistrée ?','Replace this saved game?')}</p><button ref={confirmRef} className="primary-action" disabled={busy||blocked} onClick={replace}>{tr('Confirmer','Confirm')}</button><button className="secondary-action" disabled={busy} onClick={cancel}>{tr('Annuler','Cancel')}</button></div>:null}
+ {restart?<div className="ldt-confirm"><p>{tr('Recommencer cette partie ?','Restart this game?')}</p><button ref={confirmRef} className="primary-action" disabled={busy||blocked} onClick={replace}>{tr('Confirmer','Confirm')}</button><button className="secondary-action" disabled={busy} onClick={cancel}>{tr('Annuler','Cancel')}</button></div>:null}
  </>}
  <p className="help-note">{tr('D’après Regicide de Paul Abrahams, Luke Badger et Andy Richdale.','Based on Regicide by Paul Abrahams, Luke Badger and Andy Richdale.')}</p>
  </section>;

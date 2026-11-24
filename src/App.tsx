@@ -17,7 +17,8 @@ import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
-import RegicideBoard from "./components/RegicideBoard.tsx";
+import RegicideLearning from "./components/RegicideLearning.tsx";
+import RegicideRulebook from "./components/RegicideRulebook.tsx";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -153,10 +154,10 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && game.id === "regicide" ? <RegicideBoard language={language} hintsEnabled={hintsEnabled} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
-              {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
+              {game.id === "regicide" ? <RegicideRulebook language={language} /> : (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
               <a className="secondary-action" href={ruleReference[game.id]} target="_blank" rel="noopener noreferrer">
                 Consulter le référentiel des règles <span aria-hidden="true">↗</span>
               </a>

@@ -39,18 +39,22 @@ test('CAR-41: incompatible, corrupt, migration failure, unavailable and generic 
 });
 import { skydeckEngine, SKYDECK_RULES_VERSION } from '../src/games/card-capture/engine.ts';
 
-test('CAR-41: explicit migration registry allows all four unchanged format v1 games and never synthesizes a conversion',async()=>{
+import {regicideEngine,REGICIDE_RULES_VERSION} from '../src/games/regicide/engine.ts';
+
+test('CAR-41: explicit migration registry allows all five unchanged format v1 games and never synthesizes a conversion',async()=>{
  assert.deepEqual(registeredGameMigrations('clear-the-dungeon'),[]);
  assert.deepEqual(registeredGameMigrations('gridcannon'),[]);
  assert.deepEqual(registeredGameMigrations('loot-the-loop'),[]);
  assert.deepEqual(registeredGameMigrations('card-capture'),[]);
- assert.deepEqual(Object.keys(REGISTERED_SAVE_MIGRATIONS).sort(),['card-capture','clear-the-dungeon','gridcannon','loot-the-loop']);
+ assert.deepEqual(registeredGameMigrations('regicide'),[]);
+ assert.deepEqual(Object.keys(REGISTERED_SAVE_MIGRATIONS).sort(),['card-capture','clear-the-dungeon','gridcannon','loot-the-loop','regicide']);
  assert.throws(()=>registeredGameMigrations('unknown'),error=>error.code==='incompatible');
  for(const [engine,gameId,rulesVersion] of [
   [grimDelveEngine,'clear-the-dungeon',GRIM_DELVE_RULES_VERSION],
   [thunderfighterEngine,'gridcannon',THUNDERFIGHTER_RULES_VERSION],
   [midnightSyndicateEngine,'loot-the-loop',MIDNIGHT_SYNDICATE_RULES_VERSION],
   [skydeckEngine,'card-capture',SKYDECK_RULES_VERSION],
+  [regicideEngine,'regicide',REGICIDE_RULES_VERSION],
  ]){
   const current=engine.createInitialState({seed:99});
   const stored={gameId,sessionId:'registered-test',rulesVersion,formatVersion:1,state:current};

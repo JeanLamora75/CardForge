@@ -19,3 +19,5 @@ export async function confirmRegicideNewGame(storage:LocalGameStorage,sessionId:
  if(live.kind!==choice.kind||live.existingSessionId!==choice.existingSessionId)throw Error('Saved session changed; confirmation required again');
  return confirmNewGame(regicideEngine,storage,{...REGICIDE_SAVE_OPTIONS,sessionId},setup,choice,true);
 }
+
+export {practiceRegicide,REGICIDE_LESSONS} from './tutorial.ts';
