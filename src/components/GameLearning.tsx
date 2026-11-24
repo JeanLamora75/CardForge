@@ -3,15 +3,19 @@ import type { PlayableLearningGame, LearningChoice, LearningPreferences } from "
 import { readLearningPreferences, saveLearningPreferences } from "../application/learning.ts";
 import GrimDelveBoard from "./GrimDelveBoard.tsx";
 import ThunderfighterBoard from "./ThunderfighterBoard.tsx";
+import MidnightSyndicateBoard from "./MidnightSyndicateBoard.tsx";
+import MidnightSyndicateRulebook from "./MidnightSyndicateRulebook.tsx";
 
 const names: Record<PlayableLearningGame, string> = {
   "clear-the-dungeon": "Grim Delve",
   gridcannon: "Thunderfighter",
+  "loot-the-loop": "Midnight Syndicate",
 };
 function local(): Storage | null {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
 export function Rulebook({ gameId }: { gameId: PlayableLearningGame }) {
+  if (gameId === "loot-the-loop") return <MidnightSyndicateRulebook />;
   const grim = gameId === "clear-the-dungeon";
   return <article className="learning-rulebook" aria-labelledby="learning-rulebook-title">
     <h2 id="learning-rulebook-title">Règles de {names[gameId]}</h2>
@@ -71,10 +75,10 @@ export default function GameLearning({ gameId, hintsEnabled, onHintsChange }: { 
       {showRules ? <Rulebook gameId={gameId} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
-          <ThunderfighterBoard tutorial hintsEnabled={preferences.hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
+          gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
-        <GrimDelveBoard hintsEnabled={preferences.hintsEnabled} /> :
-        <ThunderfighterBoard hintsEnabled={preferences.hintsEnabled} />}
+        <GrimDelveBoard hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
+        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard hintsEnabled={hintsEnabled} />}
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}
     {mode === null ? <button className="back-link" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>{showRules ? "Masquer les règles" : "Lire les règles avant de choisir"}</button> : null}
