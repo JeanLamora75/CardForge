@@ -58,7 +58,7 @@ test('opening validation rejects corrupt zones, metadata and card placement with
   }
   for(const seed of [-1,NaN,1.5,4294967296])assert.throws(()=>regicideEngine.createInitialState({seed}));
   const before=structuredClone(s);
-  const rejected=regicideEngine.transition(s,{type:'play',cardIds:[s.hand[0]]});
+  const rejected=regicideEngine.transition(s,{type:'play',cardIds:[s.tavern[0]]});
   assert.equal(rejected.accepted,false); assert.equal(rejected.state,s);
   assert.deepEqual(s,before);
 });
