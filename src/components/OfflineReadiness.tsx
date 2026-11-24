@@ -49,6 +49,9 @@ export default function OfflineReadiness({ language }: { language: Locale }) {
     const onControl = () => { void check(); };
     navigator.serviceWorker.addEventListener("controllerchange", onControl);
     void (async () => {
+      // On an offline cold restart, a controller can already serve the cached shell.
+      // Probe it BEFORE attempting registration, which may reject while offline.
+      if (navigator.serviceWorker.controller) await check();
       try {
         registration = await navigator.serviceWorker.register(new URL("sw.js", document.baseURI).toString(), { scope: "./", updateViaCache: "none" });
         if (cancelled) return;
@@ -56,7 +59,10 @@ export default function OfflineReadiness({ language }: { language: Locale }) {
         if (registration.installing) registration.installing.addEventListener("statechange", onControl);
         await check();
       } catch {
-        if (!cancelled) setStatus({ phase: "error" });
+        if (!cancelled) {
+          if (navigator.serviceWorker.controller) await check();
+          else setStatus({ phase: "error" });
+        }
       }
     })();
     return () => {
