@@ -120,6 +120,12 @@ async function journey(locale,mobile){
       }else{
         await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.grim-actions button.secondary-action').first().waitFor({state:'visible'});
+        // A real discard asks for confirmation; Playwright dismisses dialogs by default.
+        // First verify cancellation cannot alter the save, then explicitly confirm the damage.
+        page.once('dialog',dialog=>void dialog.dismiss());
+        await interact(page,page.locator('.grim-actions button.secondary-action').filter({hasText:/Défausser|Discard/}).first(),mobile);
+        assert.deepEqual(await readSaved(page,game.id),before,'discard cancellation must preserve the saved state');
+        page.once('dialog',dialog=>void dialog.accept());
         await interact(page,page.locator('.grim-actions button.secondary-action').filter({hasText:/Défausser|Discard/}).first(),mobile);
       }
       const after=await waitSavedChanged(page,game.id,before);
