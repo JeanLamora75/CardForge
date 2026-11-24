@@ -380,3 +380,81 @@ test('CC-R03: provisional guard refuses two Jokers with or without a reference',
   }
   assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.cardIds.includes('joker-1')&&a.cardIds.includes('joker-2')),false);
 });
+
+test('CC-T11: B sacrifices exactly one hand card and the enemy at position one',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','joker-1'],1);
+  const choices=skydeckEngine.getLegalActions(s).filter(a=>a.type==='capture-b');
+  assert.deepEqual(choices,s.hand.map(cardId=>({type:'capture-b',cardId})));
+  for(const a of choices){
+    const n=act(s,a);
+    assert.deepEqual(n.enemyCapture,['hearts-9',a.cardId]);
+    assert.deepEqual(n.hand,s.hand.filter(id=>id!==a.cardId));
+    assert.deepEqual(n.enemyLine,[null,...s.enemyLine.slice(1)]);
+    assert.deepEqual(n.playerDeck,s.playerDeck);
+    assert.deepEqual(n.enemyDeck,s.enemyDeck);
+    assert.deepEqual(n.discard,s.discard);
+    assert.equal(n.round,s.round+1);
+    assert.equal(n.phase,'enemy');
+    assert.equal(n.outcome,'in-progress');
+    const d=apply(n,'advance-enemy');
+    const draw=act(d,{type:'discard',cardIds:[]});
+    const c=apply(draw,'draw');
+    assert.deepEqual(c.enemyCapture,n.enemyCapture);
+    assert.equal(c.hand.includes(a.cardId),false);
+    assert.equal(c.playerDeck.includes(a.cardId),false);
+  }
+});
+test('CC-T12: every protected rank triggers immediate defeat on either side of action B',()=>{
+  for(const rank of [1,11,12,13]){
+    for(const [target,cardId] of [['hearts-'+rank,'clubs-2'],['hearts-9','clubs-'+rank],['hearts-'+rank,'clubs-'+rank]]){
+      const s=captureFixture(target,[cardId,'spades-2','spades-3','joker-1'],1);
+      const n=act(s,{type:'capture-b',cardId});
+      assert.deepEqual(n.enemyCapture,[target,cardId]);
+      assert.equal(n.outcome,'loss');
+      assert.equal(n.phase,'finished');
+      assert.equal(n.round,s.round);
+      assert.deepEqual(skydeckEngine.getLegalActions(n),[]);
+      assert.equal(skydeckEngine.transition(n,{type:'advance-enemy'}).accepted,false);
+      for(const outcome of ['in-progress','win','abandoned']){
+        const invalid={...n,outcome,phase:outcome==='in-progress'?'enemy':'finished'};
+        assert.equal(skydeckEngine.validateState(invalid).valid,false);
+      }
+    }
+  }
+});
+test('CC-T15: action B on final enemy wins only if neither sacrificed card is protected',()=>{
+  for(const [target,cardId,outcome] of [['hearts-9','joker-2','win'],['hearts-13','clubs-2','loss'],['hearts-9','clubs-1','loss']]){
+    const s=captureFixture(target,[cardId,'spades-2','spades-3','spades-4'],1,true);
+    const n=act(s,{type:'capture-b',cardId});
+    assert.equal(n.outcome,outcome);
+    assert.equal(n.phase,'finished');
+    assert.deepEqual(n.enemyLine,[null,null,null,null]);
+    assert.deepEqual(n.enemyDeck,[]);
+    assert.deepEqual(n.enemyCapture,[target,cardId]);
+    assert.deepEqual(skydeckEngine.getLegalActions(n),[]);
+  }
+});
+test('CC-T11 / CC-T14: B refuses invalid selections, target override and repeated captures',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1);
+  for(const action of [{type:'capture-b'},{type:'capture-b',cardId:'hearts-9'},{type:'capture-b',cardId:s.playerDeck[0]},{type:'capture-b',cardId:['clubs-2']},{type:'capture-b',cardId:'clubs-2',targetPosition:2}]){
+    const before=structuredClone(s);
+    const r=skydeckEngine.transition(s,action);
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,s);
+    assert.deepEqual(s,before);
+  }
+  const a={type:'capture-b',cardId:'clubs-2'};
+  const n=act(s,a);
+  assert.equal(skydeckEngine.transition(n,a).accepted,false);
+  assert.equal(skydeckEngine.transition(n,{type:'capture-a',targetPosition:2,cardIds:['hearts-4','hearts-5']}).accepted,false);
+  assert.equal(skydeckEngine.transition({...s,phase:'discard'},a).accepted,false);
+});
+test('CC-R04: no implicit substitution when position one is empty',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1,true);
+  const empty={...s,enemyLine:[null,'hearts-9',null,null]};
+  assert.equal(skydeckEngine.validateState(empty).valid,false);
+  assert.deepEqual(skydeckEngine.getLegalActions(empty),[]);
+  const r=skydeckEngine.transition(empty,{type:'capture-b',cardId:'clubs-2'});
+  assert.equal(r.accepted,false);
+  assert.equal(r.state,empty);
+});
