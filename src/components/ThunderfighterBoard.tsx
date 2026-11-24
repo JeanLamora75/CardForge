@@ -178,7 +178,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
           `${tutorial ? "Coup d’entraînement" : "Coup enregistré"} : ${actionLabel(selection)}.`);
       }
       setSelection(null);
-    } catch { setNotice("Enregistrement impossible. L'action n'a pas été validée."); }
+    } catch (error) { setNotice(storageRecoveryMessage(error, "write")); }
     finally { setBusy(false); }
   }
   const preview = state && selection ? previewThunderfighterAction(state, selection) : null;
