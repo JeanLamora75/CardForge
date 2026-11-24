@@ -23,7 +23,7 @@ export interface MidnightSyndicateState {
   /** Collected aces and numeric cards, in collection order. */
   loot: LoopCard[];
 }
-export type MidnightSyndicateAction = Readonly<{ type: 'look-around' }>;
+export type MidnightSyndicateAction = Readonly<{ type: 'look-around' } | { type: 'explore'; distance: number }>;
 
 const canonical = [...makeStandardDeck().map(card => card.id), 'joker-1'];
 const validIds = new Set(canonical);
@@ -100,9 +100,16 @@ function createInitialState(setup: MidnightSyndicateSetup): MidnightSyndicateSta
 
 function getLegalActions(state: Readonly<MidnightSyndicateState>): readonly MidnightSyndicateAction[] {
   if (!validateState(state).valid || state.outcome !== 'in-progress') return [];
-  if (state.deck[0] && !state.deck[0].faceUp) return [{type:'look-around'}];
-  // Other actions are added in the dedicated gameplay stories; do not simulate their effects.
-  return [];
+  const actions: MidnightSyndicateAction[] = [];
+  if (state.deck[0] && !state.deck[0].faceUp) actions.push({type:'look-around'});
+  const distances = new Set<number>();
+  for (const card of state.deck.slice(0,2)) {
+    if (!card.faceUp) continue;
+    const rank = makeStandardDeck().find(item => item.id === card.id)?.rank;
+    if (rank !== undefined && rank >= 2 && rank <= 10) distances.add(rank);
+  }
+  for (const distance of distances) actions.push({type:'explore',distance});
+  return actions;
 }
 function transition(
   state: Readonly<MidnightSyndicateState>,
@@ -110,6 +117,15 @@ function transition(
 ): TransitionResult<MidnightSyndicateState> {
   if (!validateState(state).valid || state.outcome !== 'in-progress') {
     return {accepted:false,state:state as MidnightSyndicateState,reason:'invalid or finished game'};
+  }
+  if (action?.type === 'explore') {
+    if (Object.keys(action).length !== 2 || !getLegalActions(state).some(
+      legal => legal.type === 'explore' && legal.distance === action.distance,
+    )) return {accepted:false,state:state as MidnightSyndicateState,reason:'explore is not legal'};
+    const offset = action.distance % state.deck.length;
+    const deck = [...state.deck.slice(offset), ...state.deck.slice(0,offset)];
+    // CAR-49 will resolve visible destinations; hidden destinations have no effect.
+    return {accepted:true,state:{...state,deck}};
   }
   if (!action || action.type !== 'look-around' || Object.keys(action).length !== 1 ||
       !state.deck[0] || state.deck[0].faceUp) {
