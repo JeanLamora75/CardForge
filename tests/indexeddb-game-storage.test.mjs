@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createIndexedDbGameStorage } from '../src/adapters/indexeddb-game-storage.ts';
 import { createPrivacyGameStorage } from '../src/adapters/indexeddb-privacy-storage.ts';
 import { LocalStorageError, stableResultId } from '../src/ports/local-storage.ts';
+import { classifyRecoveryProblem, storageRecoveryMessage } from '../src/application/storage-recovery-messages.ts';
 import { startPersistentGame, resumePersistentGame } from '../src/application/persistent-game-session.ts';
 import { getNewGameChoice, confirmNewGame } from '../src/application/new-game-choice.ts';
 
@@ -11,9 +12,11 @@ import { getNewGameChoice, confirmNewGame } from '../src/application/new-game-ch
 function makeFactory() {
   const databases = new Map();
   let failStatisticsPut = false;
+  let failQuotaPut = false;
   let failResultsDelete = false;
   return {
     failStats: value => { failStatisticsPut = value; },
+    failQuota: value => { failQuotaPut = value; },
     failDelete: value => { failResultsDelete = value; },
     open(name) {
       const request = {};
@@ -44,6 +47,7 @@ function makeFactory() {
                     put(value) {
                       if (mode !== 'readwrite') throw Error('readonly');
                       if (key === 'statistics' && failStatisticsPut) throw Error('failed statistics put');
+                      if (key === 'statistics' && failQuotaPut) throw new DOMException('Storage full', 'QuotaExceededError');
                       const copy = structuredClone(value);
                       staged.push(['put', store, copy[store.keyPath], copy]);
                       schedule();
@@ -441,4 +445,24 @@ test('privacy full erase clears only application game database records', async (
   assert.equal(await storage.readResult('r1'),undefined);
   assert.equal(await storage.readStatistics('clear-the-dungeon'),undefined);
   assert.deepEqual(await unrelated.readGame('independent'),game('independent'));
+});
+
+test('CAR-41: a synchronous QuotaExceededError in the IndexedDB adapter preserves recovery details and rolls back writes', async () => {
+  const factory=makeFactory();
+  const storage=createIndexedDbGameStorage({factory,name:'quota-recovery'});
+  await storage.commit({save:game(),result,statistics:stats});
+  factory.failQuota(true);
+  const next=game('clear-the-dungeon',{cards:['new','state']});
+  await assert.rejects(
+    ()=>storage.commit({save:next,result:{...result,id:'r-quota'},statistics:{...stats,played:2,won:2}}),
+    error=> error instanceof LocalStorageError && error.code==='write-failed' &&
+      classifyRecoveryProblem(error)==='quota' &&
+      /stockage local est plein/i.test(storageRecoveryMessage(error,'write')),
+  );
+  assert.deepEqual(await storage.readGame('clear-the-dungeon'),game());
+  assert.equal(await storage.readResult('r-quota'),undefined);
+  assert.deepEqual(await storage.readStatistics('clear-the-dungeon'),stats);
+  factory.failQuota(false);
+  await storage.commit({save:next});
+  assert.deepEqual((await storage.readGame('clear-the-dungeon')).state,{cards:['new','state']});
 });
