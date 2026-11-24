@@ -458,3 +458,80 @@ test('CC-R04: no implicit substitution when position one is empty',()=>{
   assert.equal(r.accepted,false);
   assert.equal(r.state,empty);
 });
+
+test('CC-T13: every pair can push each occupied enemy to the bottom, without a personal capture',()=>{
+  const s=captureFixture('hearts-13',['hearts-4','hearts-5','clubs-2','joker-1'],2);
+  const choices=skydeckEngine.getLegalActions(s).filter(a=>a.type==='capture-c');
+  assert.equal(choices.length,24);
+  assert.equal(new Set(choices.map(a=>JSON.stringify(a))).size,24);
+  for(const a of choices){
+    const n=act(s,a);
+    const selected=new Set(a.cardIds);
+    const target=s.enemyLine[a.targetPosition-1];
+    assert.deepEqual(n.enemyCapture,s.hand.filter(id=>selected.has(id)));
+    assert.deepEqual(n.hand,s.hand.filter(id=>!selected.has(id)));
+    assert.deepEqual(n.enemyDeck,[...s.enemyDeck,target]);
+    assert.deepEqual(n.enemyLine,s.enemyLine.map((id,i)=>i===a.targetPosition-1?null:id));
+    assert.deepEqual(n.discard,s.discard);
+    assert.deepEqual(n.playerDeck,s.playerDeck);
+    assert.equal(n.phase,'enemy');
+    assert.equal(n.round,s.round+1);
+    assert.equal(n.outcome,'in-progress');
+    const filled=apply(n,'advance-enemy');
+    assert.equal(filled.enemyDeck.at(-1),target);
+    assert.equal(filled.enemyCapture.includes(target),false);
+  }
+});
+test('CC-T12: C loses immediately for each protected rank sacrificed, but not for Jokers or a protected target',()=>{
+  for(const rank of [1,11,12,13]){
+    const s=captureFixture('hearts-9',['clubs-'+rank,'joker-2','spades-2','spades-3']);
+    const n=act(s,{type:'capture-c',targetPosition:2,cardIds:['joker-2','clubs-'+rank]});
+    assert.equal(n.outcome,'loss');
+    assert.equal(n.phase,'finished');
+    assert.equal(n.round,s.round);
+    assert.deepEqual(n.enemyCapture,['clubs-'+rank,'joker-2']);
+    assert.deepEqual(n.enemyDeck,[...s.enemyDeck,'hearts-9']);
+    assert.deepEqual(skydeckEngine.getLegalActions(n),[]);
+    assert.equal(skydeckEngine.transition(n,{type:'advance-enemy'}).accepted,false);
+  }
+  const s=captureFixture('hearts-13',['joker-1','joker-2','clubs-2','spades-3']);
+  const n=act(s,{type:'capture-c',targetPosition:2,cardIds:['joker-2','joker-1']});
+  assert.deepEqual(n.enemyCapture,['joker-1','joker-2']);
+  assert.equal(n.outcome,'in-progress');
+  assert.equal(n.enemyDeck.at(-1),'hearts-13');
+});
+test('CC-T13: last enemy is postponed rather than defeated, even with an empty enemy deck',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1,true);
+  const n=act(s,{type:'capture-c',targetPosition:1,cardIds:['clubs-2','spades-3']});
+  assert.equal(n.outcome,'in-progress');
+  assert.deepEqual(n.enemyLine,[null,null,null,null]);
+  assert.deepEqual(n.enemyDeck,['hearts-9']);
+  const filled=apply(n,'advance-enemy');
+  assert.deepEqual(filled.enemyLine,['hearts-9',null,null,null]);
+  assert.deepEqual(filled.enemyDeck,[]);
+});
+test('CC-T14: C rejects invalid selections and all second capture alternatives without mutation',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1,true);
+  const a={type:'capture-c',targetPosition:1,cardIds:['clubs-2','spades-3']};
+  for(const invalid of [
+    {...a,targetPosition:2},{...a,targetPosition:0},{...a,targetPosition:5},{...a,targetPosition:1.5},
+    {...a,cardIds:['clubs-2']},{...a,cardIds:['clubs-2','clubs-2']},
+    {...a,cardIds:['clubs-2','spades-3','hearts-4']},{...a,cardIds:['clubs-2',s.playerDeck[0]]},
+    {...a,cardIds:new Array(2)},{...a,cardIds:null},{...a,jokerCopyId:'clubs-2'}
+  ]){
+    const before=structuredClone(s);
+    const r=skydeckEngine.transition(s,invalid);
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,s);
+    assert.deepEqual(s,before);
+  }
+  const n=act(s,a);
+  for(const action of [a,{type:'capture-a',targetPosition:1,cardIds:['hearts-4','hearts-5']},{type:'capture-b',cardId:'hearts-4'}]){
+    const before=structuredClone(n);
+    const r=skydeckEngine.transition(n,action);
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,n);
+    assert.deepEqual(n,before);
+  }
+  assert.equal(skydeckEngine.transition({...s,phase:'discard'},a).accepted,false);
+});

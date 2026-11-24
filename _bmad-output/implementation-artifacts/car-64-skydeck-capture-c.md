@@ -1,0 +1,6 @@
+# CAR-64 — Repousser un ennemi (C)
+Amelia — implémentation directe sur main sans uv.
+AC1 : choix de deux cartes physiques distinctes de main, transférées définitivement dans enemyCapture ; cible occupée renvoyée en fin de pioche ennemie sans mélange, aucun transfert vers la défausse personnelle. Le dernier ennemi repoussé ne déclenche pas la victoire.
+AC2 : J/Q/K/A sacrifié entraîne immédiatement loss et verrouillage ; les Jokers ne sont pas protégés ; une figure repoussée n'est pas sacrifiée. Les deux cartes sont transférées dans le même état résultant.
+AC3 : refus immuable des cibles vides, positions invalides, cartes absentes, doublons, cardinalité incorrecte, champs supplémentaires et actions hors phase. Les actions A/B/C sont exclusives via la machine d'états.
+Tests CC-T12/13/14, 24 choix légaux (4 cibles × 6 paires), ordre de pioche, dernier ennemi, identité et conservation. Les cas CC-R01–04 restent ouverts. Aucun autre moteur, catalogue ou publication modifié. CI précédente CAR-63 non encore conclue au début du travail ; CI de ce commit à constater.
