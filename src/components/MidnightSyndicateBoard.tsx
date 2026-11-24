@@ -4,9 +4,9 @@ import type { PersistentGameSession } from "../application/persistent-game-sessi
 import type { NewGameChoice } from "../application/new-game-choice.ts";
 import { makeMidnightSyndicateSummary } from "../application/game-results.ts";
 import { inspectMidnightSyndicate, type MidnightSyndicateState, type MidnightSyndicateAction, type PublicLoopCard } from "../games/loot-the-loop/engine.ts";
-import { startMidnightSyndicate, resumeMidnightSyndicate, getMidnightSyndicateNewGameChoice, confirmMidnightSyndicateNewGame } from "../games/loot-the-loop/persistence.ts";
+import { startMidnightSyndicate, resumeMidnightSyndicate, getMidnightSyndicateNewGameChoice, confirmMidnightSyndicateNewGame, practiceMidnightSyndicate } from "../games/loot-the-loop/persistence.ts";
 import GameResultPanel from "./GameResultPanel";
-type Session = PersistentGameSession<MidnightSyndicateState, MidnightSyndicateAction>;
+type Session = Pick<PersistentGameSession<MidnightSyndicateState, MidnightSyndicateAction>, 'getState' | 'dispatch'>;
 const setup = () => ({seed:crypto.getRandomValues(new Uint32Array(1))[0]});
 function cardLabel(card: PublicLoopCard) {
   if (!card.faceUp) return "Carte cachée";
@@ -30,7 +30,7 @@ function actionLabel(action:MidnightSyndicateAction) {
     case "return-to-path": return "Restituer la note "+(action.noteIndex+1);
   }
 }
-export default function MidnightSyndicateBoard() {
+export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true,onReplayTutorial}:{tutorial?:boolean;hintsEnabled?:boolean;onReplayTutorial?:()=>void}) {
   const session = useRef<Session|null>(null);
   const lock = useRef(false);
   const [state,setState] = useState<Readonly<MidnightSyndicateState>|null>(null);
@@ -48,23 +48,23 @@ export default function MidnightSyndicateBoard() {
     mounted.current=true;
     void (async()=>{
       try {
-        const existing=await resumeMidnightSyndicate(createIndexedDbGameStorage());
+        const existing=tutorial ? practiceMidnightSyndicate({seed:54}) : await resumeMidnightSyndicate(createIndexedDbGameStorage());
         if(cancelled)return;
         session.current=existing??null;
         setState(existing?.getState()??null);
-        setNotice(existing?"Partie reprise · sauvegarde locale":"");
+        setNotice(tutorial?"Entraînement sans sauvegarde":existing?"Partie reprise · sauvegarde locale":"");
       } catch {
         if(!cancelled){setBlocked(true);setError("Sauvegarde incompatible ou inaccessible. Elle est conservée.");}
       } finally {if(!cancelled)setBusy(false);}
     })();
     return ()=>{cancelled=true;mounted.current=false;};
-  },[]);
+  },[tutorial]);
   useEffect(()=>{if(selected||replacement)confirmation.current?.focus();},[selected,replacement]);
   async function run(work:()=>Promise<void>) {
     if(lock.current||busy||blocked)return;
     lock.current=true;setBusy(true);setError("");
     try{await work();}
-    catch{if(mounted.current)setError("Action non enregistrée. La sauvegarde précédente est conservée. Rechargez si nécessaire.");}
+    catch{if(mounted.current)setError(tutorial?"Action d’entraînement impossible.":"Action non enregistrée. La sauvegarde précédente est conservée. Rechargez si nécessaire.");}
     finally{lock.current=false;if(mounted.current)setBusy(false);}
   }
   function adopt(next:Session) {
@@ -96,7 +96,7 @@ export default function MidnightSyndicateBoard() {
       setSelected(null);
       if(!result.accepted){setError("Action refusée : ce coup n’est plus autorisé.");return;}
       setState(session.current!.getState());
-      setNotice("Action enregistrée");
+      setNotice(tutorial?"Action d’entraînement":"Action enregistrée");
       actionsHeading.current?.focus();
     });
   }
@@ -104,18 +104,19 @@ export default function MidnightSyndicateBoard() {
   const summary=state?makeMidnightSyndicateSummary(state):null;
   return <section className="ms-board" aria-label="Plateau Midnight Syndicate" aria-busy={busy}>
     <p className="ms-kicker">MIDNIGHT SYNDICATE · 1930</p>
-    <p role="status" aria-live="polite">{busy?"Chargement ou enregistrement…":notice}</p>
+    <p role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</p>
     {error?<p role="alert" className="ms-error">{error}</p>:null}
-    {!state?<button className="primary-action" disabled={busy||blocked} onClick={()=>void start()}>Commencer une partie</button>:null}
+    {!state&&!tutorial?<button className="primary-action" disabled={busy||blocked} onClick={()=>void start()}>Commencer une partie</button>:null}
     {view?<><div className="ms-counters">
       <span>As : {view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length} / 4</span>
       <span>Butin : {view.loot.length}</span><span>Parcours : {view.deck.length}</span>
       <span>Notes : {view.notes.length} / 3</span>
     </div>
-    {summary?<GameResultPanel summary={summary} tutorial={false} disabled={busy} onReplay={()=>void chooseReplacement()}/>:null}
+    {summary?<GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/>:null}
     <h3>Position actuelle</h3>
     <div className="ms-top">{view.deck.slice(0,2).map(card=><Card key={card.position} card={card}/>)}</div>
     {view.outcome==="in-progress"?<>
+      {hintsEnabled?<details open={tutorial}><summary>Aide contextuelle</summary><p>{view.actions.some(a=>a.type==="look-around")?"Observez pour révéler les deux premières cartes.":view.actions.some(a=>a.type==="explore")?"Choisissez une distance visible, puis inspectez la destination avant de confirmer.":"Essayez de restituer une note pour retrouver un chemin."}</p><p>Une figure visible à l’arrivée est un piège. Les notes permettent de préparer un autre chemin.</p></details>:null}
       <h3 ref={actionsHeading} tabIndex={-1}>Actions autorisées</h3>
       <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
         key={actionLabel(action)} disabled={busy||!!replacement}
@@ -127,7 +128,7 @@ export default function MidnightSyndicateBoard() {
         <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void apply()}>Confirmer</button>
         <button className="secondary-action" disabled={busy} onClick={()=>{setSelected(null);actionsHeading.current?.focus();}}>Annuler</button>
       </div>:null}
-      <button className="secondary-action" disabled={busy||!!selected||!!replacement} onClick={()=>void chooseReplacement()}>Nouvelle partie</button>
+      {!tutorial?<button className="secondary-action" disabled={busy||!!selected||!!replacement} onClick={()=>void chooseReplacement()}>Nouvelle partie</button>:null}
     </>:null}
     {replacement?<div className="ms-confirm" role="group" aria-label="Confirmation de nouvelle partie">
       <p>{view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
@@ -143,6 +144,6 @@ export default function MidnightSyndicateBoard() {
     <details><summary>Consulter le butin ({view.loot.length} cartes)</summary>
       <div className="ms-inspection">{view.loot.map(card=><Card key={card.position} card={card}/>)}</div>
     </details></>:null}
-    <p className="help-note">Le retour au catalogue conserve la partie enregistrée.</p>
+    <p className="help-note">{tutorial?"Cet entraînement ne modifie aucune sauvegarde ni statistique.":"Le retour au catalogue conserve la partie enregistrée."}</p>
   </section>;
 }
