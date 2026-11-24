@@ -414,3 +414,30 @@ h1[tabindex="-1"]:focus { outline: none; }
 .ms-board summary { padding:10px 0; }
 .ms-error { color:#ffd1b9; }
 @media(max-width:480px) { .ms-board .ms-actions button { flex:1 1 100%; } .ms-board .ms-confirm button { flex:1 1 110px; } .ms-counters span { flex:1 1 42%; } }
+
+/* Skydeck preview: original decorative airship motif, independent of rules. */
+.sd-board {min-width:0;color:#f9f2ff;background:radial-gradient(ellipse at top,#4b205f,#181c36 68%);border:1px solid #a78fc7;border-radius:16px;padding:clamp(8px,2.5vw,24px);}
+.sd-kicker {color:#f4d8a3;font-weight:800;letter-spacing:.08em}
+.sd-board h3 {margin:16px 0 8px;color:#f4d8a3}
+.sd-phases,.sd-counts,.sd-actions,.sd-confirm {display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.sd-phases span,.sd-counts span {padding:7px 9px;border:1px solid #a78fc7;border-radius:8px;overflow-wrap:anywhere}
+.sd-phases [aria-current] {border:2px solid #f4d8a3;font-weight:bold}
+.sd-direction {font-size:.85rem}
+.sd-line {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(4px,1vw,12px);max-width:640px}
+.sd-card {display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:4px;min-width:0;min-height:110px;border:1px solid #e3c9ff;border-radius:8px;padding:5px 2px;background:linear-gradient(#d9d8fc,#f8e8c8);color:#292043;font:inherit;overflow-wrap:anywhere;text-align:center;cursor:pointer}
+.sd-card:disabled {opacity:.85;cursor:default}
+.sd-card[aria-pressed=true],.sd-board button[aria-pressed=true] {outline:3px solid #f4d8a3;outline-offset:1px}
+.sd-card[aria-pressed=true]::after {content:'✓';font-weight:bold}
+.sd-power {font-size:clamp(1rem,3vw,1.5rem);font-weight:800}
+.sd-position,.sd-card small {font-size:clamp(.65rem,1.7vw,.85rem)}
+.sd-art {display:block;width:100%;max-width:84px;color:#50376e}
+.sd-art svg {width:100%;height:auto;display:block}
+.sd-board button {min-height:44px}
+.sd-board button:focus-visible,.sd-board input:focus-visible,.sd-board h3:focus-visible {outline:3px solid #f4d8a3;outline-offset:3px}
+.sd-board fieldset {border:1px solid #a78fc7;min-width:0;padding:8px}
+.sd-board fieldset label {display:flex;align-items:center;gap:8px;min-height:44px}
+.sd-confirm {border:1px solid #f4d8a3;padding:10px;border-radius:8px}
+.sd-confirm p {flex-basis:100%;margin:0;overflow-wrap:anywhere}
+.sd-preview {margin:8px 0}
+@media(max-width:480px){.sd-actions button{flex:1 1 100%}.sd-counts span{flex:1 1 40%}.sd-card{min-height:100px}}
+@media(prefers-reduced-motion:reduce){.sd-board *{animation:none!important;transition:none!important}}

@@ -172,6 +172,25 @@ async function journey(locale,mobile){
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       assert.equal(await page.locator('html').getAttribute('lang'),locale);
     }
+    // Skydeck internal preview: no persistence or statistics before its persistence story.
+    await page.goto(HOST+'#game/card-capture/board');
+    const sd=page.locator('.sd-board');
+    await sd.waitFor();
+    await interact(page,sd.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
+    assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
+    const initial=await sd.locator('[role=status]').textContent();
+    await interact(page,sd.locator('.sd-preview'),mobile);
+    await interact(page,sd.locator('.sd-confirm button.secondary-action'),mobile);
+    assert.equal(await sd.locator('[role=status]').textContent(),initial);
+    for(let phase=0;phase<3;phase++){
+      await interact(page,sd.locator('.sd-preview'),mobile);
+      await interact(page,sd.locator('.sd-confirm button.primary-action'),mobile);
+    }
+    assert.equal(await sd.locator('.sd-hand button').count(),4);
+    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+    assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));
+    assert.equal(await readSaved(page,'card-capture'),null);
     await page.close();
     await context.setOffline(true);
     const offline=await context.newPage();

@@ -17,6 +17,7 @@ import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
+import SkydeckBoard from "./components/SkydeckBoard";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -76,9 +77,10 @@ const ruleReference: Record<GameId, string> = {
 };
 
 function GameDetail({
-  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange,
+  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange, language,
 }: {
   game: GameEntry;
+  language: Locale;
   section: GameSection;
   progress: CatalogGameProgress;
   onNavigate: (route: CatalogRoute) => void;
@@ -123,11 +125,11 @@ function GameDetail({
               {actions.newGame && progress.indicator === "active" ? (
                 <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
               ) : null}
-              {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
+              {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-            <p className="help-note">Les trois plateaux en préversion proposent le choix entre entraînement facultatif et partie normale. La collection reste en préversion.</p>
+            <p className="help-note">Les plateaux sont accessibles en préversion. Skydeck propose une partie de recette en mémoire.</p>
             <details className="source-credits">
               <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
@@ -139,7 +141,7 @@ function GameDetail({
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
                 <strong>{statusLabel(game)}</strong> — La publication officielle n’est pas encore autorisée.
-                {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
+                {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
@@ -150,7 +152,7 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && game.id === "card-capture" ? <SkydeckBoard key={game.id} language={language} hintsEnabled={hintsEnabled} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
@@ -337,7 +339,7 @@ export default function App() {
       route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
-          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back}
+          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} language={language}
           hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
         <>
@@ -352,7 +354,7 @@ export default function App() {
               <h2 id="catalog-title">Choisissez votre univers</h2>
               <span>{games.length} jeux dans la collection</span>
             </div>
-            <p className="catalog-notice">Les plateaux Grim Delve, Thunderfighter et Midnight Syndicate sont accessibles en préversion depuis leurs fiches.</p>
+            <p className="catalog-notice">Les plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck sont accessibles en préversion depuis leurs fiches.</p>
             <div className="game-grid">
               {games.map(game => (
                 <article className={`game-card ${game.accent}`} key={game.id} aria-labelledby={`name-${game.id}`}>
@@ -384,7 +386,7 @@ export default function App() {
         </>
       )}
       <footer className="app-footer">
-        <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter et Midnight Syndicate en préversion</span>
+        <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck en préversion</span>
         <button type="button" className="credits-footer-link" onClick={() => {
           if (route.page !== "about") settingsOrigin.current = route;
           navigate({ page: "about" });
