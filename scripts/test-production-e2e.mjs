@@ -32,10 +32,10 @@ async function readSaved(page,id){
     });}finally{db.close();}
   },id);
 }
-async function interact(locator,mobile,key='Enter'){
+async function interact(page,locator,mobile,key='Enter'){
   await locator.waitFor({state:'visible',timeout:15000});
   if(mobile)await locator.tap();
-  else{await locator.focus();await locator.page().keyboard.press(key);}
+  else{await locator.focus();await page.keyboard.press(key);}
 }
 async function ready(page){
   await page.locator('[data-offline-phase="ready"]').waitFor({timeout:30000}).catch(async()=>{
@@ -89,42 +89,30 @@ async function journey(locale,mobile){
     for(const game of GAMES){
       await page.goto(HOST);
       const card=page.locator('.game-card').filter({has:page.getByRole('heading',{name:game.name})});
-      await interact(card.getByRole('button'),mobile,'Enter');
-      await interact(page.locator('.context-actions button.primary-action').first(),mobile,'Space');
-      await page.locator(game.root).count().then(async count=>{
-        if(count)return;
-        const direct=page.locator('.learning-intro button.primary-action');
-        await interact(direct,mobile,'Enter');
-      });
-      // A prior preference might have selected learn/play; the current run uses isolated context.
-      if(await page.locator('.learning-intro').count())await interact(page.locator('.learning-intro button.secondary-action'),mobile);
+      await interact(page,card.getByRole('button'),mobile,'Enter');
+      await interact(page,page.locator('.context-actions button.primary-action').first(),mobile,'Space');
+      if(await page.locator('.learning-intro').count())
+        await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
       await page.locator(game.root).waitFor({state:'visible',timeout:20000});
       const first=page.locator(game.root+' button.primary-action').filter({hasText:/Commencer une partie|Start a game|Start playing/}).first();
-      if(await first.count())await interact(first,mobile);
+      if(await first.count())await interact(page,first,mobile);
       await page.locator(game.actions).first().waitFor({state:'visible',timeout:15000});
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
       if(game.confirm){
-        await interact(page.locator(game.actions).first(),mobile);
+        await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.thunder-confirm').waitFor({state:'visible'});
         const onCancel=await readSaved(page,game.id);
         assert.deepEqual(onCancel,before,'Thunderfighter preview must not write');
-        await interact(page.locator('.thunder-confirm button.back-link'),mobile);
+        await interact(page,page.locator('.thunder-confirm button.back-link'),mobile);
         assert.deepEqual(await readSaved(page,game.id),before,'cancel must not write');
-        await interact(page.locator(game.actions).first(),mobile);
-        await interact(page.locator('.thunder-confirm button.primary-action'),mobile);
+        await interact(page,page.locator(game.actions).first(),mobile);
+        await interact(page,page.locator('.thunder-confirm button.primary-action'),mobile);
       }else{
-        await interact(page.locator(game.actions).first(),mobile);
+        await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.grim-actions button.secondary-action').first().waitFor({state:'visible'});
-        await interact(page.locator('.grim-actions button.secondary-action').first(),mobile);
+        await interact(page,page.locator('.grim-actions button.secondary-action').first(),mobile);
       }
-      await page.waitForFunction(async id=>{
-        const req=indexedDB.open('cardforge',1);
-        const db=await new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
-        const record=await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readonly');const read=tx.objectStore('sessions').get(id);read.onsuccess=()=>resolve(read.result);read.onerror=()=>reject(read.error);});
-        db.close();
-        return record && JSON.stringify(record.state)!==window.__car42Before;
-      },game.id,{timeout:15000}).catch(()=>{});
       const after=await readSaved(page,game.id);
       assert.ok(after,'action must leave a saved game');
       assert.notDeepEqual(after.state,before.state,'UI action must persist a different real-engine state for '+game.name);
