@@ -4,9 +4,9 @@ import ts from "typescript";
 
 const root=process.cwd();
 const categories=[
-  {label:"CTD latest",file:"_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md",pattern:/\\bCTD-T\\d{1,3}\\b/g},
-  {label:"Gridcannon latest",file:"_bmad-output/planning-artifacts/gridcannon-rule-test-matrix.md",pattern:/\\bGC-T\\d{1,3}\\b/g},
-  {label:"CTD initial historical",file:"_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md",pattern:/\\bT-\\d{2,3}\\b/g},
+  {label:"CTD latest",file:"_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md",pattern:/\bCTD-T\d{1,3}\b/g},
+  {label:"Gridcannon latest",file:"_bmad-output/planning-artifacts/gridcannon-rule-test-matrix.md",pattern:/\bGC-T\d{1,3}\b/g},
+  {label:"CTD initial historical",file:"_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md",pattern:/\bT-\d{2,3}\b/g},
 ];
 
 function visit(node,fn){
@@ -49,11 +49,11 @@ function executableTests(file){
 }
 function statedIds(title){
   const found=new Set();
-  for(const m of title.matchAll(/\\b(CTD-T|GC-T)(\\d{1,3})((?:\\/(?:T)?\\d{1,3})*)/g)){
+  for(const m of title.matchAll(/\b(CTD-T|GC-T)(\d{1,3})((?:\/(?:T)?\d{1,3})*)/g)){
     found.add(m[1]+m[2]);
     for(const extra of m[3].split("/").filter(Boolean))found.add(m[1]+extra.replace(/^T/,""));
   }
-  for(const m of title.matchAll(/\\bT-\\d{2,3}\\b/g))found.add(m[0]);
+  for(const m of title.matchAll(/\bT-\d{2,3}\b/g))found.add(m[0]);
   return found;
 }
 const testFiles=readdirSync(resolve(root,"tests")).filter(file=>file.endsWith(".test.mjs"));
