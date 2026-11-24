@@ -57,6 +57,7 @@ const sum = (ids: readonly string[]) => ids.reduce((n,id)=>n+valueOf(id),0);
 const uint = (v: unknown): v is number => typeof v==='number' && Number.isSafeInteger(v) && v>=0;
 const same = (a: readonly string[], b: readonly string[]) => a.length===b.length && a.every(id=>b.includes(id));
 function validPlay(ids: readonly string[]): boolean {
+  if(new Set(ids).size!==ids.length||!ids.every(id=>allIds.has(id)&&!id.startsWith('joker')))return false;
   if(ids.length===1)return true;
   if(ids.length===2 && ids.some(id=>rank(id)===1))return true;
   return ids.length>=2 && ids.length<=4 && rank(ids[0])>=2 && rank(ids[0])<=10 &&
@@ -104,7 +105,7 @@ function subsets(hand: readonly string[]): string[][] {
 function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] {
   if(!validateState(s).valid||s.outcome!=='in-progress')return [];
   switch(s.phase){
-    case 'play': return subsets(s.hand).filter(ids=>ids.length===1).map(cardIds=>({type:'play',cardIds}));
+    case 'play': return subsets(s.hand).filter(validPlay).map(cardIds=>({type:'play',cardIds}));
     case 'powers': return [{type:'resolve-powers'}];
     case 'damage': return [{type:'resolve-damage'}];
     case 'retaliation': {
