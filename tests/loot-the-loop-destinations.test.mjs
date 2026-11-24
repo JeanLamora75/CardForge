@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { midnightSyndicateEngine as engine } from '../src/games/loot-the-loop/engine.ts';
 const explore={type:'explore',distance:2};
 const aces=['hearts-1','clubs-1','spades-1','diamonds-1'];
-function fixture(destination,faceUp=true,lootIds=[],following='clubs-13') {
+function fixture(destination,faceUp=true,lootIds=[],following='clubs-4') {
   const initial=engine.createInitialState({seed:49});
   const ids=['hearts-2','clubs-3',destination,following];
   return {...initial,deck:[...ids.map((id,i)=>({id,faceUp:i===0||i===3||(i===2&&faceUp)})),...initial.deck.filter(c=>!ids.includes(c.id)&&!lootIds.includes(c.id))],loot:lootIds.map(id=>({id,faceUp:true}))};
@@ -42,7 +42,7 @@ test('LTL-T10/T11: visible ace or numeric is collected exactly once',()=>{
     assert.deepEqual(next.loot,[...state.loot,{id,faceUp:true}]);
     assert.deepEqual(next.deck,[...state.deck.slice(3),...state.deck.slice(0,2)]);
     assert.equal(next.outcome,'in-progress');
-    assert.equal(next.deck[0].id,'clubs-13');
+    assert.equal(next.deck[0].id,'clubs-4');
   }
 });
 test('LTL-T12: visible Joker with fewer than four aces is not victory',()=>{
@@ -82,7 +82,12 @@ test('observing Joker with four aces does not win',()=>{
   assert.equal(next.outcome,'in-progress');
 });
 test('collecting fourth ace does not win even if next card is visible Joker',()=>{
-  const next=apply(fixture('diamonds-1',true,aces.slice(0,3),'joker-1'));
+  const state=fixture('diamonds-1',true,aces.slice(0,3),'joker-1');
+  // A note provides a legal continuation after collecting the fourth Ace.
+  const note=state.deck.find(c=>c.id==='clubs-9');
+  state.deck=state.deck.filter(c=>c.id!==note.id);
+  state.notes=[{...note,faceUp:true}];
+  const next=apply(state);
   assert.equal(next.loot.length,4);
   assert.equal(next.deck[0].id,'joker-1');
   assert.equal(next.outcome,'in-progress');
