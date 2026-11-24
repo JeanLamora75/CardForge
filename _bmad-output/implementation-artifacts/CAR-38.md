@@ -45,3 +45,15 @@ Le service worker ne touche qu'aux caches préfixés `cardforge-app-`. Au moment
 4. Vérifier l’état « préparation » si une ressource manque, le refus de marquer « prêt », et le comportement multi-onglets.
 
 **Adaptation BMAD :** scripts `uv` non exécutables sur GitHub ; développement, tests et revue de CI via les connecteurs et GitHub Actions. Aucune vérification navigateur réel n'est revendiquée.
+
+
+## Recette production réalisée en CAR-42 — 24 novembre 2026
+
+La **reprise hors connexion** décrite ci-dessus, initialement non attestée, a désormais été vérifiée par les [tests E2E de production CAR-42](./CAR-42.md) : [CI GitHub Actions #45341981900](https://github.com/JeanLamora75/CardForge/actions/runs/45341981900), commit `42bed08dfd0c214b69d49d3bcd6bafc5d6b95560`.
+
+- **Quatre parcours Chromium réellement exécutés** : FR et EN × clavier desktop et tactile mobile émulé, chacun avec Grim Delve et Thunderfighter.
+- Le build `dist/` est servi par `vite preview` ; une fois le service worker contrôlant la page et son cache complet, un onglet est fermé, le contexte réseau est désactivé, puis un nouvel onglet est ouvert hors ligne. Les interfaces et les règles sont chargées depuis le cache, et les sauvegardes IndexedDB de **chaque jeu** sont relues à l'identique.
+- **Défaut corrigé après détection E2E** : les fichiers JS/CSS étaient dans CacheStorage mais n'étaient pas servis hors ligne, à cause de la correspondance des variantes d'en-têtes. Le fetch du service worker utilise maintenant l'URL locale exacte dans le cache versionné avec `ignoreVary: true` ; l'indicateur d'état interroge le contrôleur dès le redémarrage.
+- **Réserve** : l'installation en mode autonome sur un appareil physique, la mise à jour d'une PWA entre deux versions, les échecs de téléchargement lors d'une mise à jour et les navigateurs mobiles matériels ne sont pas prouvés par cette recette Chromium.
+
+Cette nouvelle preuve remplace uniquement la réserve initiale relative à la **reprise hors connexion en navigateur réel automatisé**, sans présumer la conformité de la publication ou des droits avant CAR-43.
