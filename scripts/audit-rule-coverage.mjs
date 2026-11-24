@@ -41,9 +41,12 @@ function executableTests(file){
   visit(ast,node=>{
     if(!ts.isCallExpression(node)||!ts.isIdentifier(node.expression)||node.expression.text!=="test")return;
     const [title,body]=node.arguments;
-    if(!title||!(ts.isStringLiteral(title)||ts.isNoSubstitutionTemplateLiteral(title)))return;
+    if(!title||!(ts.isStringLiteral(title)||ts.isNoSubstitutionTemplateLiteral(title)||ts.isTemplateExpression(title)))return;
     if(!body||!(ts.isArrowFunction(body)||ts.isFunctionExpression(body)))return;
-    tests.push({file,title:title.text,hasAssertions:hasAssertions(body.body)});
+    const label=ts.isTemplateExpression(title)
+      ? title.head.text+title.templateSpans.map(span=>"<value>"+span.literal.text).join("")
+      : title.text;
+    tests.push({file,title:label,hasAssertions:hasAssertions(body.body)});
   });
   return tests;
 }
