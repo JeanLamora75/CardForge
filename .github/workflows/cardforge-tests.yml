@@ -43,7 +43,7 @@ jobs:
       - name: Unit tests
         run: npm test
       - name: Install Chromium for real IndexedDB tests
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
       - name: Real Chromium IndexedDB integration and two-tab concurrency
         run: npm run test:browser
       - name: Audit Mary rule matrix traceability
