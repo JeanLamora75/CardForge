@@ -104,7 +104,7 @@ async function journey(locale,mobile){
       await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
       await page.locator(game.root).waitFor({state:'visible',timeout:20000});
       const first=page.locator(game.root+' button.primary-action').filter({hasText:/Commencer une partie|Start a game|Start playing/}).first();
-      if(await first.count())await interact(page,first,mobile);
+      await interact(page,first,mobile);
       await page.locator(game.actions).first().waitFor({state:'visible',timeout:15000}).catch(async error=>{
         const diagnostic=await page.evaluate(()=>({
           url:location.href,
