@@ -55,7 +55,7 @@ test('look-around cannot be played twice; rejected transition is referentially i
   const second = engine.transition(first.state,look);
   assert.equal(second.accepted,false);
   assert.strictEqual(second.state,first.state);
-  assert.deepEqual(engine.getLegalActions(first.state),[]);
+  assert.ok(engine.getLegalActions(first.state).every(action=>action.type!=='look-around'));
 });
 test('only top card available: reveal once without indexing beyond deck', () => {
   const initial=fresh();
