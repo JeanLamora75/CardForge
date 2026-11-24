@@ -9,7 +9,7 @@ function withTopIds(state, ids) {
   return {...state, deck:[...selected, ...state.deck.filter(card => !ids.includes(card.id))]};
 }
 test('LTL-T03: observe first two, preserve physical order, zones, original state', () => {
-  const initial = fresh();
+  const initial = withTopIds(fresh(), ['hearts-2','clubs-3']);
   const snapshot = structuredClone(initial);
   const result = engine.transition(initial,look);
   assert.equal(result.accepted,true);
@@ -42,7 +42,7 @@ test('revealing visible J/Q/K or Joker does not cause loss, win or loot', () => 
     const initial = fresh();
     const trap = initial.deck.find(c=>c.id===id);
     assert.ok(trap, 'card id exists');
-    const prepared = withTopIds(initial,[id]);
+    const prepared = withTopIds(initial,[id,'clubs-2']);
     const result = engine.transition(prepared,look);
     assert.equal(result.accepted,true);
     assert.equal(result.state.outcome,'in-progress');
