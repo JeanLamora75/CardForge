@@ -32,6 +32,14 @@ async function readSaved(page,id){
     });}finally{db.close();}
   },id);
 }
+async function waitSavedChanged(page,id,before){
+  for(let i=0;i<100;i++){
+    const current=await readSaved(page,id);
+    if(current && JSON.stringify(current.state)!==JSON.stringify(before.state))return current;
+    await new Promise(resolve=>setTimeout(resolve,75));
+  }
+  throw new Error('No persisted engine transition after UI action: '+id);
+}
 async function interact(page,locator,mobile,key='Enter'){
   await locator.waitFor({state:'visible',timeout:15000});
   if(mobile)await locator.tap();
@@ -113,7 +121,7 @@ async function journey(locale,mobile){
         await page.locator('.grim-actions button.secondary-action').first().waitFor({state:'visible'});
         await interact(page,page.locator('.grim-actions button.secondary-action').first(),mobile);
       }
-      const after=await readSaved(page,game.id);
+      const after=await waitSavedChanged(page,game.id,before);
       assert.ok(after,'action must leave a saved game');
       assert.notDeepEqual(after.state,before.state,'UI action must persist a different real-engine state for '+game.name);
       saved[game.id]=after;
