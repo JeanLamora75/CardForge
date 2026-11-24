@@ -1,0 +1,123 @@
+import { makeStandardDeck, shuffle } from '../../core/cards.ts';
+import { createSeededRandom } from '../../core/deterministic-deck.ts';
+import type { GameEngine, GameOutcome, TransitionResult, ValidationResult } from '../../core/game-engine.ts';
+
+export const MIDNIGHT_SYNDICATE_GAME_ID = 'loot-the-loop' as const;
+export const MIDNIGHT_SYNDICATE_RULES_VERSION = 'isaludo-beta-1.11' as const;
+
+export interface MidnightSyndicateSetup {
+  seed: number;
+}
+export interface LoopCard {
+  id: string;
+  faceUp: boolean;
+}
+export interface MidnightSyndicateState {
+  rulesVersion: typeof MIDNIGHT_SYNDICATE_RULES_VERSION;
+  phase: 'exploring' | 'finished';
+  outcome: GameOutcome;
+  /** Top of the circular pile is index zero. A card's visibility follows its physical identity. */
+  deck: LoopCard[];
+  /** Temporarily removed face-up numeric cards, limited to three. */
+  notes: LoopCard[];
+  /** Collected aces and numeric cards, in collection order. */
+  loot: LoopCard[];
+}
+export type MidnightSyndicateAction = Readonly<{ type: 'look-around' }>;
+
+const canonical = [...makeStandardDeck().map(card => card.id), 'joker-1'];
+const validIds = new Set(canonical);
+const aces = new Set(makeStandardDeck().filter(card => card.rank === 1).map(card => card.id));
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+function isValidCard(value: unknown): value is LoopCard {
+  return isRecord(value) &&
+    Object.keys(value).length === 2 &&
+    Object.hasOwn(value, 'id') && Object.hasOwn(value, 'faceUp') &&
+    typeof value.id === 'string' && validIds.has(value.id) &&
+    typeof value.faceUp === 'boolean';
+}
+function isNumeric(id: string): boolean {
+  const card = makeStandardDeck().find(item => item.id === id);
+  return !!card && card.rank >= 2 && card.rank <= 10;
+}
+function validateState(value: unknown): ValidationResult {
+  if (!isRecord(value)) return {valid:false,errors:['state must be an object']};
+  const errors: string[] = [];
+  const allowed = ['rulesVersion','phase','outcome','deck','notes','loot'];
+  if (Object.keys(value).length !== allowed.length || Object.keys(value).some(key => !allowed.includes(key)))
+    errors.push('unexpected state fields');
+  if (value.rulesVersion !== MIDNIGHT_SYNDICATE_RULES_VERSION) errors.push('incorrect rules version');
+  if (value.phase !== 'exploring' && value.phase !== 'finished') errors.push('invalid phase');
+  if (value.outcome !== 'in-progress' && value.outcome !== 'win' && value.outcome !== 'loss')
+    errors.push('invalid outcome');
+  if (value.outcome === 'in-progress' && value.phase !== 'exploring' ||
+      (value.outcome === 'win' || value.outcome === 'loss') && value.phase !== 'finished')
+    errors.push('phase and outcome mismatch');
+  const zones: LoopCard[][] = [];
+  for (const key of ['deck','notes','loot'] as const) {
+    const cards = value[key];
+    if (!Array.isArray(cards) || !cards.every(isValidCard)) {
+      errors.push('invalid '+key+' cards');
+      zones.push([]);
+      continue;
+    }
+    zones.push(cards);
+  }
+  const [deck,notes,loot] = zones;
+  const ids = [...deck,...notes,...loot].map(card => card.id);
+  if (ids.length !== canonical.length || new Set(ids).size !== canonical.length ||
+      ids.some(id => !validIds.has(id)))
+    errors.push('physical cards must be 53 distinct allowed cards');
+  if (notes.length > 3 || notes.some(card => !card.faceUp || !isNumeric(card.id)))
+    errors.push('notes must contain no more than three face-up numerics');
+  if (loot.some(card => !card.faceUp || !(aces.has(card.id) || isNumeric(card.id))))
+    errors.push('loot may contain only face-up aces and numerics');
+  if (value.outcome === 'win' && (aces.size !== loot.filter(card => aces.has(card.id)).length ||
+      deck[0]?.id !== 'joker-1' || !deck[0].faceUp))
+    errors.push('invalid win state');
+  return errors.length ? {valid:false,errors}:{valid:true};
+}
+
+function createInitialState(setup: MidnightSyndicateSetup): MidnightSyndicateState {
+  if (!isRecord(setup) || Object.keys(setup).length !== 1 || !Object.hasOwn(setup,'seed'))
+    throw new TypeError('Exactly one seed is required');
+  const random = createSeededRandom(setup.seed);
+  const deck = shuffle(canonical, random).map(id => ({id,faceUp:false}));
+  const state: MidnightSyndicateState = {
+    rulesVersion: MIDNIGHT_SYNDICATE_RULES_VERSION,
+    phase:'exploring',
+    outcome:'in-progress',
+    deck,
+    notes:[],
+    loot:[],
+  };
+  if (!validateState(state).valid) throw new Error('Invalid initial game');
+  return state;
+}
+
+function getLegalActions(state: Readonly<MidnightSyndicateState>): readonly MidnightSyndicateAction[] {
+  if (!validateState(state).valid || state.outcome !== 'in-progress') return [];
+  if (state.deck[0] && !state.deck[0].faceUp) return [{type:'look-around'}];
+  // Other actions are added in the dedicated gameplay stories; do not simulate their effects.
+  return [];
+}
+function transition(
+  state: Readonly<MidnightSyndicateState>,
+  _action: Readonly<MidnightSyndicateAction>,
+): TransitionResult<MidnightSyndicateState> {
+  return {accepted:false,state:state as MidnightSyndicateState,reason:'action not yet implemented'};
+}
+
+export const midnightSyndicateEngine: GameEngine<
+  MidnightSyndicateState,MidnightSyndicateAction,MidnightSyndicateSetup
+> = {
+  createInitialState,
+  getLegalActions,
+  transition,
+  getOutcome:state=>state.outcome,
+  getVictoryScore:state=>state.outcome==='win' ? state.loot.length : null,
+  validateState,
+};
