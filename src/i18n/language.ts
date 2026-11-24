@@ -428,6 +428,7 @@ export const english: Readonly<Record<string, string>> = {
   "Jeu original : Clear the Dungeon":"Original game: Clear the Dungeon",
   "Jeu original : Tom Francis":"Original game: Tom Francis",
   "Jeu original : Lucas Gentry":"Original game: Lucas Gentry",
+  "d’après Loot the Loop, Wil Su (Isaludo)":"Based on Loot the Loop, Wil Su (Isaludo)",
   "Jeu original : Wil Su / Isaludo":"Original game: Wil Su / Isaludo",
   "Jeu original : Paul Abrahams, Luke Badger et Andy Richdale":"Original game: Paul Abrahams, Luke Badger and Andy Richdale",
 };
