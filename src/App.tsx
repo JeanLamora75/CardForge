@@ -17,6 +17,7 @@ import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
+import RegicideBoard from "./components/RegicideBoard.tsx";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -124,6 +125,7 @@ function GameDetail({
               {actions.newGame && progress.indicator === "active" ? (
                 <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
               ) : null}
+              {game.id === "regicide" ? <button type="button" className="primary-action" data-i18n-ignore onClick={() => go("board")}>{language==="fr"?"Ouvrir le plateau de recette":"Open internal test board"}</button> : null}
               {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
@@ -140,7 +142,7 @@ function GameDetail({
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
                 <strong>{statusLabel(game)}</strong> — La publication officielle n’est pas encore autorisée.
-                {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
+                {game.id === "regicide" || game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
@@ -151,7 +153,7 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && game.id === "regicide" ? <RegicideBoard language={language} hintsEnabled={hintsEnabled} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}

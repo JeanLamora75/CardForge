@@ -199,6 +199,16 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
   return validateState(n).valid?{accepted:true,state:n}:reject('invalid resulting state');
 }
 
+/** Preview derived from the same rules as the confirmed transition, never hidden card order. */
+export function previewRegicide(state: Readonly<RegicideState>, action: RegicideAction) {
+  if(!validateState(state).valid||!state.activeEnemy)return null;
+  const valid=getLegalActions(state).some(a=>a.type===action.type&&'cardIds' in a&&'cardIds' in action&&same(a.cardIds,action.cardIds));
+  if(!valid||!('cardIds' in action)||new Set(action.cardIds).size!==action.cardIds.length)return null;
+  if(action.type==='play')return {kind:'attack' as const,...attackEffects(action.cardIds,state.activeEnemy)};
+  if(action.type==='retaliate')return {kind:'defence' as const,power:sum(action.cardIds),required:Math.max(0,state.enemyAttack-state.shield)};
+  return null;
+}
+
 export type RegicideMedal = 'gold' | 'silver' | 'bronze';
 /** Official solo distinction, not a numerical score. Invalid saves are not losses. */
 export function getRegicideResult(state: Readonly<RegicideState>) {
