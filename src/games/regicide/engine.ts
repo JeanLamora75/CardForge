@@ -5,12 +5,16 @@ import type { GameEngine, GameOutcome, ValidationResult, TransitionResult } from
 export const REGICIDE_GAME_ID = 'regicide' as const;
 export const REGICIDE_RULES_VERSION = 'regicide-solo' as const;
 export interface RegicideSetup { seed: number }
+export type RegicidePhase = 'play' | 'powers' | 'damage' | 'retaliation' | 'finished';
 export interface RegicideState {
   rulesVersion: typeof REGICIDE_RULES_VERSION;
   seed: number;
-  phase: 'play';
-  outcome: 'in-progress';
-  activeEnemy: string;
+  phase: RegicidePhase;
+  outcome: GameOutcome;
+  activeEnemy: string | null;
+  pending: string[];
+  turn: number;
+  recycleCount: number;
   enemyHealth: number;
   enemyAttack: number;
   shield: number;
@@ -21,7 +25,7 @@ export interface RegicideState {
   combat: string[];
   jokers: { id: string; used: boolean }[];
 }
-export type RegicideAction = Readonly<{ type: string }>;
+export type RegicideAction = Readonly<{ type: 'play'; cardIds: readonly string[] } | { type: 'resolve-powers' | 'resolve-damage' } | { type: 'retaliate'; cardIds: readonly string[] }>;
 const canonical = makeDeckWithJokers();
 const allIds = new Set(canonical.map(c => c.id));
 const rankIds = (rank: number) => canonical.filter(c => !isJokerCard(c) && c.rank === rank).map(c => c.id);
@@ -29,7 +33,7 @@ const tavernIds = canonical.filter(c => !isJokerCard(c) && c.rank <= 10).map(c =
 const tavernSet = new Set(tavernIds);
 const validSeed = (v: unknown): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= 0xffff_ffff;
 const record = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === 'object' && !Array.isArray(v);
-const fields = ['rulesVersion','seed','phase','outcome','activeEnemy','enemyHealth','enemyAttack','shield','castle','tavern','hand','discard','combat','jokers'];
+const fields = ['rulesVersion','seed','phase','outcome','activeEnemy','enemyHealth','enemyAttack','shield','castle','tavern','hand','discard','combat','jokers','pending','turn','recycleCount'];
 const rank = (id: string) => Number(id.split('-')[1]);
 
 function createInitialState(setup: RegicideSetup): RegicideState {
@@ -41,34 +45,112 @@ function createInitialState(setup: RegicideSetup): RegicideState {
   const tavern = shuffle(tavernIds, random);
   return {
     rulesVersion: REGICIDE_RULES_VERSION, seed: setup.seed, phase: 'play', outcome: 'in-progress',
-    activeEnemy: jacks[0], enemyHealth: 20, enemyAttack: 10, shield: 0,
+    activeEnemy: jacks[0], pending: [], turn: 1, recycleCount: 0, enemyHealth: 20, enemyAttack: 10, shield: 0,
     castle: [...jacks.slice(1), ...queens, ...kings], tavern: tavern.slice(8), hand: tavern.slice(0,8),
     discard: [], combat: [], jokers: [{id:'joker-1',used:false},{id:'joker-2',used:false}],
   };
 }
 
-/** Until turn transitions are implemented, only the regulatory opening state is accepted. */
+const valueOf = (id: string) => rank(id) >= 11 ? (rank(id)-9)*5 : rank(id);
+const suit = (id: string) => id.split('-')[0];
+const sum = (ids: readonly string[]) => ids.reduce((n,id)=>n+valueOf(id),0);
+const uint = (v: unknown): v is number => typeof v==='number' && Number.isSafeInteger(v) && v>=0;
+const same = (a: readonly string[], b: readonly string[]) => a.length===b.length && a.every(id=>b.includes(id));
+function validPlay(ids: readonly string[]): boolean {
+  if(ids.length===1)return true;
+  if(ids.length===2 && ids.some(id=>rank(id)===1))return true;
+  return ids.length>=2 && ids.length<=4 && rank(ids[0])>=2 && rank(ids[0])<=10 &&
+    ids.every(id=>rank(id)===rank(ids[0])) && sum(ids)<=10;
+}
 function validateState(value: unknown): ValidationResult {
-  const invalid = (reason: string): ValidationResult => ({valid:false, errors:[reason]});
-  if (!record(value) || Object.keys(value).length !== fields.length || fields.some(k => !Object.hasOwn(value,k))) return invalid('invalid state fields');
-  if (value.rulesVersion !== REGICIDE_RULES_VERSION || !validSeed(value.seed) || value.phase !== 'play' || value.outcome !== 'in-progress' ||
-      value.enemyHealth !== 20 || value.enemyAttack !== 10 || value.shield !== 0) return invalid('invalid opening metadata');
-  const zones: string[][] = [];
-  for (const key of ['castle','tavern','hand','discard','combat']) {
-    const zone = value[key];
-    if (!Array.isArray(zone) || !Array.from(zone).every(id => typeof id === 'string' && allIds.has(id))) return invalid('invalid '+key);
+  const invalid = (reason: string): ValidationResult => ({valid:false,errors:[reason]});
+  if(!record(value)||Object.keys(value).length!==fields.length||fields.some(k=>!Object.hasOwn(value,k)))return invalid('invalid state fields');
+  if(value.rulesVersion!==REGICIDE_RULES_VERSION||!validSeed(value.seed)||!uint(value.turn)||value.turn===0||
+    !uint(value.recycleCount)||value.recycleCount>0xffffffff||!uint(value.shield)||!uint(value.enemyHealth)||!uint(value.enemyAttack)||
+    !['play','powers','damage','retaliation','finished'].includes(String(value.phase))||
+    !['in-progress','win','loss'].includes(String(value.outcome))||
+    (value.phase==='finished')!==(value.outcome!=='in-progress'))return invalid('invalid metadata');
+  const zones: string[][]=[];
+  for(const key of ['castle','tavern','hand','discard','combat','pending']){
+    const zone=value[key];
+    if(!Array.isArray(zone)||!Array.from(zone).every(id=>typeof id==='string'&&allIds.has(id)&&!id.startsWith('joker')))return invalid('invalid '+key);
     zones.push(zone);
   }
-  const [castle,tavern,hand,discard,combat] = zones;
-  if (castle.length !== 11 || tavern.length !== 32 || hand.length !== 8 || discard.length || combat.length) return invalid('invalid opening zone sizes');
-  if (typeof value.activeEnemy !== 'string' || !rankIds(11).includes(value.activeEnemy)) return invalid('invalid active enemy');
-  if (!castle.every((id,i) => rank(id) === (i < 3 ? 11 : i < 7 ? 12 : 13))) return invalid('invalid castle order');
-  if (![...tavern,...hand].every(id => tavernSet.has(id))) return invalid('invalid tavern card');
-  const jokers = value.jokers;
-  if (!Array.isArray(jokers) || jokers.length !== 2 || !Array.from(jokers).every((j,i) => record(j) && Object.keys(j).length === 2 && j.id === 'joker-'+(i+1) && j.used === false)) return invalid('invalid opening jokers');
-  const physical = [value.activeEnemy,...zones.flat(),...jokers.map(j => j.id)];
-  if (physical.length !== 54 || new Set(physical).size !== 54 || !physical.every(id => allIds.has(id))) return invalid('invalid physical partition');
+  const [castle,tavern,hand,discard,combat,pending]=zones;
+  const active=value.activeEnemy;
+  if(hand.length>8||castle.length>11||castle.some((id,i)=>rank(id)<11||(i>0&&rank(id)<rank(castle[i-1]))))return invalid('invalid zones');
+  if(value.outcome==='win'){
+    if(active!==null||castle.length||combat.length||value.enemyHealth||value.enemyAttack||value.shield)return invalid('invalid win');
+  }else{
+    if(typeof active!=='string'||!allIds.has(active)||rank(active)<11||rank(active)>13||
+      castle.some(id=>rank(id)<rank(active))||value.enemyAttack!==valueOf(active)||
+      value.enemyHealth<1||value.enemyHealth>valueOf(active)*2)return invalid('invalid enemy');
+    const remaining=castle.length+1;
+    if(rank(active)!== (remaining>8?11:remaining>4?12:13)||
+      castle.some((id,i)=>rank(id)!==(remaining-i-1>8?11:remaining-i-1>4?12:13)))return invalid('invalid castle order');
+  }
+  if((value.phase==='powers'||value.phase==='damage')!== (pending.length>0)||!(!pending.length||validPlay(pending)))return invalid('invalid pending play');
+  const jokers=value.jokers;
+  if(!Array.isArray(jokers)||jokers.length!==2||!Array.from(jokers).every((j,i)=>record(j)&&Object.keys(j).length===2&&j.id==='joker-'+(i+1)&&j.used===false))return invalid('invalid jokers');
+  const physical=[...(active===null?[]:[active]),...zones.flat(),...jokers.map(j=>j.id)];
+  if(physical.length!==54||new Set(physical).size!==54||!physical.every(id=>typeof id==='string'&&allIds.has(id)))return invalid('invalid physical partition');
+  if(value.turn===1&&value.phase==='play'&&(castle.length!==11||hand.length!==8||tavern.length!==32||discard.length||combat.length||
+    value.enemyHealth!==20||value.shield!==0||value.recycleCount!==0||![...tavern,...hand].every(id=>tavernSet.has(id))))return invalid('invalid opening');
   return {valid:true};
+}
+function subsets(hand: readonly string[]): string[][] {
+  return Array.from({length:2**hand.length},(_,mask)=>hand.filter((_,i)=>(mask&(1<<i))!==0));
+}
+function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] {
+  if(!validateState(s).valid||s.outcome!=='in-progress')return [];
+  switch(s.phase){
+    case 'play': return subsets(s.hand).filter(ids=>ids.length===1).map(cardIds=>({type:'play',cardIds}));
+    case 'powers': return [{type:'resolve-powers'}];
+    case 'damage': return [{type:'resolve-damage'}];
+    case 'retaliation': {
+      const cost=Math.max(0,s.enemyAttack-s.shield);
+      return subsets(s.hand).filter(ids=>cost===0?ids.length===0:sum(ids)>=cost&&ids.some(id=>sum(ids)-valueOf(id)<cost)).map(cardIds=>({type:'retaliate',cardIds}));
+    }
+    default:return [];
+  }
+}
+function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): TransitionResult<RegicideState> {
+  const reject=(reason:string):TransitionResult<RegicideState>=>({accepted:false,state:s,reason});
+  if(!validateState(s).valid||!record(a))return reject('invalid state or action');
+  const legal=getLegalActions(s);
+  if(a.type==='play'||a.type==='retaliate'){
+    if(Object.keys(a).length!==2||!Array.isArray(a.cardIds)||!Array.from(a.cardIds).every(id=>typeof id==='string')||
+      new Set(a.cardIds).size!==a.cardIds.length||!legal.some(b=>b.type===a.type&&'cardIds' in b&&same(b.cardIds,a.cardIds)))return reject('illegal card selection or phase');
+  }else if(Object.keys(a).length!==1||!legal.some(b=>b.type===a.type))return reject('illegal phase');
+  const n:RegicideState={...s,castle:[...s.castle],tavern:[...s.tavern],hand:[...s.hand],discard:[...s.discard],combat:[...s.combat],pending:[...s.pending],jokers:s.jokers.map(j=>({...j}))};
+  if(a.type==='play'){
+    n.pending=n.hand.filter(id=>a.cardIds.includes(id));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='powers';
+  }else if(a.type==='resolve-powers'){
+    const power=sum(n.pending), suits=new Set(n.pending.map(suit).filter(x=>x!==suit(n.activeEnemy!)));
+    if(suits.has('hearts')&&n.discard.length){
+      if(n.recycleCount===0xffffffff)return reject('random sequence exhausted');
+      n.recycleCount++;
+      const shuffled=shuffle(n.discard,createSeededRandom((n.seed+Math.imul(n.recycleCount,0x9e3779b9))>>>0));
+      const recovered=shuffled.slice(0,power);
+      n.tavern.push(...recovered); n.discard=shuffled.slice(recovered.length);
+    }
+    if(suits.has('diamonds'))n.hand.push(...n.tavern.splice(0,Math.min(power,8-n.hand.length)));
+    if(suits.has('spades'))n.shield+=power;
+    n.phase='damage';
+  }else if(a.type==='resolve-damage'){
+    const damage=sum(n.pending)*(n.pending.some(id=>suit(id)==='clubs'&&suit(n.activeEnemy!)!=='clubs')?2:1);
+    n.combat.push(...n.pending);n.pending=[];
+    if(damage<n.enemyHealth){n.enemyHealth-=damage;n.phase='retaliation';}
+    else{
+      if(damage===n.enemyHealth)n.tavern.unshift(n.activeEnemy!);else n.discard.push(n.activeEnemy!);
+      n.discard.push(...n.combat);n.combat=[];n.shield=0;n.activeEnemy=n.castle.shift()??null;n.turn++;
+      if(n.activeEnemy===null){n.phase='finished';n.outcome='win';n.enemyHealth=0;n.enemyAttack=0;}
+      else{n.phase='play';n.enemyAttack=valueOf(n.activeEnemy);n.enemyHealth=2*n.enemyAttack;}
+    }
+  }else if(a.type==='retaliate'){
+    n.discard.push(...n.hand.filter(id=>a.cardIds.includes(id)));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='play';n.turn++;
+  }
+  return validateState(n).valid?{accepted:true,state:n}:reject('invalid resulting state');
 }
 
 export function inspectRegicide(state: Readonly<RegicideState>) {
@@ -83,9 +165,7 @@ export function inspectRegicide(state: Readonly<RegicideState>) {
 
 export const regicideEngine: GameEngine<RegicideState,RegicideAction,RegicideSetup> = {
   createInitialState, validateState,
-  getLegalActions: () => [],
+  getLegalActions,
   getOutcome: (state): GameOutcome => state.outcome,
-  transition: (state): TransitionResult<RegicideState> => ({
-    accepted:false,state,reason:validateState(state).valid?'turn actions not implemented':'invalid state',
-  }),
+  transition,
 };
