@@ -274,8 +274,9 @@ export function createIndexedDbGameStorage(options: {
             reject(new LocalStorageError('write-failed', 'Cannot start local transaction', { cause }));
             return;
           }
+          let writeFailure: unknown;
           tx.oncomplete = () => resolve();
-          tx.onabort = () => reject(new LocalStorageError('write-failed', 'Local transaction rolled back', { cause: tx.error }));
+          tx.onabort = () => reject(new LocalStorageError('write-failed', 'Local transaction rolled back', { cause: writeFailure ?? tx.error }));
           tx.onerror = () => { /* onabort is the settlement point */ };
           try {
             const sessions = tx.objectStore(SESSIONS);
@@ -292,7 +293,8 @@ export function createIndexedDbGameStorage(options: {
                   tx.objectStore(RESULTS).put(result);
                   tx.objectStore(STATISTICS).put(statistics);
                 }
-              } catch {
+              } catch (cause) {
+                writeFailure = cause;
                 try { tx.abort(); } catch { /* already aborted */ }
               }
             };
