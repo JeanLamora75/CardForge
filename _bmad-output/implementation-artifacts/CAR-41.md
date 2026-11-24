@@ -24,6 +24,7 @@
 - `src/application/storage-recovery-messages.ts` identifie les causes racines `QuotaExceededError`, les sauvegardes incompatibles, la corruption, l'impossibilité de migrer et le stockage indisponible. Messages distincts FR/EN et sans promesse de restauration non prouvée.
 - Les deux plateaux affichent la raison diagnostiquée lors du chargement, de la création et de la sauvegarde de mouvements au lieu d'un unique message générique.
 - `tests/storage-recovery-messages.test.mjs` vérifie les causes imbriquées de quota, les messages et la politique de migration par jeu.
+- **Correctif additionnel du vrai adaptateur :** lors d’une exception synchrone `QuotaExceededError` pendant un `put`, `src/adapters/indexeddb-game-storage.ts` conserve désormais la `cause` de l’annulation de transaction. `tests/indexeddb-game-storage.test.mjs` confirme l’annulation, l’intégrité des trois collections, le diagnostic `quota` et un nouvel essai réussi.
 - La recette Chromium étend le contrôle à l'**interface utilisateur visible** pour une sauvegarde incompatible avec les règles courantes : message affiché, ancien enregistrement conservé.
 - **Limite :** l'épuisement réel du quota disque du navigateur n'a pas été provoqué : la classification des erreurs de quota est couverte par des exceptions simulées et des causes imbriquées, non par une saturation physique.
 
