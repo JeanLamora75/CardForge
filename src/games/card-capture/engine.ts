@@ -8,6 +8,7 @@ export interface SkydeckSetup { seed: number }
 export interface SkydeckState {
   rulesVersion: typeof SKYDECK_RULES_VERSION;
   seed: number;
+  recycleCount: number;
   round: number;
   phase: SkydeckPhase;
   outcome: GameOutcome;
@@ -20,7 +21,7 @@ export interface SkydeckState {
   enemyCapture: string[];
 }
 export type SkydeckPhase = 'enemy' | 'discard' | 'draw' | 'capture' | 'finished';
-export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' }>;
+export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' } | { type: 'discard'; cardIds: readonly string[] }>;
 
 const canonical = makeDeckWithJokers();
 const playerIds = new Set(canonical.filter(c=>isJokerCard(c)||[2,3,4].includes(c.rank)).map(c=>c.id));
@@ -44,7 +45,7 @@ export function prepareSkydeck(player:readonly string[], enemy:readonly string[]
   // booklet has not yet established a more specific ordering.
   const returned=drawn.filter(id=>protectedIds.has(id));
   return {
-    rulesVersion:SKYDECK_RULES_VERSION,seed,round:1,phase:'enemy',outcome:'in-progress',
+    rulesVersion:SKYDECK_RULES_VERSION,seed,recycleCount:0,round:1,phase:'enemy',outcome:'in-progress',
     playerDeck:[...player],enemyDeck:[...enemy.slice(4),...returned],
     enemyLine:drawn.map(id=>protectedIds.has(id)?null:id),
     hand:[],discard:[],enemyCapture:[],
@@ -60,11 +61,12 @@ const allIds = new Set(canonical.map(c=>c.id));
 function validateState(value:unknown):ValidationResult {
   if(!record(value))return {valid:false,errors:['state must be an object']};
   const errors:string[]=[];
-  const fields=['rulesVersion','seed','round','phase','outcome','playerDeck','enemyDeck','enemyLine','hand','discard','enemyCapture'];
+  const fields=['rulesVersion','seed','recycleCount','round','phase','outcome','playerDeck','enemyDeck','enemyLine','hand','discard','enemyCapture'];
   if(Object.keys(value).length!==fields.length||fields.some(key=>!Object.hasOwn(value,key)))errors.push('invalid state fields');
   const phase=value.phase;
   const outcome=value.outcome;
   if(value.rulesVersion!==SKYDECK_RULES_VERSION||!validSeed(value.seed)||
+     typeof value.recycleCount!=='number'||!Number.isSafeInteger(value.recycleCount)||value.recycleCount<0||value.recycleCount>0xffff_ffff||
      typeof value.round!=='number'||!Number.isSafeInteger(value.round)||value.round<1||
      !['enemy','discard','draw','capture','finished'].includes(String(phase))||
      !['in-progress','win','loss','abandoned'].includes(String(outcome))||
@@ -99,7 +101,8 @@ function validateState(value:unknown):ValidationResult {
       const holes=4-occupied.length;
       if(holes>0&&!enemyDeck.slice(-holes).every(id=>protectedIds.has(id)))errors.push('invalid returned cards');
     }
-    if(phase==='discard'&&(hand.length||discard.length))errors.push('invalid first discard');
+    if((phase==='discard'||phase==='draw')&&(hand.length||discard.length))errors.push('invalid first discard');
+    if(value.recycleCount!==0)errors.push('invalid first round recycle count');
   }
   if(lineValid&&['discard','draw','capture'].includes(String(phase))){
     const compact=Array.from(line).every((id,i)=>i<occupied.length?id!==null:id===null);
@@ -112,15 +115,31 @@ function getLegalActions(state:Readonly<SkydeckState>):readonly SkydeckAction[]{
   if(!validateState(state).valid||state.outcome!=='in-progress')return [];
   switch(state.phase){
     case 'enemy': return [{type:'advance-enemy'}];
-    case 'discard': return [{type:'discard-none'}];
-    case 'draw': return state.playerDeck.length>=4-state.hand.length?[{type:'draw'}]:[];
+    case 'discard': {
+      const choices: SkydeckAction[]=[{type:'discard-none'},{type:'discard',cardIds:[]}];
+      for(let mask=1;mask<2**state.hand.length;mask++){
+        choices.push({type:'discard',cardIds:state.hand.filter((_,i)=>(mask&(1<<i))!==0)});
+      }
+      return choices;
+    }
+    case 'draw': return state.playerDeck.length+state.discard.length>=4-state.hand.length &&
+      (state.playerDeck.length>=4-state.hand.length||state.recycleCount<0xffff_ffff)?[{type:'draw'}]:[];
     default: return [];
   }
 }
 function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>):TransitionResult<SkydeckState>{
   const reject=(reason:string):TransitionResult<SkydeckState>=>({accepted:false,state,reason});
-  if(!record(action)||Object.keys(action).length!==1||
-     !getLegalActions(state).some(legal=>legal.type===action.type))return reject('illegal action or phase');
+  if(!record(action))return reject('invalid action');
+  const legal=getLegalActions(state);
+  if(action.type==='discard'){
+    if(Object.keys(action).length!==2||!Array.isArray(action.cardIds)||
+       !Array.from(action.cardIds).every(id=>typeof id==='string')||
+       new Set(action.cardIds).size!==action.cardIds.length||
+       !legal.some(candidate=>candidate.type==='discard'&&candidate.cardIds.length===action.cardIds.length&&
+         candidate.cardIds.every(id=>action.cardIds.includes(id))))return reject('illegal discard selection or phase');
+  }else if(Object.keys(action).length!==1||!legal.some(candidate=>candidate.type===action.type)){
+    return reject('illegal action or phase');
+  }
   let next:SkydeckState;
   switch(action.type){
     case 'advance-enemy': {
@@ -132,10 +151,30 @@ function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>)
       break;
     }
     case 'discard-none': next={...state,phase:'draw'};break;
+    case 'discard': {
+      const selected=new Set(action.cardIds);
+      next={...state,phase:'draw',hand:state.hand.filter(id=>!selected.has(id)),
+        discard:[...state.discard,...state.hand.filter(id=>selected.has(id))]};
+      break;
+    }
     case 'draw': {
       const count=4-state.hand.length;
-      next={...state,phase:'capture',playerDeck:state.playerDeck.slice(count),
-        hand:[...state.hand,...state.playerDeck.slice(0,count)]};
+      const drawn=state.playerDeck.slice(0,count);
+      let playerDeck=state.playerDeck.slice(count);
+      let discard=state.discard;
+      let recycleCount=state.recycleCount;
+      if(drawn.length<count){
+        recycleCount++;
+        // Each recycling has an independent reproducible stream; the counter
+        // is serialized, so restoration never relies on hidden PRNG state.
+        const recycleSeed=(state.seed+Math.imul(recycleCount,0x9e3779b9))>>>0;
+        const recycled=shuffle(discard,createSeededRandom(recycleSeed));
+        const needed=count-drawn.length;
+        drawn.push(...recycled.slice(0,needed));
+        playerDeck=recycled.slice(needed);
+        discard=[];
+      }
+      next={...state,phase:'capture',playerDeck,discard,recycleCount,hand:[...state.hand,...drawn]};
       break;
     }
     default:return reject('unknown action');
