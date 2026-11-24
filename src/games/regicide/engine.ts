@@ -54,6 +54,13 @@ function createInitialState(setup: RegicideSetup): RegicideState {
 const valueOf = (id: string) => rank(id) >= 11 ? (rank(id)-9)*5 : rank(id);
 const suit = (id: string) => id.split('-')[0];
 const sum = (ids: readonly string[]) => ids.reduce((n,id)=>n+valueOf(id),0);
+/** A suit triggers once per attack; enemy immunity affects powers, not card value. */
+function attackEffects(ids: readonly string[], enemy: string) {
+  const power=sum(ids);
+  const suits=new Set(ids.map(suit).filter(s=>s!==suit(enemy)));
+  return {power, recycle:suits.has('hearts'), draw:suits.has('diamonds'),
+    shield:suits.has('spades')?power:0, damage:power*(suits.has('clubs')?2:1)};
+}
 const uint = (v: unknown): v is number => typeof v==='number' && Number.isSafeInteger(v) && v>=0;
 const same = (a: readonly string[], b: readonly string[]) => a.length===b.length && a.every(id=>b.includes(id));
 function validPlay(ids: readonly string[]): boolean {
@@ -127,19 +134,19 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
   if(a.type==='play'){
     n.pending=n.hand.filter(id=>a.cardIds.includes(id));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='powers';
   }else if(a.type==='resolve-powers'){
-    const power=sum(n.pending), suits=new Set(n.pending.map(suit).filter(x=>x!==suit(n.activeEnemy!)));
-    if(suits.has('hearts')&&n.discard.length){
+    const effects=attackEffects(n.pending,n.activeEnemy!);
+    if(effects.recycle&&n.discard.length){
       if(n.recycleCount===0xffffffff)return reject('random sequence exhausted');
       n.recycleCount++;
       const shuffled=shuffle(n.discard,createSeededRandom((n.seed+Math.imul(n.recycleCount,0x9e3779b9))>>>0));
-      const recovered=shuffled.slice(0,power);
+      const recovered=shuffled.slice(0,effects.power);
       n.tavern.push(...recovered); n.discard=shuffled.slice(recovered.length);
     }
-    if(suits.has('diamonds'))n.hand.push(...n.tavern.splice(0,Math.min(power,8-n.hand.length)));
-    if(suits.has('spades'))n.shield+=power;
+    if(effects.draw)n.hand.push(...n.tavern.splice(0,Math.min(effects.power,8-n.hand.length)));
+    n.shield+=effects.shield;
     n.phase='damage';
   }else if(a.type==='resolve-damage'){
-    const damage=sum(n.pending)*(n.pending.some(id=>suit(id)==='clubs'&&suit(n.activeEnemy!)!=='clubs')?2:1);
+    const damage=attackEffects(n.pending,n.activeEnemy!).damage;
     n.combat.push(...n.pending);n.pending=[];
     if(damage<n.enemyHealth){n.enemyHealth-=damage;n.phase='retaliation';}
     else{
