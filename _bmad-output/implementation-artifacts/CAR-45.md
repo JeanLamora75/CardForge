@@ -30,5 +30,5 @@ La confidentialité des cartes cachées à l'affichage relève de CAR-50 et CAR-
 
 ## Validation technique
 
-Les tests ont été **publiés avant l'implémentation** (CI rouge attendue), puis le moteur a été publié et une CI complète a été déclenchée. **Résultat final à confirmer sur la CI du commit de code**. Aucun script `uv` exécuté ; aucune validation locale ou navigateur supplémentaire revendiquée.
+Les tests ont été **publiés avant l'implémentation** (CI rouge attendue), puis le moteur a été publié et une CI complète a été déclenchée. **CI complète vérifiée : [GitHub Actions #45346496676](https://github.com/JeanLamora75/CardForge/actions/runs/45346496676), commit de code `1ff977409f915a8033cdd14d872c49ced5079e7b` : 325 tests Node réussis sur 325, aucun échec ; audits des matrices Mary, build Web/Vite, contrôle PWA de 8 ressources, recette Chromium IndexedDB, quatre parcours E2E de production FR/EN clavier/tactile avec reprise hors ligne, et les deux jobs `web` et `Web MVP quality gate (no publication)` réussis. Les six tests CAR-45 sont inclus dans cette exécution.** Aucun script `uv` exécuté ; aucune validation locale ou navigateur supplémentaire revendiquée.
 
