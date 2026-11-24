@@ -73,7 +73,8 @@ async function ready(page){
   return probe;
 }
 const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',actions:'.grim-hand button.grim-card',confirm:false},
- {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.thunder-actions button',confirm:true}];
+ {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.thunder-actions button',confirm:true},
+ {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button',confirm:true}];
 
 async function journey(locale,mobile){
   const context=await browser.newContext({
@@ -126,7 +127,15 @@ async function journey(locale,mobile){
       });
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
-      if(game.confirm){
+      if(game.id==='loot-the-loop'){
+        assert.equal(await page.locator('.ms-top .ms-hidden').count(),2);
+        await interact(page,page.locator(game.actions).first(),mobile);
+        assert.deepEqual(await readSaved(page,game.id),before);
+        await interact(page,page.locator('.ms-confirm button.secondary-action'),mobile);
+        assert.deepEqual(await readSaved(page,game.id),before);
+        await interact(page,page.locator(game.actions).first(),mobile);
+        await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
+      }else if(game.confirm){
         await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.thunder-confirm').waitFor({state:'visible'});
         const onCancel=await readSaved(page,game.id);
@@ -150,6 +159,15 @@ async function journey(locale,mobile){
       assert.ok(after,'action must leave a saved game');
       assert.notDeepEqual(after.state,before.state,'UI action must persist a different real-engine state for '+game.name);
       saved[game.id]=after;
+      if(game.id==='loot-the-loop'){
+        assert.deepEqual(after.state.deck.map(c=>c.id),before.state.deck.map(c=>c.id));
+        assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
+        await page.locator('.ms-board').getByText(/Action enregistrée|Action saved/).waitFor();
+        await select.selectOption(locale==='fr'?'en':'fr');
+        assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');
+        assert.deepEqual(await readSaved(page,game.id),after,'switching language must not alter game state');
+        await select.selectOption(locale);
+      }
       await page.goto(HOST+'#game/'+game.id+'/rules');
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       assert.equal(await page.locator('html').getAttribute('lang'),locale);
@@ -186,15 +204,19 @@ async function journey(locale,mobile){
         await offline.locator(game.root).waitFor({state:'visible',timeout:15000});
         const restored=await readSaved(offline,game.id);
         assert.deepEqual(restored,saved[game.id],game.name+' must survive offline cold tab reopen without shuffling');
-        await offline.getByText(/Partie locale restaurée|Partie restaurée sans remélange|Game restored|restored without/).first().waitFor({timeout:10000});
+        await offline.getByText(/Partie locale restaurée|Partie restaurée sans remélange|Partie reprise · sauvegarde locale|Game resumed · local save|Game restored|restored without/).first().waitFor({timeout:10000});
         await offline.goto(HOST+'#game/'+game.id+'/rules',{waitUntil:'domcontentloaded'});
         await offline.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       }
       assert.equal(await offline.locator('html').getAttribute('lang'),locale);
       // Mobile browser uses real touch events, no desktop-only hover action.
+      await offline.goto(HOST+'#game/loot-the-loop/board',{waitUntil:'domcontentloaded'});
+      await offline.locator('.ms-board .ms-top').waitFor();
+      const msScreen=await offline.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+      assert.ok(msScreen.scroll<=msScreen.width+4,JSON.stringify({label,msScreen}));
       const screen=await offline.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
       assert.ok(screen.scroll<=screen.width+4,JSON.stringify({label,screen}));
-      console.log('CAR-42 production:',label,'both games played and resumed offline, rules and localization verified; cache '+probe.version);
+      console.log('CAR-42 production:',label,'three games played and resumed offline, rules and localization verified; cache '+probe.version);
     }finally{await offline.close();}
   }finally{await context.close();}
 }
@@ -204,7 +226,7 @@ try{
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])
       await journey(locale,mobile);
-  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, two games, offline service worker.');
+  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, three games, offline service worker.');
 }finally{
   if(browser)await browser.close();
   vite.kill('SIGTERM');
