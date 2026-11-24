@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { skydeckEngine, prepareSkydeck } from '../src/games/card-capture/engine.ts';
+import { skydeckEngine, prepareSkydeck, inspectSkydeck } from '../src/games/card-capture/engine.ts';
 import { makeDeckWithJokers, shuffle } from '../src/core/cards.ts';
 import { createSeededRandom } from '../src/core/deterministic-deck.ts';
 
@@ -534,4 +534,114 @@ test('CC-T14: C rejects invalid selections and all second capture alternatives w
     assert.deepEqual(n,before);
   }
   assert.equal(skydeckEngine.transition({...s,phase:'discard'},a).accepted,false);
+});
+
+test('public projection: exact allowlist, no hidden identities or seed, detached visible arrays and actions',()=>{
+  const s=captureFixture('hearts-10',['hearts-5','joker-1','clubs-2','spades-3']);
+  const moved=s.playerDeck.slice(0,2);
+  const state={...s,playerDeck:s.playerDeck.slice(2),discard:[moved[0]],enemyCapture:[moved[1]]};
+  // Choose a non-protected physical card for the enemy capture fixture.
+  if(protectedCard(moved[1])){
+    state.discard.push(moved[1]);
+    state.enemyCapture=[];
+    const index=state.playerDeck.findIndex(id=>!protectedCard(id));
+    state.enemyCapture.push(...state.playerDeck.splice(index,1));
+  }
+  assert.equal(skydeckEngine.validateState(state).valid,true);
+  const before=structuredClone(state);
+  const view=inspectSkydeck(state);
+  assert.deepEqual(Object.keys(view).sort(),['round','phase','outcome','hand','enemyLine','counts','actions','blockedReason'].sort());
+  assert.deepEqual(view.counts,{playerDeck:state.playerDeck.length,enemyDeck:state.enemyDeck.length,discard:state.discard.length,enemyCapture:state.enemyCapture.length});
+  assert.deepEqual(view.hand,state.hand);
+  assert.deepEqual(view.enemyLine,state.enemyLine);
+  const serialized=JSON.stringify(view);
+  for(const id of [...state.playerDeck,...state.enemyDeck,...state.discard,...state.enemyCapture])
+    assert.equal(serialized.includes(JSON.stringify(id)),false,id);
+  assert.deepEqual(view.actions,skydeckEngine.getLegalActions(state));
+  const reordered={...state,playerDeck:[...state.playerDeck].reverse(),enemyDeck:[...state.enemyDeck].reverse(),seed:123};
+  assert.deepEqual(inspectSkydeck(reordered),view);
+  view.hand.pop();
+  view.enemyLine[0]=null;
+  const selected=view.actions.find(a=>a.type==='capture-a'||a.type==='capture-c');
+  selected.cardIds.pop();
+  assert.deepEqual(state,before);
+});
+test('CC-T15: victory requires both enemy zones empty, personal hand and discard may remain',()=>{
+  const s=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','spades-3'],1,true);
+  const a={type:'capture-a',targetPosition:1,cardIds:['hearts-4','hearts-5']};
+  const n=act(s,a);
+  assert.equal(n.outcome,'win');
+  assert.equal(n.hand.length,2);
+  assert.equal(n.discard.length,3);
+  assert.equal(skydeckEngine.getVictoryScore,undefined);
+  const stillEnemy={...s,enemyLine:['hearts-9',s.playerDeck.find(id=>initialEnemy.includes(id)),null,null]};
+  stillEnemy.playerDeck=s.playerDeck.filter(id=>id!==stillEnemy.enemyLine[1]);
+  assert.equal(act(stillEnemy,a).outcome,'in-progress');
+  const forged={...s,phase:'finished',outcome:'win'};
+  assert.equal(skydeckEngine.validateState(forged).valid,false);
+  assert.equal(skydeckEngine.validateState({...n,phase:'enemy',outcome:'in-progress'}).valid,false);
+});
+test('CC-T12: loss takes priority and forged losses or integrity errors do not become defeats',()=>{
+  const s=captureFixture('hearts-13',['clubs-2','clubs-3','spades-2','spades-3'],1,true);
+  assert.equal(skydeckEngine.validateState({...s,phase:'finished',outcome:'loss'}).valid,false);
+  const invalid={...s,playerDeck:s.playerDeck.slice(1)};
+  assert.throws(()=>inspectSkydeck(invalid),TypeError);
+  const r=skydeckEngine.transition(invalid,{type:'capture-b',cardId:'clubs-2'});
+  assert.equal(r.accepted,false);
+  assert.equal(r.state,invalid);
+  assert.equal(r.state.outcome,'in-progress');
+  const n=act(s,{type:'capture-b',cardId:'clubs-2'});
+  assert.equal(n.outcome,'loss');
+  assert.equal(inspectSkydeck(n).outcome,'loss');
+  assert.deepEqual(inspectSkydeck(n).actions,[]);
+});
+test('CC-R02: absent A is not a defeat; reachable shortage is explicitly unresolved',()=>{
+  const s=captureFixture('hearts-13',['clubs-2','clubs-3','spades-2','spades-3'],1,true);
+  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'),false);
+  assert.equal(inspectSkydeck(s).outcome,'in-progress');
+  assert.equal(inspectSkydeck(s).blockedReason,null);
+  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-c'),true);
+  const initial=prepareSkydeck(initialPlayer,initialEnemy,0);
+  let current=initial;
+  // Repeatedly postpone an enemy using two unprotected starting cards.
+  // No capture A can add cards to the personal circuit in this path.
+  for(let i=0;i<6;i++){
+    current=apply(current,'advance-enemy');
+    current=apply(current,'discard-none');
+    current=apply(current,'draw');
+    current=act(current,{type:'capture-c',targetPosition:1,cardIds:current.hand.slice(0,2)});
+  }
+  current=apply(current,'advance-enemy');
+  current=apply(current,'discard-none');
+  assert.equal(current.hand.length+current.playerDeck.length+current.discard.length,2);
+  const v=inspectSkydeck(current);
+  assert.equal(v.blockedReason,'unconfirmed-insufficient-personal-cards');
+  assert.equal(v.outcome,'in-progress');
+  assert.deepEqual(v.actions,[]);
+  assert.equal(skydeckEngine.transition(current,{type:'draw'}).accepted,false);
+});
+test('CC-T14: deterministic reachable trajectories preserve partition and protect hidden zones in every phase',()=>{
+  for(let seed=0;seed<48;seed++){
+    let s=skydeckEngine.createInitialState({seed});
+    const random=createSeededRandom(seed);
+    for(let step=0;step<80;step++){
+      const v=inspectSkydeck(s);
+      const serialized=JSON.stringify(v);
+      for(const id of [...s.playerDeck,...s.enemyDeck,...s.discard,...s.enemyCapture])
+        assert.equal(serialized.includes(JSON.stringify(id)),false,id);
+      if(!v.actions.length)break;
+      const a=v.actions[Math.floor(random()*v.actions.length)];
+      const previous=s;
+      s=act(s,a);
+      if(previous.phase==='capture'){
+        for(const alternative of previous===s?[]:v.actions){
+          assert.equal(skydeckEngine.transition(s,alternative).accepted,false);
+        }
+      }
+      if(s.outcome!=='in-progress'){
+        assert.deepEqual(skydeckEngine.getLegalActions(s),[]);
+        break;
+      }
+    }
+  }
 });
