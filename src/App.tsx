@@ -13,7 +13,6 @@ import {
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
-import MidnightSyndicateBoard from "./components/MidnightSyndicateBoard";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
@@ -128,7 +127,7 @@ function GameDetail({
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-            <p className="help-note">Les plateaux de Grim Delve et Thunderfighter proposent désormais le choix entre entraînement facultatif et partie normale. La collection reste en préversion.</p>
+            <p className="help-note">Les trois plateaux en préversion proposent le choix entre entraînement facultatif et partie normale. La collection reste en préversion.</p>
             <details className="source-credits">
               <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
@@ -151,10 +150,10 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && game.id === "loot-the-loop" ? <MidnightSyndicateBoard key={game.id} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
-              {(game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
+              {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
               <a className="secondary-action" href={ruleReference[game.id]} target="_blank" rel="noopener noreferrer">
                 Consulter le référentiel des règles <span aria-hidden="true">↗</span>
               </a>
