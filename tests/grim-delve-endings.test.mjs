@@ -191,3 +191,19 @@ test('CTD-T116: non-applicable other-target partial attacks cannot survive the t
  assert.ok(validity.errors.some(message=>message.includes('attack on hidden, absent or duplicate monster')));
  assert.deepEqual(engine.getLegalActions(inconsistent),[]);
 });
+
+test('CTD-T116: score eight uses exactly eight remaining draw cards, with no other live target',()=>{
+  const {s,monsterId}=nearVictory(5);
+  const extra=s.removed.slice(0,3);
+  const before={...s,removed:s.removed.slice(3),drawPile:[...s.drawPile,...extra]};
+  assert.equal(before.drawPile.length,8);
+  assert.equal(before.defeated.length,11);
+  assert.deepEqual(engine.validateState(before),{valid:true});
+  const won=run(before,{type:'trigger-attack',cardId:'joker-2',monsterId});
+  assert.equal(won.outcome,'win');
+  assert.equal(won.defeated.length,12);
+  assert.deepEqual(won.columns,[[],[],[],[]]);
+  assert.deepEqual(won.attacks,[]);
+  assert.equal(won.victoryScore,8);
+  assert.equal(won.drawPile.length,8);
+});
