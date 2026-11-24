@@ -1,0 +1,5 @@
+# CAR-68 — Mary / Amelia / Murat — reprise QA
+CI e376f27 échouée (45392862865) : test terminal préparait un second sessionId via commit ordinaire, interdit par protection transactionnelle. Correction par replaceGame après résultat terminal, pas de contournement de production.
+Mary : confirmation primaire deux Jokers même référence, source BGG thread 2011639 page 3. R01/R02/R04 restent non confirmés ; PDF primaire non lu. R03 partiellement confirmé (même référence), références distinctes non établies. Règles intégrées actualisées.
+Amelia : autorise deux Jokers sur même référence, tests de refus sans carte normale ; scénario navigateur FR/EN clavier/tactile sur états préparés de victoire/défaite/abandon hors ligne, transitions réelles ; ne prétend pas à un parcours complet naturel. Gate MVP couvre quatre titres, aucun droit accordé.
+Murat : nouvelle CI à constater, pas de GO final avant preuves. Sans uv.

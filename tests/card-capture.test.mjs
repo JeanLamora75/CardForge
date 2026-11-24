@@ -369,16 +369,16 @@ test('CC-T10: copied ace is worth fourteen and a captured Joker recycles with it
   assert.equal([...drawn.hand,...drawn.playerDeck].filter(id=>id==='joker-2').length,1);
   assert.deepEqual(skydeckEngine.transition(JSON.parse(JSON.stringify(empty)),{type:'draw'}).state,drawn);
 });
-test('CC-R03: provisional guard refuses two Jokers with or without a reference',()=>{
+test('CC-R03 / CC-T10: two Jokers copy the same engaged card, never each other',()=>{
   const s=captureFixture('hearts-12',['hearts-4','joker-1','joker-2','clubs-2']);
-  for(const cardIds of [['joker-1','joker-2'],['hearts-4','joker-1','joker-2']]){
-    const before=structuredClone(s);
-    const r=skydeckEngine.transition(s,{type:'capture-a',targetPosition:2,cardIds,jokerCopyId:'hearts-4'});
-    assert.equal(r.accepted,false);
-    assert.equal(r.state,s);
-    assert.deepEqual(s,before);
+  const a={type:'capture-a',targetPosition:2,cardIds:['hearts-4','joker-1','joker-2'],jokerCopyId:'hearts-4'};
+  assert.equal(skydeckEngine.getLegalActions(s).some(x=>JSON.stringify(x)===JSON.stringify(a)),true);
+  const n=act(s,a);
+  assert.deepEqual(n.discard,['hearts-4','joker-1','joker-2','hearts-12']);
+  for(const cardIds of [['joker-1','joker-2'],['hearts-4','joker-1']]){
+    const r=skydeckEngine.transition(s,{...a,cardIds});
+    assert.equal(r.accepted,false);assert.equal(r.state,s);
   }
-  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.cardIds.includes('joker-1')&&a.cardIds.includes('joker-2')),false);
 });
 
 test('CC-T11: B sacrifices exactly one hand card and the enemy at position one',()=>{

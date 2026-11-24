@@ -76,9 +76,8 @@ function captureOptions(targetId:string,selected:readonly string[]): (string|und
     references.push({id,value:strength});
   }
   if(jokers===0)return total>=value(target.rank)?[undefined]:[];
-  // Multiple simultaneous Jokers are withheld until the original rule is confirmed.
-  if(jokers!==1)return [];
-  return references.filter(card=>total+card.value>=value(target.rank)).map(card=>card.id);
+  // Lucas Gentry explicitly confirmed both Jokers may copy the same card.
+  return references.filter(card=>total+jokers*card.value>=value(target.rank)).map(card=>card.id);
 }
 function validateState(value:unknown):ValidationResult {
   if(!record(value))return {valid:false,errors:['state must be an object']};

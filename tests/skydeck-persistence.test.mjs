@@ -75,7 +75,9 @@ test('CAR-68: terminal victory and defeat commits are atomic, scoreless and idem
   const hand=['hearts-4','hearts-5','clubs-2','spades-3'];
   const state={...base,round:2,phase:'capture',hand,enemyLine:[target,null,null,null],enemyDeck:[],playerDeck:ids.filter(x=>x!==target&&!hand.includes(x))};
   assert.equal(engine.validateState(state).valid,true);
-  await store.commit({save:{...options,sessionId:id,state}});
+  const previous=await store.readGame(options.gameId);
+  if(previous)await store.replaceGame({expectedSessionId:previous.sessionId,replacement:{...options,sessionId:id,state}});
+  else await store.commit({save:{...options,sessionId:id,state}});
   const action=expected==='win'?{type:'capture-a',targetPosition:1,cardIds:hand.slice(0,2)}:{type:'capture-b',cardId:'clubs-2'};
   const failing={...store,commitTerminal:async()=>{throw Error('terminal write failed')}};
   const failed=await resumeSkydeck(failing);

@@ -18,7 +18,7 @@ if(midnightRequested && !checkGamePublication(GAME_RELEASE_EVIDENCE["loot-the-lo
   process.exitCode=1;
 }
 if(publicationRequested){
-  const mvp=["clear-the-dungeon","gridcannon"];
+  const mvp=["clear-the-dungeon","gridcannon","loot-the-loop","card-capture"];
   const blockedMvp=mvp.filter(id=>!checkGamePublication(GAME_RELEASE_EVIDENCE[id]).allowed);
   if(blockedMvp.length){
     console.error("[CAR-43] PUBLICATION REFUSED: insufficient reviewed rights/resources for "+

@@ -72,7 +72,7 @@ export const GAME_RELEASE_EVIDENCE: Readonly<Record<GameId, GameReleaseRecord>> 
       publicTitle: pending("Skydeck : disponibilité et droit d'exploitation du nouveau titre non vérifiés."),
       attribution: verified(credits,"Jeu source Card Capture et auteur Lucas Gentry identifiés."),
       visualAssets: pending("Motif SVG de préversion présent ; inventaire et droits des illustrations finales non audités."),
-      ruleConformance: pending("Moteur et tests CC-T01–16 présents ; CC-R01–04 et validation QA finale restent ouverts."),
+      ruleConformance: pending("Moteur et tests CC-T01–16 présents ; CC-R01, R02, R04 et validation QA finale restent ouverts."),
       bilingualExperience: pending("Plateau et règles FR/EN intégrés ; CI finale et revue des scénarios de fin à confirmer."),
       offlineExperience: pending("Reprise locale implémentée ; preuve E2E hors ligne du commit final à confirmer."),
     },

@@ -32,6 +32,21 @@ async function readSaved(page,id){
     });}finally{db.close();}
   },id);
 }
+async function installSkydeckFixture(page, save, outcome){
+  const target=outcome==='win'?'hearts-9':'hearts-13';
+  const hand=['hearts-4','hearts-5','clubs-2','spades-3'];
+  const old=save.state;
+  const ids=[...old.playerDeck,...old.enemyDeck,...old.enemyLine.filter(Boolean),...old.hand,...old.discard,...old.enemyCapture];
+  const state={...old,round:2,phase:'capture',outcome:'in-progress',hand,enemyDeck:[],enemyLine:[target,null,null,null],playerDeck:ids.filter(id=>id!==target&&!hand.includes(id)),discard:[],enemyCapture:[]};
+  const fixture={...save,sessionId:save.sessionId+'-'+outcome,state};
+  await page.evaluate(async fixture=>{
+    const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+    try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}
+  },fixture);
+  await page.reload();
+  await page.locator('.sd-resumed').waitFor();
+  return fixture;
+}
 async function waitSavedChanged(page,id,before){
   for(let i=0;i<100;i++){
     const current=await readSaved(page,id);
@@ -234,6 +249,26 @@ async function journey(locale,mobile){
       await offline.goto(HOST+'#game/card-capture/board',{waitUntil:'domcontentloaded'});
       await offline.locator('.sd-resumed').waitFor();
       assert.deepEqual(await readSaved(offline,'card-capture'),saved['card-capture']);
+      // Prepared late-game snapshots exercise real UI transitions, not a full natural playthrough.
+      const sd=offline.locator('.sd-board');
+      for(const outcome of ['win','loss','abandoned']){
+        const fixture=await installSkydeckFixture(offline,saved['card-capture'],outcome);
+        if(outcome==='abandoned'){
+          await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
+        }else{
+          if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}),mobile);
+          else await interact(offline,sd.locator('[data-position="1"]'),mobile);
+          await interact(offline,sd.locator('.sd-hand button').nth(outcome==='win'?0:2),mobile);
+          if(outcome==='win')await interact(offline,sd.locator('.sd-hand button').nth(1),mobile);
+          await interact(offline,sd.locator('.sd-preview'),mobile);
+        }
+        await interact(offline,sd.locator('.sd-confirm button.primary-action'),mobile);
+        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        assert.equal((await readSaved(offline,'card-capture')).state.outcome,outcome);
+        await offline.reload();
+        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
+      }
       await offline.goto(HOST+'#game/card-capture/rules');
       await offline.getByRole('heading',{name:locale==='fr'?'Règles de Skydeck':'Skydeck rules'}).waitFor();
       assert.equal(await offline.locator('html').getAttribute('lang'),locale);
@@ -244,7 +279,7 @@ async function journey(locale,mobile){
       assert.ok(msScreen.scroll<=msScreen.width+4,JSON.stringify({label,msScreen}));
       const screen=await offline.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
       assert.ok(screen.scroll<=screen.width+4,JSON.stringify({label,screen}));
-      console.log('CAR-42 production:',label,'three games played and resumed offline, rules and localization verified; cache '+probe.version);
+      console.log('CAR-42 production:',label,'four games played and resumed offline, rules and localization verified; cache '+probe.version);
     }finally{await offline.close();}
   }finally{await context.close();}
 }
@@ -254,7 +289,7 @@ try{
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])
       await journey(locale,mobile);
-  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, three games, offline service worker.');
+  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, four games, offline service worker.');
 }finally{
   if(browser)await browser.close();
   vite.kill('SIGTERM');
