@@ -180,7 +180,7 @@ async function journey(locale,mobile){
         });
         throw new Error('Offline cold restart did not become ready: '+JSON.stringify({diagnostic,browserErrors}),{cause:error});
       });
-      await offline.locator('.offline-readiness').getByText(locale==='fr'?'Hors connexion':'Offline').waitFor();
+      await offline.locator('.offline-readiness small').getByText(locale==='fr'?'Hors connexion':'Offline',{exact:true}).waitFor();
       for(const game of GAMES){
         await offline.goto(HOST+'#game/'+game.id+'/board',{waitUntil:'domcontentloaded',timeout:15000});
         await offline.locator(game.root).waitFor({state:'visible',timeout:15000});
