@@ -6,7 +6,7 @@ import type { LocalGameStorage } from "../ports/local-storage.ts";
 import type { PersistentGameSession, PersistentSessionOptions } from "./persistent-game-session.ts";
 
 export interface GameSummary {
-  gameId: "clear-the-dungeon" | "gridcannon";
+  gameId: "clear-the-dungeon" | "gridcannon" | "loot-the-loop";
   outcome: "win" | "loss";
   title: string;
   explanation: string;
@@ -61,6 +61,27 @@ export function makeThunderfighterSummary(state: {
     score: state.outcome === "win" ? state.victoryScore ?? null : null,
     scoreLabel: state.outcome === "win" && state.victoryScore != null
       ? "Score officiel · As et Jokers non utilisés" : null,
+  };
+}
+
+export function makeMidnightSyndicateSummary(state: {
+  outcome: "in-progress" | "win" | "loss" | "abandoned";
+  loot: readonly { id: string }[];
+  notes: readonly unknown[];
+  deck: readonly unknown[];
+}): GameSummary | null {
+  if (state.outcome !== "win" && state.outcome !== "loss") return null;
+  const aces = new Set(["hearts-1", "diamonds-1", "clubs-1", "spades-1"]);
+  const collected = new Set(state.loot.filter(card => aces.has(card.id)).map(card => card.id));
+  return {
+    gameId: "loot-the-loop", outcome: state.outcome,
+    title: state.outcome === "win" ? "Victoire · La sortie est atteinte" : "Défaite · Fin de mission",
+    explanation: state.outcome === "win" ? "Les quatre As ont été récupérés et le Joker atteint." :
+      "La partie est terminée : piège ou impasse confirmée.",
+    details: [`As récupérés : ${collected.size} / 4`, `Cartes au butin : ${state.loot.length}`,
+      `Cartes dans le parcours : ${state.deck.length}`],
+    score: state.outcome === "win" ? state.loot.length : null,
+    scoreLabel: state.outcome === "win" ? "Score officiel · nombre de cartes au butin" : null,
   };
 }
 
