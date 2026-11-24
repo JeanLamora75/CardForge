@@ -76,3 +76,62 @@ test('initial validation rejects duplicate, missing, foreign, sparse, malformed 
   for(const seed of [-1,1.5,NaN,4294967296])assert.throws(()=>skydeckEngine.createInitialState({seed}));
   assert.deepEqual(s,before);
 });
+
+function apply(s,type){
+  const before=structuredClone(s);
+  const r=skydeckEngine.transition(s,{type});
+  assert.equal(r.accepted,true);
+  assert.deepEqual(s,before);
+  assert.equal(skydeckEngine.validateState(r.state).valid,true);
+  assert.deepEqual(all(r.state).sort(),all(s).sort());
+  return r.state;
+}
+test('CC-T04: compact right and refill in draw order, including protected enemies',()=>{
+  const top=['hearts-1','spades-5','clubs-13','diamonds-9','hearts-11','clubs-6'];
+  const s=prepareSkydeck(initialPlayer,[...top,...initialEnemy.filter(id=>!top.includes(id))],7);
+  const n=apply(s,'advance-enemy');
+  assert.deepEqual(n.enemyLine,['spades-5','diamonds-9','hearts-11','clubs-6']);
+  assert.deepEqual(n.enemyDeck,s.enemyDeck.slice(2));
+  assert.equal(n.phase,'discard');
+});
+test('CC-T04: exhausted enemy deck leaves empty slots without creating cards',()=>{
+  const remaining=['hearts-5','clubs-6'];
+  const s={...skydeckEngine.createInitialState({seed:0}),round:2,
+    enemyDeck:[],enemyLine:[null,remaining[0],null,remaining[1]],
+    playerDeck:initialPlayer,discard:initialEnemy.filter(id=>!remaining.includes(id))};
+  const n=apply(s,'advance-enemy');
+  assert.deepEqual(n.enemyLine,[...remaining,null,null]);
+  assert.deepEqual(n.enemyDeck,[]);
+});
+test('CC-T03: first round follows enemy, empty discard, draw then capture',()=>{
+  for(let seed=0;seed<64;seed++){
+    const s=skydeckEngine.createInitialState({seed});
+    const d=apply(s,'advance-enemy');
+    assert.deepEqual(d.hand,[]);
+    const p=apply(d,'discard-none');
+    assert.equal(p.phase,'draw');
+    const c=apply(p,'draw');
+    assert.equal(c.phase,'capture');
+    assert.deepEqual(c.hand,s.playerDeck.slice(0,4));
+    assert.deepEqual(c.playerDeck,s.playerDeck.slice(4));
+  }
+});
+test('phase guard rejects repeated, out of order and unimplemented actions without mutation',()=>{
+  const s=skydeckEngine.createInitialState({seed:0});
+  const d=apply(s,'advance-enemy');
+  const p=apply(d,'discard-none');
+  const c=apply(p,'draw');
+  for(const [state,actions] of [[s,['draw','discard-none']],[d,['advance-enemy','draw']],[p,['discard-none','advance-enemy']],[c,['draw','advance-enemy','capture-a','capture-b','capture-c']]]){
+    for(const type of actions){
+      const before=structuredClone(state);
+      const r=skydeckEngine.transition(state,{type});
+      assert.equal(r.accepted,false);
+      assert.equal(r.state,state);
+      assert.deepEqual(state,before);
+    }
+  }
+  const terminal={...c,phase:'finished',outcome:'abandoned'};
+  assert.equal(skydeckEngine.validateState(terminal).valid,true);
+  assert.deepEqual(skydeckEngine.getLegalActions(terminal),[]);
+  assert.equal(skydeckEngine.transition(terminal,{type:'draw'}).accepted,false);
+});

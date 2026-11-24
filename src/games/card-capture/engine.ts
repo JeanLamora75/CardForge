@@ -1,6 +1,6 @@
 import { makeDeckWithJokers, isJokerCard, shuffle } from '../../core/cards.ts';
 import { createSeededRandom } from '../../core/deterministic-deck.ts';
-import type { GameEngine, ValidationResult } from '../../core/game-engine.ts';
+import type { GameEngine, GameOutcome, TransitionResult, ValidationResult } from '../../core/game-engine.ts';
 
 export const SKYDECK_GAME_ID = 'card-capture' as const;
 export const SKYDECK_RULES_VERSION = 'card-capture-2018' as const;
@@ -8,9 +8,9 @@ export interface SkydeckSetup { seed: number }
 export interface SkydeckState {
   rulesVersion: typeof SKYDECK_RULES_VERSION;
   seed: number;
-  round: 1;
-  phase: 'enemy';
-  outcome: 'in-progress';
+  round: number;
+  phase: SkydeckPhase;
+  outcome: GameOutcome;
   playerDeck: string[];
   enemyDeck: string[];
   /** Index zero represents position 1, at the right edge. */
@@ -19,7 +19,8 @@ export interface SkydeckState {
   discard: string[];
   enemyCapture: string[];
 }
-export type SkydeckAction = Readonly<{ type: string }>;
+export type SkydeckPhase = 'enemy' | 'discard' | 'draw' | 'capture' | 'finished';
+export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' }>;
 
 const canonical = makeDeckWithJokers();
 const playerIds = new Set(canonical.filter(c=>isJokerCard(c)||[2,3,4].includes(c.rank)).map(c=>c.id));
@@ -55,35 +56,92 @@ function createInitialState(setup:SkydeckSetup):SkydeckState {
   const random=createSeededRandom(setup.seed);
   return prepareSkydeck(shuffle([...playerIds],random),shuffle([...enemyIds],random),setup.seed);
 }
+const allIds = new Set(canonical.map(c=>c.id));
 function validateState(value:unknown):ValidationResult {
   if(!record(value))return {valid:false,errors:['state must be an object']};
   const errors:string[]=[];
   const fields=['rulesVersion','seed','round','phase','outcome','playerDeck','enemyDeck','enemyLine','hand','discard','enemyCapture'];
   if(Object.keys(value).length!==fields.length||fields.some(key=>!Object.hasOwn(value,key)))errors.push('invalid state fields');
-  if(value.rulesVersion!==SKYDECK_RULES_VERSION||!validSeed(value.seed)||value.round!==1||value.phase!=='enemy'||value.outcome!=='in-progress')
-    errors.push('invalid opening metadata');
-  if(!Array.isArray(value.playerDeck)||!exactPartition(value.playerDeck,playerIds))errors.push('invalid player deck');
-  const line=value.enemyLine;
-  const deck=value.enemyDeck;
-  if(!Array.isArray(line)||line.length!==4||!Array.from(line).every(id=>id===null||
-     (typeof id==='string'&&enemyIds.has(id)&&!protectedIds.has(id))))errors.push('invalid opening enemy line');
-  if(!Array.isArray(deck)||!Array.isArray(line)||!exactPartition([...deck,...Array.from(line).filter(id=>id!==null)],enemyIds))
-    errors.push('invalid enemy partition');
-  if(Array.isArray(deck)&&Array.isArray(line)){
-    const holes=line.filter(id=>id===null).length;
-    if(holes>0&&!deck.slice(-holes).every(id=>typeof id==='string'&&protectedIds.has(id)))errors.push('invalid returned cards');
-  }
-  for(const key of ['hand','discard','enemyCapture']){
+  const phase=value.phase;
+  const outcome=value.outcome;
+  if(value.rulesVersion!==SKYDECK_RULES_VERSION||!validSeed(value.seed)||
+     typeof value.round!=='number'||!Number.isSafeInteger(value.round)||value.round<1||
+     !['enemy','discard','draw','capture','finished'].includes(String(phase))||
+     !['in-progress','win','loss','abandoned'].includes(String(outcome))||
+     (phase==='finished')!==(outcome!=='in-progress'))
+    errors.push('invalid phase or metadata');
+  const zones: string[][]=[];
+  for(const key of ['playerDeck','enemyDeck','hand','discard','enemyCapture']){
     const zone=value[key];
-    if(!Array.isArray(zone)||zone.length!==0)errors.push('invalid opening '+key);
+    if(!Array.isArray(zone)||!Array.from(zone).every(id=>typeof id==='string'&&allIds.has(id))){
+      errors.push('invalid '+key); zones.push([]);
+    }else zones.push(zone);
+  }
+  const [playerDeck,enemyDeck,hand,discard,enemyCapture]=zones;
+  const line=value.enemyLine;
+  const lineValid=Array.isArray(line)&&line.length===4&&Array.from(line).every(id=>id===null||
+    (typeof id==='string'&&enemyIds.has(id)));
+  if(!lineValid)errors.push('invalid enemy line');
+  const occupied:string[]=lineValid?Array.from(line).filter((id):id is string=>id!==null):[];
+  if(!exactPartition([...zones.flat(),...occupied],allIds))errors.push('invalid physical card partition');
+  if(enemyDeck.some(id=>!enemyIds.has(id)))errors.push('invalid enemy deck');
+  if(hand.length>4)errors.push('hand exceeds four cards');
+  if(phase==='capture'&&hand.length!==4)errors.push('capture requires a full hand');
+  if(outcome==='in-progress'&&enemyCapture.some(id=>protectedIds.has(id)))errors.push('protected card in enemy capture');
+  if(outcome==='win'&&(enemyDeck.length!==0||occupied.length!==0||enemyCapture.some(id=>protectedIds.has(id))))
+    errors.push('invalid win');
+  if(value.round===1&&phase!=='finished'){
+    if(!exactPartition([...playerDeck,...hand,...discard],playerIds)||
+       !exactPartition([...enemyDeck,...occupied],enemyIds)||enemyCapture.length)
+      errors.push('invalid first round partition');
+    if(phase==='enemy'){
+      if(hand.length||discard.length||occupied.some(id=>protectedIds.has(id)))errors.push('invalid opening zones');
+      const holes=4-occupied.length;
+      if(holes>0&&!enemyDeck.slice(-holes).every(id=>protectedIds.has(id)))errors.push('invalid returned cards');
+    }
+    if(phase==='discard'&&(hand.length||discard.length))errors.push('invalid first discard');
+  }
+  if(lineValid&&['discard','draw','capture'].includes(String(phase))){
+    const compact=Array.from(line).every((id,i)=>i<occupied.length?id!==null:id===null);
+    if(!compact||(enemyDeck.length>0&&occupied.length!==4))errors.push('enemy line must be filled before player phases');
   }
   return errors.length?{valid:false,errors}:{valid:true};
 }
 
+function getLegalActions(state:Readonly<SkydeckState>):readonly SkydeckAction[]{
+  if(!validateState(state).valid||state.outcome!=='in-progress')return [];
+  switch(state.phase){
+    case 'enemy': return [{type:'advance-enemy'}];
+    case 'discard': return [{type:'discard-none'}];
+    case 'draw': return state.playerDeck.length>=4-state.hand.length?[{type:'draw'}]:[];
+    default: return [];
+  }
+}
+function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>):TransitionResult<SkydeckState>{
+  const reject=(reason:string):TransitionResult<SkydeckState>=>({accepted:false,state,reason});
+  if(!record(action)||Object.keys(action).length!==1||
+     !getLegalActions(state).some(legal=>legal.type===action.type))return reject('illegal action or phase');
+  let next:SkydeckState;
+  switch(action.type){
+    case 'advance-enemy': {
+      const occupied=state.enemyLine.filter((id):id is string=>id!==null);
+      const count=Math.min(4-occupied.length,state.enemyDeck.length);
+      const filled=[...occupied,...state.enemyDeck.slice(0,count)];
+      next={...state,phase:'discard',enemyDeck:state.enemyDeck.slice(count),
+        enemyLine:[...filled,...Array<null>(4-filled.length).fill(null)]};
+      break;
+    }
+    case 'discard-none': next={...state,phase:'draw'};break;
+    case 'draw': {
+      const count=4-state.hand.length;
+      next={...state,phase:'capture',playerDeck:state.playerDeck.slice(count),
+        hand:[...state.hand,...state.playerDeck.slice(0,count)]};
+      break;
+    }
+    default:return reject('unknown action');
+  }
+  return validateState(next).valid?{accepted:true,state:next}:reject('invalid resulting state');
+}
 export const skydeckEngine:GameEngine<SkydeckState,SkydeckAction,SkydeckSetup>={
-  createInitialState,
-  validateState,
-  getLegalActions:()=>[],
-  transition:state=>({accepted:false,state,reason:'enemy phase transition not implemented'}),
-  getOutcome:state=>state.outcome,
+  createInitialState,validateState,getLegalActions,transition,getOutcome:state=>state.outcome,
 };
