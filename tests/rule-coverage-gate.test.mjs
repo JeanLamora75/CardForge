@@ -21,7 +21,7 @@ test("CAR-40: strict Mary matrix gate accepts executable references and fails cl
       "test.skip('GC-T02',()=>{assert.equal(1,1)})",
       "test('GC-T03',()=>{})",
       "test('GC-T04',()=>{ const a=2; })",
-    ].join("\\n")+"\\n");
+    ].join("\n")+"\n");
     const pass=spawnSync(process.execPath,[auditor,"--require-complete"],{cwd:root,encoding:"utf8"});
     assert.equal(pass.status,0,pass.stderr+pass.stdout);
     writeFileSync(join(planning,"gridcannon-rule-test-matrix.md"),"| GC-T01 | rule |\n| GC-T02 | NEW UNCOVERED |\n");
