@@ -48,6 +48,8 @@ jobs:
         run: npm run test:browser
       - name: Audit Mary rule matrix traceability
         run: npm run audit:rules
+      - name: Assert catalog publication labels are rights-gated
+        run: npm run audit:publication
       - name: TypeScript and Web build
         run: npm run build
       - name: Verify installable offline bundle
