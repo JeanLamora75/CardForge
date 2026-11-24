@@ -80,7 +80,12 @@ self.addEventListener("fetch", event => {
     return;
   }
   event.respondWith((async () => {
-    const cached = await caches.match(request, { cacheName: CACHE_NAME });
+    // Built JS/CSS are immutable same-origin resources. Their fetch requests can
+    // have different Vary headers from install-time cache.addAll requests.
+    // Match the exact requested URL in this version's cache, ignoring Vary,
+    // rather than falling through to the network on a cold offline restart.
+    const cache = await caches.open(CACHE_NAME);
+    const cached = await cache.match(url.href, { ignoreVary: true });
     if (cached) return cached;
     return fetch(request);
   })());
