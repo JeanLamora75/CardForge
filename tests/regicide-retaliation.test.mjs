@@ -35,7 +35,7 @@ test('REG-T20: insufficient defence with exhausted jokers permits defeat and ter
 test('REG-T21: zero retaliation consumes no cards and excess shield stays active',()=>{
   for(const shield of [10,15]){
     const s=fixture(['hearts-2'],{shield});
-    assert.deepEqual(engine.getLegalActions(s),[{type:'retaliate',cardIds:[]}]);
+    assert.deepEqual(engine.getLegalActions(s).filter(a=>a.type==='retaliate'),[{type:'retaliate',cardIds:[]}]);
     reject(s,{type:'retaliate',cardIds:s.hand});
     const n=apply(s,{type:'retaliate',cardIds:[]});assert.deepEqual(n.hand,s.hand);assert.deepEqual(n.discard,s.discard);assert.equal(n.shield,shield);
   }

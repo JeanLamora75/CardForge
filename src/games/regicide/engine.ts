@@ -103,24 +103,27 @@ function validateState(value: unknown): ValidationResult {
   if(value.outcome==='loss'&&(sum(hand)>=Math.max(0,value.enemyAttack-value.shield)))return invalid('defeat requires insufficient defence');
   const physical=[...(active===null?[]:[active]),...zones.flat(),...jokers.map(j=>j.id)];
   if(physical.length!==54||new Set(physical).size!==54||!physical.every(id=>typeof id==='string'&&allIds.has(id)))return invalid('invalid physical partition');
-  if(value.turn===1&&value.phase==='play'&&(castle.length!==11||hand.length!==8||tavern.length!==32||discard.length||combat.length||
-    value.enemyHealth!==20||value.shield!==0||value.recycleCount!==0||jokers.some(j=>j.used)||![...tavern,...hand].every(id=>tavernSet.has(id))))return invalid('invalid opening');
+  if(value.turn===1&&value.phase==='play'&&!jokers.some(j=>j.used)&&(castle.length!==11||hand.length!==8||tavern.length!==32||discard.length||combat.length||
+    value.enemyHealth!==20||value.shield!==0||value.recycleCount!==0||![...tavern,...hand].every(id=>tavernSet.has(id))))return invalid('invalid opening');
   return {valid:true};
 }
 function subsets(hand: readonly string[]): string[][] {
   return Array.from({length:2**hand.length},(_,mask)=>hand.filter((_,i)=>(mask&(1<<i))!==0));
 }
+function jokerActions(s: Readonly<RegicideState>): RegicideAction[] {
+  return s.jokers.filter(j=>!j.used).map(j=>({type:'use-joker',jokerId:j.id}));
+}
 function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] {
   if(!validateState(s).valid||s.outcome!=='in-progress')return [];
   switch(s.phase){
-    case 'play': return subsets(s.hand).filter(validPlay).map(cardIds=>({type:'play',cardIds}));
+    case 'play': return [...subsets(s.hand).filter(validPlay).map((cardIds):RegicideAction=>({type:'play',cardIds})),...jokerActions(s)];
     case 'powers': return [{type:'resolve-powers'}];
     case 'damage': return [{type:'resolve-damage'}];
     case 'retaliation': {
       const cost=Math.max(0,s.enemyAttack-s.shield);
-      if(cost===0)return [{type:'retaliate',cardIds:[]}];
+      if(cost===0)return [{type:'retaliate',cardIds:[]},...jokerActions(s)];
       const choices:RegicideAction[]=subsets(s.hand).filter(ids=>sum(ids)>=cost&&ids.some(id=>sum(ids)-valueOf(id)<cost)).map(cardIds=>({type:'retaliate',cardIds}));
-      for(const j of s.jokers)if(!j.used)choices.push({type:'use-joker',jokerId:j.id});
+      choices.push(...jokerActions(s));
       if(sum(s.hand)<cost)choices.push({type:'accept-defeat'});
       return choices;
     }

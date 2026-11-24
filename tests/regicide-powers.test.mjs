@@ -60,7 +60,7 @@ test('REG-T06: shields accumulate across turns and do not alter enemy base attac
   const first=damage(powers(s,['spades-8']));assert.equal(first.shield,8);assert.equal(first.enemyAttack,10);
   const next=apply(first,{type:'retaliate',cardIds:['diamonds-2']});
   const second=damage(powers(next,['spades-3']));assert.equal(second.shield,11);assert.equal(second.enemyHealth,9);
-  assert.deepEqual(engine.getLegalActions(second),[{type:'retaliate',cardIds:[]}]);
+  assert.deepEqual(engine.getLegalActions(second).filter(a=>a.type==='retaliate'),[{type:'retaliate',cardIds:[]}]);
 });
 test('REG-T08: diamond immunity prevents draw but not damage',()=>{
   const s=fixture('diamonds-11',['diamonds-8']),p=powers(s,['diamonds-8']);

@@ -43,7 +43,7 @@ test('REG-T12: all allowed numeric combinations and forbidden totals',()=>{
       if(cards.length===1||cards.length*rank<=10){expected.push(key(cards));apply(state,{type:'play',cardIds:cards});}
       else reject(state,cards);
     }
-    assert.deepEqual(engine.getLegalActions(state).map(a=>key(a.cardIds)).sort(),expected.sort());
+    assert.deepEqual(engine.getLegalActions(state).filter(a=>a.type==='play').map(a=>key(a.cardIds)).sort(),expected.sort());
   }
 });
 test('REG-T13: recruited figures and ace retain their original strength',()=>{

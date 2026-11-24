@@ -46,7 +46,7 @@ test('opening validation rejects corrupt zones, metadata and card placement with
     {...s,hand:['unknown',...s.hand.slice(1)]},{...s,hand:new Array(8)},
     {...s,hand:[s.castle[0],...s.hand.slice(1)],castle:[s.hand[0],...s.castle.slice(1)]},
     {...s,jokers:[{id:'joker-1',used:false},{id:'joker-1',used:false}]},
-    {...s,jokers:[{id:'joker-1',used:true},s.jokers[1]]},
+    {...s,jokers:[{id:'joker-1',used:'yes'},s.jokers[1]]},
     {...s,enemyHealth:19},{...s,enemyAttack:15},{...s,shield:1},
     {...s,phase:'finished'},{...s,discard:[s.tavern[0]],tavern:s.tavern.slice(1)},
     {...s,extra:true}];

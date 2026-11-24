@@ -56,5 +56,5 @@ test('REG-T32: no unconfirmed solo pass or random consumption on rejection',()=>
   const s=engine.createInitialState({seed:7});
   for(const a of [{type:'pass'},{type:'play',cardIds:[]},{type:'play',cardIds:[s.hand[0],s.hand[0]]},{type:'play',cardIds:[s.tavern[0]]},{type:'resolve-powers',extra:1}])reject(s,a);
   assert.equal(s.recycleCount,0);
-  assert.ok(engine.getLegalActions(s).every(a=>a.type==='play'));
+  assert.ok(engine.getLegalActions(s).every(a=>a.type==='play'||a.type==='use-joker'));
 });
