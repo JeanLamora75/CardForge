@@ -17,8 +17,8 @@ test('LTL-T05: hidden numerics and visible figures cannot provide distances',()=
   }
 });
 test('LTL-T06: distinct visible numeric distances, deduplication and hidden top',()=>{
-  assert.deepEqual(engine.getLegalActions(fixture(['hearts-4','clubs-6'],[0,1])),[explore(4),explore(6)]);
-  assert.deepEqual(engine.getLegalActions(fixture(['hearts-4','clubs-4'],[0,1])),[explore(4)]);
+  assert.deepEqual(engine.getLegalActions(fixture(['hearts-4','clubs-6'],[0,1])),[explore(4),explore(6),{type:'mark-path'}]);
+  assert.deepEqual(engine.getLegalActions(fixture(['hearts-4','clubs-4'],[0,1])),[explore(4),{type:'mark-path'}]);
   assert.deepEqual(engine.getLegalActions(fixture(['hearts-4','clubs-6'],[1])),[{type:'look-around'},explore(6)]);
 });
 test('LTL-T07/T08: rotate exactly N preserving faces, hidden arrival unchanged',()=>{
