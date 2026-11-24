@@ -12,6 +12,11 @@ for(const game of games){
     (check.missing.length ? " — pending: "+check.missing.join(", ") : ""));
 }
 const publicationRequested=process.argv.includes("--require-mvp-publication");
+const midnightRequested=process.argv.includes("--require-midnight-publication");
+if(midnightRequested && !checkGamePublication(GAME_RELEASE_EVIDENCE["loot-the-loop"]).allowed){
+  console.error("[CAR-56] PUBLICATION REFUSED: Midnight Syndicate evidence incomplete");
+  process.exitCode=1;
+}
 if(publicationRequested){
   const mvp=["clear-the-dungeon","gridcannon"];
   const blockedMvp=mvp.filter(id=>!checkGamePublication(GAME_RELEASE_EVIDENCE[id]).allowed);
@@ -20,5 +25,5 @@ if(publicationRequested){
       blockedMvp.join(", "));
     process.exitCode=1;
   } else console.log("[CAR-43] MVP publication evidence complete (deployment still requires separate approval).");
-}else console.log("[CAR-43] Catalogue safe: no unapproved game labelled as available; "+blocked+
+}else if(!midnightRequested) console.log("[CAR-43] Catalogue safe: no unapproved game labelled as available; "+blocked+
   " pending. Internal quality build is NOT permission for public deployment.");
