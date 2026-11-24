@@ -27,10 +27,10 @@ Cette synthèse fait **foi pour la préparation du backlog**. Les compléments c
 
 | Sujet | Décision/statut courant | Source |
 | --- | --- | --- |
-| MVP | **Grim Delve** (règles *Clear the Dungeon* Classic 1.1.0 sans réserve facultative) et **Thunderfighter** (règles *Gridcannon* Version 2) entièrement jouables dans le premier Web/PWA | §6 ; Product Brief |
+| MVP | **Grim Delve**, **Thunderfighter**, **Midnight Syndicate** et **Skydeck** entièrement jouables dans le premier Web/PWA, sous réserve des contrôles de publication | Décision du 24 novembre 2026 ci-dessous |
 | Clear the Dungeon | Joker à **puissance 10 fixe** ; **CTD-ARB-01 à 14 clos** pour CardForge, y compris poses provisoires, verrouillage, main vide et fin de pioche | [Mary — règles CTD §11–25](../../game-rules/clear-the-dungeon.md) |
 | Gridcannon V2 | **Cadrage documentaire terminé**, GC-01 à GC-21 de mécanique/précision clos et GC-22 à GC-53 de portée UX/transverse documentés ; statut normatif actuel au **§68**. GC-54 reste une proposition technique à instruire | [Mary — règles GC §68](../../game-rules/gridcannon.md) |
-| Jeux futurs | **Skydeck** ([Card Capture](../../game-rules/card-capture.md), **Midnight Syndicate** ([Loot the Loop](../../game-rules/loot-the-loop.md) et adaptation de [Regicide — « Les Douze Tyrans », Asie féodale fantastique Wuxia / Chanbara](../../game-rules/regicide.md) disposent de référentiels séparés, mais sont **hors du MVP** | Documents Mary propres à chaque jeu |
+| Jeux futurs | **Les Douze Tyrans** (Regicide) reste après MVP | Référentiel Mary |
 | Titre de Gridcannon | **« Thunderfighter » validé le 23 novembre 2026**, « Bastion Stellaire » abandonné ; attribution à Tom Francis et vérification de disponibilité avant publication | Mary GC-17 actualisé |
 | Langues | **FR et EN complets dans le MVP**, préférence manuelle persistante, détection, repli anglais et usage hors ligne ; au moins **dix langues à terme**, sans imposer les dix dès le MVP | GC-26 à GC-28 |
 | Conformité | **Aucun moteur ni scénario de conformité exécuté**. La clôture du cadrage n'est pas une certification des conventions CardForge par les auteurs ; sources primaires, tests et droits restent des **jalons de sortie** | Mary §68 et matrices |
@@ -572,10 +572,18 @@ Le porteur de CardForge valide explicitement les titres publics suivants :
 | --- | --- | --- | --- |
 | *Clear the Dungeon* Classic 1.1.0 | **Grim Delve** | Donjon dark fantasy, monstres illustrés | MVP |
 | *Gridcannon* Version 2, Tom Francis | **Thunderfighter** | Science-fiction spatiale pulp rétrofuturiste | MVP |
-| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | Après MVP |
-| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | Après MVP |
+| *Card Capture*, Lucas Gentry | **Skydeck** | Corsaires du ciel, flottes aériennes et îles flottantes | MVP |
+| *Loot the Loop*, Wil Su (*Isaludo*) | **Midnight Syndicate** | Années 1930, prohibition, dieselpunk et pulp | MVP |
 | *Regicide* | **Les Douze Tyrans** | Wuxia / Chanbara, Asie féodale fantastique | Après MVP |
 
 **Important :** la formulation « Loop the Loot » employée lors de la validation désigne le jeu original documenté par Mary sous son titre exact ***Loot the Loop***. **Midnight Syndicate** est le titre public voulu, sans changement des règles originales. Les titres antérieurs de travail « Bastion Stellaire », « Corsaires du ciel » ou les autres libellés provisoires ne doivent pas remplacer les noms publics ci-dessus dans les nouveaux écrans et maquettes ; « Corsaires du ciel » reste un **univers**, non le nom du jeu.
 
 Les noms des jeux originaux sont **conservés dans les références aux sources, la traçabilité juridique, les identifiants stables et les noms des documents de règles**. Il ne faut pas renommer les `gameId`, les répertoires internes, les sauvegardes, les statistiques ou les moteurs du seul fait d'un changement de titre public. Tous les jeux reprennent les **règles originales documentées par Mary**, sans nouveau pouvoir associé au thème. Le catalogue, les fiches, les interfaces, l'aide, les traductions et les crédits affichent leurs noms publics respectifs et l'attribution au jeu source. **La disponibilité des nouveaux titres et les droits d'adaptation restent à vérifier avant toute diffusion publique : aucune vérification juridique n'est revendiquée.**
+
+
+## Décision produit du 24 novembre 2026 — extension du MVP à quatre jeux (fait foi)
+
+Le porteur valide Midnight Syndicate puis Skydeck dans le MVP Web/PWA gratuit sans publicité, aux côtés de Grim Delve et Thunderfighter. Les Douze Tyrans reste après MVP. Cette décision remplace les anciennes limitations à deux jeux dans ce document, sans modifier leurs règles ni prétendre que les quatre jeux sont publiables. Chaque moteur conserve sa composition originale : 54 cartes pour Grim Delve, Thunderfighter et Skydeck ; 53 pour Midnight Syndicate. Les exigences transversales FR-05 à FR-32 et NFR s'appliquent aux quatre jeux selon leurs règles propres. La conformité, les droits et les preuves de publication CAR-43 restent des conditions de sortie. Les anciennes mentions de deux jeux décrivent le périmètre initial historique.
+
+- [Cadrage et Stories Skydeck](../../skydeck-implementation-scope-and-stories-2026-11-24.md)
+- [Cadrage Midnight Syndicate](../../midnight-syndicate-implementation-scope-and-stories-2026-11-24.md)
