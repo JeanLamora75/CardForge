@@ -10,6 +10,7 @@ import type { PersistentSessionOptions } from './persistent-game-session.ts';
 export const REGISTERED_SAVE_MIGRATIONS: Readonly<Record<string, readonly SaveMigration[]>> = Object.freeze({
   'clear-the-dungeon': Object.freeze([]),
   gridcannon: Object.freeze([]),
+  'loot-the-loop': Object.freeze([]),
 });
 
 export function registeredGameMigrations(gameId: string): readonly SaveMigration[] {
