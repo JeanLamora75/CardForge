@@ -44,6 +44,31 @@ test('T-16 / CTD-T16 / CTD-T50 / CTD-T51 / CTD-T115/T56: victory with exhausted 
  assert.equal(final.drawPile.length,0);assert.ok(final.hand.length>0);
  refuse(final,{type:'end-hand'});
 });
+test('CTD-T50: exactly two cards in the final hand can finish an attack from the previous hand',()=>{
+ const start=engine.createInitialState({seed:23});
+ const monsterId=start.visibleMonsters[0];
+ const allPower=[...start.hand,...start.drawPile];
+ const cards=['joker-1','clubs-3','joker-2'];
+ assert.ok(cards.every(id=>allPower.includes(id)));
+ const pre={...start,hand:['clubs-3','joker-2'],drawPile:[],
+   removed:allPower.filter(id=>!cards.includes(id)),handNumber:2,
+   attacks:[{monsterId,powers:[{cardId:'joker-1',handNumber:1}]}]};
+ assert.deepEqual(engine.validateState(pre),{valid:true});
+ assert.equal(pre.hand.length,2);
+ assert.equal(pre.drawPile.length,0);
+ const remainingBefore=pre.columns.flat().length;
+ let after=run(pre,{type:'place-power',cardId:'clubs-3',monsterId});
+ assert.deepEqual(after.attacks[0].powers.map(p=>p.handNumber),[1,2]);
+ assert.equal(after.outcome,'in-progress','empty deck does not prematurely end final hand');
+ assert.equal(after.hand.length,1);
+ assert.ok(engine.getLegalActions(after).some(a=>a.type==='trigger-attack'&&a.cardId==='joker-2'&&a.monsterId===monsterId));
+ after=run(after,{type:'trigger-attack',cardId:'joker-2',monsterId});
+ assert.equal(after.defeated.length,1);
+ assert.equal(after.columns.flat().length,remainingBefore-1);
+ assert.equal(after.outcome,'in-progress');
+ assert.equal(after.drawPile.length,0);
+ assert.equal(after.hand.length,0);
+});
 test('T-11 / CTD-T34 / CTD-T62/64: defeat of an exposed monster reveals next while other attacks are intact',()=>{
  const s=engine.createInitialState({seed:80});const monsterId=s.visibleMonsters[0],other=s.visibleMonsters[1];
  const ids=['joker-1','clubs-8','joker-2'];const pool=[...s.hand,...s.drawPile];
