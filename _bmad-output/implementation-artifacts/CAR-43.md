@@ -42,6 +42,6 @@
 
 **Aucune vérification juridique indépendante, recherche de marque ou lecture de l'accord auteur n'a été réalisée ici.** L'utilisateur a demandé une confirmation préalable aux recherches web et ne l'a pas autorisée dans ce tour. Les outils de développement ne remplacent pas un conseil juridique. Aucune preuve de permission, de licence de ressources ou de disponibilité d'un titre n'a été inventée ou marquée `verified:true`.
 
-**CI :** dernière exécution verte complète et commit à consigner après la fin effective du workflow. Un résultat CI vert signifie seulement qu'aucun changement de catalogue non autorisé n'a franchi le garde.
+**CI complète vérifiée : [GitHub Actions #45343470923](https://github.com/JeanLamora75/CardForge/actions/runs/45343470923), commit de code `b71f12e561310e91640e81cc624ca0c4565c2469`.** Résultats : **319/319 tests réussis**, script de contrôle CAR-43 affichant **les cinq jeux `BLOCKED`**, audit des matrices Mary, build TypeScript/Vite, précache PWA 8 ressources, quatre E2E production FR/EN clavier/tactile et reprise hors connexion, **deux jobs CI verts**. La commande `--require-mvp-publication` est également vérifiée en mode refus dans les tests du gate. La documentation a été publiée dans un commit ultérieur ne modifiant pas le code exécuté. **CI verte ne signifie pas permission de diffusion.**
 
 **État Jira :** non modifié ; la mise en conformité juridique reste bloquante pour une diffusion publique.
