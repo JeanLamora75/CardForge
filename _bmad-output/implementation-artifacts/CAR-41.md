@@ -46,7 +46,7 @@
 
 Workflow `.github/workflows/cardforge-tests.yml` : `npm test`, installation de Chromium via Playwright, `npm run test:browser`, audit strict des matrices Mary, build TypeScript/Vite, contrôle des ressources hors ligne.
 
-CI de référence **à remplacer après vérification du dernier commit de code**. La revue de Murat doit se prononcer **après** vérification de toutes les étapes sur un même commit.
+**CI de référence vérifiée : [GitHub Actions #45337868350](https://github.com/JeanLamora75/CardForge/actions/runs/45337868350), commit de code `d5b9514a83300a6efb9f057f7d534faf75f089df`.** Résultats : **314/314 tests Node réussis, 0 échec**, recette Chromium réelle réussie (fermeture/réouverture, deux jeux, deux onglets, résultat et statistiques uniques, message d'incompatibilité visible sans écraser la sauvegarde), audit strict Mary 121/121 + 35/35 + 21/21, build TypeScript/Vite et précache PWA 8/8 vérifiés. Toutes les étapes ont réussi **sur le même commit**. La revue de Murat doit se prononcer **après** vérification de toutes les étapes sur un même commit.
 
 **Limites de recette :** essais réels sur Chrome/Firefox/Edge utilisateur et vrai disque plein restent une validation complémentaire. L'exécution GitHub Actions utilise un navigateur Chromium réel dans son runner, **pas** une session sur l'ordinateur Windows de l'utilisateur.
 
