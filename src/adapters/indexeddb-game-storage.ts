@@ -287,16 +287,25 @@ export function createIndexedDbGameStorage(options: {
                 try { tx.abort(); } catch { /* already aborted */ }
                 return;
               }
-              try {
-                sessions.put(save);
-                if (result && statistics) {
-                  tx.objectStore(RESULTS).put(result);
-                  tx.objectStore(STATISTICS).put(statistics);
+              // A stale tab must never overwrite a session already finalized by another tab.
+              const terminal = tx.objectStore(RESULTS).get(stableResultId(save.gameId, save.sessionId));
+              terminal.onsuccess = () => {
+                if (terminal.result !== undefined) {
+                  writeFailure = new Error('Session already finalized');
+                  try { tx.abort(); } catch { /* already aborted */ }
+                  return;
                 }
-              } catch (cause) {
-                writeFailure = cause;
-                try { tx.abort(); } catch { /* already aborted */ }
-              }
+                try {
+                  sessions.put(save);
+                  if (result && statistics) {
+                    tx.objectStore(RESULTS).put(result);
+                    tx.objectStore(STATISTICS).put(statistics);
+                  }
+                } catch (cause) {
+                  writeFailure = cause;
+                  try { tx.abort(); } catch { /* already aborted */ }
+                }
+              };
             };
           } catch (cause) {
             try { tx.abort(); } catch { /* already aborted */ }
