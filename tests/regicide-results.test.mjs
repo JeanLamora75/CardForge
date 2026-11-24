@@ -33,12 +33,14 @@ test('REG-T20: defeat has no medal even when unused jokers remain',()=>{
  const n=act(f,{type:'accept-defeat'});assert.deepEqual(getRegicideResult(n),{outcome:'loss',medal:null,jokersUsed:used});assert.deepEqual(engine.getLegalActions(n),[]);
  }
 });
-test('REG-T32: unresolved solo pass with empty hand is not silently classified as defeat',()=>{
+test('REG-T32: solo pass forbidden; exhausted hand and jokers permit defeat even with zero retaliation',()=>{
  const s=initial();
  const f={...s,turn:2,hand:[],discard:[...s.hand],jokers:s.jokers.map(j=>({...j,used:true}))};
- assert.equal(inspectRegicide(f).blockedReason,'unconfirmed-solo-pass');
- assert.equal(engine.getOutcome(f),'in-progress');assert.deepEqual(engine.getLegalActions(f),[]);
- for(const type of ['pass','accept-defeat'])assert.equal(engine.transition(f,{type}).accepted,false);
+ assert.equal(inspectRegicide(f).blockedReason,'no-legal-play');
+ assert.equal(engine.getOutcome(f),'in-progress');assert.deepEqual(engine.getLegalActions(f),[{type:'accept-defeat'}]);
+ assert.equal(engine.transition(f,{type:'pass'}).accepted,false);
+ const shielded={...f,shield:10};const n=act(shielded,{type:'accept-defeat'});assert.equal(n.outcome,'loss');assert.equal(getRegicideResult(n).medal,null);
+ const rescue={...f,jokers:[{id:'joker-1',used:false},{id:'joker-2',used:true}]};assert.equal(engine.transition(rescue,{type:'accept-defeat'}).accepted,false);assert.equal(act(rescue,{type:'use-joker',jokerId:'joker-1'}).hand.length,8);
 });
 test('corrupt state is rejected separately from a game loss',()=>{
  const s=initial();const f={...s,tavern:s.tavern.slice(1)};

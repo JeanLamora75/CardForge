@@ -52,7 +52,7 @@ test('REG-T27: final king defeated yields immediate victory',()=>{
   assert.equal(n.outcome,'win');assert.equal(n.phase,'finished');assert.equal(n.activeEnemy,null);
   assert.deepEqual(engine.getLegalActions(n),[]);reject(n,{type:'retaliate',cardIds:[]});
 });
-test('REG-T32: no unconfirmed solo pass or random consumption on rejection',()=>{
+test('REG-T32: no solo pass or random consumption on rejection',()=>{
   const s=engine.createInitialState({seed:7});
   for(const a of [{type:'pass'},{type:'play',cardIds:[]},{type:'play',cardIds:[s.hand[0],s.hand[0]]},{type:'play',cardIds:[s.tavern[0]]},{type:'resolve-powers',extra:1}])reject(s,a);
   assert.equal(s.recycleCount,0);

@@ -24,7 +24,7 @@ function reject(s,cardIds){
   assert.equal(r.accepted,false);assert.equal(r.state,s);assert.deepEqual(s,before);
 }
 const key=a=>[...a].sort().join(',');
-test('REG-T11: ace alone, with another ace, number or recruited figure',()=>{
+test('Ace companions: ace alone, with another ace, number or recruited figure',()=>{
   const s=fixture(['hearts-1','diamonds-1','spades-7','clubs-12']);
   for(const cards of [['hearts-1'],['hearts-1','diamonds-1'],['hearts-1','spades-7'],['clubs-12','hearts-1']]){
     const n=apply(s,{type:'play',cardIds:cards});
@@ -33,7 +33,7 @@ test('REG-T11: ace alone, with another ace, number or recruited figure',()=>{
   }
   reject(s,['hearts-1','diamonds-1','spades-7']);
 });
-test('REG-T12: all allowed numeric combinations and forbidden totals',()=>{
+test('REG-T11/12: all allowed numeric combinations and forbidden totals',()=>{
   const suits=['hearts','diamonds','clubs','spades'];
   for(let rank=2;rank<=10;rank++){
     const hand=suits.map(s=>s+'-'+rank),state=fixture(hand);
@@ -46,7 +46,7 @@ test('REG-T12: all allowed numeric combinations and forbidden totals',()=>{
     assert.deepEqual(engine.getLegalActions(state).filter(a=>a.type==='play').map(a=>key(a.cardIds)).sort(),expected.sort());
   }
 });
-test('REG-T13: recruited figures and ace retain their original strength',()=>{
+test('REG-T14: recruited figures and ace retain their original strength',()=>{
   for(const [card,value] of [['hearts-1',1],['hearts-11',10],['hearts-12',15]]){
     const s=fixture([card]);
     const n=apply(apply(apply(s,{type:'play',cardIds:[card]}),{type:'resolve-powers'}),{type:'resolve-damage'});
@@ -61,7 +61,7 @@ test('REG-T13: recruited figures and ace retain their original strength',()=>{
   const n=apply(apply(apply(s,{type:'play',cardIds:hand}),{type:'resolve-powers'}),{type:'resolve-damage'});
   assert.equal(n.enemyHealth,20);
 });
-test('REG-T14: invalid lots, duplicate identities, hidden cards and jokers are refused',()=>{
+test('REG-T13: invalid lots, duplicate identities, hidden cards and jokers are refused',()=>{
   const s=fixture(['hearts-4','diamonds-4','clubs-4','hearts-1','clubs-11','diamonds-11','spades-2','spades-3']);
   for(const cards of [[],['hearts-4','diamonds-4','clubs-4'],['hearts-1','hearts-4','diamonds-4'],['clubs-11','diamonds-11'],['spades-2','spades-3'],['hearts-4','hearts-4'],['joker-1'],[s.tavern[0]],['unknown'],new Array(1),null])reject(s,cards);
   const p=apply(s,{type:'play',cardIds:['diamonds-4','hearts-4']});

@@ -69,7 +69,7 @@ export default function RegicideBoard({language,hintsEnabled=true,lesson}:{langu
  <div className="ldt-hand">{view.hand.map(id=><button type="button" key={id} className="ldt-card" aria-label={label(id)} aria-pressed={selected.includes(id)} disabled={busy||blocked||!!pending||restart||!['play','retaliation'].includes(view.phase)||view.outcome!=='in-progress'} onClick={()=>setSelected(old=>old.includes(id)?old.filter(x=>x!==id):[...old,id])}>{card(id)}{selected.includes(id)?<span>{tr('Sélectionnée','Selected')}</span>:null}</button>)}</div>
  <h3 ref={actionRef} tabIndex={-1}>{tr('Actions autorisées','Legal actions')}</h3>
  {hintsEnabled?<p>{tr('Sélectionnez les cartes, vérifiez le coup, puis confirmez. Les pouvoirs sont résolus avant les dégâts.','Select cards, preview, then confirm. Powers resolve before damage.')}</p>:null}
- {view.blockedReason?<p role="alert">{tr('Impasse : règle de passage solo à confirmer.','Deadlock: solo pass rule awaiting clarification.')}</p>:null}
+ {view.blockedReason?<p role="alert">{tr('Aucune carte ni Joker disponible : défaite.','No card or Joker available: defeat.')}</p>:null}
  {view.outcome==='in-progress'?<div className="ldt-actions">
  {['play','retaliation'].includes(view.phase)?<button className="primary-action ldt-preview" disabled={busy||blocked||!choice||!!pending||restart} onClick={()=>choice&&setPending(choice)}>{tr('Prévisualiser le coup','Preview move')}</button>:null}
  {automatic?<button className="primary-action ldt-next" disabled={busy||blocked||!!pending||restart} onClick={()=>setPending(automatic)}>{actionName(automatic)}</button>:null}

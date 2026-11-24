@@ -294,6 +294,27 @@ async function journey(locale,mobile){
       await offline.goto(HOST+'#game/regicide/board');
       await offline.locator('.ldt-resumed').waitFor();
       assert.deepEqual(await readSaved(offline,'regicide'),saved.regicide);
+      // CAR-81: real terminal transitions on prepared snapshots; not a natural full playthrough.
+      const reg=offline.locator('.ldt-board');
+      for(const scenario of ['joker','win','loss','abandoned']){
+        const base=saved.regicide.state;
+        const ids=[base.activeEnemy,...base.castle,...base.hand,...base.tavern,...base.discard,...base.combat,...base.pending].filter(Boolean);
+        const enemy=scenario==='win'?'spades-13':'spades-11';
+        const castle=scenario==='win'?[]:ids.filter(id=>Number(id.split('-')[1])>=11&&id!==enemy).sort((a,b)=>Number(a.split('-')[1])-Number(b.split('-')[1]));
+        const hand=scenario==='win'?['clubs-10']:scenario==='loss'?[]:['hearts-1'];
+        const state={...base,turn:12,phase:scenario==='loss'?'retaliation':'play',outcome:'in-progress',activeEnemy:enemy,castle,hand,discard:[],combat:[],pending:[],shield:0,enemyHealth:scenario==='win'?20:20,enemyAttack:scenario==='win'?20:10,tavern:ids.filter(id=>id!==enemy&&!castle.includes(id)&&!hand.includes(id)),jokers:base.jokers.map(j=>({...j,used:scenario==='loss'}))};
+        const fixture={...saved.regicide,sessionId:saved.regicide.sessionId+'-'+scenario,state};
+        await offline.evaluate(async fixture=>{
+          const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+          try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}
+        },fixture);
+        await offline.reload();await reg.locator('.ldt-resumed').waitFor();
+        const confirm=async()=>{await interact(offline,reg.locator('.ldt-confirm .primary-action'),mobile);await reg.locator('.ldt-confirm').waitFor({state:'hidden'});};
+        if(scenario==='joker'){await interact(offline,reg.locator('.ldt-jokers button').first(),mobile);await confirm();assert.equal((await readSaved(offline,'regicide')).state.jokers[0].used,true);}
+        else if(scenario==='win'){await interact(offline,reg.locator('.ldt-hand button').first(),mobile);await interact(offline,reg.locator('.ldt-preview'),mobile);await confirm();for(let i=0;i<2;i++){await interact(offline,reg.locator('.ldt-next'),mobile);await confirm();}}
+        else {await interact(offline,reg.getByRole('button',{name:scenario==='loss'?(locale==='fr'?'Accepter la défaite':'Accept defeat'):(locale==='fr'?'Abandonner':'Abandon'),exact:true}),mobile);await confirm();}
+        const durable=await readSaved(offline,'regicide');assert.equal(durable.state.outcome,scenario==='joker'?'in-progress':scenario);await offline.reload();await reg.locator('.ldt-resumed').waitFor();assert.deepEqual(await readSaved(offline,'regicide'),durable);
+      }
       await offline.goto(HOST+'#game/regicide/rules');
       await offline.getByRole('heading',{name:locale==='fr'?'Règles des Douze Tyrans':'Twelve Tyrants rules'}).waitFor();
       await offline.goto(HOST+'#game/card-capture/board',{waitUntil:'domcontentloaded'});

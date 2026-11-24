@@ -98,9 +98,9 @@ export const GAME_RELEASE_EVIDENCE: Readonly<Record<GameId, GameReleaseRecord>> 
       publicTitle: pending("Titre Les Douze Tyrans non vérifié juridiquement."),
       attribution: verified(credits,"Regicide et auteurs Paul Abrahams, Luke Badger et Andy Richdale identifiés."),
       visualAssets: pending("Ressources illustrées Wuxia / Chanbara non livrées ni auditées."),
-      ruleConformance: pending("Moteur et tests de jeu futur non livrés ; règles Regicide à préserver."),
-      bilingualExperience: pending("Parcours de jeu FR/EN non livré."),
-      offlineExperience: pending("Jeu non encore intégré au build PWA hors ligne."),
+      ruleConformance: pending("Moteur livré ; clarification REG-R01 documentée ; revue finale CAR-81 et CI corrective à constater."),
+      bilingualExperience: verified("https://github.com/JeanLamora75/CardForge/actions/runs/45451661764","Plateau et règles FR/EN testés au clavier et tactile émulé ; scénarios terminaux complémentaires à vérifier."),
+      offlineExperience: verified("https://github.com/JeanLamora75/CardForge/actions/runs/45451661764","Reprise et règles hors ligne vérifiées sur le build de production CAR-80."),
     },
   },
 };

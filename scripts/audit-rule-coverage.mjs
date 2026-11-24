@@ -4,6 +4,7 @@ import ts from "typescript";
 
 const root=process.cwd();
 const categories=[
+  {label:'Regicide',file:'_bmad-output/planning-artifacts/game-rules/regicide.md',pattern:/\bREG-T\d{2}\b/g},
   {label:"Card Capture",file:"_bmad-output/planning-artifacts/game-rules/card-capture.md",pattern:/\bCC-T\d{1,3}\b/g},
   {label:"Loot the Loop",file:"_bmad-output/planning-artifacts/game-rules/loot-the-loop.md",pattern:/\bLTL-T\d{1,3}\b/g},
   {label:"CTD latest",file:"_bmad-output/planning-artifacts/clear-the-dungeon-rule-test-matrix.md",pattern:/\bCTD-T\d{1,3}\b/g},
@@ -54,9 +55,9 @@ function executableTests(file){
 }
 function statedIds(title){
   const found=new Set();
-  for(const m of title.matchAll(/\b(CTD-T|GC-T|LTL-T|CC-T)(\d{1,3})((?:\/(?:T)?\d{1,3})*)/g)){
+  for(const m of title.matchAll(/\b(CTD-T|GC-T|LTL-T|CC-T|REG-T)(\d{1,3})((?:\/(?:T)?\d{1,3})*)/g)){
     found.add(m[1]+m[2]);
-    for(const extra of m[3].split("/").filter(Boolean))found.add(m[1]+((m[1]==='LTL-T'||m[1]==='CC-T')?extra.replace(/^T/,"").padStart(2,'0'):extra.replace(/^T/,"")));
+    for(const extra of m[3].split("/").filter(Boolean))found.add(m[1]+((m[1]==='LTL-T'||m[1]==='CC-T'||m[1]==='REG-T')?extra.replace(/^T/,"").padStart(2,'0'):extra.replace(/^T/,"")));
   }
   for(const m of title.matchAll(/\bT-\d{2,3}\b/g))found.add(m[0]);
   return found;

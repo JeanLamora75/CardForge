@@ -100,7 +100,7 @@ function validateState(value: unknown): ValidationResult {
   if((value.phase==='powers'||value.phase==='damage')!== (pending.length>0&&value.outcome!=='abandoned')||!(!pending.length||validPlay(pending)))return invalid('invalid pending play');
   const jokers=value.jokers;
   if(!Array.isArray(jokers)||jokers.length!==2||!Array.from(jokers).every((j,i)=>record(j)&&Object.keys(j).length===2&&j.id==='joker-'+(i+1)&&typeof j.used==='boolean'))return invalid('invalid jokers');
-  if(value.outcome==='loss'&&(sum(hand)>=Math.max(0,value.enemyAttack-value.shield)))return invalid('defeat requires insufficient defence');
+  if(value.outcome==='loss'&&!(hand.length===0&&jokers.every(j=>j.used))&&(sum(hand)>=Math.max(0,value.enemyAttack-value.shield)))return invalid('defeat requires insufficient defence');
   const physical=[...(active===null?[]:[active]),...zones.flat(),...jokers.map(j=>j.id)];
   if(physical.length!==54||new Set(physical).size!==54||!physical.every(id=>typeof id==='string'&&allIds.has(id)))return invalid('invalid physical partition');
   if(value.turn===1&&value.phase==='play'&&!jokers.some(j=>j.used)&&(castle.length!==11||hand.length!==8||tavern.length!==32||discard.length||combat.length||
@@ -116,7 +116,7 @@ function jokerActions(s: Readonly<RegicideState>): RegicideAction[] {
 function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] {
   if(!validateState(s).valid||s.outcome!=='in-progress')return [];
   switch(s.phase){
-    case 'play': return [...subsets(s.hand).filter(validPlay).map((cardIds):RegicideAction=>({type:'play',cardIds})),...jokerActions(s)];
+    case 'play': if(!s.hand.length&&s.jokers.every(j=>j.used))return [{type:'accept-defeat'}]; return [...subsets(s.hand).filter(validPlay).map((cardIds):RegicideAction=>({type:'play',cardIds})),...jokerActions(s)];
     case 'powers': return [{type:'resolve-powers'}];
     case 'damage': return [{type:'resolve-damage'}];
     case 'retaliation': {
@@ -225,7 +225,7 @@ export function inspectRegicide(state: Readonly<RegicideState>) {
   return {
     phase: state.phase, outcome: state.outcome, activeEnemy: state.activeEnemy,
     result: getRegicideResult(state),
-    blockedReason: state.outcome==='in-progress'&&state.phase==='play'&&state.hand.length===0&&state.jokers.every(j=>j.used)?'unconfirmed-solo-pass':null,
+    blockedReason: state.outcome==='in-progress'&&state.phase==='play'&&state.hand.length===0&&state.jokers.every(j=>j.used)?'no-legal-play':null,
     enemyHealth: state.enemyHealth, enemyAttack: state.enemyAttack, shield: state.shield,
     hand: [...state.hand], jokers: state.jokers.map(j => ({...j})),
     counts: {castle:state.castle.length,tavern:state.tavern.length,discard:state.discard.length},
