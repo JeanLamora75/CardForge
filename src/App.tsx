@@ -13,6 +13,7 @@ import {
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
+import MidnightSyndicateBoard from "./components/MidnightSyndicateBoard";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
@@ -123,7 +124,7 @@ function GameDetail({
               {actions.newGame && progress.indicator === "active" ? (
                 <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
               ) : null}
-              {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
+              {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
@@ -139,7 +140,7 @@ function GameDetail({
             {!canPlay(game) ? (
               <p className="availability-note" role="status">
                 <strong>{statusLabel(game)}</strong> — La publication officielle n’est pas encore autorisée.
-                {game.id === "clear-the-dungeon" || game.id === "gridcannon" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
+                {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
               </p>
             ) : null}
           </div>
@@ -150,7 +151,7 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && game.id === "loot-the-loop" ? <MidnightSyndicateBoard key={game.id} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {(game.id === "clear-the-dungeon" || game.id === "gridcannon") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
@@ -352,8 +353,7 @@ export default function App() {
               <h2 id="catalog-title">Choisissez votre univers</h2>
               <span>{games.length} jeux dans la collection</span>
             </div>
-            <p className="catalog-notice">Le plateau Grim Delve est accessible en préversion depuis sa fiche.
-              Les autres jeux ne sont pas encore ouverts à la partie.</p>
+            <p className="catalog-notice">Les plateaux Grim Delve, Thunderfighter et Midnight Syndicate sont accessibles en préversion depuis leurs fiches.</p>
             <div className="game-grid">
               {games.map(game => (
                 <article className={`game-card ${game.accent}`} key={game.id} aria-labelledby={`name-${game.id}`}>
@@ -385,7 +385,7 @@ export default function App() {
         </>
       )}
       <footer className="app-footer">
-        <span>CardForge · Collection en construction · Plateaux Grim Delve et Thunderfighter en préversion</span>
+        <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter et Midnight Syndicate en préversion</span>
         <button type="button" className="credits-footer-link" onClick={() => {
           if (route.page !== "about") settingsOrigin.current = route;
           navigate({ page: "about" });
