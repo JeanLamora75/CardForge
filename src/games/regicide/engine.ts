@@ -122,6 +122,36 @@ function getLegalActions(s: Readonly<RegicideState>): readonly RegicideAction[] 
     default:return [];
   }
 }
+/** Powers have already resolved; only now may combat cards enter the discard. */
+function resolveDamage(n: RegicideState): void {
+  const enemy=n.activeEnemy!;
+  const damage=attackEffects(n.pending,enemy).damage;
+  n.combat.push(...n.pending);
+  n.pending=[];
+  if(damage<n.enemyHealth){
+    n.enemyHealth-=damage;
+    n.phase='retaliation';
+    return;
+  }
+  if(damage===n.enemyHealth)n.tavern.unshift(enemy);
+  else n.discard.push(enemy);
+  n.discard.push(...n.combat);
+  n.combat=[];
+  n.shield=0;
+  n.activeEnemy=n.castle.shift()??null;
+  n.turn++;
+  if(n.activeEnemy===null){
+    n.phase='finished';
+    n.outcome='win';
+    n.enemyHealth=0;
+    n.enemyAttack=0;
+    return;
+  }
+  n.phase='play';
+  n.enemyAttack=valueOf(n.activeEnemy);
+  n.enemyHealth=2*n.enemyAttack;
+}
+
 function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): TransitionResult<RegicideState> {
   const reject=(reason:string):TransitionResult<RegicideState>=>({accepted:false,state:s,reason});
   if(!validateState(s).valid||!record(a))return reject('invalid state or action');
@@ -146,15 +176,7 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
     n.shield+=effects.shield;
     n.phase='damage';
   }else if(a.type==='resolve-damage'){
-    const damage=attackEffects(n.pending,n.activeEnemy!).damage;
-    n.combat.push(...n.pending);n.pending=[];
-    if(damage<n.enemyHealth){n.enemyHealth-=damage;n.phase='retaliation';}
-    else{
-      if(damage===n.enemyHealth)n.tavern.unshift(n.activeEnemy!);else n.discard.push(n.activeEnemy!);
-      n.discard.push(...n.combat);n.combat=[];n.shield=0;n.activeEnemy=n.castle.shift()??null;n.turn++;
-      if(n.activeEnemy===null){n.phase='finished';n.outcome='win';n.enemyHealth=0;n.enemyAttack=0;}
-      else{n.phase='play';n.enemyAttack=valueOf(n.activeEnemy);n.enemyHealth=2*n.enemyAttack;}
-    }
+    resolveDamage(n);
   }else if(a.type==='retaliate'){
     n.discard.push(...n.hand.filter(id=>a.cardIds.includes(id)));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='play';n.turn++;
   }
