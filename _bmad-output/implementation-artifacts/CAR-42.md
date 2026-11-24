@@ -16,9 +16,9 @@
 
 | Cible | Type de preuve | État |
 | --- | --- | --- |
-| Web desktop Chromium Linux (runner CI) | E2E clavier + FR/EN | En attente de vérification de la dernière CI |
-| Web mobile simulé Chromium Linux, 390 × 844 | Touch events Playwright + FR/EN | En attente de vérification de la dernière CI |
-| PWA de production sur localhost sécurisé | SW installé, ressources contrôlées, fermeture/relance offline | En attente de vérification de la dernière CI |
+| Web desktop Chromium Linux (runner CI) | E2E clavier + FR/EN | **PASS — CI #45341981900** |
+| Web mobile simulé Chromium Linux, 390 × 844 | Touch events Playwright + FR/EN | **PASS — CI #45341981900** |
+| PWA de production sur localhost sécurisé | SW installé, ressources contrôlées, fermeture/relance offline | **PASS — CI #45341981900** |
 | Chrome/Edge sur Windows 11 physique | Appareil réel | **NON TESTÉ** |
 | Chrome sur Android physique | Appareil réel / installation de PWA | **NON TESTÉ** |
 | Capacitor Android natif | Projet natif et batterie native | **NON DÉVELOPPÉ / NON TESTÉ** |
@@ -36,4 +36,17 @@ La validation Web ne doit **jamais** être affichée comme une validation Androi
 
 ## CI
 
-Preuves à enregistrer après une exécution complète sur **un même commit**, y compris le nouveau E2E et le gate qualité. Revue QA Murat distincte requise.
+**CI complète verte vérifiée : [GitHub Actions #45341981900](https://github.com/JeanLamora75/CardForge/actions/runs/45341981900), commit de code `42bed08dfd0c214b69d49d3bcd6bafc5d6b95560`.**
+
+- **314 tests Node réussis sur 314**, aucun échec ;
+- **CAR-41 Chromium** : restauration, concurrence de deux onglets et sauvegarde incompatible confirmées ;
+- **CAR-42 production** : quatre parcours E2E exécutés et réussis, logs explicites `fr/keyboard`, `fr/touch`, `en/keyboard`, `en/touch`, chacun comprenant les deux vrais plateaux, le jeu normal, la modification de sauvegarde par action UI, l'annulation non destructive, la reprise hors connexion après fermeture d'onglet, le service worker actif et les règles localisées ;
+- **Audit strict Mary** : 121/121 CTD-T, 35/35 GC-T, 21/21 références historiques reliées à des tests avec assertions ;
+- **Build TypeScript/Vite et précache** : succès, 8 ressources PWA vérifiées ;
+- **Job `Web MVP quality gate (no publication)` : PASS** car il dépend de la réussite du job `web`.
+
+**Preuve du blocage du gate qualité :** lors du run rouge [#45341795564](https://github.com/JeanLamora75/CardForge/actions/runs/45341795564), le job `web` a échoué sur le E2E hors ligne et `Web MVP quality gate` a été explicitement **SKIPPED**. Lors du run vert #45341981900 les **deux jobs** ont réussi. Cette preuve confirme la dépendance des jobs CI, mais **aucune publication effective n'est configurée** : ne pas affirmer qu'une plateforme de déploiement en production est aujourd'hui protégée.
+
+**Correctif produit révélé par CAR-42 :** les `assets/index*.js` et CSS existaient dans CacheStorage mais les requêtes hors ligne échouaient (`net::ERR_FAILED`). `src/pwa/service-worker-build.ts` sert maintenant les ressources statiques versionnées par correspondance d'URL exacte avec `ignoreVary: true`. `OfflineReadiness` interroge d'abord le contrôleur existant avant tentative de réenregistrement pendant une relance sans réseau. Les scénarios Chromium attestent ensuite l'affichage de tous les contenus et la reprise des deux parties hors connexion.
+
+**Revue QA Murat** : à consigner séparément, avec réserves sur les appareils physiques et le mécanisme de publication encore inexistant.
