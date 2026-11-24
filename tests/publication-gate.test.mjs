@@ -63,3 +63,15 @@ test("publication CLI is non-blocking for internal CI audit but refuses release 
   assert.equal(publish.status,1);
   assert.match(publish.stderr,/PUBLICATION REFUSED/);
 });
+
+test("CAR-56: Midnight Syndicate stays upcoming despite technical CI; illicit promotion and explicit release are refused",()=>{
+  const game=games.find(g=>g.id==="loot-the-loop");
+  assert.equal(game.status,"coming-soon");
+  assert.equal(game.playableRoute,null);
+  assert.equal(game.authors,"d’après Loot the Loop, Wil Su (Isaludo)");
+  assert.equal(checkGamePublication(GAME_RELEASE_EVIDENCE[game.id]).allowed,false);
+  assert.throws(()=>assertCatalogueReleaseSafety(games.map(g=>g.id===game.id?{...g,status:"available",playableRoute:"/play/loot-the-loop"}:g)),/Publication blocked for Midnight Syndicate/);
+  const run=spawnSync(process.execPath,["scripts/audit-publication-gate.mjs","--require-midnight-publication"],{encoding:"utf8"});
+  assert.equal(run.status,1,run.stderr+run.stdout);
+  assert.match(run.stderr,/PUBLICATION REFUSED: Midnight Syndicate/);
+});
