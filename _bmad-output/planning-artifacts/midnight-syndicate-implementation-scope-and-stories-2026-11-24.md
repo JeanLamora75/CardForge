@@ -247,3 +247,28 @@ Les détails de conformité **LTL-R01/R02/R03** sont des vérifications de sourc
 - **Gate juridique :** [CAR-43](https://lmn24.atlassian.net/browse/CAR-43).
 
 **Aucune recherche Web externe nouvelle, aucun script `uv`, aucune création Jira et aucun développement du troisième moteur exécutés dans cette étape.** Les estimations de complexité restent qualitatives ; un effort chiffré en points est à estimer par l'équipe après revue Winston/Sally.
+
+## 7. Publication Jira — validation et création le 24 novembre 2026
+
+**Décision utilisateur :** validation explicite de l'Epic Midnight Syndicate et des douze Stories puis autorisation de création dans Jira CAR. **Statut : créé et vérifié dans Jira** (la proposition des sections 3 et 5 reste conservée pour la traçabilité historique).
+
+**Epic :** [CAR-44 — Midnight Syndicate post-MVP](https://lmn24.atlassian.net/browse/CAR-44).
+
+| Référence BMAD | Jira | Résumé |
+| --- | --- | --- |
+| MS-01 | [CAR-45](https://lmn24.atlassian.net/browse/CAR-45) | Initialisation 53 cartes |
+| MS-02 | [CAR-46](https://lmn24.atlassian.net/browse/CAR-46) | Observer |
+| MS-03 | [CAR-47](https://lmn24.atlassian.net/browse/CAR-47) | Explorer et pioche circulaire |
+| MS-04 | [CAR-48](https://lmn24.atlassian.net/browse/CAR-48) | Marquer et restituer |
+| MS-05 | [CAR-49](https://lmn24.atlassian.net/browse/CAR-49) | Destination, victoire, score |
+| MS-06 | [CAR-50](https://lmn24.atlassian.net/browse/CAR-50) | Inspection sécurisée et impasses |
+| MS-07 | [CAR-51](https://lmn24.atlassian.net/browse/CAR-51) | Sauvegarde/reprise |
+| MS-08 | [CAR-52](https://lmn24.atlassian.net/browse/CAR-52) | Clôture et statistiques |
+| MS-09 | [CAR-53](https://lmn24.atlassian.net/browse/CAR-53) | Plateau accessible |
+| MS-10 | [CAR-54](https://lmn24.atlassian.net/browse/CAR-54) | Règles et apprentissage FR/EN |
+| MS-11 | [CAR-55](https://lmn24.atlassian.net/browse/CAR-55) | Matrice Mary et E2E |
+| MS-12 | [CAR-56](https://lmn24.atlassian.net/browse/CAR-56) | Dossier de publication |
+
+**Vérifications effectuées :** requête Jira `project = CAR AND parent = CAR-44` renvoyant exactement **12 Stories**, toutes de type Story et dont `parent.key = CAR-44` ; chaque description contient ses critères d'acceptation, dépendances, impacts et références BMAD. **17 liens de dépendance « Blocks »** créés au total entre Stories et avec le blocage **CAR-43 → CAR-56**, et vérifiés dans les liens des tickets, notamment CAR-45, CAR-52 et CAR-56.
+
+**Important :** aucune Story n'est terminée par sa seule création et aucune diffusion publique n'est autorisée. Les autres tickets MVP n'ont pas été modifiés (sauf le lien de dépendance sortant de CAR-43 vers CAR-56). Les scripts BMAD `uv` et les tests de code n'ont pas été exécutés dans cette opération documentaire et Jira.
