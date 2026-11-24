@@ -157,16 +157,28 @@ async function journey(locale,mobile){
     await page.close();
     await context.setOffline(true);
     const offline=await context.newPage();
+    const browserErrors=[];
+    offline.on('requestfailed',request=>browserErrors.push('request '+request.url()+': '+request.failure()?.errorText));
+    offline.on('pageerror',error=>browserErrors.push('page '+error.message));
+    offline.on('console',message=>{if(message.type()==='error')browserErrors.push('console '+message.text());});
     try{
       await offline.goto(HOST,{waitUntil:'domcontentloaded',timeout:15000});
       await offline.locator('[data-offline-phase="ready"]').waitFor({timeout:20000}).catch(async error=>{
-        const diagnostic=await offline.evaluate(()=>({
-          controller:!!navigator.serviceWorker?.controller,
-          online:navigator.onLine,
-          visiblePhase:document.querySelector('[data-offline-phase]')?.getAttribute('data-offline-phase') ?? null,
-          cacheKeys:typeof caches==='undefined'?[]:[],
-        }));
-        throw new Error('Offline cold restart did not become ready: '+JSON.stringify(diagnostic),{cause:error});
+        const diagnostic=await offline.evaluate(async()=>{
+          const scripts=[...document.scripts].map(x=>({url:x.src,type:x.type}));
+          const keys=await caches.keys();
+          const cached=await Promise.all(scripts.filter(x=>x.url).map(async item=>({
+            url:item.url,match:!!(await caches.match(item.url)),
+          })));
+          return {
+            controller:!!navigator.serviceWorker?.controller,
+            online:navigator.onLine,
+            visiblePhase:document.querySelector('[data-offline-phase]')?.getAttribute('data-offline-phase') ?? null,
+            root:document.querySelector('#root')?.textContent?.slice(0,120)??null,
+            scripts,cached,cacheKeys:keys,
+          };
+        });
+        throw new Error('Offline cold restart did not become ready: '+JSON.stringify({diagnostic,browserErrors}),{cause:error});
       });
       await offline.locator('.offline-readiness').getByText(locale==='fr'?'Hors connexion':'Offline').waitFor();
       for(const game of GAMES){
