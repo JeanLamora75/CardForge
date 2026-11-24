@@ -6,7 +6,9 @@ import {
   type ThunderfighterState, type ThunderfighterAction,
 } from "../games/gridcannon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
-import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { resumeRegisteredGame } from "../application/registered-save-migrations.ts";
+import { storageRecoveryMessage } from "../application/storage-recovery-messages.ts";
 import { createTutorialSession } from "../application/learning.ts";
 import { makeThunderfighterSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
@@ -106,14 +108,14 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
           setNotice("Mission guidée · vos coups ne sont pas sauvegardés.");
           return;
         }
-        const restored = await resumePersistentGame(thunderfighterEngine, createIndexedDbGameStorage(), options);
+        const restored = await resumeRegisteredGame(thunderfighterEngine, createIndexedDbGameStorage(), options);
         if (cancelled) return;
         session.current = restored ?? null;
         setState(restored?.getState() ?? null);
         setLegal(restored?.getLegalActions() ?? []);
         setNotice(restored ? "Partie restaurée sans remélange." : "Aucune sauvegarde. Commencez une partie.");
-      } catch {
-        if (!cancelled) setNotice("Lecture impossible. Aucune sauvegarde existante n'a été modifiée.");
+      } catch (error) {
+        if (!cancelled) setNotice(storageRecoveryMessage(error, "read"));
       } finally { if (!cancelled) setBusy(false); }
     })();
     return () => { cancelled = true; };
@@ -128,7 +130,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       setState(created.getState());
       setLegal(created.getLegalActions());
       setNotice("Nouvelle partie créée et sauvegardée.");
-    } catch { setNotice("Impossible de commencer ; aucune partie enregistrée n'a été remplacée."); }
+    } catch (error) { setNotice(storageRecoveryMessage(error, "start")); }
     finally { setBusy(false); }
   }
   async function replay() {
