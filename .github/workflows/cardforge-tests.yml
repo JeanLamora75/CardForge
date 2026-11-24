@@ -52,3 +52,14 @@ jobs:
         run: npm run build
       - name: Verify installable offline bundle
         run: npm run verify:pwa
+      - name: Production PWA E2E FR EN desktop and touch offline
+        run: npm run test:e2e:production
+
+  web-quality-gate:
+    name: Web MVP quality gate (no publication)
+    needs: [web]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Assert Web checks succeeded before any future publication
+        run: echo "PASS Web/PWA automated quality gate. No deployment configured; Android/iOS native not tested; legal release requires CAR-43."
