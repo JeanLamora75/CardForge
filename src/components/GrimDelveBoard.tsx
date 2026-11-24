@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { makeDeckWithJokers } from "../core/cards.ts";
 import { grimDelveEngine, GRIM_DELVE_GAME_ID, GRIM_DELVE_RULES_VERSION, type GrimDelveAction, type GrimDelveState } from "../games/clear-the-dungeon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
-import { resumePersistentGame, startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { startPersistentGame, type PersistentGameSession } from "../application/persistent-game-session.ts";
+import { resumeRegisteredGame } from "../application/registered-save-migrations.ts";
+import { storageRecoveryMessage } from "../application/storage-recovery-messages.ts";
 import { createTutorialSession } from "../application/learning.ts";
 import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
@@ -69,14 +71,14 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
           setNotice("Exercice guidé · les actions ne sont jamais enregistrées.");
           return;
         }
-        const restored = await resumePersistentGame(grimDelveEngine, createIndexedDbGameStorage(), options);
+        const restored = await resumeRegisteredGame(grimDelveEngine, createIndexedDbGameStorage(), options);
         if (cancelled) return;
         session.current = restored ?? null;
         setState(restored?.getState() ?? null);
         setLegal(restored?.getLegalActions() ?? []);
         setNotice(restored ? "Partie locale restaurée, sans remélanger les cartes." : "Aucune partie enregistrée. Lancez une partie pour ouvrir le plateau.");
-      } catch {
-        if (!cancelled) setNotice("Impossible de lire cette partie. Aucune sauvegarde n'a été écrasée.");
+      } catch (error) {
+        if (!cancelled) setNotice(storageRecoveryMessage(error, "read"));
       } finally { if (!cancelled) setBusy(false); }
     })();
     return () => { cancelled = true; };
@@ -91,7 +93,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
       setState(created.getState());
       setLegal(created.getLegalActions());
       setNotice("Nouvelle partie enregistrée sur cet appareil.");
-    } catch { setNotice("Impossible de démarrer une partie. Vérifiez le stockage local ; aucune partie existante n'a été remplacée."); }
+    } catch (error) { setNotice(storageRecoveryMessage(error, "start")); }
     finally { setBusy(false); }
   }
   async function replay() {
@@ -130,7 +132,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
           result.state.outcome === "loss" ? "Défaite : " + (result.state.endReason === "damage" ? "7 dégâts." : "pioche épuisée.") :
           `${tutorial ? "Coup d’entraînement" : "Action enregistrée"} : ${actionName[action.type]}.`);
       }
-    } catch { setNotice("Sauvegarde impossible. Le coup n'a pas été appliqué ; réessayez."); }
+    } catch (error) { setNotice(storageRecoveryMessage(error, "write")); }
     finally { setBusy(false); }
   }
   const actions = selected ? legal.filter(action => "cardId" in action && action.cardId === selected) : [];
