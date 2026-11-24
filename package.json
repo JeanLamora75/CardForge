@@ -11,7 +11,10 @@
     "verify:pwa": "node scripts/verify-pwa-build.mjs",
     "audit:rules": "node scripts/audit-rule-coverage.mjs --require-complete",
     "test:browser": "node scripts/test-indexeddb-browser.mjs",
-    "test:e2e:production": "node scripts/test-production-e2e.mjs"
+    "test:e2e:production": "node scripts/test-production-e2e.mjs",
+    "audit:publication": "node scripts/audit-publication-gate.mjs",
+    "release:check": "node scripts/audit-publication-gate.mjs --require-mvp-publication",
+    "prepublishOnly": "npm run release:check"
   },
   "dependencies": {
     "react": "^19.0.0",
