@@ -38,7 +38,8 @@ async function waitSavedChanged(page,id,before){
     if(current && JSON.stringify(current.state)!==JSON.stringify(before.state))return current;
     await new Promise(resolve=>setTimeout(resolve,75));
   }
-  throw new Error('No persisted engine transition after UI action: '+id);
+  const notice=await page.locator(id==='gridcannon'?'.thunder-notice':'.grim-notice').allTextContents();
+  throw new Error('No persisted engine transition after UI action: '+id+' / notice: '+notice.join(' | '));
 }
 async function interact(page,locator,mobile,key='Enter'){
   await locator.waitFor({state:'visible',timeout:15000});
@@ -119,7 +120,7 @@ async function journey(locale,mobile){
       }else{
         await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.grim-actions button.secondary-action').first().waitFor({state:'visible'});
-        await interact(page,page.locator('.grim-actions button.secondary-action').first(),mobile);
+        await interact(page,page.locator('.grim-actions button.secondary-action').filter({hasText:/Défausser|Discard/}).first(),mobile);
       }
       const after=await waitSavedChanged(page,game.id,before);
       assert.ok(after,'action must leave a saved game');
