@@ -64,3 +64,36 @@ test('incompatible save and failed storage transaction are preserved',async()=>{
  await assert.rejects(()=>startSkydeck(open(),'two',{seed:2}));
  assert.deepEqual(await store.readGame(options.gameId),incompatible);
 });
+
+test('CAR-68: terminal victory and defeat commits are atomic, scoreless and idempotent; all other games preserved',async()=>{
+ const open=stores(),store=open();
+ const other=['clear-the-dungeon','gridcannon','loot-the-loop'].map(gameId=>({gameId,sessionId:'other-'+gameId,rulesVersion:'fixture',formatVersion:1,state:{sentinel:gameId}}));
+ for(const save of other)await store.commit({save});
+ for(const [id,target,expected] of [['win','hearts-9','win'],['loss','hearts-13','loss']]){
+  const base=engine.createInitialState({seed:7});
+  const ids=[...base.playerDeck,...base.enemyDeck,...base.enemyLine.filter(Boolean)];
+  const hand=['hearts-4','hearts-5','clubs-2','spades-3'];
+  const state={...base,round:2,phase:'capture',hand,enemyLine:[target,null,null,null],enemyDeck:[],playerDeck:ids.filter(x=>x!==target&&!hand.includes(x))};
+  assert.equal(engine.validateState(state).valid,true);
+  await store.commit({save:{...options,sessionId:id,state}});
+  const action=expected==='win'?{type:'capture-a',targetPosition:1,cardIds:hand.slice(0,2)}:{type:'capture-b',cardId:'clubs-2'};
+  const failing={...store,commitTerminal:async()=>{throw Error('terminal write failed')}};
+  const failed=await resumeSkydeck(failing);
+  await assert.rejects(()=>failed.dispatch(action));
+  assert.deepEqual((await store.readGame(options.gameId)).state,state);
+  assert.equal(await store.readResult(stableResultId(options.gameId,id)),undefined);
+  const session=await resumeSkydeck(open());
+  const result=await session.dispatch(action);
+  assert.equal(result.accepted,true);
+  assert.equal(result.state.outcome,expected);
+  assert.equal((await session.dispatch(action)).accepted,false);
+  const resumed=await resumeSkydeck(open());
+  assert.deepEqual(resumed.getState(),result.state);
+  const record=await store.readResult(stableResultId(options.gameId,id));
+  assert.equal(record.outcome,expected);
+  assert.equal(record.score,undefined);
+ }
+ assert.deepEqual(await store.readStatistics(options.gameId),{gameId:options.gameId,played:2,won:1,lost:1,abandoned:0});
+ assert.equal(victoryRate(await store.readStatistics(options.gameId)),'50 %');
+ for(const save of other)assert.deepEqual(await store.readGame(save.gameId),save);
+});
