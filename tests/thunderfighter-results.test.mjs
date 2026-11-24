@@ -61,7 +61,7 @@ test('GC-T22 / GC-08: victory on twelfth figure only, with official score of uns
   assert.deepEqual(engine.getLegalActions(won),[]);
   reject(won,{type:'place-number',cell:0});
 });
-test('GC-T35 / GC-08: after using an As to refill draw, only remaining Joker contributes to score',()=>{
+test('GC-08: after using an As with non-empty draw, only remaining Joker contributes to score',()=>{
   let s=nearVictory();
   const before=s.drawPile.length;
   s=apply(s,{type:'extract',cardId:'hearts-1',cell:4});
@@ -71,6 +71,33 @@ test('GC-T35 / GC-08: after using an As to refill draw, only remaining Joker con
   assert.equal(won.outcome,'win');assert.equal(won.victoryScore,1);
   assert.deepEqual(won.specialReserve,['joker-1']);
   assert.equal(getThunderfighterResult(won).officialScore,1);
+});
+test('GC-T35: exhausted draw is replenished by As extraction before the final victory',()=>{
+  const initial=nearVictory();
+  const unused=initial.drawPile;
+  const remainingNumbers=unused.filter(id=>numerics.includes(id));
+  const otherSpecials=unused.filter(id=>specials.includes(id));
+  assert.equal(unused.length,30);
+  assert.equal(remainingNumbers.length+otherSpecials.length,30);
+  // All 54 physical cards remain present: unplayed numbers are in the centre pile,
+  // the four previously consumed specials in their dedicated history.
+  const exhausted={...initial,
+    grid:initial.grid.map((pile,index)=>index===4?[...remainingNumbers,...pile]:[...pile]),
+    drawPile:[],spentSpecials:otherSpecials};
+  assert.deepEqual(engine.validateState(exhausted),{valid:true});
+  assert.equal(exhausted.drawPile.length,0,'GC-T35 requires actual deck exhaustion');
+  assert.ok(engine.getLegalActions(exhausted).some(x=>x.type==='extract'&&x.cardId==='hearts-1'&&x.cell===4));
+  let next=apply(exhausted,{type:'extract',cardId:'hearts-1',cell:4});
+  assert.equal(next.grid[4].length,0);
+  assert.equal(next.drawPile.length,remainingNumbers.length+1);
+  assert.deepEqual(next.spentSpecials,[...otherSpecials,'hearts-1']);
+  assert.equal(next.outcome,'in-progress');
+  next=apply(next,{type:'place-number',cell:0});
+  assert.equal(next.outcome,'win');
+  assert.equal(next.defeatedFigures.length,12);
+  assert.equal(next.victoryScore,1);
+  assert.deepEqual(next.specialReserve,['joker-1']);
+  assert.equal(getThunderfighterResult(next).physicalCardCount,54);
 });
 test('GC-08: zero unspent actions yields valid victory score 0',()=>{
   const s=nearVictory({reserve:[]});
