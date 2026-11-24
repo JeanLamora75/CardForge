@@ -25,7 +25,7 @@
 
 La suite automatisée inclut les tests CTD-T116 d'invalidité des attaques sur cibles vaincues et du **score 8** sur un état valide.
 
-**Portée de cette validation :** accord de **Mary sur l'analyse et la requalification recommandée**, pas validation autonome du Product Owner. L'AC2 de CAR-40 exige une justification « validée » : la **confirmation finale de cette exception documentaire par le Product Owner** reste requise si la décision fonctionnelle doit être formalisée dans la matrice Mary. Le statut Jira n'est pas modifié.
+**Validation produit obtenue le 24 novembre 2026 :** après cet avis, l'utilisateur a répondu explicitement « Oui je valide » à la proposition de requalifier CTD-T116. La matrice principale a été mise à jour avec l'exception non applicable et le cas valide du score 8. Il ne reste **aucune validation PO à demander pour CTD-T116**. Cet accord ne clôt pas à lui seul CAR-40 ; le statut Jira n'a pas été modifié.
 
 ## Conclusion
 
