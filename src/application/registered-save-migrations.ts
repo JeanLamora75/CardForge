@@ -12,6 +12,7 @@ export const REGISTERED_SAVE_MIGRATIONS: Readonly<Record<string, readonly SaveMi
   gridcannon: Object.freeze([]),
   'loot-the-loop': Object.freeze([]),
   'card-capture': Object.freeze([]),
+  regicide: Object.freeze([]),
 });
 
 export function registeredGameMigrations(gameId: string): readonly SaveMigration[] {

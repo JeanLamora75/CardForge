@@ -25,7 +25,7 @@ export interface RegicideState {
   combat: string[];
   jokers: { id: string; used: boolean }[];
 }
-export type RegicideAction = Readonly<{ type: 'play'; cardIds: readonly string[] } | { type: 'resolve-powers' | 'resolve-damage' } | { type: 'retaliate'; cardIds: readonly string[] } | { type: 'use-joker'; jokerId: string } | { type: 'accept-defeat' }>;
+export type RegicideAction = Readonly<{ type: 'play'; cardIds: readonly string[] } | { type: 'resolve-powers' | 'resolve-damage' } | { type: 'retaliate'; cardIds: readonly string[] } | { type: 'use-joker'; jokerId: string } | { type: 'accept-defeat' } | { type: 'abandon' }>;
 const canonical = makeDeckWithJokers();
 const allIds = new Set(canonical.map(c => c.id));
 const rankIds = (rank: number) => canonical.filter(c => !isJokerCard(c) && c.rank === rank).map(c => c.id);
@@ -76,7 +76,7 @@ function validateState(value: unknown): ValidationResult {
   if(value.rulesVersion!==REGICIDE_RULES_VERSION||!validSeed(value.seed)||!uint(value.turn)||value.turn===0||
     !uint(value.recycleCount)||value.recycleCount>0xffffffff||!uint(value.shield)||!uint(value.enemyHealth)||!uint(value.enemyAttack)||
     !['play','powers','damage','retaliation','finished'].includes(String(value.phase))||
-    !['in-progress','win','loss'].includes(String(value.outcome))||
+    !['in-progress','win','loss','abandoned'].includes(String(value.outcome))||
     (value.phase==='finished')!==(value.outcome!=='in-progress'))return invalid('invalid metadata');
   const zones: string[][]=[];
   for(const key of ['castle','tavern','hand','discard','combat','pending']){
@@ -97,7 +97,7 @@ function validateState(value: unknown): ValidationResult {
     if(rank(active)!== (remaining>8?11:remaining>4?12:13)||
       castle.some((id,i)=>rank(id)!==(remaining-i-1>8?11:remaining-i-1>4?12:13)))return invalid('invalid castle order');
   }
-  if((value.phase==='powers'||value.phase==='damage')!== (pending.length>0)||!(!pending.length||validPlay(pending)))return invalid('invalid pending play');
+  if((value.phase==='powers'||value.phase==='damage')!== (pending.length>0&&value.outcome!=='abandoned')||!(!pending.length||validPlay(pending)))return invalid('invalid pending play');
   const jokers=value.jokers;
   if(!Array.isArray(jokers)||jokers.length!==2||!Array.from(jokers).every((j,i)=>record(j)&&Object.keys(j).length===2&&j.id==='joker-'+(i+1)&&typeof j.used==='boolean'))return invalid('invalid jokers');
   if(value.outcome==='loss'&&(sum(hand)>=Math.max(0,value.enemyAttack-value.shield)))return invalid('defeat requires insufficient defence');
@@ -169,7 +169,7 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
       new Set(a.cardIds).size!==a.cardIds.length||!legal.some(b=>b.type===a.type&&'cardIds' in b&&same(b.cardIds,a.cardIds)))return reject('illegal card selection or phase');
   }else if(a.type==='use-joker'){
     if(Object.keys(a).length!==2||!legal.some(b=>b.type==='use-joker'&&b.jokerId===a.jokerId))return reject('illegal joker');
-  }else if(Object.keys(a).length!==1||!legal.some(b=>b.type===a.type))return reject('illegal phase');
+  }else if(Object.keys(a).length!==1||!(a.type==='abandon'&&s.outcome==='in-progress')&&!legal.some(b=>b.type===a.type))return reject('illegal phase');
   const n:RegicideState={...s,castle:[...s.castle],tavern:[...s.tavern],hand:[...s.hand],discard:[...s.discard],combat:[...s.combat],pending:[...s.pending],jokers:s.jokers.map(j=>({...j}))};
   if(a.type==='play'){
     n.pending=n.hand.filter(id=>a.cardIds.includes(id));n.hand=n.hand.filter(id=>!a.cardIds.includes(id));n.phase='powers';
@@ -191,6 +191,8 @@ function transition(s: Readonly<RegicideState>, a: Readonly<RegicideAction>): Tr
     n.jokers=n.jokers.map(j=>j.id===a.jokerId?{...j,used:true}:j);
     n.discard.push(...n.hand);
     n.hand=n.tavern.splice(0,8);
+  }else if(a.type==='abandon'){
+    n.phase='finished';n.outcome='abandoned';
   }else if(a.type==='accept-defeat'){
     n.phase='finished';n.outcome='loss';
   }else if(a.type==='retaliate'){
