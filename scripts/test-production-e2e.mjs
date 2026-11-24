@@ -105,7 +105,19 @@ async function journey(locale,mobile){
       await page.locator(game.root).waitFor({state:'visible',timeout:20000});
       const first=page.locator(game.root+' button.primary-action').filter({hasText:/Commencer une partie|Start a game|Start playing/}).first();
       if(await first.count())await interact(page,first,mobile);
-      await page.locator(game.actions).first().waitFor({state:'visible',timeout:15000});
+      await page.locator(game.actions).first().waitFor({state:'visible',timeout:15000}).catch(async error=>{
+        const diagnostic=await page.evaluate(()=>({
+          url:location.href,
+          thunderNotice:document.querySelector('.thunder-notice')?.textContent,
+          grimNotice:document.querySelector('.grim-notice')?.textContent,
+          thunderMetrics:document.querySelector('.thunder-metrics')?.textContent,
+          startButtons:[...document.querySelectorAll('button.primary-action')].map(b=>b.textContent?.trim()),
+          visibleActions:document.querySelectorAll('.thunder-actions button').length,
+          intro:document.querySelector('.learning-intro')?.textContent,
+          mode:document.querySelector('.learning-mode')?.textContent,
+        }));
+        throw new Error('No executable UI actions for '+game.name+': '+JSON.stringify(diagnostic),{cause:error});
+      });
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
       if(game.confirm){
