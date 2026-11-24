@@ -38,11 +38,10 @@ test('LTL-T05: no visible numeric move; illegal explore cannot mutate state', ()
   assert.strictEqual(result.state,initial);
 });
 test('revealing visible J/Q/K or Joker does not cause loss, win or loot', () => {
-  for (const id of ['spades-11','joker-1']) {
+  for (const id of ['spades-11','hearts-12','clubs-13','joker-1']) {
     const initial = fresh();
     const trap = initial.deck.find(c=>c.id===id);
-    assert.ok(trap || id==='spades-11', 'card id exists');
-    if (!trap) continue;
+    assert.ok(trap, 'card id exists');
     const prepared = withTopIds(initial,[id]);
     const result = engine.transition(prepared,look);
     assert.equal(result.accepted,true);
@@ -61,7 +60,7 @@ test('look-around cannot be played twice; rejected transition is referentially i
 test('only top card available: reveal once without indexing beyond deck', () => {
   const initial=fresh();
   const state={...initial,deck:[initial.deck[0]],loot:[...initial.deck.slice(1)]};
-  // Such a state is invalid (loot cannot contain traps); a malformed state must be rejected safely.
+  // This cannot be a valid physical state: most of these cards cannot be loot. Reject safely.
   const result=engine.transition(state,look);
   assert.equal(result.accepted,false);
   assert.strictEqual(result.state,state);
