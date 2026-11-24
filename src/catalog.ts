@@ -42,7 +42,7 @@ export const games: readonly GameEntry[] = [
   },
   {
     id: "loot-the-loop", title: "Midnight Syndicate",
-    originalGame: "Loot the Loop", authors: "Jeu original : Wil Su / Isaludo",
+    originalGame: "Loot the Loop", authors: "d’après Loot the Loop, Wil Su (Isaludo)",
     setting: "Années 1930 · Prohibition et dieselpunk",
     description: "Explorez une métropole clandestine entre speakeasies, ruelles et boucles mystérieuses.",
     mechanics: "Adaptation des règles de Loot the Loop en préparation.",
