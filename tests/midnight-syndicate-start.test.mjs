@@ -45,11 +45,16 @@ test('CAR-45: same seed creates the same circular order; independent seeds vary'
   assert.notDeepEqual(engine.createInitialState({seed:12346}).deck,first.deck);
   const copy=structuredClone(first);
   const result=engine.transition(first,{type:'look-around'});
-  assert.equal(result.accepted,false,'observing itself belongs to next story');
-  assert.strictEqual(result.state,first,'rejected action returns the same state');
-  assert.deepEqual(first,copy,'no hidden mutation on an unimplemented transition');
-  assert.deepEqual(engine.getLegalActions({...first,deck:first.deck.map((card,i)=>i?card:{...card,faceUp:true})}),[],
-    'no other actions are implemented in initialization story');
+  assert.equal(result.accepted,true,'observation is implemented since CAR-46');
+  assert.deepEqual(result.state.deck.map(card=>card.id),first.deck.map(card=>card.id));
+  assert.ok(result.state.deck.slice(0,2).every(card=>card.faceUp));
+  assert.ok(result.state.deck.slice(2).every(card=>!card.faceUp));
+  assert.deepEqual(first,copy,'observation must not mutate its input');
+  assert.deepEqual(engine.transition(engine.createInitialState({seed:12345}),{type:'look-around'}),result);
+  const rejected=engine.transition(first,{type:'explore',distance:2});
+  assert.equal(rejected.accepted,false,'hidden cards cannot provide an exploration distance');
+  assert.strictEqual(rejected.state,first);
+  assert.deepEqual(first,copy);
 });
 test('LTL-T19 / CAR-45: validator detects duplicate, omitted, unknown or additional joker',()=>{
   const initial=engine.createInitialState({seed:7});
