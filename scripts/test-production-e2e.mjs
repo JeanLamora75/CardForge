@@ -99,8 +99,8 @@ async function journey(locale,mobile){
       const card=page.locator('.game-card').filter({has:page.getByRole('heading',{name:game.name})});
       await interact(page,card.getByRole('button'),mobile,'Enter');
       await interact(page,page.locator('.context-actions button.primary-action').first(),mobile,'Space');
-      if(await page.locator('.learning-intro').count())
-        await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
+      await page.locator('.learning-intro').waitFor({state:'visible',timeout:15000});
+      await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
       await page.locator(game.root).waitFor({state:'visible',timeout:20000});
       const first=page.locator(game.root+' button.primary-action').filter({hasText:/Commencer une partie|Start a game|Start playing/}).first();
       if(await first.count())await interact(page,first,mobile);
