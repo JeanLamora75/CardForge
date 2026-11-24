@@ -23,7 +23,7 @@ export interface MidnightSyndicateState {
   /** Collected aces and numeric cards, in collection order. */
   loot: LoopCard[];
 }
-export type MidnightSyndicateAction = Readonly<{ type: 'look-around' } | { type: 'explore'; distance: number }>;
+export type MidnightSyndicateAction = Readonly<{ type: 'look-around' } | { type: 'explore'; distance: number } | { type: 'mark-path' } | { type: 'return-to-path'; noteIndex: number }>;
 
 const canonical = [...makeStandardDeck().map(card => card.id), 'joker-1'];
 const validIds = new Set(canonical);
@@ -109,6 +109,9 @@ function getLegalActions(state: Readonly<MidnightSyndicateState>): readonly Midn
     if (rank !== undefined && rank >= 2 && rank <= 10) distances.add(rank);
   }
   for (const distance of distances) actions.push({type:'explore',distance});
+  const top = state.deck[0];
+  if (top?.faceUp && isNumeric(top.id) && state.notes.length < 3) actions.push({type:'mark-path'});
+  for (let noteIndex=0; noteIndex<state.notes.length; noteIndex++) actions.push({type:'return-to-path',noteIndex});
   return actions;
 }
 function transition(
@@ -117,6 +120,18 @@ function transition(
 ): TransitionResult<MidnightSyndicateState> {
   if (!validateState(state).valid || state.outcome !== 'in-progress') {
     return {accepted:false,state:state as MidnightSyndicateState,reason:'invalid or finished game'};
+  }
+  if (action?.type === 'mark-path') {
+    if (Object.keys(action).length !== 1 || !getLegalActions(state).some(legal => legal.type === 'mark-path'))
+      return {accepted:false,state:state as MidnightSyndicateState,reason:'mark-path is not legal'};
+    return {accepted:true,state:{...state,deck:state.deck.slice(1),notes:[...state.notes,state.deck[0]]}};
+  }
+  if (action?.type === 'return-to-path') {
+    if (Object.keys(action).length !== 2 || !getLegalActions(state).some(
+      legal => legal.type === 'return-to-path' && legal.noteIndex === action.noteIndex,
+    )) return {accepted:false,state:state as MidnightSyndicateState,reason:'return-to-path is not legal'};
+    const note = state.notes[action.noteIndex];
+    return {accepted:true,state:{...state,deck:[note,...state.deck],notes:state.notes.filter((_,index)=>index!==action.noteIndex)}};
   }
   if (action?.type === 'explore') {
     if (Object.keys(action).length !== 2 || !getLegalActions(state).some(
