@@ -15,9 +15,10 @@ test("CAR-40: strict Mary matrix gate accepts executable references and fails cl
     mkdirSync(join(planning,"game-rules"),{recursive:true});
     writeFileSync(join(planning,"game-rules","loot-the-loop.md"),"| LTL-T01 | rule |\n");
     writeFileSync(join(planning,"game-rules","card-capture.md"),"| CC-T01 | rule |\n");
+    writeFileSync(join(planning,"game-rules","regicide.md"),"| REG-T01 | rule |\n");
     writeFileSync(join(planning,"clear-the-dungeon-rule-test-matrix.md"),"| CTD-T01 | rule |\n| T-01 | legacy |\n");
     writeFileSync(join(planning,"gridcannon-rule-test-matrix.md"),"| GC-T01 | rule |\n");
-    writeFileSync(join(root,"tests","scenario.test.mjs"),"test('CTD-T01 / T-01 / GC-T01 / LTL-T01 / CC-T01',()=>{assert.ok(true)});\n");
+    writeFileSync(join(root,"tests","scenario.test.mjs"),"test('CTD-T01 / T-01 / GC-T01 / LTL-T01 / CC-T01 / REG-T01',()=>{assert.ok(true)});\n");
     const pass=spawnSync(process.execPath,[auditor,"--require-complete"],{cwd:root,encoding:"utf8"});
     assert.equal(pass.status,0,pass.stderr+pass.stdout);
     // An ID in comments, a skipped test, or an empty callback is not proof.
@@ -30,12 +31,14 @@ test("CAR-40: strict Mary matrix gate accepts executable references and fails cl
     writeFileSync(join(planning,"gridcannon-rule-test-matrix.md"),"| GC-T01 | rule |\n| GC-T02 | skipped/commented |\n| GC-T03 | empty |\n| GC-T04 | nonasserting |\n");
     writeFileSync(join(planning,"game-rules","loot-the-loop.md"),"| LTL-T01 | rule |\n| LTL-T02 | missing |\n");
     writeFileSync(join(planning,"game-rules","card-capture.md"),"| CC-T01 | rule |\n| CC-T02 | missing |\n");
+    writeFileSync(join(planning,"game-rules","regicide.md"),"| REG-T01 | rule |\n| REG-T02 | missing |\n");
     const fail=spawnSync(process.execPath,[auditor,"--require-complete"],{cwd:root,encoding:"utf8"});
     assert.equal(fail.status,1,fail.stderr+fail.stdout);
     assert.match(fail.stdout,/GC-T02/);
     assert.match(fail.stdout,/COVERAGE GAP/);
     assert.match(fail.stdout,/LTL-T02/);
     assert.match(fail.stdout,/CC-T02/);
+    assert.match(fail.stdout,/REG-T02/);
     assert.match(fail.stdout,/GC-T02/);
     assert.doesNotMatch(pass.stdout,/Test without assertions/);
   } finally { rmSync(root,{recursive:true,force:true}); }
