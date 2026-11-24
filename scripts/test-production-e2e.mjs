@@ -194,6 +194,7 @@ async function journey(locale,mobile){
     const sd=page.locator('.sd-board');
     await sd.waitFor();
     await interact(page,sd.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
+    await sd.locator('.sd-line:not(.sd-hand) button[data-position="1"]').waitFor();
     assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
     const initial=await sd.locator('[role=status]').textContent();
     await interact(page,sd.locator('.sd-preview'),mobile);
@@ -203,6 +204,7 @@ async function journey(locale,mobile){
       await interact(page,sd.locator('.sd-preview'),mobile);
       await interact(page,sd.locator('.sd-confirm button.primary-action'),mobile);
     }
+    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     assert.equal(await sd.locator('.sd-hand button').count(),4);
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
