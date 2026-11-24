@@ -21,7 +21,7 @@ export interface SkydeckState {
   enemyCapture: string[];
 }
 export type SkydeckPhase = 'enemy' | 'discard' | 'draw' | 'capture' | 'finished';
-export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' } | { type: 'discard'; cardIds: readonly string[] } | { type: 'capture-a'; targetPosition: number; cardIds: readonly string[] }>;
+export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' } | { type: 'discard'; cardIds: readonly string[] } | { type: 'capture-a'; targetPosition: number; cardIds: readonly string[]; jokerCopyId?: string }>;
 
 const canonical = makeDeckWithJokers();
 const playerIds = new Set(canonical.filter(c=>isJokerCard(c)||[2,3,4].includes(c.rank)).map(c=>c.id));
@@ -59,17 +59,26 @@ function createInitialState(setup:SkydeckSetup):SkydeckState {
 }
 const allIds = new Set(canonical.map(c=>c.id));
 const cardsById = new Map(canonical.map(card=>[card.id,card]));
-function canCapture(targetId:string, selected:readonly string[]):boolean {
+function captureOptions(targetId:string,selected:readonly string[]): (string|undefined)[] {
   const target=cardsById.get(targetId);
-  if(!target||isJokerCard(target)||selected.length===0)return false;
+  if(!target||isJokerCard(target)||selected.length===0)return [];
   const value=(rank:number)=>rank===1?14:rank;
   let total=0;
+  let jokers=0;
+  const references:{id:string;value:number}[]=[];
   for(const id of selected){
     const card=cardsById.get(id);
-    if(!card||isJokerCard(card)||card.suit!==target.suit)return false;
-    total+=value(card.rank);
+    if(!card)return [];
+    if(isJokerCard(card)){jokers++;continue;}
+    if(card.suit!==target.suit)return [];
+    const strength=value(card.rank);
+    total+=strength;
+    references.push({id,value:strength});
   }
-  return total>=value(target.rank);
+  if(jokers===0)return total>=value(target.rank)?[undefined]:[];
+  // Multiple simultaneous Jokers are withheld until the original rule is confirmed.
+  if(jokers!==1)return [];
+  return references.filter(card=>total+card.value>=value(target.rank)).map(card=>card.id);
 }
 function validateState(value:unknown):ValidationResult {
   if(!record(value))return {valid:false,errors:['state must be an object']};
@@ -144,7 +153,11 @@ function getLegalActions(state:Readonly<SkydeckState>):readonly SkydeckAction[]{
         if(target===null)continue;
         for(let mask=1;mask<2**state.hand.length;mask++){
           const cardIds=state.hand.filter((_,i)=>(mask&(1<<i))!==0);
-          if(canCapture(target,cardIds))choices.push({type:'capture-a',targetPosition:index+1,cardIds});
+          for(const jokerCopyId of captureOptions(target,cardIds)){
+            choices.push(jokerCopyId===undefined
+              ?{type:'capture-a',targetPosition:index+1,cardIds}
+              :{type:'capture-a',targetPosition:index+1,cardIds,jokerCopyId});
+          }
         }
       }
       return choices;
@@ -163,10 +176,13 @@ function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>)
        !legal.some(candidate=>candidate.type==='discard'&&candidate.cardIds.length===action.cardIds.length&&
          candidate.cardIds.every(id=>action.cardIds.includes(id))))return reject('illegal discard selection or phase');
   }else if(action.type==='capture-a'){
-    if(Object.keys(action).length!==3||!Number.isInteger(action.targetPosition)||
+    if(Object.keys(action).length!==(Object.hasOwn(action,'jokerCopyId')?4:3)||
+       (Object.hasOwn(action,'jokerCopyId')&&typeof action.jokerCopyId!=='string')||
+       !Number.isInteger(action.targetPosition)||
        !Array.isArray(action.cardIds)||!Array.from(action.cardIds).every(id=>typeof id==='string')||
        new Set(action.cardIds).size!==action.cardIds.length||
        !legal.some(candidate=>candidate.type==='capture-a'&&candidate.targetPosition===action.targetPosition&&
+         candidate.jokerCopyId===action.jokerCopyId&&
          candidate.cardIds.length===action.cardIds.length&&candidate.cardIds.every(id=>action.cardIds.includes(id))))
       return reject('illegal capture selection or phase');
   }else if(Object.keys(action).length!==1||!legal.some(candidate=>candidate.type===action.type)){

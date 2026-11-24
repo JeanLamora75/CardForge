@@ -271,7 +271,7 @@ test('CC-T08: wrong suit, insufficient strength, duplicates, missing cards and i
     assert.equal(r.state,s);
     assert.deepEqual(s,before);
   }
-  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.targetPosition===2&&a.cardIds.includes('joker-1')),false);
+  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.targetPosition===2&&a.cardIds.includes('joker-1')&&!a.jokerCopyId),false);
 });
 test('CC-T09: figures and ace use values 11, 12, 13 and 14, not raw ace rank',()=>{
   for(const [target,good,bad] of [
@@ -312,4 +312,71 @@ test('CC-T15: last enemy captured by action A wins, remaining personal cards are
   assert.deepEqual(n.enemyLine,[null,null,null,null]);
   assert.deepEqual(skydeckEngine.getLegalActions(n),[]);
   assert.equal(skydeckEngine.transition(n,{type:'advance-enemy'}).accepted,false);
+});
+
+test('CC-T10: each physical Joker copies the selected card value and suit',()=>{
+  for(const joker of ['joker-1','joker-2']){
+    const s=captureFixture('hearts-10',['hearts-5',joker,'clubs-2','spades-3']);
+    const a={type:'capture-a',targetPosition:2,cardIds:[joker,'hearts-5'],jokerCopyId:'hearts-5'};
+    const n=act(s,a);
+    assert.deepEqual(n.discard,['hearts-5',joker,'hearts-10']);
+    assert.deepEqual(n.hand,['clubs-2','spades-3']);
+    assert.deepEqual(n.enemyCapture,[]);
+    assert.equal(n.round,s.round+1);
+    assert.equal(n.phase,'enemy');
+    assert.equal(skydeckEngine.transition(n,a).accepted,false);
+  }
+});
+test('CC-T10: copy choices are explicit and only sufficient references are legal',()=>{
+  const s=captureFixture('hearts-13',['hearts-3','hearts-5','joker-1','clubs-2']);
+  const cardIds=['hearts-3','hearts-5','joker-1'];
+  const legal=skydeckEngine.getLegalActions(s).filter(a=>a.type==='capture-a'&&a.targetPosition===2&&a.cardIds.length===3);
+  assert.deepEqual(legal,[{type:'capture-a',targetPosition:2,cardIds,jokerCopyId:'hearts-5'}]);
+  for(const jokerCopyId of ['hearts-3','hearts-13','hearts-7','clubs-2','joker-1','joker-2',undefined,5]){
+    const before=structuredClone(s);
+    const r=skydeckEngine.transition(s,{type:'capture-a',targetPosition:2,cardIds,jokerCopyId});
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,s);
+    assert.deepEqual(s,before);
+  }
+  assert.equal(act(s,legal[0]).discard.includes('hearts-13'),true);
+});
+test('CC-T10: no independent Joker value, wrong suit or extraneous copy field',()=>{
+  const s=captureFixture('hearts-10',['hearts-5','spades-5','joker-1','clubs-2']);
+  for(const a of [
+    {cardIds:['joker-1'],jokerCopyId:'hearts-5'},
+    {cardIds:['spades-5','joker-1'],jokerCopyId:'spades-5'},
+    {cardIds:['hearts-5','spades-5','joker-1'],jokerCopyId:'hearts-5'},
+    {cardIds:['hearts-5','joker-1']},
+    {cardIds:['hearts-5','joker-1'],jokerCopyId:'hearts-5',value:99},
+    {cardIds:['hearts-5','hearts-5','joker-1'],jokerCopyId:'hearts-5'},
+  ]){
+    const r=skydeckEngine.transition(s,{type:'capture-a',targetPosition:2,...a});
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,s);
+  }
+  const natural=captureFixture('hearts-9',['hearts-4','hearts-5','clubs-2','joker-1']);
+  assert.equal(skydeckEngine.transition(natural,{type:'capture-a',targetPosition:2,cardIds:['hearts-4','hearts-5'],jokerCopyId:'hearts-5'}).accepted,false);
+});
+test('CC-T10: copied ace is worth fourteen and a captured Joker recycles with its original identity',()=>{
+  const s=captureFixture('hearts-13',['hearts-1','joker-2','clubs-2','spades-3']);
+  const n=act(s,{type:'capture-a',targetPosition:2,cardIds:['hearts-1','joker-2'],jokerCopyId:'hearts-1'});
+  assert.deepEqual(n.discard,['hearts-1','joker-2','hearts-13']);
+  const d=apply(n,'advance-enemy');
+  const ready=act(d,{type:'discard',cardIds:[]});
+  const empty={...ready,discard:[...ready.discard,...ready.playerDeck],playerDeck:[]};
+  const drawn=act(empty,{type:'draw'});
+  assert.equal([...drawn.hand,...drawn.playerDeck].filter(id=>id==='joker-2').length,1);
+  assert.deepEqual(skydeckEngine.transition(JSON.parse(JSON.stringify(empty)),{type:'draw'}).state,drawn);
+});
+test('CC-R03: provisional guard refuses two Jokers with or without a reference',()=>{
+  const s=captureFixture('hearts-12',['hearts-4','joker-1','joker-2','clubs-2']);
+  for(const cardIds of [['joker-1','joker-2'],['hearts-4','joker-1','joker-2']]){
+    const before=structuredClone(s);
+    const r=skydeckEngine.transition(s,{type:'capture-a',targetPosition:2,cardIds,jokerCopyId:'hearts-4'});
+    assert.equal(r.accepted,false);
+    assert.equal(r.state,s);
+    assert.deepEqual(s,before);
+  }
+  assert.equal(skydeckEngine.getLegalActions(s).some(a=>a.type==='capture-a'&&a.cardIds.includes('joker-1')&&a.cardIds.includes('joker-2')),false);
 });
