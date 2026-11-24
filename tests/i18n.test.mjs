@@ -49,11 +49,15 @@ test("Catalogue and public game names remain stable, while presentation changes 
   assert.equal(translateUiText("Monstres vaincus : 3 / 12","en"),"Monsters defeated: 3 / 12");
   assert.equal(translateUiText("Retour à Thunderfighter","en"),"Back to Thunderfighter");
 });
-test("Both complete rulebooks are bundled locally, translating paragraphs without external lookup",()=>{
-  assert.equal(Object.keys(rulebookEnglish).length,12);
+test("All three rulebooks are bundled locally, translating paragraphs and labels without external lookup",()=>{
+  const paragraphs=Object.entries(rulebookEnglish).filter(([fr])=>fr.length>80);
+  assert.ok(paragraphs.length>=17,"12 existing paragraphs plus five Midnight Syndicate rule paragraphs");
+  for(const prefix of ["Vaincre les douze figures","Mélangez 53 cartes","Une action par tour.","Une arrivée sur une carte cachée","Marquez la première carte","Inspectez librement les positions"]){
+    assert.ok(paragraphs.some(([fr])=>fr.startsWith(prefix)),`Missing rule: ${prefix}`);
+  }
   for (const [fr,en] of Object.entries(rulebookEnglish)) {
-    assert.ok(fr.length>80);
-    assert.ok(en.length>80);
+    assert.ok(fr.trim().length>0);
+    assert.ok(en.trim().length>0);
     assert.equal(translateUiText(fr,"en"),en);
     assert.equal(translateUiText(fr,"fr"),fr);
   }
