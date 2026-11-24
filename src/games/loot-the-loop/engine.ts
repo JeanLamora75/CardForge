@@ -114,7 +114,57 @@ function getLegalActions(state: Readonly<MidnightSyndicateState>): readonly Midn
   for (let noteIndex=0; noteIndex<state.notes.length; noteIndex++) actions.push({type:'return-to-path',noteIndex});
   return actions;
 }
-function transition(
+/** Public projection: hidden cards carry only their current position and visibility. */
+export type PublicLoopCard = Readonly<
+  { position: number; faceUp: false } | { position: number; faceUp: true; id: string }
+>;
+export function inspectMidnightSyndicate(state: Readonly<MidnightSyndicateState>) {
+  if (!validateState(state).valid) throw new TypeError('Invalid game state');
+  const project = (cards: readonly LoopCard[]): PublicLoopCard[] =>
+    cards.map((card,position) => card.faceUp
+      ? {position,faceUp:true,id:card.id}
+      : {position,faceUp:false});
+  return {
+    phase:state.phase,outcome:state.outcome,
+    deck:project(state.deck),notes:project(state.notes),loot:project(state.loot),
+    actions:getLegalActions(state),
+  };
+}
+
+/** Conservative proof: exhaust only mark/return alternatives before a safe
+ * exploration or observation. A hidden arrival is never presumed fatal.
+ * A bounded search that cannot finish returns false, not a loss. */
+export function isProvenMidnightSyndicateDeadEnd(state: Readonly<MidnightSyndicateState>): boolean {
+  if (!validateState(state).valid || state.outcome !== 'in-progress') return false;
+  const pending: MidnightSyndicateState[] = [state as MidnightSyndicateState];
+  const visited = new Set<string>();
+  const limit = 4096;
+  while (pending.length) {
+    const current = pending.pop()!;
+    const key = JSON.stringify([current.deck.map(c=>c.id),current.notes.map(c=>c.id)]);
+    if (visited.has(key)) continue;
+    if (visited.size >= limit) return false;
+    visited.add(key);
+    for (const action of getLegalActions(current)) {
+      if (action.type === 'look-around') return false;
+      if (action.type === 'explore') {
+        const destination = current.deck[action.distance % current.deck.length];
+        if (!destination?.faceUp || destination.id === 'joker-1' ||
+            aces.has(destination.id) || isNumeric(destination.id)) return false;
+        continue;
+      }
+      if (action.type === 'mark-path') {
+        pending.push({...current,deck:current.deck.slice(1),notes:[...current.notes,current.deck[0]]});
+      } else if (action.type === 'return-to-path') {
+        pending.push({...current,deck:[current.notes[action.noteIndex],...current.deck],
+          notes:current.notes.filter((_,i)=>i!==action.noteIndex)});
+      }
+    }
+  }
+  return true;
+}
+
+function transitionRaw(
   state: Readonly<MidnightSyndicateState>,
   action: Readonly<MidnightSyndicateAction>,
 ): TransitionResult<MidnightSyndicateState> {
@@ -160,6 +210,17 @@ function transition(
     index < 2 && !card.faceUp ? {...card,faceUp:true} : card,
   );
   return {accepted:true,state:{...state,deck}};
+}
+
+function transition(
+  state: Readonly<MidnightSyndicateState>,
+  action: Readonly<MidnightSyndicateAction>,
+): TransitionResult<MidnightSyndicateState> {
+  const result = transitionRaw(state,action);
+  if (result.accepted && isProvenMidnightSyndicateDeadEnd(result.state)) {
+    return {accepted:true,state:{...result.state,phase:'finished',outcome:'loss'}};
+  }
+  return result;
 }
 
 export const midnightSyndicateEngine: GameEngine<
