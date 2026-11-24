@@ -386,3 +386,31 @@ h1[tabindex="-1"]:focus { outline: none; }
 .credits-item a, .credits-references a { color:#f1c98d; text-decoration:underline; text-underline-offset:3px; overflow-wrap:anywhere; }
 .credits-warning { border-inline-start:3px solid #f1c98d; padding-inline-start:12px; }
 .credits-references li { padding:4px 0; }
+
+
+/* CAR-53 — Midnight Syndicate internal preview */
+.ms-board { color:#f5e8d0; background:linear-gradient(145deg,#25201e,#17171d); border:1px solid #806344; border-radius:16px; padding:clamp(12px,3vw,28px); min-width:0; }
+.ms-kicker { color:#e6b978; font-weight:800; letter-spacing:.16em; }
+.ms-board h3 { margin:24px 0 10px; color:#f4d8a3; }
+.ms-counters,.ms-actions,.ms-confirm { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+.ms-counters span { background:#332b24; border:1px solid #806344; padding:8px 12px; border-radius:8px; }
+.ms-top,.ms-notes,.ms-inspection { display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(78px,1fr)); }
+.ms-top { grid-template-columns:repeat(2,minmax(0,125px)); }
+.ms-notes { grid-template-columns:repeat(3,minmax(0,105px)); }
+.ms-inspection { grid-template-columns:repeat(auto-fill,minmax(76px,1fr)); }
+.ms-card { display:flex; flex-direction:column; align-items:center; justify-content:space-between; gap:8px; min-height:100px; padding:8px 4px; text-align:center; border:1px solid #b99b68; border-radius:8px; overflow-wrap:anywhere; }
+.ms-card strong { font-size:1.1rem; }
+.ms-card small,.ms-card span { font-size:.75rem; }
+.ms-visible { color:#2e2119; background:#f3e2bc; }
+.ms-hidden { color:#e8c184; background:repeating-linear-gradient(135deg,#30271e 0 9px,#393027 9px 18px); }
+.ms-empty { border-style:dashed; color:#e0c69b; }
+.ms-board button,.ms-board summary { min-height:44px; cursor:pointer; }
+.ms-board button:focus-visible,.ms-board summary:focus-visible,.ms-board h3:focus-visible { outline:3px solid #f4d8a3; outline-offset:3px; }
+.ms-board button[aria-pressed="true"] { outline:2px solid #f4d8a3; background:#5a452c; }
+.ms-board button:disabled { cursor:default; opacity:.65; }
+.ms-confirm { margin:12px 0; padding:12px; border:1px solid #b99b68; border-radius:8px; }
+.ms-confirm p { flex-basis:100%; margin:0; }
+.ms-board details { margin-top:16px; padding:8px; border:1px solid #806344; border-radius:8px; }
+.ms-board summary { padding:10px 0; }
+.ms-error { color:#ffd1b9; }
+@media(max-width:480px) { .ms-board .ms-actions button { flex:1 1 100%; } .ms-board .ms-confirm button { flex:1 1 110px; } .ms-counters span { flex:1 1 42%; } }
