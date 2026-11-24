@@ -35,8 +35,10 @@ export function saveLanguage(store: LanguageStore | null, locale: Locale): boole
  * never fetches translations and remains usable when the application is cached.
  */
 export const english: Readonly<Record<string, string>> = {
+  "Bienvenue dans Skydeck":"Welcome to Skydeck",
+  "Apprendre ou jouer à Skydeck":"Learn or play Skydeck",
   "Ouvrir le plateau Skydeck":"Open the Skydeck board",
-  "Les plateaux sont accessibles en préversion. Skydeck propose une partie de recette en mémoire.":"The boards are available in preview. Skydeck offers an in-memory test game.",
+  "Les plateaux sont accessibles en préversion avec tutoriel facultatif et sauvegarde locale.":"The boards are available in preview with optional tutorial and local saves.",
   "Les plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck sont accessibles en préversion depuis leurs fiches.":"Grim Delve, Thunderfighter, Midnight Syndicate and Skydeck boards are available in preview from their game pages.",
   "CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck en préversion":"CardForge · Collection in development · Grim Delve, Thunderfighter, Midnight Syndicate and Skydeck boards in preview",
   "Disponible":"Available",

@@ -21,7 +21,7 @@ export interface SkydeckState {
   enemyCapture: string[];
 }
 export type SkydeckPhase = 'enemy' | 'discard' | 'draw' | 'capture' | 'finished';
-export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' } | { type: 'discard'; cardIds: readonly string[] } | { type: 'capture-a'; targetPosition: number; cardIds: readonly string[]; jokerCopyId?: string } | { type: 'capture-b'; cardId: string } | { type: 'capture-c'; targetPosition: number; cardIds: readonly string[] }>;
+export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' | 'abandon' } | { type: 'discard'; cardIds: readonly string[] } | { type: 'capture-a'; targetPosition: number; cardIds: readonly string[]; jokerCopyId?: string } | { type: 'capture-b'; cardId: string } | { type: 'capture-c'; targetPosition: number; cardIds: readonly string[] }>;
 
 const canonical = makeDeckWithJokers();
 const playerIds = new Set(canonical.filter(c=>isJokerCard(c)||[2,3,4].includes(c.rank)).map(c=>c.id));
@@ -216,6 +216,12 @@ export function inspectSkydeck(state:Readonly<SkydeckState>):SkydeckPublicState 
 function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>):TransitionResult<SkydeckState>{
   const reject=(reason:string):TransitionResult<SkydeckState>=>({accepted:false,state,reason});
   if(!record(action))return reject('invalid action');
+  if(action.type==='abandon'){
+    if(Object.keys(action).length!==1||!validateState(state).valid||state.outcome!=='in-progress')
+      return reject('illegal abandonment');
+    const next:SkydeckState={...state,phase:'finished',outcome:'abandoned'};
+    return validateState(next).valid?{accepted:true,state:next}:reject('invalid abandonment');
+  }
   const legal=getLegalActions(state);
   if(action.type==='discard'){
     if(Object.keys(action).length!==2||!Array.isArray(action.cardIds)||

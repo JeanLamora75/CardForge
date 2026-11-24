@@ -17,7 +17,6 @@ import { GameStatisticsPanel } from "./components/GameResultPanel";
 import PrivacyPanel from "./components/PrivacyPanel";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
-import SkydeckBoard from "./components/SkydeckBoard";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -129,7 +128,7 @@ function GameDetail({
               <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
               <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
             </div>
-            <p className="help-note">Les plateaux sont accessibles en préversion. Skydeck propose une partie de recette en mémoire.</p>
+            <p className="help-note">Les plateaux sont accessibles en préversion avec tutoriel facultatif et sauvegarde locale.</p>
             <details className="source-credits">
               <summary>Origine du jeu et crédits</summary>
               <dl className="game-facts">
@@ -152,10 +151,10 @@ function GameDetail({
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && game.id === "card-capture" ? <SkydeckBoard key={game.id} language={language} hintsEnabled={hintsEnabled} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <GameLearning key={game.id} gameId={game.id} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
-              {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop") ? <Rulebook gameId={game.id} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
+              {(game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
               <a className="secondary-action" href={ruleReference[game.id]} target="_blank" rel="noopener noreferrer">
                 Consulter le référentiel des règles <span aria-hidden="true">↗</span>
               </a>

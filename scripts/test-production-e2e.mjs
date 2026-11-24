@@ -172,8 +172,10 @@ async function journey(locale,mobile){
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       assert.equal(await page.locator('html').getAttribute('lang'),locale);
     }
-    // Skydeck internal preview: no persistence or statistics before its persistence story.
+    // Skydeck normal play: persistence and exact offline resume.
     await page.goto(HOST+'#game/card-capture/board');
+    await page.locator('.learning-intro').waitFor();
+    await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
     const sd=page.locator('.sd-board');
     await sd.waitFor();
     await interact(page,sd.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
@@ -190,7 +192,9 @@ async function journey(locale,mobile){
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));
-    assert.equal(await readSaved(page,'card-capture'),null);
+    saved['card-capture']=await readSaved(page,'card-capture');
+    assert.ok(saved['card-capture']);
+    assert.equal(saved['card-capture'].state.phase,'capture');
     await page.close();
     await context.setOffline(true);
     const offline=await context.newPage();
@@ -227,6 +231,11 @@ async function journey(locale,mobile){
         await offline.goto(HOST+'#game/'+game.id+'/rules',{waitUntil:'domcontentloaded'});
         await offline.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       }
+      await offline.goto(HOST+'#game/card-capture/board',{waitUntil:'domcontentloaded'});
+      await offline.locator('.sd-resumed').waitFor();
+      assert.deepEqual(await readSaved(offline,'card-capture'),saved['card-capture']);
+      await offline.goto(HOST+'#game/card-capture/rules');
+      await offline.getByRole('heading',{name:locale==='fr'?'Règles de Skydeck':'Skydeck rules'}).waitFor();
       assert.equal(await offline.locator('html').getAttribute('lang'),locale);
       // Mobile browser uses real touch events, no desktop-only hover action.
       await offline.goto(HOST+'#game/loot-the-loop/board',{waitUntil:'domcontentloaded'});

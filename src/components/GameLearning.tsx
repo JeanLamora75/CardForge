@@ -5,16 +5,21 @@ import GrimDelveBoard from "./GrimDelveBoard.tsx";
 import ThunderfighterBoard from "./ThunderfighterBoard.tsx";
 import MidnightSyndicateBoard from "./MidnightSyndicateBoard.tsx";
 import MidnightSyndicateRulebook from "./MidnightSyndicateRulebook.tsx";
+import SkydeckBoard from "./SkydeckBoard.tsx";
+import SkydeckRulebook from "./SkydeckRulebook.tsx";
+import type {Locale} from "../i18n/language.ts";
 
 const names: Record<PlayableLearningGame, string> = {
   "clear-the-dungeon": "Grim Delve",
   gridcannon: "Thunderfighter",
   "loot-the-loop": "Midnight Syndicate",
+  "card-capture": "Skydeck",
 };
 function local(): Storage | null {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
-export function Rulebook({ gameId }: { gameId: PlayableLearningGame }) {
+export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGame; language?:Locale }) {
+  if (gameId === "card-capture") return <SkydeckRulebook language={language} />;
   if (gameId === "loot-the-loop") return <MidnightSyndicateRulebook />;
   const grim = gameId === "clear-the-dungeon";
   return <article className="learning-rulebook" aria-labelledby="learning-rulebook-title">
@@ -38,7 +43,7 @@ export function Rulebook({ gameId }: { gameId: PlayableLearningGame }) {
   </article>;
 }
 
-export default function GameLearning({ gameId, hintsEnabled, onHintsChange }: { gameId: PlayableLearningGame; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void }) {
+export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange }: { gameId: PlayableLearningGame; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
   const [mode, setMode] = useState<LearningChoice | null>(() => readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
@@ -72,16 +77,16 @@ export default function GameLearning({ gameId, hintsEnabled, onHintsChange }: { 
         <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
       </div>
       {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
-      {showRules ? <Rulebook gameId={gameId} /> : null}
+      {showRules ? <Rulebook gameId={gameId} language={language} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
-          gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
+          gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
-        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard hintsEnabled={hintsEnabled} />}
+        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard hintsEnabled={hintsEnabled} />}
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}
     {mode === null ? <button className="back-link" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>{showRules ? "Masquer les règles" : "Lire les règles avant de choisir"}</button> : null}
-    {mode === null && showRules ? <Rulebook gameId={gameId} /> : null}
+    {mode === null && showRules ? <Rulebook gameId={gameId} language={language} /> : null}
   </section>;
 }
