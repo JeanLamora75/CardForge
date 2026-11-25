@@ -173,23 +173,27 @@ async function immersiveScreens(){
     await assertPaintedArt(page,".forge-button-art","buttons");
     await assertPaintedArt(page,".forge-menu .forge-effect","effects");
     if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/"+id+"-"+viewport.width+".png"}); }
-    assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.left>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-15&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
+    assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.left>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
     if(viewport.width<viewport.height){
       const geometry=await page.locator(".forge-menu-actions").evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,viewport:innerWidth,bottom:r.bottom,height:innerHeight};});
-      assert.ok(geometry.width>=Math.min(geometry.viewport-32,540)-1,JSON.stringify(geometry));
-      assert.ok(geometry.bottom<=geometry.height-15,JSON.stringify(geometry));
+      assert.ok(Math.abs(geometry.width-Math.min(geometry.viewport*.9,540))<=2,JSON.stringify(geometry));
+      assert.ok(geometry.bottom<=geometry.height-31,JSON.stringify(geometry));
     }
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
     assert.equal(await page.locator(".forge-menu > .forge-return,.forge-menu-foot,.forge-credits").count(),0);
-    assert.ok(await page.locator(".forge-title").evaluate(n=>{const r=n.getBoundingClientRect();return Math.abs(r.x+r.width/2-innerWidth/2)<2;}),"logo centered");
+    assert.ok(await page.locator(".forge-title").evaluate((n,shift)=>{const r=n.getBoundingClientRect();const offset=r.x+r.width/2-innerWidth/2;return shift?offset>=8&&offset<=innerWidth*.12&&r.right<=innerWidth:r.left>=0&&Math.abs(offset)<2;},viewport.width<viewport.height&&["regicide","loot-the-loop"].includes(id)),"logo placement per world");
+    assert.equal(await page.locator(".forge-command").count(),5);
+    await page.keyboard.press("Tab");
+    await page.locator(".forge-command").first().focus();
+    assert.ok(await page.locator(".forge-command").first().evaluate(n=>n.matches(":focus-visible")&&getComputedStyle(n).outlineStyle==="solid"),"visible keyboard focus");
     assert.match(await page.locator(".forge-command").last().innerText(),/^(Retour|Back)$/);
     assert.equal(await page.locator(".forge-command.primary-action").count(),1);
     if(viewport.width<=600&&viewport.width<viewport.height)assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().width>=innerWidth*.85),"portrait commands must fill available width");
     assert.equal(await page.locator(".forge-command-back").count(),1);
     assert.ok(await page.locator(".forge-command.primary-action .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity))>await page.locator(".forge-command-back .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity)),"primary action must stand out from return");
     assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect(),l=n.querySelector("span").getBoundingClientRect();return Math.abs((r.top+r.bottom-l.top-l.bottom)/2)<=2;})),"labels must be vertically centered");
-    if(viewport.width<viewport.height) assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().bottom<=innerHeight-15),"menu must leave room below commands");
+    if(viewport.width<viewport.height) assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().bottom<=innerHeight-31),"menu must leave room below commands");
     await page.locator(".forge-command").last().click();
     await page.locator(".forge-gallery").waitFor();
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
@@ -291,7 +295,7 @@ async function journey(locale,mobile){
       await page.goto(HOST+'#game/'+game.id);
       await page.locator('.forge-menu[data-saved="yes"]').waitFor();
       assert.equal(await page.locator('.forge-command').count(),5);
-      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-15&&r.height>=44&&!!e&&n.contains(e);})), 'saved menu: all five commands must fit and be clickable');
+      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.height>=44&&!!e&&n.contains(e);})), 'saved menu: all five commands must fit and be clickable');
       if(mobile){const {mkdirSync}=await import('node:fs');mkdirSync('ux-screenshots',{recursive:true});await page.screenshot({path:'ux-screenshots/'+game.id+'-saved-'+locale+'.png'});}
       await page.goto(HOST+'#game/'+game.id+'/board');
       await page.locator(game.root).waitFor();
