@@ -448,9 +448,9 @@ h1[tabindex="-1"]:focus { outline: none; }
 /* Immersive launcher and independent game menus. */
 .forge-home,.forge-full{position:relative;isolation:isolate;max-width:none;width:100%;padding:0;min-height:100dvh;}
 .forge-home{height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
-.forge-world-bg{position:absolute;inset:0;z-index:-2;background:#101018 var(--portrait) center/cover no-repeat;}
+.forge-world-bg{position:absolute;inset:0;z-index:-2;background-color:#101018;background-image:var(--portrait);background-position:center;background-size:cover;background-repeat:no-repeat;}
 .forge-world-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0003,transparent 32%,#0005 65%,#000b);}
-.forge-effect{position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--effect) center bottom/100% auto no-repeat;opacity:.15;animation:forge-drift 18s ease-in-out infinite alternate;overflow:hidden;}
+.forge-effect{position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:var(--effect);background-position:center bottom;background-size:100% auto;background-repeat:no-repeat;opacity:.15;animation:forge-drift 18s ease-in-out infinite alternate;overflow:hidden;}
 @keyframes forge-drift{from{transform:translateY(0);opacity:.08}to{transform:translateY(-12px);opacity:.19}}
 .forge-home .topbar{flex:none;min-height:0;padding:8px max(16px,env(safe-area-inset-right)) 4px max(16px,env(safe-area-inset-left));border:0;gap:8px;}
 .forge-home .brand{width:min(40vw,240px);}.world-logo{display:block;width:100%;height:auto;object-fit:contain;}
@@ -476,15 +476,22 @@ h1[tabindex="-1"]:focus { outline: none; }
 .forge-title{margin:0;flex:0 1 auto;width:min(72vw,460px);max-height:25%;display:flex;justify-content:center;align-items:start;}
 .forge-title .world-logo{max-height:100%;width:100%;object-fit:contain;filter:drop-shadow(0 4px 8px #000b);}
 .forge-menu-actions.context-actions{margin:auto 0 0;width:min(75vw,310px);display:grid;gap:3px;flex:none;}
-.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{display:flex;align-items:center;justify-content:center;min-height:44px;height:clamp(44px,8.5dvh,76px);padding:4px 16%;border:0;border-radius:0;background:transparent var(--button) center/100% 100% no-repeat;color:#fff5dc;font:bold clamp(.78rem,2.8vw,1.1rem)/1.1 Georgia,serif;text-shadow:0 2px 4px #000,0 0 5px #000;filter:drop-shadow(0 3px 5px #0009);}
+.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{display:flex;align-items:center;justify-content:center;min-height:44px;height:clamp(44px,8.5dvh,76px);padding:4px 16%;border:0;border-radius:0;background-color:#30231b;background-image:var(--button);background-position:center;background-size:100% 100%;background-repeat:no-repeat;color:#fff5dc;font:bold clamp(.78rem,2.8vw,1.1rem)/1.1 Georgia,serif;text-shadow:0 2px 4px #000,0 0 5px #000;filter:drop-shadow(0 3px 5px #0009);}
 .forge-command:hover,.forge-command:focus-visible{filter:brightness(1.15) drop-shadow(0 0 5px #e8b77788);}
 .forge-command:active{transform:scale(.97);}
 .forge-menu-foot{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;max-width:100%;font-size:.68rem;color:#f5e6c8;text-shadow:0 1px 4px #000;background:#0008;padding:4px 8px;border-radius:6px;}
 .forge-credits summary{cursor:pointer;min-height:24px;display:flex;align-items:center;}
 .forge-credits[open] p{position:absolute;bottom:40px;left:8px;right:8px;background:#18141e;border:1px solid #ab936a;padding:12px;z-index:4;margin:0;text-align:center;}
-.forge-transition::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--effect) center/cover no-repeat;z-index:4;animation:forge-exit .32s ease-in forwards;}
+.forge-transition::after{content:"";position:absolute;inset:0;pointer-events:none;background-image:var(--effect);background-position:center;background-size:cover;background-repeat:no-repeat;z-index:4;animation:forge-exit .32s ease-in forwards;}
 @keyframes forge-exit{from{opacity:0;transform:scale(.96)}to{opacity:.8;transform:scale(1.03)}}
 @media(orientation:landscape){.forge-world-bg{background-image:var(--landscape)}.forge-grid{grid-template-columns:repeat(5,minmax(0,1fr));}.forge-title{width:min(46vw,360px);max-height:30%;}.forge-menu-actions.context-actions{width:min(90vw,900px);grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}.forge-command,.forge-command.primary-action{height:clamp(44px,10dvh,64px);font-size:clamp(.75rem,2vw,1rem);}}
 @media(min-width:900px) and (min-height:650px){.forge-menu-actions.context-actions{width:min(65vw,680px);grid-template-columns:repeat(2,minmax(0,1fr));}.forge-command,.forge-command.primary-action{height:65px;}}
 [data-motion="off"] .forge-effect,[data-motion="off"] .forge-transition::after{animation:none;}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-effect,:root:not([data-motion="on"]) .forge-transition::after{animation:none;}}
+
+/* Keep the menu inside the viewport even when a saved game adds a fifth command. */
+.forge-menu{min-height:0;box-sizing:border-box;}
+.forge-title{min-height:0;flex-shrink:1;}
+.forge-menu-actions.context-actions{max-width:100%;gap:3px;}
+.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{height:clamp(44px,7dvh,65px);}
+.forge-menu-foot{flex:none;}

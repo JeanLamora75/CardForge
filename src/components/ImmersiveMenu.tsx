@@ -4,7 +4,7 @@ import type { Locale } from "../i18n/language";
 import type { CatalogGameProgress } from "../application/catalog-navigation";
 const slugs: Record<GameId,string> = {"clear-the-dungeon":"grim-delve",gridcannon:"thunderfighter","card-capture":"skydeck","loot-the-loop":"midnight-syndicate",regicide:"les-douze-tyrans"};
 const root=import.meta.env.BASE_URL;
-export function art(kind:string, slug:string){return root+"art/"+kind+"/"+slug+".webp";}
+export function art(kind:string, slug:string){return new URL(root+"art/"+kind+"/"+slug+".webp",document.baseURI).href;}
 export function theme(slug:string):CSSProperties {return {"--portrait":`url("${art("worlds",slug)}")`,"--landscape":`url("${art("worlds-landscape",slug)}")`,"--effect":`url("${art("effects",slug)}")`,"--button":`url("${art("buttons",slug)}")`} as CSSProperties;}
 export function WorldLogo({slug,title}:{slug:string;title:string}){return <img className="world-logo" src={art("logos",slug)} alt={title} draggable={false}/>;}
 export function Gallery({language,progress,open,scrollTop,onScroll}:{language:Locale;progress:Partial<Record<GameId,CatalogGameProgress>>;open:(id:GameId,button:HTMLButtonElement)=>void;scrollTop:number;onScroll:(v:number)=>void}){
