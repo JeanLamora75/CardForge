@@ -9,9 +9,8 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { heading.current?.focus(); }, []);
 
-  return <section className="context-page credits-page forge-settings-page" data-i18n-ignore aria-labelledby="credits-heading">
-    <button type="button" className="back-link" onClick={onBack}>{en ? "← Back to settings" : "← Retour aux paramètres"}</button>
-    <h1 id="credits-heading" tabIndex={-1} ref={heading}>{en ? "About CardForge and credits" : "À propos de CardForge et crédits"}</h1>
+  return <section className="context-page credits-page forge-settings-page settings-subpage" data-i18n-ignore aria-labelledby="credits-heading">
+    <header className="forge-settings-heading"><button type="button" className="settings-top-back" aria-label={en?"Back to settings":"Retour aux paramètres"} onClick={onBack}>←</button><h1 id="credits-heading" tabIndex={-1} ref={heading}>{en?"Credits and licences":"Crédits et licences"}</h1></header>
     <p><strong>CardForge — v{APP_VERSION}</strong></p>
     <p>{en
       ? "A free, ad-free collection of solo card games. Each game uses the original game's rules but has an independent visual universe created for CardForge. Naming a source or author does not imply affiliation, endorsement or permission to publish."

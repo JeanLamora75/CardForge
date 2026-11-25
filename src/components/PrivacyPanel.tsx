@@ -102,7 +102,8 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
           {english ? "Delete preferences" : "Supprimer les préférences"}
         </button>
       </details>
-      <div className="privacy-action">
+      <div className="privacy-action privacy-sensitive-zone">
+        <p className="privacy-zone-label"><span aria-hidden="true">⚠ </span>{english?"Danger zone":"Zone sensible"}</p>
         <h4>{english ? "All CardForge data" : "Toutes les données CardForge"}</h4>
         <p>{english ? "Irreversibly erases every game's saves, results and statistics, plus all CardForge preferences." :
           "Efface irréversiblement les sauvegardes, résultats et statistiques de tous les jeux ainsi que toutes les préférences CardForge."}</p>

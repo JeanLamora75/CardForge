@@ -163,9 +163,12 @@ async function immersiveScreens(){
    if(viewport.width<600){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
    if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390-"+locale+".png"});}
    await page.locator(".forge-settings-tile").click();
+   assert.equal(await page.locator(".settings-top-back").count(),1);
+   assert.equal(await page.locator(".forge-settings-footer").count(),0);
+   assert.ok(await page.locator(".forge-settings-heading").evaluate(n=>{const r=n.getBoundingClientRect(),h=n.querySelector("h1").getBoundingClientRect();return Math.abs((h.left+h.right-r.left-r.right)/2)<2;}),"centered settings title");
    await page.locator('[data-settings-category="language"]').click();
    await page.locator("#settings-language").waitFor();
-   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="audio"]').click();
    assert.equal(await page.getByRole("slider").count(),2);
    const music=page.locator("#musicVolume"),sounds=page.locator("#soundsVolume");
@@ -175,11 +178,18 @@ async function immersiveScreens(){
    await sounds.focus();await page.keyboard.press("ArrowRight");assert.equal(await sounds.inputValue(),"1");
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("cardforge.settings.v1")).soundsVolume),1);
    await sounds.fill("0");
-   await page.locator(".forge-settings-footer .back-link").click();
+   assert.equal(await page.locator(".volume-muted").count(),2);
+   await sounds.fill("35");
+   assert.equal(await page.locator(".volume-muted").count(),1);
+   await page.locator(".settings-top-back").click();
+   assert.match(await page.locator('[data-settings-category="audio"]').innerText(),/35 %/);
+   await page.locator('[data-settings-category="audio"]').click();await page.locator("#soundsVolume").fill("0");await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="comfort"]').click();
    await page.locator("#settings-animations").waitFor();
-   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="privacy"]').click();
+   assert.equal(await page.locator(".privacy-sensitive-zone").count(),1);
+   assert.equal(await page.locator(".settings-top-back").count(),1);
    await page.locator(".inventory-details summary").click();
    assert.ok(await page.locator(".privacy-inventory li").count()>=7);
    await page.locator("details.privacy-action summary").first().click();
@@ -188,16 +198,16 @@ async function immersiveScreens(){
    assert.ok(await page.locator(".privacy-confirm-actions button").first().evaluate(n=>document.activeElement===n));
    await page.locator(".privacy-confirm-actions button").first().click();
    assert.equal(await page.getByRole("alertdialog").count(),0);
-   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="about"]').click();
    await page.locator(".settings-credits").click();
    await page.locator(".credits-page").waitFor();
    assert.equal(await page.locator("details.credits-item summary img").count(),5);
    await page.locator("details.credits-item summary").first().click();
    assert.ok(await page.locator("details.credits-item").first().getAttribute("open")!==null);
-   await page.locator(".credits-page .back-link").click();
+   await page.locator(".credits-page .settings-top-back").click();
    await page.locator('[data-settings-category="language"]').waitFor();
-   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator(".settings-top-back").click();
    await page.locator(".forge-gallery").waitFor();
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
@@ -310,8 +320,8 @@ async function journey(locale,mobile){
     await page.locator('[data-settings-category="language"]').click();
     const select=page.locator('#settings-language');
     await select.selectOption(locale);
-    await page.locator('.forge-settings-footer .back-link').click();
-    await page.locator('.forge-settings-footer .back-link').click();
+    await page.locator('.settings-top-back').click();
+    await page.locator('.settings-top-back').click();
     await page.locator('.forge-gallery').waitFor();
     assert.equal(await page.locator('html').getAttribute('lang'),locale);
     assert.equal(await page.getByRole('heading',{name:/Choisissez votre univers|Choose your universe/}).count(),0);
@@ -397,8 +407,8 @@ async function journey(locale,mobile){
         assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');
         assert.deepEqual(await readSaved(page,game.id),after,'switching language must not alter game state');
         await select.selectOption(locale);
-        await page.locator('.forge-settings-footer .back-link').click();
-        await page.locator('.forge-settings-footer .back-link').click();
+        await page.locator('.settings-top-back').click();
+        await page.locator('.settings-top-back').click();
       }
       await page.goto(HOST+'#game/'+game.id+'/rules');
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();

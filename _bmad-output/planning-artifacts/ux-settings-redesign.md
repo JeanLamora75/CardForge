@@ -33,3 +33,13 @@ Publication du code ne vaut pas réussite de CI. Recette visuelle et résultats 
 - SET-21/22 : panneaux dépliables confidentialité, données par jeu, préférences, crédits avec logos et notices complètes.
 - SET-23/24 : marges et styles harmonisés, confirmations et droits inchangés.
 - SET-25 : tests unitaires migration et gains, E2E FR/EN, responsive et hors ligne ; résultats effectifs requis avant clôture.
+
+## Recette V3 — SET-26 à SET-35
+- SET-26/27 : retour unique dans le bandeau, retour catalogue depuis le catalogue et écran d’origine depuis une partie (contrat existant préservé).
+- SET-28 : bandeau et cartes compacts, cibles de 44 px minimum.
+- SET-29 : résumés dynamiques des volumes, aides, animations, langue et version.
+- SET-30/31 : indication de silence uniquement à zéro, test sonore pleine largeur, aides dépliables et messages utiles conservés.
+- SET-32 : zone sensible distincte, aucun changement des confirmations ni des périmètres.
+- SET-33 : À propos centré avec logo, version, gratuité, absence de publicité et restriction de diffusion.
+- SET-34 : titres centrés par grille symétrique, bandeau commun y compris crédits.
+- SET-35 : tests FR/EN et huit résolutions adaptés, contrôles de navigation, résumés et zone sensible ; CI et recette nécessaires.
