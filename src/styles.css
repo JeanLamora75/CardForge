@@ -1082,3 +1082,37 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 @keyframes tf-impact{0%,35%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1.7)}}
 :root[data-motion=off] .tf-shot-live{display:none;}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-shot-live{display:none;}}
+
+/* CAR-92: exclusive cinematic terminal view. No active board or HUD underneath. */
+.shell.thunder-command-surface:has(.tf-ending){min-height:100dvh;padding:0;display:block;}
+.thunder-command-page:has(.tf-ending){max-width:none;margin:0;padding:0;width:100%;}
+.thunder-command-page:has(.tf-ending) .tf-command-header{display:none;}
+.thunder-command-page:has(.tf-ending) :is(.board-page,.game-learning,.tf-training-wrap){width:100%;margin:0;padding:0;max-width:none;}
+.tf-ending.game-final-screen{--end-accent:#f3bc70;box-sizing:border-box;margin:0;border:0;border-radius:0;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;place-items:center;background:linear-gradient(0deg,#050b14 2%,#050b14b3 45%,#050b1410 100%),url("./assets/thunderfighter-end-win.svg") center top/cover;color:#fff3df;}
+.tf-ending.game-final-screen[data-result=loss]{--end-accent:#ff916c;background:linear-gradient(0deg,#100a0c 2%,#100a0cb3 45%,#100a0c10 100%),url("./assets/thunderfighter-end-loss.svg") center top/cover;}
+.tf-ending.game-final-screen[data-training=true]{--end-accent:#85d5f8;background:linear-gradient(0deg,#071421,#07142188),url("./assets/thunderfighter-space.svg") center/cover;}
+.tf-ending-main{width:min(100%,650px);display:flex;flex-direction:column;align-items:center;gap:clamp(5px,1.5dvh,14px);text-align:center;}
+.tf-ending .world-logo{width:clamp(120px,38vw,250px);height:clamp(40px,10dvh,90px);object-fit:contain;}
+.tf-ending-hero{width:100%;color:var(--end-accent);filter:drop-shadow(0 0 10px #000);}
+.tf-ending-hero svg{width:clamp(46px,11dvh,96px);height:clamp(36px,9dvh,76px);}
+.tf-ending.game-final-screen h2{font:900 clamp(1.8rem,7vw,3.7rem)/1.05 inherit;font-family:inherit;font-weight:900;font-size:clamp(1.8rem,7vw,3.7rem);line-height:1.05;color:var(--end-accent);margin:0;letter-spacing:.04em;text-shadow:0 2px 8px #000;}
+.tf-ending-subtitle{font-size:clamp(.75rem,3vw,1.2rem);font-weight:800;letter-spacing:.08em;margin:3px 0;}
+.tf-ending-explanation{margin:0;font-size:clamp(.8rem,2.8vw,1.05rem);line-height:1.3;max-width:38ch;}
+.tf-ending-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;width:100%;}
+.tf-ending-metrics>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:5px 3px;background:#0d1d29db;border:1px solid var(--end-accent);border-radius:6px;min-width:0;}
+.tf-ending-metrics span{color:var(--end-accent);font-size:1.3rem;line-height:1;}
+.tf-ending-metrics strong{font-size:clamp(1.1rem,4vw,1.65rem);color:var(--end-accent);}
+.tf-ending-metrics small{font-size:clamp(.64rem,2.5vw,.85rem);line-height:1.15;}
+.tf-ending .tf-ending-actions{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0;}
+.tf-ending .tf-ending-actions>*{width:100%;min-height:44px;padding:6px;font-weight:800;}
+.tf-ending .primary-action{background:linear-gradient(#f5d89c,#bb7936);color:#181716;border:1px solid #ffe3a7;}
+.tf-ending-details-link{min-height:44px;background:#0c1c29b8;color:#e6edf2;border:1px solid #6e8798;border-radius:5px;padding:4px 14px;font-size:.85rem;}
+.tf-ending-dialog{width:min(92vw,520px);max-height:85dvh;padding:0;color:#edf5fa;background:#142735;border:1px solid #7296ab;border-radius:10px;}
+.tf-ending-dialog[open]{display:flex;flex-direction:column;}
+.tf-ending-dialog::backdrop{background:#02070bcb;}
+.tf-ending-dialog header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px;border-bottom:1px solid #7296ab;}
+.tf-ending-dialog header button{min-height:44px;}
+.tf-ending-dialog-content{overflow:auto;min-height:0;padding:10px;text-align:left;}
+.tf-ending-dialog dl div{display:flex;justify-content:space-between;gap:10px;padding:6px;border-bottom:1px solid #496272;}
+.tf-ending-dialog dd{margin:0;font-weight:700;}
+@media(orientation:landscape) and (max-height:500px){.tf-ending-main{gap:4px;}.tf-ending .world-logo{height:35px;}.tf-ending-hero svg{height:30px;}.tf-ending.game-final-screen h2{font-size:1.65rem;}.tf-ending-metrics span{display:none;}.tf-ending-metrics>div{padding:3px;}.tf-ending .tf-ending-details-link{min-height:44px;}}

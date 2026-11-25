@@ -11,8 +11,8 @@ import { startPersistentGame, type PersistentGameSession } from "../application/
 import { resumeRegisteredGame } from "../application/registered-save-migrations.ts";
 import { storageRecoveryMessage } from "../application/storage-recovery-messages.ts";
 import { createTutorialSession } from "../application/learning.ts";
-import { makeThunderfighterSummary, replayFinishedGame } from "../application/game-results.ts";
-import GameResultPanel from "./GameResultPanel.tsx";
+import { replayFinishedGame } from "../application/game-results.ts";
+import ThunderfighterEnding from "./ThunderfighterEnding.tsx";
 import { playGameplayEffect } from "../application/audio.ts";
 import type {Locale} from "../i18n/language.ts";
 import {thunderCardView} from "../application/thunderfighter-card-view.ts";
@@ -78,7 +78,7 @@ export function previewThunderfighterAction(state: ThunderfighterState, action: 
     changingCards: after.physicalCardCount === 54,
   };
 }
-export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial, language="fr" }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void; language?:Locale }) {
+export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial, onExitTutorial, language="fr" }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void; onExitTutorial?:()=>void; language?:Locale }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<ThunderfighterState | null>(null);
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
@@ -266,6 +266,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const revealed=search?.visible?search.revealedNumerics:[];
   const detail=state&&inspected?thunderCardView(state,inspected,language,revealed):null;
   function renderCard(id:string){const view=state?thunderCardView(state,id,language,revealed):null;return view?<ThunderTacticalCard key={id} card={view} locale={language} onInspect={()=>{inspectTrigger.current=document.activeElement as HTMLElement;setInspected(id);}}/>:null;}
+  if(state&&(state.outcome==="win"||state.outcome==="loss"))return <ThunderfighterEnding state={state} tutorial={tutorial} language={language} busy={busy} notice={notice} onReplay={()=>void replay()} onExitTutorial={onExitTutorial}/>;
   return <section className={`thunder-board${tutorial?" tf-training":""}${state?.outcome==="in-progress"?" tf-live":""}`} aria-labelledby="thunder-title" onKeyDown={event=>{if(event.key==="Escape"&&!event.defaultPrevented&&(selection||targetChoice||special)&&!inspected){event.preventDefault();event.stopPropagation();if(!busy)cancelSelection();}}}>
     <h2 id="thunder-title" className="thunder-sr-only">Poste de commandement</h2>
     {!state?<p className="thunder-notice" role="status" aria-live="polite">{notice}</p>:null}
@@ -275,7 +276,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong></span>
         <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
-      {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
+
       <div className="tf-combat-layout">
       <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true" data-dragging={!!ghost&&!ghost.returning}>

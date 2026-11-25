@@ -43,3 +43,6 @@ Synthèse Amelia : priorité plateau, console compacte et stable, carte + consig
 
 ## TF-UX-73–81 — Combat lisible
 Trajectoires et contributions calculées par le moteur, puissance/résistance et succès/échec avant confirmation, laser et impact après action acceptée, deux axes simultanés, respect du mouvement réduit. Superposition non interactive sans changement de géométrie. La carte déclencheuse est exclue, même couleur pour Dame et même enseigne pour Roi. Tests de régression ciblés. Aucun changement de sauvegarde.
+
+## CAR-92 — Fin de mission cinématique
+Maquettes Sally validées : victoire bleu/or, défaite catastrophe rouge/cuivre, entraînement bleu, logo, résultat et motif, trois métriques maximum, commandes visibles, statistiques en dialogue. Score officiel en victoire remplace la pioche sur la vue principale. Aucun plateau ni HUD actif. TF-END-01–09 ; responsive six résolutions, FR/EN, clavier/tactile, hors ligne, préférence de mouvement. Fond SVG local original (interprétation vectorielle de la maquette, non photoréaliste). Aucun changement moteur/stockage.
