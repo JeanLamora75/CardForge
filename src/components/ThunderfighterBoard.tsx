@@ -241,37 +241,38 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
-      <h3>Champ de bataille · 3 × 3</h3>
+      <div className="tf-combat-layout"><div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
+</div>
+      <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true">
         {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
-        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
+        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
         <div className="thunder-middle">
-          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
+          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
           <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i} data-target-state={targetState("pile",i)}>
-            <strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>{i + 1} · {pile.length}</strong>
+            <strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>×{pile.length}</strong>
             {pile.length ? renderCard(pile[pile.length - 1]) : <span aria-label="Emplacement vide">—</span>}{renderTarget("pile",i)}
           </div>)}</div>
-          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
+          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
         </div>
-        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
+        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
+      </div>
       </div>
       <div className="thunder-action-zone">
       <section className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
         <h3>{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
-        <div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit">{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>
-        {!state.specialReserve.length?<p>{en?"No special cards available.":"Aucune carte spéciale disponible."}</p>:null}
-        <small>{en?"Used":"Utilisées"} : {state.spentSpecials.length}</small>
+        {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit">{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
+        <details className="tf-reserve-info"><summary>{en?"Details":"Détail"}</summary><small>{en?"Used":"Utilisées"} : {state.spentSpecials.length}</small></details>
         {special&&!selection?<div className="tf-special-instruction"><p>{choosingSource?(en?"Choose the source pile.":"Choisissez la pile source."):special.from!==undefined?(en?"Choose the destination for pile ":"Choisissez la destination de la pile ")+(special.from+1):en?"Choose the pile to extract.":"Choisissez la pile à extraire."}</p><button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>{en?"Cancel special action":"Annuler l’action spéciale"}</button></div>:null}
       </section>
-      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
-      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p></div> : null}
       {search?.visible ? <section className="thunder-search" aria-label="Recherche">
         <h3>Recherche d'un adversaire</h3>
         <p data-i18n-ignore>{en?"Revealed number cards":"Cartes numériques révélées"} : {search.revealedNumerics.length}. {en?"They will return to the bottom of the deck.":"Elles seront replacées sous la pioche."}</p>
         <div className="thunder-reserve tf-search-cards">{search.revealedNumerics.map(id => renderCard(id))}</div>
         {search.integrityStatus === "invalid" ? <p role="alert">La partie ne peut pas continuer normalement.</p> : null}
       </section> : null}
-      <h3>Actions autorisées</h3>
+      <h3 className="thunder-sr-only">Actions autorisées</h3>
       {state.outcome === "in-progress" && !selection ? <div className="thunder-actions">
         {!special&&legal.some(action=>contextualThunderTarget(action,figures,null))?<p data-i18n-ignore className="tf-target-hint">{en?"Choose a highlighted destination on the board.":"Choisissez une destination en surbrillance sur le plateau."}</p>:null}
         {targetChoice?<div className="tf-target-choices"><p data-i18n-ignore>{en?"Choose an action":"Choisissez une action"}</p>{ambiguousActions.map((action,index)=><button type="button" className="secondary-action" key={index} disabled={busy} onClick={()=>choose(action)}>{actionLabel(action)}</button>)}<button type="button" className="back-link" onClick={cancelSelection}>{en?"Cancel":"Annuler"}</button></div>:null}

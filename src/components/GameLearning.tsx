@@ -43,7 +43,7 @@ export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGa
   </article>;
 }
 
-export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange, initialLearn=false }: { gameId: PlayableLearningGame; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void; initialLearn?:boolean }) {
+export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange, initialLearn=false, thunderHelp=false }: { gameId: PlayableLearningGame; thunderHelp?:boolean; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void; initialLearn?:boolean }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
   const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
@@ -65,7 +65,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         <button className="secondary-action" type="button" onClick={() => choose("play")}>Jouer directement</button>
       </div>
     </section> : <>
-      <div className="learning-toolbar" role="group" aria-label="Mode de jeu et aide">
+      <div className="learning-toolbar" hidden={gameId==="gridcannon"&&!thunderHelp} role="group" aria-label="Mode de jeu et aide">
         {gameId!=="gridcannon"||mode==="learn"?<span className="learning-mode">{mode === "learn" ? "Tutoriel · entraînement sans sauvegarde" : "Partie normale"}</span>:null}
         <button className="secondary-action" type="button" onClick={() => choose(mode === "learn" ? "play" : "learn")}>
           {mode === "learn" ? "Jouer librement" : gameId==="gridcannon"?"Tutoriel":"Relancer le tutoriel"}
@@ -77,13 +77,13 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
       </div>
       {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
-      {showRules ? <Rulebook gameId={gameId} language={language} /> : null}
+      {showRules && (gameId!=="gridcannon"||thunderHelp) ? <Rulebook gameId={gameId} language={language} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
-          gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
+          gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled && thunderHelp} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
-        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard language={language} hintsEnabled={hintsEnabled} />}
+        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard language={language} hintsEnabled={hintsEnabled && thunderHelp} />}
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}
     {mode === null ? <button className="back-link" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>{showRules ? "Masquer les règles" : "Lire les règles avant de choisir"}</button> : null}

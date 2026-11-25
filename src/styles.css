@@ -861,3 +861,39 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .thunder-middle:has([data-target-state="legal"],[data-target-state="selected"]) :is(.thunder-pile,.thunder-slot){height:max(106px,var(--tf-cell));}
 .thunder-board :is(.thunder-top-slots,.thunder-bottom-slots):has([data-target-state]) .thunder-slot{height:max(106px,var(--tf-cell));}
 .thunder-board .thunder-pile[data-target-state="source"] .tf-tactical{margin-bottom:0;}
+
+/* Compact command deck: fixed geometry independent of legal actions. */
+.thunder-command-page .tf-command-header{display:grid;grid-template-columns:44px minmax(0,1fr) 44px 44px;align-items:center;gap:4px;min-height:48px;margin:0 0 4px;padding:2px;background:linear-gradient(#263d4e,#142531);border:1px solid #58768a;border-radius:6px;}
+.tf-command-header h1{margin:0;line-height:0;min-width:0;text-align:center;}
+.tf-command-header h1 img{width:100%;max-width:240px;height:44px;object-fit:contain;}
+.tf-command-header button{width:44px;height:44px;min-height:44px;padding:0;display:grid;place-items:center;font-size:1.4rem;border:1px solid #7894a5;border-radius:5px;background:#172936;color:#e8d4b7;}
+.thunder-command-page .learning-toolbar[hidden]{display:none;}
+.thunder-board .tf-combat-layout{display:flex;flex-direction:column;gap:4px;align-items:center;}
+.thunder-board .tf-current-card{width:100%;}
+.tf-current-card:empty{display:none;}
+.thunder-board .tf-current-card .tf-pending-card{min-height:48px;padding:3px 6px;border:1px solid #57798b;border-radius:6px;background:#142735;}
+.thunder-board .tf-current-card .tf-tactical{width:48px;height:48px;flex:0 0 48px;}
+.thunder-board .tf-current-card .thunder-pending{margin:0;padding:3px;border:0;background:none;font-size:.9rem;}
+.thunder-board .thunder-battlefield{--tf-cell:clamp(55px,18vw,90px);width:min(100%,490px);box-sizing:border-box;}
+.thunder-board .thunder-middle,.thunder-board .thunder-grid,.thunder-board .thunder-side-slots{grid-template-rows:none;}
+.thunder-board .thunder-slot,.thunder-board .thunder-pile,.thunder-board [data-target-state]:has(.tf-tactical),.thunder-board .thunder-middle:has([data-target-state]) :is(.thunder-slot,.thunder-pile),.thunder-board :is(.thunder-top-slots,.thunder-bottom-slots):has([data-target-state]) .thunder-slot{height:var(--tf-cell);min-height:0;box-sizing:border-box;position:relative;padding:2px;}
+.thunder-board .thunder-slot>small{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden;}
+.thunder-board .thunder-pile>strong{position:absolute;z-index:2;left:3px;bottom:3px;background:#081420dd;color:#e1e8ed;padding:2px;border-radius:3px;pointer-events:none;}
+.thunder-board .thunder-slot> .tf-tactical,.thunder-board .thunder-pile> .tf-tactical,.thunder-board [data-target-state] .tf-tactical{height:100%;min-height:0;margin:0;width:100%;}
+.thunder-board .tf-target{width:44px;height:44px;background:transparent;border:0;display:grid;place-items:end;z-index:3;}
+.thunder-board .tf-target span{display:grid;place-items:center;width:22px;height:22px;background:#183c34;border:1px solid #8dd6b1;border-radius:4px;font-size:1.1rem;}
+.thunder-board .tf-target[aria-pressed=true]{background:transparent;}
+.thunder-board .tf-target[aria-pressed=true] span{background:#523c25;border-color:#f2bc76;color:#ffe3b6;}
+.thunder-board [data-target-state] .tf-tactical .tf-card-bottom{right:1px;left:auto;}
+.thunder-board .tf-empty{opacity:.3;font-size:1rem;}
+.thunder-board .tf-special-console{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;padding:4px 6px;}
+.thunder-board .tf-special-console h3{margin:0;font-size:.9rem;flex:1;}
+.thunder-board .tf-special-list,.thunder-board .tf-special-instruction{flex-basis:100%;}
+.thunder-board .tf-reserve-info{font-size:.75rem;}
+.thunder-board .tf-reserve-info summary{cursor:pointer;padding:4px;}
+.thunder-board .tf-special-unit{width:60px;}
+.thunder-board .tf-special-unit .tf-tactical{height:54px;}
+.thunder-board .thunder-action-zone{margin-top:4px;padding:5px;}
+.thunder-board .thunder-metrics span{padding:3px 2px;}
+.thunder-board .thunder-extra{font-size:.85rem;}
+@media(orientation:landscape) and (min-width:600px){.thunder-board .tf-combat-layout{flex-direction:row;justify-content:center;align-items:flex-start;}.thunder-board .tf-current-card{max-width:150px;}.thunder-board .thunder-battlefield{--tf-cell:clamp(50px,12vh,84px);width:min(100%,440px);}.thunder-board .tf-current-card .tf-pending-card{flex-direction:column;}}

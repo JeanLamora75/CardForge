@@ -6,7 +6,7 @@ function Ship({card}:{card:ThunderCardView}){return <img className="tf-ship" src
 export function ThunderTacticalCard({card,locale,onInspect}:{card:ThunderCardView;locale:Locale;onInspect:()=>void}){
  const en=locale==="en";
  return <button type="button" className="thunder-card tf-tactical" data-i18n-ignore data-card-id={card.id} data-figure={card.figure||undefined} data-defeated={card.defeated||undefined} data-suit={card.suit??"joker"} onClick={onInspect} aria-haspopup="dialog" aria-label={card.label+", "+(card.defeated?(en?"neutralized":"neutralisé"):card.figure?(en?"resistance ":"résistance ")+card.resistance:card.role)+", "+(en?"view card":"voir la carte")}>
- <span className="tf-card-corner"><strong>{card.compact}</strong><span>{card.symbol}</span></span><Ship card={card}/><span className="tf-card-bottom">{card.defeated?"✓":card.figure?<>{card.resistance}{card.armor>0?<small> ◇</small>:null}</>:card.special?(card.rank===1?"↧":"↔"):card.value}</span>
+ <span className="tf-card-corner"><strong>{card.compact}</strong><span>{card.symbol}</span></span><Ship card={card}/>{(card.figure||card.special)?<span className="tf-card-bottom">{card.defeated?"✓":card.figure?<>{card.resistance}{card.armor>0?<small> ◇</small>:null}</>:card.special?(card.rank===1?"↧":"↔"):card.value}</span>:null}
  </button>;
 }
 export function ThunderCardDetail({card,locale,onClose}:{card:ThunderCardView;locale:Locale;onClose:()=>void}){

@@ -336,8 +336,9 @@ async function journey(locale,mobile){
     assert.equal(await page.getByRole('heading',{name:/Choisissez votre univers|Choose your universe/}).count(),0);
     assert.equal(await page.locator('.forge-gallery').getAttribute('aria-label'),locale==='fr'?'Galerie des jeux':'Game gallery');
     if(!mobile){
+      await page.locator('.forge-gallery button').first().focus();
       await page.keyboard.press('Tab');
-      assert.equal(await page.evaluate(()=>document.activeElement?.tagName!=='BODY'),true,'Tab must activate a focusable control');
+      assert.equal(await page.locator('.forge-gallery button').nth(1).evaluate(n=>document.activeElement===n),true,'Tab must advance to the next gallery control');
     }
     const saved={};
     for(const game of GAMES){
@@ -367,6 +368,9 @@ async function journey(locale,mobile){
         assert.equal(await page.locator('.thunder-grid .thunder-pile').count(),9);
         assert.equal(await page.locator('.thunder-battlefield .thunder-slot').count(),12);
         assert.equal(await page.locator('.thunder-metrics>span').count(),3);
+        assert.equal(await page.locator('.tf-command-header').count(),1);
+        assert.equal(await page.locator('.topbar').count(),0);
+        assert.ok(await page.locator('.thunder-pile,.thunder-slot').evaluateAll(nodes=>Math.max(...nodes.map(n=>n.getBoundingClientRect().height))-Math.min(...nodes.map(n=>n.getBoundingClientRect().height))<=1),'stable board cells');
         assert.equal(await page.locator('.thunder-id,.thunder-command-page .status').count(),0);
         assert.doesNotMatch(await page.locator('.thunder-metrics').innerText(),/Cartes physiques|physical cards/i);
         assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+2;}));
@@ -441,7 +445,7 @@ async function journey(locale,mobile){
         assert.deepEqual(after.state.deck.map(c=>c.id),before.state.deck.map(c=>c.id));
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
         await page.locator('.ms-board').getByText(/Action enregistrée|Action saved/).waitFor();
-        await page.locator('.topbar .settings-button').click();
+        await page.locator('.topbar .settings-button, .tf-command-header .settings-button').click();
         await page.locator('[data-settings-category="language"]').click();
         await select.selectOption(locale==='fr'?'en':'fr');
         assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');

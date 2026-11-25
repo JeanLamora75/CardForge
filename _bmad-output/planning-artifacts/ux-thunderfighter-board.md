@@ -22,3 +22,6 @@ Poste de commandement rétrofuturiste, métal bleu nuit, acier, accents orange e
 | CAR-88 | Recette et non-régression | CAR-83 à CAR-87 |
 ## Références
 Règles : game-rules/gridcannon.md (V2, arbitrages existants prioritaires). Code : src/components/ThunderfighterBoard.tsx, GameLearning.tsx, App.tsx. Les maquettes ne sont pas des règles. Les illustrations définitives restent à produire et à valider. Aucun résultat de test revendiqué à ce stade.
+
+## Revue V2 validée le 25 novembre 2026
+CAR-89 : TF-UX-09 bandeau unique logo/retour/aide/paramètres ; 10 regrouper aide/règles/tutoriel ; 11 carte courante visible ; 12 géométrie stable ; 13 cases vides sobres ; 14 marqueurs compacts ; 15 supprimer valeurs répétées ; 16 réserve compacte ; 18 portrait/paysage/desktop ; 19 retirer redondances ; 20 tests FR/EN clavier tactile hors ligne. CAR-90 : TF-UX-17 illustrations définitives séparées. La carte courante est placée avant le plateau en portrait pour rester visible pendant la sélection ; en paysage elle est latérale. Aucun changement du moteur ni stockage. Les cibles de sélection et consultation restent distinctes. Recette réelle et CI obligatoires avant clôture.

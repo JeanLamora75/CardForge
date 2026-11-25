@@ -79,7 +79,7 @@ const ruleReference: Record<GameId, string> = {
 };
 
 function GameDetail({
-  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange, language,
+  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange, language, onSettings,
 }: {
   game: GameEntry;
   language: Locale;
@@ -87,12 +87,14 @@ function GameDetail({
   progress: CatalogGameProgress;
   onNavigate: (route: CatalogRoute) => void;
   onBack: () => void;
+  onSettings: () => void;
   hintsEnabled: boolean;
   onHintsChange: (enabled: boolean) => void;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => { titleRef.current?.focus(); }, [section, game.id]);
   const [learn, setLearn] = useState(false);
+  const [thunderHelp,setThunderHelp]=useState(false);
   const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
   const subPage = section !== "detail";
   const thunderCommand = game.id === "gridcannon" && section === "board";
@@ -100,19 +102,19 @@ function GameDetail({
   if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
     <section className={`detail ${game.accent}${thunderCommand?" thunder-command-page":""}`} aria-labelledby="game-title">
-      <div className="detail-navigation">
+      {thunderCommand?<header className="tf-command-header" data-i18n-ignore><button type="button" className="back-link tf-header-back" aria-label={language==="en"?"Back to Thunderfighter":"Retour à Thunderfighter"} onClick={onBack}>←</button><h1 id="game-title" ref={titleRef} tabIndex={-1}><WorldLogo slug="thunderfighter" title="Thunderfighter"/></h1><button type="button" className="tf-help-toggle" aria-label={language==="en"?"Help":"Aide"} aria-expanded={thunderHelp} onClick={()=>setThunderHelp(v=>!v)}>?</button><button type="button" className="settings-button" aria-label={language==="en"?"Settings":"Paramètres"} onClick={onSettings}>⚙</button></header>:<div className="detail-navigation">
         <button className="back-link" type="button" onClick={onBack}>
           <span aria-hidden="true">←</span> {subPage ? `Retour à ${game.title}` : "Retour au catalogue"}
         </button>
         {!thunderCommand?<span className="status" data-status={game.status}>{statusLabel(game)}</span>:null}
-      </div>
+      </div>}
       {(
         <div className={section === "board" ? "board-page" : "context-page"}>
           {!thunderCommand?<span className="eyebrow">{game.title}</span>:null}
-          <h1 id="game-title" ref={titleRef} tabIndex={-1}>
+          {!thunderCommand?<h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {thunderCommand ? "Thunderfighter" : section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
-          </h1>
-          {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "rules" ? (
+          </h1>:null}
+          {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} thunderHelp={thunderHelp} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {game.id === "regicide" ? <RegicideRulebook language={language} /> : (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
@@ -231,7 +233,7 @@ export default function App() {
   return (
     <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":thunderSurface?"thunder-command-surface":""}`}>
       {route.page==="catalog"||settingsSurface?<WorldBackdrop slug="cardforge"/>:null}
-      {!immersive?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
+      {!immersive&&!thunderSurface?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
           {route.page==="catalog"||settingsSurface?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}
@@ -246,7 +248,7 @@ export default function App() {
       route.page === "settings" ? <Settings onBack={back} onCredits={()=>navigate({page:"about"})} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
-          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} language={language}
+          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} onSettings={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} language={language}
           hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
         <Gallery language={language} progress={progress} openSettings={button=>{lastTrigger.current=button;lastGalleryControl.current=".forge-settings-tile";settingsOrigin.current=HOME;navigate({page:"settings"});}} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
