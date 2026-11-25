@@ -125,8 +125,9 @@ async function assertPaintedArt(page,selector,kind){
  }
 }
 async function immersiveScreens(){
- for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
-  const context=await browser.newContext({viewport,reducedMotion:"reduce",hasTouch:viewport.width<900});
+ for(const locale of ["fr","en"]) for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
+  const context=await browser.newContext({viewport,locale:locale==="fr"?"fr-FR":"en-US",reducedMotion:"reduce",hasTouch:viewport.width<900});
+  await context.addInitScript(chosen=>{if(location.origin==="http://127.0.0.1:4388")localStorage.setItem("cardforge.language.v1",chosen);},locale);
   try{
    const page=await context.newPage();await page.goto(HOST);await ready(page);
    await page.locator(".forge-grid button").last().waitFor();
@@ -153,7 +154,7 @@ async function immersiveScreens(){
    assert.ok(end.top>=0&&end.height-end.bottom>=79, "settings must be fully visible with bottom margin: "+JSON.stringify(end));
    assert.ok(await page.locator(".forge-settings-art").evaluate(n=>n.currentSrc.includes("settings-forge")||n.currentSrc.startsWith("data:image/svg+xml")),"dedicated settings art");
    if(viewport.width<600){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
-   if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390.png"});}
+   if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390-"+locale+".png"});}
    await page.locator(".forge-settings-tile").click();
    await page.locator("#settings-language").waitFor();
    await page.locator(".settings-credits").click();
@@ -164,7 +165,7 @@ async function immersiveScreens(){
    await page.locator(".forge-gallery").waitFor();
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
-   if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+".png"}); }
+   if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+"-"+locale+".png"}); }
    assert.ok(await page.locator(".forge-tile-scene").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
    for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
@@ -176,8 +177,8 @@ async function immersiveScreens(){
     await assertPaintedArt(page,".forge-menu .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
     await assertPaintedArt(page,".forge-button-art","buttons");
     await assertPaintedArt(page,".forge-menu .forge-effect","effects");
-    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/"+id+"-"+viewport.width+".png"}); }
-    assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.left>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
+    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/"+id+"-"+viewport.width+"-"+locale+".png"}); }
+    assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=document.querySelector(".forge-title").getBoundingClientRect().bottom-1&&r.left>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
     if(viewport.width<viewport.height){
       const geometry=await page.locator(".forge-menu-actions").evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,viewport:innerWidth,bottom:r.bottom,height:innerHeight};});
@@ -202,6 +203,8 @@ async function immersiveScreens(){
       return r.left>=0&&Math.abs(offset)<2;
     },{id,portrait:viewport.width<viewport.height}),"logo placement per world");
     assert.equal(await page.locator(".forge-command").count(),5);
+    await assertThreeRowMenu(page);
+    assert.deepEqual(await page.locator(".forge-command span").allTextContents(),locale==="fr"?["Nouvelle partie","Apprendre","Règles","Statistiques","Retour"]:["New game","Learn","Rules","Statistics","Back"],"menu labels in selected language");
     await page.keyboard.press("Tab");
     await page.locator(".forge-command").first().focus();
     assert.ok(await page.locator(".forge-command").first().evaluate(n=>n.matches(":focus-visible")&&getComputedStyle(n).outlineStyle==="solid"),"visible keyboard focus");
@@ -226,6 +229,25 @@ async function immersiveScreens(){
    }
   }finally{await context.close();}
  }
+}
+
+async function assertThreeRowMenu(page){
+  const geometry=await page.locator(".forge-menu-actions").evaluate(menu=>{
+    const area=menu.getBoundingClientRect(),root=menu.closest(".forge-menu").getBoundingClientRect();
+    const buttons=[...menu.querySelectorAll(".forge-command")].map(button=>{
+      const r=button.getBoundingClientRect(),label=button.querySelector("span"),l=label.getBoundingClientRect();
+      return {x:r.x,y:r.y,right:r.right,bottom:r.bottom,width:r.width,height:r.height,labelFits:l.left>=r.left-1&&l.right<=r.right+1&&l.top>=r.top-1&&l.bottom<=r.bottom+1&&label.scrollWidth<=label.clientWidth+1};
+    });
+    return {area:{x:area.x,right:area.right,width:area.width,bottom:area.bottom},bottom:root.bottom,buttons};
+  });
+  const {area,bottom,buttons:b}=geometry;
+  const near=(a,b)=>Math.abs(a-b)<=1;
+  assert.equal(b.length,5);
+  assert.ok(near(b[0].x,area.x)&&near(b[0].right,area.right),"primary spans both columns");
+  assert.ok(near(b[1].y,b[2].y)&&near(b[3].y,b[4].y)&&b[1].y>=b[0].bottom&&b[3].y>=b[1].bottom,"exactly three rows");
+  assert.ok(near(b[1].x,b[3].x)&&near(b[2].x,b[4].x)&&b[2].x>b[1].right&&near(b[1].width,b[2].width),"two equal secondary columns");
+  assert.ok(b.every(r=>r.height>=44&&near(r.height,b[0].height)&&r.labelFits),"equal accessible targets and unclipped labels");
+  assert.ok(bottom-area.bottom>=31,"32px bottom safety margin");
 }
 async function journey(locale,mobile){
   const context=await browser.newContext({
@@ -317,7 +339,8 @@ async function journey(locale,mobile){
       await page.goto(HOST+'#game/'+game.id);
       await page.locator('.forge-menu[data-saved="yes"]').waitFor();
       assert.equal(await page.locator('.forge-command').count(),5);
-      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=Math.min(innerHeight,visualViewport?.height??innerHeight)/2-1&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.height>=44&&!!e&&n.contains(e);})), 'saved menu: all five commands must fit and be clickable');
+      await assertThreeRowMenu(page);
+      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=document.querySelector(".forge-title").getBoundingClientRect().bottom-1&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-31&&r.height>=44&&!!e&&n.contains(e);})), 'saved menu: all five commands must fit and be clickable');
       if(mobile){const {mkdirSync}=await import('node:fs');mkdirSync('ux-screenshots',{recursive:true});await page.screenshot({path:'ux-screenshots/'+game.id+'-saved-'+locale+'.png'});}
       await page.goto(HOST+'#game/'+game.id+'/board');
       await page.locator(game.root).waitFor();
