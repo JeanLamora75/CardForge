@@ -14,7 +14,7 @@ import {
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
-import PrivacyPanel from "./components/PrivacyPanel";
+import Settings from "./components/Settings";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
 import RegicideLearning from "./components/RegicideLearning.tsx";
@@ -132,57 +132,6 @@ function GameDetail({
   );
 }
 
-function Settings({ onBack, onCredits, language, onLanguageChange, preferences, onPreferencesChange }: {
-  onBack: () => void;
-  onCredits: () => void;
-  language: Locale;
-  onLanguageChange: (locale: Locale) => void;
-  preferences: SharedSettings;
-  onPreferencesChange: (next: SharedSettings) => void;
-}) {
-  const title = useRef<HTMLHeadingElement>(null);
-  useEffect(() => { title.current?.focus(); }, []);
-  return (
-    <section className="context-page" aria-labelledby="settings-title">
-      <button className="back-link" type="button" onClick={onBack}>← Retour au catalogue</button>
-      <h1 ref={title} tabIndex={-1} id="settings-title">Paramètres</h1>
-      <p>CardForge fonctionne sans compte et enregistre les parties dans le navigateur. La navigation entre les écrans n’abandonne jamais une partie.</p>
-      <label className="language-setting" htmlFor="settings-language">Langue de l’interface</label>
-      <select id="settings-language" value={language} onChange={event => onLanguageChange(event.target.value as Locale)}>
-        <option value="fr">Français</option><option value="en">English</option>
-      </select>
-      <p className="help-note">La langue est mémorisée localement et ne modifie jamais la partie, les cartes ou les statistiques.</p>
-      <fieldset className="shared-options">
-        <legend>Confort de jeu</legend>
-        <label className="shared-option"><span><strong>Musique d’ambiance</strong><small>Fond musical facultatif, indépendant des effets.</small></span>
-          <input type="checkbox" checked={preferences.music}
-            onChange={event => onPreferencesChange({ ...preferences, music: event.target.checked })} />
-        </label>
-        <label className="shared-option"><span><strong>Effets sonores</strong><small>Retours sonores facultatifs sur les coups et résultats.</small></span>
-          <input type="checkbox" checked={preferences.sounds}
-            onChange={event => onPreferencesChange({ ...preferences, sounds: event.target.checked })} />
-        </label>
-        <label className="shared-option"><span><strong>Aides contextuelles</strong><small>Les commandes légales et les règles restent consultables.</small></span>
-          <input type="checkbox" checked={preferences.hints}
-            onChange={event => onPreferencesChange({ ...preferences, hints: event.target.checked })} />
-        </label>
-        <label className="shared-motion" htmlFor="settings-animations">Animations
-          <select id="settings-animations" value={preferences.animations}
-            onChange={event => onPreferencesChange({ ...preferences, animations: event.target.value as SharedSettings["animations"] })}>
-            <option value="system">Suivre le système</option>
-            <option value="on">Activer</option>
-            <option value="off">Désactiver</option>
-          </select>
-        </label>
-        <p className="help-note">Avec « Suivre le système », CardForge respecte la réduction des mouvements configurée sur votre appareil. Les résultats restent lisibles sans animation ni son.</p>
-        <p className="help-note">Les réglages s’appliquent à tous les jeux, sans changer les cartes, les règles ni les sauvegardes. La lecture audio dépend des autorisations du navigateur.</p>
-      </fieldset>
-      <PrivacyPanel language={language} />
-      <section className="settings-about" data-i18n-ignore><h2>{language==="fr"?"À propos":"About"}</h2><button type="button" className="secondary-action settings-credits" onClick={onCredits}>{language==="fr"?"Crédits et licences":"Credits and licences"}</button><p className="help-note">{language==="fr"?"Préversion interne · diffusion non autorisée":"Internal preview · public release not authorized"}</p></section>
-    </section>
-  );
-}
-
 export default function App() {
   const [preferences, setPreferences] = useState<SharedSettings>(() => {
     try { return readSharedSettings(window.localStorage); }
@@ -258,7 +207,7 @@ export default function App() {
   useEffect(() => {
     if (route.page === "catalog") return;
     const onEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !event.defaultPrevented) {
         event.preventDefault();
         back();
       }
@@ -274,17 +223,18 @@ export default function App() {
   };
   const galleryScroll=useRef(0);
   const immersive=route.page==="game" && route.section==="detail";
+  const settingsSurface=route.page==="settings"||route.page==="about";
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":""}`}>
-      {route.page==="catalog"?<WorldBackdrop slug="cardforge"/>:null}
-      {!immersive?<header className={route.page==="catalog"?"topbar forge-gallery-header":"topbar"}>
+    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":""}`}>
+      {route.page==="catalog"||settingsSurface?<WorldBackdrop slug="cardforge"/>:null}
+      {!immersive?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
-          {route.page==="catalog"?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}
+          {route.page==="catalog"||settingsSurface?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}
         </button>
-        {route.page!=="catalog"&&route.page!=="settings"?<div className="topbar-actions"><button className="settings-button" type="button" onClick={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} aria-label="Paramètres">⚙ Paramètres</button></div>:null}
+        {route.page!=="catalog"&&!settingsSurface?<div className="topbar-actions"><button className="settings-button" type="button" onClick={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} aria-label="Paramètres">⚙ Paramètres</button></div>:null}
       </header>:null}
       {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}

@@ -31,7 +31,7 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
   useEffect(() => {
-    if (pending) confirmRef.current?.focus();
+    if (pending) cancelRef.current?.focus();
     else if (!busy) lastTrigger.current?.focus();
   }, [pending, busy]);
 
@@ -61,7 +61,7 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
     } finally { setBusy(false); }
   }
 
-  return <section className="privacy-panel" aria-labelledby="privacy-title">
+  return <section className="privacy-panel" aria-labelledby="privacy-title" data-i18n-ignore>
     <h2 id="privacy-title">{english ? "Privacy and my data" : "Confidentialité et mes données"}</h2>
     <p>{english
       ? "CardForge runs without an account, advertising or game-data synchronization. Saved games, results, statistics and preferences are stored in this browser, on this device. Closing or navigating away does not delete them."
@@ -69,14 +69,14 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
     <p>{english
       ? "The source-rule links open GitHub only if you choose them. Your browser or operating system may manage storage, backups or deletion independently of CardForge."
       : "Les liens vers les règles sources ouvrent GitHub uniquement si vous les choisissez. Votre navigateur ou système d’exploitation peut gérer son stockage, ses sauvegardes ou son effacement indépendamment de CardForge."}</p>
-    <h3>{english ? "What is stored?" : "Quelles données sont conservées ?"}</h3>
+    <details className="forge-privacy-details"><summary>{english ? "What is stored?" : "Quelles données sont conservées ?"}</summary>
     <ul className="privacy-inventory">{PRIVACY_INVENTORY.map(item =>
       <li key={item.id}>
         <strong>{english ? item.descriptionEn : item.descriptionFr}</strong>
         <span>{english ? item.effectEn : item.effectFr}</span>
-        <small>{item.area === "indexeddb" ? "IndexedDB" : item.area === "localStorage" ? "localStorage" : english ? "Temporary memory" : "Mémoire temporaire"}</small>
+        <small>{item.area === "indexeddb" ? (english ? "Saved on this device" : "Sauvegardé sur cet appareil") : item.area === "localStorage" ? (english ? "Saved preference" : "Préférence mémorisée") : english ? "Not saved after the session" : "Non conservé après la session"}</small>
       </li>
-    )}</ul>
+    )}</ul></details>
     <h3>{english ? "Manage my data" : "Gérer mes données"}</h3>
     <p>{english ? "Choose precisely what to erase. Nothing is deleted until you confirm a detailed warning." :
       "Choisissez précisément ce que vous souhaitez effacer. Aucune donnée n’est supprimée sans confirmation du périmètre affiché."}</p>
@@ -89,7 +89,7 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
         </select>
         <p>{english ? "Deletes this game's save, ALL its past results and its statistics. Preserves all other games and your preferences." :
           "Supprime la sauvegarde de ce jeu, TOUS ses résultats passés et ses statistiques. Conserve les autres jeux et les préférences."}</p>
-        <button className="secondary-action" type="button" disabled={busy || !!pending}
+        <button className="secondary-action privacy-danger" type="button" disabled={busy || !!pending}
           onClick={event => request({ kind: "game", gameId: selectedGame }, event.currentTarget)}>
           {english ? "Delete this game's data" : "Supprimer les données de ce jeu"}
         </button>
@@ -98,7 +98,7 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
         <h4>{english ? "Preferences only" : "Préférences uniquement"}</h4>
         <p>{english ? "Clears CardForge language, shared settings and learning choices. Preserves ALL game saves, results and statistics." :
           "Efface la langue, les réglages et les choix d’apprentissage CardForge. Conserve TOUTES les parties, résultats et statistiques."}</p>
-        <button className="secondary-action" type="button" disabled={busy || !!pending}
+        <button className="secondary-action privacy-danger" type="button" disabled={busy || !!pending}
           onClick={event => request({ kind: "preferences" }, event.currentTarget)}>
           {english ? "Delete preferences" : "Supprimer les préférences"}
         </button>

@@ -156,12 +156,32 @@ async function immersiveScreens(){
    if(viewport.width<600){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
    if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390-"+locale+".png"});}
    await page.locator(".forge-settings-tile").click();
+   await page.locator('[data-settings-category="language"]').click();
    await page.locator("#settings-language").waitFor();
+   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator('[data-settings-category="audio"]').click();
+   assert.equal(await page.getByRole("switch").count(),2);
+   const music=page.getByRole("switch").first(), beforeMusic=await music.isChecked();
+   await music.click();assert.equal(await music.isChecked(),!beforeMusic);await music.click();
+   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator('[data-settings-category="comfort"]').click();
+   await page.locator("#settings-animations").waitFor();
+   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator('[data-settings-category="privacy"]').click();
+   await page.locator(".forge-privacy-details summary").click();
+   assert.ok(await page.locator(".privacy-inventory li").count()>=7);
+   await page.locator(".privacy-action button").first().click();
+   await page.getByRole("alertdialog").waitFor();
+   assert.ok(await page.locator(".privacy-confirm-actions button").first().evaluate(n=>document.activeElement===n));
+   await page.locator(".privacy-confirm-actions button").first().click();
+   assert.equal(await page.getByRole("alertdialog").count(),0);
+   await page.locator(".forge-settings-footer .back-link").click();
+   await page.locator('[data-settings-category="about"]').click();
    await page.locator(".settings-credits").click();
    await page.locator(".credits-page").waitFor();
    await page.locator(".credits-page .back-link").click();
-   await page.locator("#settings-language").waitFor();
-   await page.locator(".context-page .back-link").click();
+   await page.locator('[data-settings-category="language"]').waitFor();
+   await page.locator(".forge-settings-footer .back-link").click();
    await page.locator(".forge-gallery").waitFor();
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
@@ -267,9 +287,11 @@ async function journey(locale,mobile){
     const probe=await ready(page);
     assert.equal(await page.locator('.forge-home select').count(),0);
     await interact(page,page.locator('.forge-settings-tile'),mobile);
+    await page.locator('[data-settings-category="language"]').click();
     const select=page.locator('#settings-language');
     await select.selectOption(locale);
-    await page.locator('.context-page .back-link').click();
+    await page.locator('.forge-settings-footer .back-link').click();
+    await page.locator('.forge-settings-footer .back-link').click();
     await page.locator('.forge-gallery').waitFor();
     assert.equal(await page.locator('html').getAttribute('lang'),locale);
     assert.equal(await page.getByRole('heading',{name:/Choisissez votre univers|Choose your universe/}).count(),0);
@@ -350,11 +372,13 @@ async function journey(locale,mobile){
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
         await page.locator('.ms-board').getByText(/Action enregistrée|Action saved/).waitFor();
         await page.locator('.topbar .settings-button').click();
+        await page.locator('[data-settings-category="language"]').click();
         await select.selectOption(locale==='fr'?'en':'fr');
         assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');
         assert.deepEqual(await readSaved(page,game.id),after,'switching language must not alter game state');
         await select.selectOption(locale);
-        await page.locator('.context-page .back-link').click();
+        await page.locator('.forge-settings-footer .back-link').click();
+        await page.locator('.forge-settings-footer .back-link').click();
       }
       await page.goto(HOST+'#game/'+game.id+'/rules');
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();

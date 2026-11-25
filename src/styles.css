@@ -630,3 +630,53 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 @media(max-width:420px){
   .forge-menu .forge-command:not(.primary-action){font-size:clamp(.78rem,3.5vw,.95rem);letter-spacing:.025em;padding-inline:4%;}
 }
+
+/* CardForge functional surfaces: shared black-and-gold settings identity. */
+.forge-settings-surface{position:relative;isolation:isolate;min-height:100dvh;width:100%;max-width:none;margin:0;padding:0 max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));background:#131115;color:#f2dfb5;}
+.forge-settings-surface>.forge-world-bg,.forge-settings-surface>.forge-effect{position:fixed;}
+.forge-settings-surface>.forge-world-bg::after{background:#131115bf;}
+.forge-settings-surface>.forge-effect{display:none;}
+.forge-settings-surface>:not(.forge-world-bg):not(.forge-effect){position:relative;z-index:2;}
+.forge-settings-surface .forge-settings-header{justify-content:center;border:0;background:transparent;padding:12px 0 0;min-height:0;}
+.forge-settings-header .brand{width:min(58vw,220px);padding:0;}
+.forge-settings-header .world-logo{max-height:115px;}
+.forge-settings-surface .offline-readiness{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:.75rem;color:#ead4ae;margin:8px auto;max-width:760px;}
+.forge-settings-surface .offline-readiness[data-offline-phase="ready"]{font-size:.7rem;opacity:.85;}
+.forge-settings-surface .forge-settings-page{max-width:760px;margin:12px auto 0;padding:0 0 24px;min-height:0;}
+.forge-settings-page h1,.forge-settings-page h2{font-family:Cinzel,Georgia,serif;color:#f2dfb5;}
+.forge-settings-page h1{font-size:clamp(1.35rem,4.2vw,2.1rem);margin:0;overflow-wrap:anywhere;}
+.forge-settings-page p{color:#ddd0b9;font-size:.93rem;line-height:1.55;}
+.forge-settings-heading{position:relative;isolation:isolate;overflow:hidden;min-height:90px;display:flex;align-items:center;justify-content:flex-end;padding:16px 6%;border:1px solid #8d7548;border-radius:12px;background:#211b1b;margin-bottom:14px;}
+.forge-settings-heading img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center;z-index:-2;}
+.forge-settings-heading::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,transparent 12%,#171318b8 38%,#171318ed);}
+.forge-settings-heading h1{width:70%;text-align:right;}
+.forge-settings-categories{display:grid;gap:10px;}
+.forge-settings-categories button{display:grid;grid-template-columns:44px minmax(0,1fr) 16px;align-items:center;gap:12px;text-align:left;min-height:70px;padding:12px;border:1px solid #8d7548;border-radius:12px;background:#231d1bf2;color:#f2dfb5;font:inherit;cursor:pointer;}
+.forge-settings-categories button:hover{border-color:#e8c581;background:#32281f;}
+.forge-settings-categories strong,.forge-settings-categories small{display:block;}
+.forge-settings-categories small,.forge-setting-toggle small{color:#d1c4ae;font-size:.83rem;line-height:1.4;margin-top:4px;}
+.forge-setting-icon{display:grid;place-items:center;border:1px solid #927444;border-radius:9px;background:#35291d;color:#e6c27e;font-size:1.4rem;height:44px;}
+.forge-settings-panel,.forge-settings-page .privacy-panel,.forge-settings-page .credits-item{background:#231d1bf2;border:1px solid #8d7548;border-radius:12px;padding:16px;margin:0 0 12px;}
+.forge-settings-panel label:not(.forge-setting-toggle){display:block;font-weight:700;margin:8px 0;}
+.forge-settings-page select{display:block;width:100%;min-height:44px;padding:8px 12px;border:1px solid #b99a5c;border-radius:8px;background:#211b1b;color:#f2dfb5;font:inherit;}
+.forge-setting-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 0;border-bottom:1px solid #6a5738;cursor:pointer;}
+.forge-setting-toggle span{min-width:0;}
+.forge-setting-toggle input{appearance:none;flex:none;width:48px;height:28px;border:1px solid #b99a5c;border-radius:20px;background:#49454a;position:relative;margin:8px 0;cursor:pointer;}
+.forge-setting-toggle input::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff1d7;}
+.forge-setting-toggle input:checked{background:#b39759;}
+.forge-setting-toggle input:checked::after{left:23px;background:#21170e;}
+.forge-settings-page :is(button,input,select,summary):focus-visible{outline:3px solid #f4d8a3;outline-offset:3px;}
+.forge-settings-page .back-link,.forge-settings-page .secondary-action{min-height:44px;color:#f2dfb5;border-color:#9b8050;background:#29221c;}
+.forge-settings-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;padding-bottom:env(safe-area-inset-bottom,0px);}
+.forge-settings-footer small,.forge-settings-note{color:#d1c4ae;}
+.forge-settings-page .privacy-panel h2{display:none;}
+.forge-settings-page .privacy-panel>p:first-of-type{margin-top:0;}
+.forge-privacy-details summary{cursor:pointer;min-height:44px;display:list-item;padding:10px 0;color:#e6c27e;font-weight:700;}
+.forge-settings-page .privacy-inventory{display:grid;grid-template-columns:1fr;gap:8px;}
+.forge-settings-page .privacy-inventory li,.forge-settings-page .privacy-action{border-color:#806943;background:#181517;padding:12px;}
+.forge-settings-page .privacy-inventory small{border-color:#806943;color:#d6c39c;}
+.forge-settings-page .privacy-actions{grid-template-columns:1fr;}
+.forge-settings-page .privacy-danger,.forge-settings-page .privacy-confirm .primary-action{border:1px solid #d58b7b;background:#421f21;color:#ffe6df;}
+.forge-settings-page .privacy-confirm{background:#321d1e;border-color:#d58b7b;}
+.forge-settings-page .credits-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));}
+@media(min-width:700px){.forge-settings-categories{grid-template-columns:repeat(2,minmax(0,1fr));}.forge-settings-categories button:last-child{grid-column:1/-1;}}
