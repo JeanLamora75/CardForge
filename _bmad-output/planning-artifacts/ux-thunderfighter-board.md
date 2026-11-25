@@ -37,3 +37,6 @@ Console intrinsèque selon phase, réserve visible sans ascenseur, commandes non
 
 ## V5.2 — TF-UX-51 à TF-UX-58
 Console à enveloppe commune pour stabiliser le plateau, pioche normale directe (seulement draw-card, recherche/remplacement restent confirmés), prévisualisation complète du rang et symbole et compteur futur, suppression du bilan neutre, notification de succès temporaire, erreurs persistantes. Contrôles navigateur de la pioche en un clic et stabilité ajoutés. La réserve pleine ou une phase exceptionnelle peut demander davantage de place : couverture à compléter. Moteur/stockage et architecture V5.1 conservés.
+
+## V6 — CAR-91 (TF-UX-59 à TF-UX-72)
+Synthèse Amelia : priorité plateau, console compacte et stable, carte + consigne réunies, entraînement discret, réserve en réglette, sélection distincte de confirmation, armure obligatoire explicite, états légaux et sélection contrastés, HUD compact, détails et aide superposés. Ne pas modifier les règles ni la persistance. Conserver Pointer Events et accès clavier. Réserve pleine et phases exceptionnelles ne doivent jamais être coupées. Contrôler six résolutions FR/EN et toutes phases. Les illustrations finales restent CAR-90.

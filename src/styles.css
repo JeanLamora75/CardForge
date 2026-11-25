@@ -1009,8 +1009,8 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .thunder-confirm:not([data-selected=true]):not([hidden]){min-height:70px;}
 
 /* Keep the field independent of ordinary phase changes. The console can grow on exceptional small-screen states without clipping. */
-.thunder-board.tf-live{grid-template-rows:auto minmax(180px,1fr) minmax(226px,auto);}
-.thunder-board.tf-live .thunder-action-zone{align-self:stretch;justify-content:flex-start;min-height:226px;box-sizing:border-box;position:relative;}
+.thunder-board.tf-live{grid-template-rows:auto minmax(180px,1fr) minmax(var(--tf-console-budget),auto);}
+.thunder-board.tf-live .thunder-action-zone{align-self:stretch;justify-content:flex-start;min-height:var(--tf-console-budget);box-sizing:border-box;position:relative;}
 .thunder-board .tf-current-card .tf-pending-card{margin:0;min-height:58px;}
 .thunder-board .thunder-confirm:not([data-selected=true]):not([hidden]){min-height:0;}
 .thunder-board .tf-action-status[data-transient=true]{position:absolute;bottom:3px;left:6px;right:6px;margin:0;pointer-events:none;}
@@ -1035,5 +1035,33 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-command-page .tf-training-wrap{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;}
 .thunder-board .tf-training-guide{display:flex;flex-direction:column;gap:2px;font-size:.78rem;line-height:1.2;color:#cde3e8;}
 .thunder-board .tf-training-guide strong{color:#edbc80;}
-.thunder-board.tf-training .thunder-action-zone{min-height:260px;}
+
 @media(orientation:landscape) and (min-width:650px){.thunder-board.tf-training .thunder-action-zone{min-height:0;}}
+
+/* V6: compact tactical controls. A shared budget keeps ordinary phases stable; exceptional content can expand rather than clip. */
+.thunder-board.tf-live{--tf-console-budget:clamp(178px,25dvh,210px);}
+.thunder-board .thunder-metrics span{padding:0 2px;min-height:0;}
+.thunder-board .thunder-metrics small{font-size:.68rem;line-height:1.1;}
+.thunder-board .thunder-metrics strong{font-size:1.35rem;line-height:1;}
+.thunder-board .thunder-action-zone{gap:3px;padding:4px 6px;background:linear-gradient(145deg,#1f3545,#0a1925 28%,#122633);border-color:#526d7e;}
+.thunder-board .tf-current-card .tf-pending-card{padding:2px 4px;min-height:48px;gap:7px;}
+.thunder-board .tf-current-card .tf-tactical{height:46px;width:46px;flex-basis:46px;}
+.thunder-board .tf-action-copy{flex:1;min-width:0;}
+.thunder-board .tf-inline-instruction{display:block;color:#b8d6df;font-size:.75rem;line-height:1.2;}
+.thunder-board .tf-training-guide{font-size:.65rem;line-height:1;}
+.thunder-board .tf-special-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;}
+.thunder-board .tf-special-unit{display:flex;flex-direction:row;align-items:center;gap:2px;background:#132737;border:1px solid #476578;border-radius:5px;padding:1px;}
+.thunder-board .tf-special-unit .tf-tactical{width:42px;flex:0 0 42px;height:44px;}
+.thunder-board .tf-special-use{flex:1;min-width:0;padding:2px;border:0;background:transparent;color:#d6c6ad;font-size:clamp(.58rem,1.6vw,.8rem);}
+.thunder-board .tf-special-unit[data-active=true]{border-color:#e7ba7d;background:#493825;}
+.thunder-board .thunder-confirm{gap:3px;}
+.thunder-board .thunder-confirm button{min-height:44px;}
+.thunder-board .tf-preview-line{font-size:.78rem;line-height:1.15;}
+.thunder-board .thunder-battlefield [data-armor-target=true]{border:2px solid #c1a9ea;background:#46345b55;}
+.thunder-board .thunder-battlefield [data-armor-target=true] .tf-target span{background:#41325a;border-color:#c1a9ea;color:#eadcff;}
+.thunder-board .thunder-battlefield [data-target-state=legal]{box-shadow:inset 0 0 8px #81d5af44;}
+.thunder-board .thunder-battlefield [data-dragging=true] [data-target-state=legal],.thunder-board .thunder-battlefield[data-dragging=true] [data-target-state=legal]{box-shadow:inset 0 0 15px #81d5af88;}
+.thunder-board .tf-target:focus-visible,.thunder-board .tf-special-use:focus-visible{outline:2px solid #ffe3b4;outline-offset:-2px;}
+.thunder-board .tf-drag-source .tf-tactical:active{filter:brightness(1.18);}
+.thunder-board .tf-action-status[data-transient=true]{bottom:2px;font-size:.65rem;}
+@media(orientation:landscape) and (min-width:650px){.thunder-board .tf-special-list{grid-template-columns:repeat(2,minmax(0,1fr));}}

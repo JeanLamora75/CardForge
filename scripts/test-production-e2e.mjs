@@ -458,6 +458,8 @@ async function journey(locale,mobile){
         const source=page.locator('.tf-current-card .tf-tactical').first();
         const geometry=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect(),cells=[...n.querySelectorAll('.thunder-slot,.thunder-pile')].map(e=>{const b=e.getBoundingClientRect();return [b.width,b.height]});return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,confirm:c.bottom,scroll:document.documentElement.scrollHeight,viewport:innerHeight,cells};});
         await thunderScreens(page,label+'-initial');
+        assert.equal(await page.locator('.tf-console-scroll').count(),0);
+        assert.ok(await page.locator('.thunder-action-zone').evaluate(n=>getComputedStyle(n).overflowY==='visible'),'console must not clip');
         const original=await geometry();
         if(direct&&await source.count()){
           const src=await source.boundingBox(),dest=await target.boundingBox();
