@@ -5,7 +5,7 @@ Poste de commandement rétrofuturiste, métal bleu nuit, acier, accents orange e
 ## Exigences
 - TF-UX-01 : identité poste de commandement, distincte des autres jeux.
 - TF-UX-02 : HUD pioche, ennemis neutralisés sur 12, réserve spéciale ; navigation retour, paramètres, aide/règles.
-- TF-UX-03 : représentation compacte avec valeur, enseigne, rang et état ; détail accessible au toucher et clavier. Identifiant physique stable, illustrations sans nouvelles capacités. Ne pas révéler les cartes cachées ni les cartes futures.
+- TF-UX-03 : représentation compacte avec valeur ou initiale, couleur de faction, insigne blanc d'alliance (sauf Singularités), rang et état ; enseignes classiques exclusivement internes ; détail accessible au toucher et clavier. Identifiant physique stable, illustrations sans nouvelles capacités. Ne pas révéler les cartes cachées ni les cartes futures.
 - TF-UX-04 : neuf piles centrales, douze positions périphériques, ordre des secteurs identique au moteur ; figures neutralisées conservent leur emplacement. Résistance actuelle et armure lisibles directement ou en détail.
 - TF-UX-05 : destinations mises en évidence exclusivement à partir des actions légales ; sélection directe, prévisualisation, annulation, confirmation ; alternative accessible pour toutes les actions, notamment choix ambigus et actions spéciales.
 - TF-UX-06 : supprimer identifiants techniques, badge à venir, références internes et invariant 54 cartes de l'affichage joueur ; conserver messages utiles, erreurs et tutoriel facultatif.
@@ -21,7 +21,7 @@ Poste de commandement rétrofuturiste, métal bleu nuit, acier, accents orange e
 | CAR-87 | Ressources artistiques et effets | CAR-84 |
 | CAR-88 | Recette et non-régression | CAR-83 à CAR-87 |
 ## Références
-Règles : game-rules/gridcannon.md (V2, arbitrages existants prioritaires). Code : src/components/ThunderfighterBoard.tsx, GameLearning.tsx, App.tsx. Les maquettes ne sont pas des règles. Les illustrations définitives restent à produire et à valider. Aucun résultat de test revendiqué à ce stade.
+Règles : game-rules/gridcannon.md (V2, arbitrages existants prioritaires). Code : src/components/ThunderfighterBoard.tsx, GameLearning.tsx, App.tsx. Les maquettes ne sont pas des règles. Les deux packs artistiques sont remis au porteur ; import GitHub, intégration et recette restent à vérifier. Aucun résultat de test revendiqué à ce stade.
 
 ## Revue V2 validée le 25 novembre 2026
 CAR-89 : TF-UX-09 bandeau unique logo/retour/aide/paramètres ; 10 regrouper aide/règles/tutoriel ; 11 carte courante visible ; 12 géométrie stable ; 13 cases vides sobres ; 14 marqueurs compacts ; 15 supprimer valeurs répétées ; 16 réserve compacte ; 18 portrait/paysage/desktop ; 19 retirer redondances ; 20 tests FR/EN clavier tactile hors ligne. CAR-90 : TF-UX-17 illustrations définitives séparées. La carte courante est placée avant le plateau en portrait pour rester visible pendant la sélection ; en paysage elle est latérale. Aucun changement du moteur ni stockage. Les cibles de sélection et consultation restent distinctes. Recette réelle et CI obligatoires avant clôture.
@@ -53,5 +53,5 @@ Réutilisation du composant Command et du logo de l'accueil ; trois médaillons 
 ## TF-END-31–38 — Finitions
 Typographie Rajdhani, bandeau affiné, cadres continus biseautés, rapport trois métriques sur une ligne et historique 2×2, taux pleine largeur avec jauge uniquement si défini, particules décoratives respectant mouvement réduit, trois états cohérents. Fonds et règles inchangés. Validation six résolutions à effectuer.
 
-## Référentiel artistique des cartes numériques V1 — 25 novembre 2026
-Voir [matrice de production Phoenix/Orion](thunderfighter-card-art-v1.md) : 18 modèles, 36 déclinaisons, enseignes classiques, palettes Nova/Vector/Aegis/Solaris et insignes d'alliance validés. Le rendu 6 validé sert de référence. Les classes et angles sont des prescriptions artistiques à éprouver, sans modification du moteur. Périmètre CAR-90 ; aucun ticket modifié.
+## Référentiel artistique consolidé V2 — 25 novembre 2026
+CAR-90 : voir [référentiel des 54 cartes](thunderfighter-card-art-v1.md), source normative de la présentation. 36 vaisseaux, 12 portraits, 4 Alpha et 2 Singularités ; quatre couleurs de faction, uniquement deux emblèmes d'alliance blancs, aucune enseigne classique visible ni emblème de faction dans l'interface. Décor des coques/uniformes autorisé. L/C/A, α/S ; résistance dynamique des figures 11/12/13 de base, réserve Extraire/Déplacer. Composant commun carré, illustrations WebP séparées, données localisées. Les neuf piles centrales restent numériques et les figures en périphérie ; les maquettes illustratives ne modifient aucune règle. Deux ZIP complémentaires remis au porteur ; publication des binaires, intégration, vérifications visuelles et CI restent à confirmer. Aucun ticket Jira modifié.
