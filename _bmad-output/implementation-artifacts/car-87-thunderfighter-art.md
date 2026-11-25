@@ -1,0 +1,3 @@
+# CAR-87 — Ressources artistiques et effets
+
+Sally : direction rétrofuturiste, quatre silhouettes et palettes, trois classes de figures, variantes de panneaux selon rang, As/Jokers distincts. Symboles traditionnels conservés pour la lisibilité. Illustrations vectorielles originales procédurales, fixes, 54 fichiers locaux, même ressource dans les deux vues. Elles ne constituent pas des peintures photoréalistes ; validation artistique utilisateur requise. Amelia : imports Vite versionnés, effets de confirmation uniquement après transition acceptée, CSS respecte off/system/on, audio via bus existant et volume. Aucun moteur ni stockage modifié. Tests inventaire et E2E image identique ajoutés ; build, cache réel, audio et recette restent à vérifier. Workflow manuel sans uv.

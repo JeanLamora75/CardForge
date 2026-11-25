@@ -87,6 +87,8 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
   const [selection, setSelection] = useState<ThunderfighterAction | null>(null);
   const [busy, setBusy] = useState(true);
+  const [effect,setEffect]=useState<{kind:string;serial:number}|null>(null);
+  const effectSerial=useRef(0);
   const committing=useRef(false);
   const actionTrigger=useRef<HTMLElement|null>(null);
   const confirmButton=useRef<HTMLButtonElement>(null);
@@ -179,7 +181,9 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         const shots = result.state.lastShot ?? [];
         setState(result.state);
         setLegal(session.current.getLegalActions());
-        playGameplayEffect(nextResult.outcome === "win" ? "victory" : nextResult.outcome === "loss" ? "defeat" : "place");
+        const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":selection.type==="assign-armor"?"armor":selection.type==="extract"||selection.type==="reassign"?"special":"place";
+        setEffect({kind:effectKind,serial:++effectSerial.current});
+        playGameplayEffect(effectKind);
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
           shots.length ? `${shots.length > 1 ? "Double tir" : "Tir"} : ${shots.map(labelOf).join(" et ")}.` :
@@ -238,6 +242,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       <h3>Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield">
+        {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
         <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
         <div className="thunder-middle">
           <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>

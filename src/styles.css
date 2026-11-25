@@ -843,3 +843,15 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .tf-special-use[aria-pressed=true]{border-color:#f2bc76;background:#523c25;color:#ffe3b6;}
 .thunder-board .tf-special-instruction{font-size:.85rem;}
 .thunder-board .tf-special-instruction p{margin:4px 0;}
+
+.thunder-board .thunder-battlefield{position:relative;background:radial-gradient(ellipse at center,#274b60,#09151f 76%);box-shadow:inset 0 0 24px #09121d,0 0 12px #57798b30;}
+.thunder-board .tf-tactical .tf-ship{inset:0;width:100%;height:100%;object-fit:cover;opacity:1;}
+.thunder-board .tf-detail-art .tf-ship{object-fit:contain;width:100%;border-radius:5px;}
+.thunder-board .tf-tactical[data-defeated=true] .tf-ship{filter:grayscale(.9) brightness(.65);}
+.thunder-board .tf-battle-effect{position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:8px;opacity:0;animation:tf-confirm-glow 480ms ease-out both;box-shadow:inset 0 0 24px #8dbbd9;}
+.thunder-board .tf-battle-effect[data-effect=shot]{box-shadow:inset 0 0 30px #ed9863;}
+.thunder-board .tf-battle-effect[data-effect=armor]{box-shadow:inset 0 0 24px #b3a1e7;}
+.thunder-board .tf-battle-effect[data-effect=special]{box-shadow:inset 0 0 24px #7acda4;}
+@keyframes tf-confirm-glow{0%{opacity:0}35%{opacity:.8}100%{opacity:0}}
+:root[data-motion=off] .thunder-board .tf-battle-effect{animation:none;opacity:0;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .thunder-board .tf-battle-effect{animation:none;opacity:0;}}

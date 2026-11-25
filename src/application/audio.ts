@@ -1,6 +1,6 @@
 import { normalizeVolume, type SharedSettings } from "./shared-settings.ts";
 
-type AudioKind = "place" | "victory" | "defeat";
+type AudioKind = "place" | "victory" | "defeat" | "shot" | "armor" | "special";
 type WebAudioContext = AudioContext;
 let audio: WebAudioContext | null = null;
 let musicTimer: ReturnType<typeof setInterval> | null = null;
@@ -70,7 +70,10 @@ export function playGameplayEffect(kind: AudioKind): void {
       note(783.99, 0.36, 0.025, "triangle");
     } else if (kind === "defeat") {
       note(174.61, 0.32, 0.03, "triangle");
-    } else note(440, 0.1, 0.02, "sine");
+    } else if(kind==="shot"){note(155,0.17,0.035,"triangle");note(620,0.11,0.018,"sine");}
+    else if(kind==="armor"){note(196,0.2,0.025,"triangle");}
+    else if(kind==="special"){note(330,0.18,0.025,"sine");note(495,0.23,0.018,"triangle");}
+    else note(440, 0.1, 0.02, "sine");
   }).catch(() => {});
 }
 export function suspendAudio(): void {

@@ -1,10 +1,8 @@
 import {useEffect,useRef} from "react";
 import type {ThunderCardView} from "../application/thunderfighter-card-view.ts";
 import type {Locale} from "../i18n/language.ts";
-function Ship({card}:{card:ThunderCardView}){
- const hull=card.figure?"M10 64L35 36 45 12 55 36 90 64 65 62 50 86 35 62Z":card.special?"M50 8L83 50 50 92 17 50Z":card.suit==="hearts"?"M50 8L66 46 92 76 61 65 50 90 39 65 8 76 34 46Z":card.suit==="diamonds"?"M50 8L85 65 62 58 50 90 38 58 15 65Z":card.suit==="clubs"?"M50 8L64 30 84 25 92 75 59 64 50 90 41 64 8 75 16 25 36 30Z":"M50 8L62 42 90 48 75 78 58 63 50 92 42 63 25 78 10 48 38 42Z";
- return <svg className="tf-ship" viewBox="0 0 100 100" aria-hidden="true"><path d={hull} fill="currentColor" stroke="#d2e0e5" strokeWidth="1.5"/><path d="M50 20L56 49 50 60 44 49Z" fill="#152f42" stroke="#e9c18c"/><path d="M44 69L50 91 56 69" fill="#f0a761"/><path d="M25 55L39 50M61 50L75 55" stroke="#132638" strokeWidth="3"/></svg>;
-}
+import {thunderArt} from "../application/thunderfighter-art.ts";
+function Ship({card}:{card:ThunderCardView}){return <img className="tf-ship" src={thunderArt[card.id]} alt="" aria-hidden="true" draggable={false}/>;}
 export function ThunderTacticalCard({card,locale,onInspect}:{card:ThunderCardView;locale:Locale;onInspect:()=>void}){
  const en=locale==="en";
  return <button type="button" className="thunder-card tf-tactical" data-i18n-ignore data-card-id={card.id} data-figure={card.figure||undefined} data-defeated={card.defeated||undefined} data-suit={card.suit??"joker"} onClick={onInspect} aria-haspopup="dialog" aria-label={card.label+", "+(card.defeated?(en?"neutralized":"neutralisé"):card.figure?(en?"resistance ":"résistance ")+card.resistance:card.role)+", "+(en?"view card":"voir la carte")}>
