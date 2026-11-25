@@ -60,7 +60,7 @@ try {
   if (context) {
     const page = context.pages()[0] || await context.newPage();
     const worker = readFileSync('dist/sw.js','utf8');
-    const version = worker.match(/const CACHE_NAME = PREFIX \+ "([a-f0-9]{8})";/)?.[1];
+    const version = worker.match(/const CACHE_NAME = PREFIX [+] "([a-f0-9]{8})";/)?.[1];
     if (!version) throw new Error('Version du build PWA introuvable.');
     await openFreshPreview(context,page,url,version);
     console.log('Interface UX V2 chargee ; cache PWA du build '+version+' controle.');

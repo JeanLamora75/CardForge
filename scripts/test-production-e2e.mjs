@@ -108,7 +108,7 @@ async function stalePreviewRecovery(){
   await page.reload();
   await page.getByText('OLD LAUNCHER').waitFor();
   await page.evaluate(()=>localStorage.setItem('preview-preserve','yes'));
-  const version=readFileSync('dist/sw.js','utf8').match(/const CACHE_NAME = PREFIX \\+ "([a-f0-9]{8})";/)?.[1];
+  const version=readFileSync('dist/sw.js','utf8').match(/const CACHE_NAME = PREFIX [+] "([a-f0-9]{8})";/)?.[1];
   assert.ok(version);
   await openFreshPreview(context,page,HOST,version);
   assert.equal(await page.evaluate(()=>localStorage.getItem('preview-preserve')),'yes');
