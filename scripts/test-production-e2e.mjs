@@ -362,6 +362,15 @@ async function journey(locale,mobile){
         }));
         throw new Error('No executable UI actions for '+game.name+': '+JSON.stringify(diagnostic),{cause:error});
       });
+      if(game.id==='gridcannon'){
+        assert.equal(await page.locator('.thunder-grid .thunder-pile').count(),9);
+        assert.equal(await page.locator('.thunder-battlefield .thunder-slot').count(),12);
+        assert.equal(await page.locator('.thunder-metrics>span').count(),3);
+        assert.equal(await page.locator('.thunder-id,.thunder-command-page .status').count(),0);
+        assert.doesNotMatch(await page.locator('.thunder-metrics').innerText(),/54|physical/i);
+        assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+2;}));
+        assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>n.getBoundingClientRect().bottom<=document.querySelector('.thunder-action-zone').getBoundingClientRect().top));
+      }
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
       if(game.id==='loot-the-loop'){

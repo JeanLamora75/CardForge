@@ -1,0 +1,3 @@
+# CAR-83 — Structure immersive et HUD
+
+Implémentation initiale : HUD à trois compteurs, plateau 3×3 et 12 secteurs, zone d’action après le plateau, commandes existantes conservées, styles propres à Thunderfighter. Informations secondaires dépliables. Cartes provisoires compactes ; détails et illustrations CAR-84/87 ; sélection directe CAR-85. Traductions via adaptateur existant. Tests E2E enrichis (géométrie, nombre d’emplacements, absence des identifiants et invariants techniques). Aucun moteur ni stockage modifié. CI et recette non exécutées dans cette session ; validation ouverte. Workflow manuel sans uv.

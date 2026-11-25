@@ -40,9 +40,9 @@ function Card({ id, defeated = false }: { id: string; defeated?: boolean }) {
   return <span className="thunder-card" data-figure={figure || undefined} data-defeated={defeated || undefined}
     aria-label={`${labelOf(id)}${defeated ? ", neutralisé" : ""}`}>
     <span className="thunder-emblem" aria-hidden="true">{figure ? "✦" : "◈"}</span>
-    <strong>{labelOf(id)}</strong>
-    <small>{figure ? "Résistance initiale" : "Valeur"} : {valueOf(id)}</small>
-    <small className="thunder-id">{id}</small>
+    <strong>{card && "rank" in card ? `${card.rank===1?"A":card.rank===11?"J":card.rank===12?"Q":card.rank===13?"K":card.rank} ${suits[card.suit][0]}` : "Joker"}</strong>
+    <small>{valueOf(id)}</small>
+
     {defeated ? <b>Neutralisé</b> : null}
   </span>;
 }
@@ -113,7 +113,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         session.current = restored ?? null;
         setState(restored?.getState() ?? null);
         setLegal(restored?.getLegalActions() ?? []);
-        setNotice(restored ? "Partie restaurée sans remélange." : "Aucune sauvegarde. Commencez une partie.");
+        setNotice(restored ? "" : "Commencez une partie.");
       } catch (error) {
         if (!cancelled) setNotice(storageRecoveryMessage(error, "read"));
       } finally { if (!cancelled) setBusy(false); }
@@ -129,7 +129,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       session.current = created;
       setState(created.getState());
       setLegal(created.getLegalActions());
-      setNotice("Nouvelle partie créée et sauvegardée.");
+      setNotice("");
     } catch (error) { setNotice(storageRecoveryMessage(error, "start")); }
     finally { setBusy(false); }
   }
@@ -187,9 +187,8 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const search = state ? getSearchPresentation(state) : null;
   const placement = state && state.pendingFigures.length ? getFigurePlacementOptions(state) : null;
   return <section className="thunder-board" aria-labelledby="thunder-title">
-    <h2 id="thunder-title">Thunderfighter · Poste de commandement</h2>
-    <p className="help-note">Aventure spatiale rétrofuturiste · Gridcannon V2. Chaque action est prévisualisée sans modifier la partie, puis confirmée et sauvegardée une seule fois.</p>
-    <p className="thunder-notice" role="status" aria-live="polite">{notice}</p>
+    <h2 id="thunder-title" className="thunder-sr-only">Poste de commandement</h2>
+    {!state?<p className="thunder-notice" role="status" aria-live="polite">{notice}</p>:null}
     {tutorial && state ? <section className="learning-lesson" aria-label="Mission Thunderfighter">
       <h3>Mission d'entraînement · {phaseLabels[state.phase]}</h3>
       <p>{state.outcome !== "in-progress" ? "Mission terminée : vous pouvez recommencer l'entraînement ou jouer librement." :
@@ -208,52 +207,56 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     </details> : null}
     {!state ? <button type="button" className="primary-action" onClick={() => void start()} disabled={busy}>Commencer une partie</button> : <>
       <div className="thunder-metrics">
-        <span>Phase : {phaseLabels[state.phase]}</span><span>Pioche : {state.drawPile.length}</span>
-        <span>Figures neutralisées : {result?.defeatedCount} / 12</span>
-        <span>Cartes physiques : {result?.physicalCardCount} / 54</span>
+        <span><small>Pioche</small><strong>{state.drawPile.length}</strong></span>
+        <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong></span>
+        <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
-      {state.pendingFigures[0] ? <p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Placement de secours du moteur." : ""}</p> : null}
-      {state.pendingNumeric ? <p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p> : null}
-      {search?.visible ? <section className="thunder-search" aria-label="Recherche">
-        <h3>Recherche d'un adversaire</h3>
-        <p>Cartes numériques traversées : {search.revealedNumerics.length}. Elles seront replacées sous la pioche selon le moteur.</p>
-        <div className="thunder-reserve">{search.revealedNumerics.map(id => <Card key={id} id={id} />)}</div>
-        {search.integrityStatus === "invalid" ? <p role="alert">Anomalie d'intégrité détectée. Aucune correction automatique.</p> : null}
-      </section> : null}
       <h3>Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield">
         <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot"><small>Nord {i + 1}</small>{id ? <Card id={id} defeated={state.defeatedFigures?.includes(id)} /> : <span>Libre</span>}</div>)}</div>
         <div className="thunder-middle">
           <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i}><small>Ouest {i - 8}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
           <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i}>
-            <strong>Pile {i + 1} · {pile.length} carte(s)</strong>
-            {pile.length ? <Card id={pile[pile.length - 1]} /> : <span>Emplacement vide</span>}
+            <strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>{i + 1} · {pile.length}</strong>
+            {pile.length ? <Card id={pile[pile.length - 1]} /> : <span aria-label="Emplacement vide">—</span>}
           </div>)}</div>
           <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i}><small>Est {i - 2}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
         </div>
         <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div key={i} className="thunder-slot"><small>Sud {i - 5}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
       </div>
-      <h3>Résistance et armure</h3>
-      <div className="thunder-armor">{figures.filter((id): id is string => id !== null).map(id =>
-        <p key={id}>{labelOf(id)} · Résistance {resistance(state, id)} ({valueOf(id)} + {(state.armorCards ?? []).filter(a => a.figureId === id).reduce((sum, a) => sum + valueOf(a.cardId), 0)} armure) · {state.defeatedFigures?.includes(id) ? "Neutralisé" : "Actif"}</p>
-      )}</div>
-      <h3>Réserve spéciale · {state.specialReserve.length} disponible(s)</h3>
-      <div className="thunder-reserve">{state.specialReserve.map(id => <Card key={id} id={id} />)}</div>
-      <p className="help-note">Actions spéciales consommées : {state.spentSpecials.length}. La réserve ne sert pas de score tant que la victoire n'est pas obtenue.</p>
+      <div className="thunder-action-zone">
+      {state.pendingFigures[0] ? <p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p> : null}
+      {state.pendingNumeric ? <p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p> : null}
+      {search?.visible ? <section className="thunder-search" aria-label="Recherche">
+        <h3>Recherche d'un adversaire</h3>
+        <p>Cartes numériques traversées : {search.revealedNumerics.length}. Elles seront replacées sous la pioche.</p>
+        <div className="thunder-reserve">{search.revealedNumerics.map(id => <Card key={id} id={id} />)}</div>
+        {search.integrityStatus === "invalid" ? <p role="alert">La partie ne peut pas continuer normalement.</p> : null}
+      </section> : null}
       <h3>Actions autorisées</h3>
       {state.outcome === "in-progress" && !selection ? <div className="thunder-actions">
         {legal.length ? legal.map((action, index) =>
           <button type="button" className="secondary-action" key={index} disabled={busy} onClick={() => choose(action)}>{actionLabel(action)}</button>
-        ) : <p>Aucune action légale. Le moteur conserve l'état actuel.</p>}
+        ) : <p>Aucune action disponible.</p>}
       </div> : null}
-      {selection && preview ? <div className="thunder-confirm" role="group" aria-label="Prévisualisation sans mutation">
-        <h3>Prévisualisation — aucune modification enregistrée</h3>
+      {selection && preview ? <div className="thunder-confirm" role="group" aria-label="Prévisualisation">
+        <h3>Prévisualisation</h3>
         <p>{preview.message}</p>
-        <p>Intégrité physique prévue : {preview.accepted && preview.changingCards ? "54 / 54 cartes" : "À vérifier"}</p>
+
         <button type="button" className="primary-action" disabled={busy || !preview.accepted} onClick={() => void confirm()}>{tutorial ? "Confirmer le coup d’entraînement" : "Confirmer et enregistrer ce coup"}</button>
         <button type="button" className="back-link" disabled={busy} onClick={() => setSelection(null)}>Annuler sans modifier</button>
       </div> : null}
+      </div>
+      <p className="thunder-notice" role="status" aria-live="polite">{notice}</p>
+      <details className="thunder-extra"><summary>Résistance et armure</summary>
+      <div className="thunder-armor">{figures.filter((id): id is string => id !== null).map(id =>
+        <p key={id}>{labelOf(id)} · Résistance {resistance(state, id)} ({valueOf(id)} + {(state.armorCards ?? []).filter(a => a.figureId === id).reduce((sum, a) => sum + valueOf(a.cardId), 0)} armure) · {state.defeatedFigures?.includes(id) ? "Neutralisé" : "Actif"}</p>
+      )}</div>
+      </details><details className="thunder-extra"><summary>Réserve spéciale · {state.specialReserve.length}</summary>
+      <div className="thunder-reserve">{state.specialReserve.map(id => <Card key={id} id={id} />)}</div>
+      <p className="help-note">Actions spéciales consommées : {state.spentSpecials.length}. </p>
+</details>
     </>}
   </section>;
 }

@@ -37,9 +37,9 @@ export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGa
       <section><h3>Réserve spéciale et armure</h3><p>Un As sert à extraire une pile entière, renvoyée au-dessous de la pioche ; le secteur de grille devient vide. Un Joker permet de réaffecter la carte supérieure d’une pile vers une autre destination légale, avec tir éventuel. Ces six cartes spéciales au maximum sont chacune consommées définitivement après usage.</p><p>Lorsqu’une carte numérique ne peut être posée et qu’aucune séquence spéciale utilisable ne la débloque, elle devient une armure ajoutée à la résistance d’une figure vivante : priorité à l’enseigne identique, puis à la couleur, puis à la plus faible valeur. Une résistance de 20 ou plus sur Valet/Dame, ou de 19 ou plus sur Roi, provoque la défaite.</p></section>
       <section><h3>Recherche et fin de partie</h3><p>Si toutes les figures visibles ont été neutralisées mais qu’il en reste à révéler, rechercher la figure suivante dans la pioche. Les cartes numériques croisées sont temporairement gardées puis réinsérées sous la pioche selon le moteur ; les As/Jokers rejoignent la réserve. La victoire exige les douze figures neutralisées. Une impasse définitive donne une défaite. Le score de victoire est le nombre d’As et de Jokers non dépensés, de zéro à six.</p></section>
     </>}
-    <p className="help-note">Ces règles décrivent le fonctionnement du moteur implémenté. Pour les arbitrages précis, les variantes écartées et les références officielles, consultez le <a href={grim
+    {grim?<p className="help-note">Ces règles décrivent le fonctionnement du moteur implémenté. Pour les arbitrages précis, les variantes écartées et les références officielles, consultez le <a href={grim
       ? "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/clear-the-dungeon.md"
-      : "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/gridcannon.md"} target="_blank" rel="noopener noreferrer">référentiel BMAD complet</a>.</p>
+      : "https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/game-rules/gridcannon.md"} target="_blank" rel="noopener noreferrer">référentiel BMAD complet</a>.</p>:null}
   </article>;
 }
 
@@ -66,13 +66,13 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
       </div>
     </section> : <>
       <div className="learning-toolbar" role="group" aria-label="Mode de jeu et aide">
-        <span className="learning-mode">{mode === "learn" ? "Tutoriel · entraînement sans sauvegarde" : "Partie normale"}</span>
+        {gameId!=="gridcannon"||mode==="learn"?<span className="learning-mode">{mode === "learn" ? "Tutoriel · entraînement sans sauvegarde" : "Partie normale"}</span>:null}
         <button className="secondary-action" type="button" onClick={() => choose(mode === "learn" ? "play" : "learn")}>
-          {mode === "learn" ? "Jouer librement" : "Relancer le tutoriel"}
+          {mode === "learn" ? "Jouer librement" : gameId==="gridcannon"?"Tutoriel":"Relancer le tutoriel"}
         </button>
         {mode === "learn" ? <button className="secondary-action" type="button" onClick={() => setTutorialRun(v => v + 1)}>Recommencer l’entraînement</button> : null}
         <button className="secondary-action" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>
-          {showRules ? "Masquer les règles" : "Consulter les règles"}
+          {showRules ? "Masquer les règles" : gameId==="gridcannon"?"Règles":"Consulter les règles"}
         </button>
         <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
       </div>

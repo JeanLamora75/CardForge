@@ -746,3 +746,48 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .settings-about .about-warning{font-size:.8rem;margin:16px 0 0;}
 .forge-settings-page{scroll-padding-top:88px;}
 .forge-settings-page .privacy-confirm{scroll-margin-top:88px;}
+
+/* Thunderfighter command deck. Other game surfaces keep their existing layout. */
+.thunder-command-surface{max-width:none;min-height:100dvh;padding:0 max(8px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));background:radial-gradient(ellipse at 50% 35%,#244253 0,#101e2b 55%,#070f18 100%);color:#e0edf4;}
+.thunder-command-surface .topbar{min-height:44px;padding:4px 0;gap:8px;border-color:#537385;max-width:960px;margin:auto;}
+.thunder-command-page{max-width:960px;margin:auto;padding:6px 0;}
+.thunder-command-page .detail-navigation{margin:0 0 4px;}
+.thunder-command-page .board-page{margin:0;padding:0;}
+.thunder-command-page .board-page>h1{font:700 clamp(1.5rem,5vw,2.2rem)/1 Rajdhani,Arial,sans-serif;text-align:center;letter-spacing:.04em;color:#f0c28a;margin:4px 0 8px;}
+.thunder-command-page .game-learning{padding:0;}
+.thunder-command-page .learning-toolbar{gap:6px;margin:4px 0;display:flex;flex-wrap:wrap;}
+.thunder-command-page .learning-toolbar>button,.thunder-command-page .learning-hints{flex:1 1 auto;width:auto;min-height:44px;padding:6px 8px;font-size:.8rem;}
+.thunder-board{padding:0 0 16px;}
+.thunder-board h2,.thunder-board h3,.thunder-board summary{font-family:Rajdhani,Arial,sans-serif;}
+.thunder-board h3{margin:8px 0 4px;font-size:1.05rem;letter-spacing:.04em;}
+.thunder-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.thunder-board .thunder-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:6px 0;}
+.thunder-board .thunder-metrics span{display:grid;text-align:center;align-content:center;min-width:0;padding:4px 2px;border-radius:5px;background:linear-gradient(#223c4e,#11222f);border:1px solid #57798b;}
+.thunder-metrics small{font:700 .72rem/1.1 Rajdhani,Arial,sans-serif;color:#bdd5e2;text-transform:uppercase;}
+.thunder-metrics strong{font:700 1.45rem/1 Rajdhani,Arial,sans-serif;color:#f0c28a;}
+.thunder-board .thunder-battlefield{--tf-gap:3px;--tf-cell:clamp(48px,15vw,91px);width:min(100%,490px);margin:0 auto;padding:4px;border-radius:8px;background:radial-gradient(ellipse,#1d394a,#09151f);border-color:#638194;}
+.thunder-board .thunder-top-slots,.thunder-board .thunder-bottom-slots{width:calc((100% - 4 * var(--tf-gap)) * .6 + 2 * var(--tf-gap));gap:var(--tf-gap);}
+.thunder-board .thunder-middle{grid-template-columns:minmax(0,1fr) minmax(0,calc(60% - 2 * var(--tf-gap) / 5)) minmax(0,1fr);gap:var(--tf-gap);padding:var(--tf-gap) 0;}
+.thunder-board .thunder-grid,.thunder-board .thunder-side-slots{gap:var(--tf-gap);}
+.thunder-board .thunder-slot,.thunder-board .thunder-pile{height:var(--tf-cell);padding:2px;gap:1px;border-radius:4px;justify-content:center;overflow:hidden;}
+.thunder-board .thunder-slot>small,.thunder-board .thunder-pile>strong{font:600 .62rem/1 Rajdhani,Arial,sans-serif;white-space:nowrap;text-align:center;}
+.thunder-board .thunder-card{flex:1;min-height:0;padding:2px;gap:0;border-width:1px;border-radius:4px;justify-content:center;font-family:Rajdhani,Arial,sans-serif;background:linear-gradient(135deg,#355569,#142a38);}
+.thunder-board .thunder-card[data-figure=true]{background:linear-gradient(135deg,#694338,#30222b);}
+.thunder-board .thunder-card[data-defeated=true]{background:#242c36;}
+.thunder-board .thunder-card strong{font-size:clamp(.8rem,3.2vw,1.2rem);line-height:1;}
+.thunder-board .thunder-card small,.thunder-board .thunder-card b{font-size:.62rem;line-height:1;}
+.thunder-board .thunder-emblem{display:none;}
+.thunder-board .thunder-slot>span:not(.thunder-card),.thunder-board .thunder-pile>span:not(.thunder-card){padding:0;text-align:center;font-size:.65rem;}
+.thunder-board .thunder-action-zone{padding:8px;border:1px solid #57798b;border-radius:8px;background:#142735;margin-top:8px;}
+.thunder-board .thunder-pending,.thunder-board .thunder-notice{padding:6px 8px;margin:4px 0;font-size:.85rem;line-height:1.3;}
+.thunder-board .thunder-notice:empty{padding:0;border:0;margin:0;}
+.thunder-board .thunder-actions{grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));gap:6px;}
+.thunder-board .thunder-actions button,.thunder-board .thunder-confirm button{min-height:44px;padding:6px 8px;font-size:.85rem;}
+.thunder-board .thunder-confirm{margin:4px 0;padding:8px;gap:6px;background:#24313d;}
+.thunder-board .thunder-confirm p{font-size:.85rem;}
+.thunder-board .thunder-extra{border:1px solid #57798b;background:#142735;padding:4px 8px;border-radius:6px;margin-top:6px;}
+.thunder-board .thunder-extra summary,.thunder-board .learning-context summary{min-height:44px;cursor:pointer;padding:10px 0;}
+.thunder-board .learning-context{margin:4px 0;padding:0 8px;background:#142735;border-color:#57798b;}
+.thunder-board .thunder-reserve>.thunder-card{flex:0 0 auto;min-height:50px;width:64px;}
+.thunder-command-page :is(button,summary,input):focus-visible{outline:3px solid #f1bc79;outline-offset:2px;}
+@media(min-width:760px){.thunder-board{max-width:700px;margin:auto;}.thunder-board .thunder-action-zone{max-width:700px;margin-inline:auto;}}

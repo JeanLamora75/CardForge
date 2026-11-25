@@ -95,21 +95,22 @@ function GameDetail({
   const [learn, setLearn] = useState(false);
   const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
   const subPage = section !== "detail";
+  const thunderCommand = game.id === "gridcannon" && section === "board";
 
   if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
-    <section className={`detail ${game.accent}`} aria-labelledby="game-title">
+    <section className={`detail ${game.accent}${thunderCommand?" thunder-command-page":""}`} aria-labelledby="game-title">
       <div className="detail-navigation">
         <button className="back-link" type="button" onClick={onBack}>
           <span aria-hidden="true">←</span> {subPage ? `Retour à ${game.title}` : "Retour au catalogue"}
         </button>
-        <span className="status" data-status={game.status}>{statusLabel(game)}</span>
+        {!thunderCommand?<span className="status" data-status={game.status}>{statusLabel(game)}</span>:null}
       </div>
       {(
         <div className={section === "board" ? "board-page" : "context-page"}>
-          <span className="eyebrow">{game.title}</span>
+          {!thunderCommand?<span className="eyebrow">{game.title}</span>:null}
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
-            {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
+            {thunderCommand ? "Thunderfighter" : section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
           {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "rules" ? (
             <>
@@ -224,10 +225,11 @@ export default function App() {
   const galleryScroll=useRef(0);
   const immersive=route.page==="game" && route.section==="detail";
   const settingsSurface=route.page==="settings"||route.page==="about";
+  const thunderSurface=route.page==="game"&&route.gameId==="gridcannon"&&route.section==="board";
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":""}`}>
+    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":thunderSurface?"thunder-command-surface":""}`}>
       {route.page==="catalog"||settingsSurface?<WorldBackdrop slug="cardforge"/>:null}
       {!immersive?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}

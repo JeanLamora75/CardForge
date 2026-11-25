@@ -35,6 +35,14 @@ export function saveLanguage(store: LanguageStore | null, locale: Locale): boole
  * never fetches translations and remains usable when the application is cached.
  */
 export const english: Readonly<Record<string, string>> = {
+  "Poste de commandement":"Command deck",
+  "Ennemis neutralisés":"Enemies defeated",
+  "Commencez une partie.":"Start a game.",
+  "Choisissez un secteur disponible.":"Choose an available sector.",
+  "Aucune action disponible.":"No available action.",
+  "La partie ne peut pas continuer normalement.":"The game cannot continue normally.",
+  "Elles seront replacées sous la pioche.":"They will be returned to the bottom of the deck.",
+
   "Bienvenue dans Skydeck":"Welcome to Skydeck",
   "Apprendre ou jouer à Skydeck":"Learn or play Skydeck",
   "Ouvrir le plateau Skydeck":"Open the Skydeck board",
