@@ -583,3 +583,19 @@ h1[tabindex="-1"]:focus { outline: none; }
 .forge-home .app-footer{background:#0a0b0cbd;}
 @media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:420px;gap:24px;}.forge-home .forge-settings-tile{aspect-ratio:3/4;}}
 @media(orientation:landscape) and (max-width:1024px){.forge-home .forge-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:680px;gap:18px;}.forge-home .forge-gallery-header .world-logo{max-height:14dvh;}}
+
+/* Compact landscape tiles use existing wide artwork and separate, uncut logos. */
+.forge-home .offline-readiness[data-offline-phase="ready"]{position:absolute;width:1px;height:1px;min-height:0;overflow:hidden;clip-path:inset(50%);padding:0;margin:0;border:0;white-space:nowrap;}
+.forge-home .forge-gallery{padding-top:14px;}
+.forge-home .forge-grid{gap:16px;}
+.forge-home .forge-cover.game-card{overflow:hidden;border:1px solid #b89960;border-radius:12px;}
+.forge-home .forge-cover button{isolation:isolate;overflow:hidden;aspect-ratio:2/1;display:grid;place-items:center;}
+.forge-home .forge-cover .forge-tile-scene{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto;object-fit:cover;z-index:-2;border-radius:0;}
+.forge-home .forge-cover button::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#090a1260,transparent 65%),linear-gradient(0deg,#090a1280,transparent 48%);pointer-events:none;}
+.forge-home .forge-cover .forge-tile-logo{width:76%;height:62%;aspect-ratio:auto;object-fit:contain;filter:drop-shadow(0 3px 6px #000c);border-radius:0;}
+.forge-home .forge-cover button:has(.forge-save) .forge-tile-logo{transform:translateY(-9%);}
+.forge-home .forge-save{left:auto;right:3%;bottom:5%;padding:4px 10px;font-size:.69rem;gap:5px;}
+.forge-home .forge-settings-tile{min-height:0;aspect-ratio:2/1;flex-direction:row;gap:16px;padding:12px 18px;}
+.forge-home .forge-settings-emblem{width:25%;max-width:72px;max-height:none;padding:10px;box-sizing:border-box;}
+.forge-home .forge-settings-caption strong{font-size:clamp(1.1rem,4vw,1.65rem);}
+@media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:520px;gap:16px;}}

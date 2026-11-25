@@ -130,7 +130,12 @@ async function immersiveScreens(){
   try{
    const page=await context.newPage();await page.goto(HOST);await ready(page);
    await page.locator(".forge-grid button").last().waitFor();
-   assert.equal(await page.locator(".forge-cover img").count(),5);
+   assert.equal(await page.locator(".forge-tile-scene").count(),5);
+   assert.equal(await page.locator(".forge-tile-logo").count(),5);
+   assert.equal(await page.getByRole("heading",{name:/Choisissez votre univers|Choose your universe/}).count(),0);
+   assert.ok(await page.locator(".forge-cover button,.forge-settings-tile").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return Math.abs(r.width/r.height-2)<.06;})),"gallery tiles must be 2:1");
+   await page.locator(".forge-tile-scene,.forge-tile-logo").evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
+   assert.ok(await page.locator(".forge-home .offline-readiness[data-offline-phase=ready]").evaluate(n=>n.getBoundingClientRect().height<=1),"ready status must not occupy visible gallery space");
    assert.equal(await page.locator(".forge-home select, .forge-home .settings-button").count(),0);
    assert.equal(await page.locator(".forge-grid > :last-child").getAttribute("class"),"forge-settings-card");
    if(viewport.width<viewport.height)assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),1);
@@ -141,7 +146,7 @@ async function immersiveScreens(){
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+".png"}); }
-   assert.ok(await page.locator(".forge-cover img").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
+   assert.ok(await page.locator(".forge-tile-scene").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
    for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
     await page.locator(".forge-title img").evaluate(i=>i.decode());
@@ -198,8 +203,8 @@ async function journey(locale,mobile){
     await page.locator('.context-page .back-link').click();
     await page.locator('.forge-gallery').waitFor();
     assert.equal(await page.locator('html').getAttribute('lang'),locale);
-    assert.equal(await page.getByRole('heading',{name:'Choisissez votre univers'}).count(),locale==='fr'?1:0);
-    assert.equal(await page.getByRole('heading',{name:'Choose your universe'}).count(),locale==='en'?1:0);
+    assert.equal(await page.getByRole('heading',{name:/Choisissez votre univers|Choose your universe/}).count(),0);
+    assert.equal(await page.locator('.forge-gallery').getAttribute('aria-label'),locale==='fr'?'Galerie des jeux':'Game gallery');
     if(!mobile){
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(()=>document.activeElement?.tagName!=='BODY'),true,'Tab must activate a focusable control');
