@@ -1,15 +1,27 @@
-# ThunderFighter — Référentiel artistique des cartes numériques V1
-Date : 25 novembre 2026. Sally (UX), Mary (règles). Statut : direction et maquette 6 validées par le porteur ; matrice de production proposée sur sa demande, angles et détails à éprouver en recette graphique. Aucun changement de moteur.
+# ThunderFighter — Référentiel artistique consolidé V2
+Date : 25 novembre 2026. Sally (UX), Mary (règles), Amelia (intégration), Murat (QA). Périmètre CAR-90. Ce document remplace les propositions contradictoires de V1 ; historique conservé dans Git. Direction artistique et maquettes validées par le porteur ; intégration et recette restent à réaliser.
 
-## Décisions et correspondances
-| Faction | Enseigne logique | Couleur graphique | Alliance (couleur logique) |
+## Identité et correspondances internes
+| Faction | Enseigne interne | Couleur graphique | Alliance |
 |---|---|---|---|
-| Nova | ♥ hearts | Orange | Phoenix (rouge) |
-| Vector | ♦ diamonds | Jaune | Phoenix (rouge) |
-| Aegis | ♠ spades | Bleu | Orion (noir) |
-| Solaris | ♣ clubs | Vert | Orion (noir) |
+| Nova | hearts (cœur) | Orange | Phoenix (rouge logique) |
+| Vector | diamonds (carreau) | Jaune | Phoenix (rouge logique) |
+| Aegis | spades (pique) | Bleu | Orion (noir logique) |
+| Solaris | clubs (trèfle) | Vert | Orion (noir logique) |
 
-La dernière correspondance validée prime sur les propositions antérieures. Les enseignes classiques restent visibles, colorées selon la faction et non selon la couleur historique. Phoenix : insigne blanc d'oiseau stylisé, corps vertical et deux paires d'ailes déployées. Orion : insigne blanc de deux chevrons descendants superposés et pointe centrale supérieure. Option A validée ; ne pas revenir au rond/triangle. Les deux insignes sont distincts par leur silhouette, indépendamment de la couleur. Valeurs 2–10 inchangées. Nomenclature validée : Valet = Lieutenant (LT), Dame = Commandant (CMD), Roi = Amiral (ADM), As = Alpha (α), Joker = Singularité (SIG). Les figures et spéciales feront l'objet d'une planche distincte ; ne pas attribuer de faction/alliance aux jokers. Traductions FR/EN à vérifier.
+Aucune enseigne classique ni emblème de faction dans l'interface. La couleur du cadre et de l'illustration distingue les factions ; nom textuel en détail et nom accessible pour ne pas dépendre exclusivement de la couleur. Seul l'insigne blanc d'alliance figure comme emblème fonctionnel : Phoenix = oiseau stylisé, corps vertical et deux paires d'ailes déployées ; Orion = deux chevrons descendants superposés avec pointe centrale supérieure. Option A validée, pas de rond/triangle ni de variantes par faction. Les insignes décoratifs sur les coques et uniformes sont autorisés ; ils ne portent aucune information de règle. Les enseignes historiques restent exclusivement internes.
+
+## Nomenclature et mécanique
+| Carte originale | Nom | Marqueur | Résistance de base / action |
+|---|---|---|---|
+| 2–10 | Vaisseau | 2–10 | Valeur inchangée |
+| Valet | Lieutenant | L | 11 ; toutes factions |
+| Dame | Commandant | C | 12 ; même alliance |
+| Roi | Amiral | A | 13 ; même faction |
+| As | Alpha | α | Extraction |
+| Joker | Singularité | S | Réaffectation |
+
+Alpha : retirer toute une pile centrale, la remettre face cachée sous la pioche selon l'ordre défini par le moteur, libérer la case. Singularité : déplacer uniquement le sommet d'une pile vers une position légale ; peut déclencher un tir normal. Actions à usage unique. Quatre Alpha avec faction/alliance ; deux Singularités sans faction/alliance, violet réservé aux cartes spéciales neutres. Les deux illustrations de Singularité ont exactement le même comportement. Résistance des figures dynamique avec armure ; seules les deux cartes intermédiaires contribuent au tir, pas la carte déclencheuse. Conserver toutes les règles de placement, armure, score, identifiants physiques, rangs, sauvegardes et moteur. Les classes sont narratives, sans capacités nouvelles. Le référentiel [Gridcannon V2](game-rules/gridcannon.md) prévaut pour toute mécanique.
 
 ## Matrice Phoenix
 ADN : coques anguleuses, lignes offensives, propulsion apparente. Nova : accents orange, énergie chaude ; Vector : accents jaunes, détails géométriques et précis.
@@ -39,18 +51,38 @@ ADN : coques enveloppantes, courbes technologiques, structures symétriques. Aeg
 | 9 | Croiseur supérieur | Architecture étagée, anneaux partiels, pont de commandement intégré | Profil droit, plongée 15° |
 | 10 | Bastion stellaire | Coque monumentale symétrique, noyau central massif, arcs protecteurs | Trois-quarts avant gauche, contre-plongée 20° |
 
-## Contrat de production
-- 18 modèles de référence (9 par alliance), 36 illustrations finales (9 par faction). Même classe, silhouette de base et angle pour les deux factions d'une alliance à valeur égale ; accents et détails secondaires propres à chaque faction. Exception : préserver les quatre rendus 6 validés, sans les remplacer arbitrairement.
-- Progression visuelle : 2–4 légers, 5–7 moyens, 8–10 lourds. Classes exclusivement narratives : aucun pouvoir, bonus, comportement ou statistique supplémentaire.
-- Conserver le gabarit de la carte 6 : illustration SF pulp, valeur dominante, enseigne explicite, nom de faction et insigne d'alliance blanc. Position constante des marqueurs sur toutes les cartes ; fond spatial sombre, contraste suffisant, pas de confusion entre accents de faction. Angles indicatifs de cadrage, à ajuster sans changer les silhouettes.
-- Produire d'abord les valeurs 2, 6, 10 des deux alliances, contrôler le rendu compact du plateau et la vue détaillée, puis les intermédiaires. Éviter tout texte généré dans l'illustration seule ; privilégier les marqueurs d'interface séparés et accessibles, conformément à TF-UX-03.
-- La maquette 6 est validée dans la conversation ; son fichier graphique n'est pas inclus dans ce commit. Retrouver l'original avant toute production qui en dépend. Les insignes sont décrits, pas livrés comme fichiers SVG définitifs.
-- Critères de recette : 36 combinaisons distinctes et complètes ; chaque valeur, enseigne, alliance lisible en miniature ; mêmes symboles en détail et sur plateau ; couleurs non seules porteuses d'information ; six résolutions de référence, FR/EN, clavier/tactile, hors ligne ; aucun contenu futur/caché révélé.
-- Vérifier l'existant (src/application/thunderfighter-card-view.ts et thunderfighter-art.ts) avant intégration ; le premier utilise encore les libellés classiques au moment de cette rédaction. Ne pas modifier IDs, rangs, enseignes, couleur logique, sauvegardes ou moteur.
-- Règles : Lieutenant résistance 11 toutes enseignes ; Commandant résistance 12 même alliance (couleur logique) ; Amiral résistance 13 même enseigne (faction) ; armure ajoutée à la résistance. Seules les deux cartes intermédiaires contribuent, jamais la carte déclencheuse. Placement des figures et armures conserve ses priorités de ressemblance. Alpha = Extraction, Singularité = Réaffectation.
-- Références : [règles](game-rules/gridcannon.md), [UX plateau](ux-thunderfighter-board.md). Périmètre artistique CAR-90 mentionné dans la documentation UX ; aucun ticket Jira modifié ni créé. Aucun script uv ni test exécuté pour cette livraison documentaire.
 
-## Rectification artistique et inventaire des ressources — 25 novembre 2026
-Dernière décision du porteur : supprimer tous les symboles traditionnels et tous les emblèmes spécifiques de faction de la présentation. La faction se distingue par sa couleur (Nova orange, Vector jaune, Aegis bleu, Solaris vert) et son nom textuel lorsque l'espace le permet ; l'insigne blanc Phoenix ou Orion reste le seul emblème. Les enseignes et couleurs historiques restent internes au moteur. Pour l'accessibilité, prévoir le nom accessible de la faction et une identification textuelle en détail ; aucune nouvelle icône de faction. Cette décision supplante les exigences graphiques antérieures relatives aux enseignes visibles. Les planches de progression 2/6/10 et la planche corrigée sans enseignes sont validées en conversation.
-Production : illustration individuelle sans cadre, chiffre, texte ni insigne ; cadre, rang, alliance et textes assemblés dynamiquement et localisés. Destination proposée, à confirmer avec l'architecture des assets existants : public/art/thunderfighter/ships/{faction}/{02..10}.webp.
-Inventaire de préparation : 29 fichiers sources nommés accessibles, Nova 9, Vector 9, Aegis 6, Solaris 5. Nova/Vector : correspondance provisoire selon ordre de génération, à contrôler visuellement. Aegis : fonds blancs/damiers incrustés dans des images RGB, à corriger ; Solaris et Aegis : affectation par valeur non vérifiée, 7 illustrations au minimum à compléter. Un fichier générique imagegen.png exclu faute de provenance unique confirmée. Pack WebP local préparé avec manifeste SHA-256, sans déformation, maximum 1024 px par côté ; candidats Orion isolés dans review/. Les binaires ne sont pas publiés sur GitHub : le transfert des octets du conteneur vers le connecteur n'est pas disponible directement. Ne pas déclarer CAR-90 terminée. Aucun code ni Jira modifié, aucun test ou uv exécuté.
+## Figures : 12 portraits
+Direction rétrofuturiste pulp (esprit Buck Rogers), avec armures SF, visage et épaules, personnages distincts, diversité de visages, âges et genres. Lieutenant : pilote opérationnel ; Commandant : officier expérimenté ; Amiral : haut dignitaire, uniforme prestigieux. Palette de faction identique aux vaisseaux. Une illustration par combinaison.
+| Faction | Lieutenant | Commandant | Amiral |
+|---|---|---|---|
+| Nova | Pilote intrépide | Officier offensif | Stratège conquérant |
+| Vector | Pilote méthodique | Expert tactique | Stratège calculateur |
+| Aegis | Pilote discipliné | Officier protecteur | Chef de flotte |
+| Solaris | Pilote technologique | Officier scientifique | Haut commandant stellaire |
+
+## Cartes spéciales : six illustrations
+| Ressource | Sujet |
+|---|---|
+| Nova Alpha | Rayon tracteur orange, métal anguleux |
+| Vector Alpha | Portail de récupération jaune, géométrique |
+| Aegis Alpha | Station d'extraction bleue |
+| Solaris Alpha | Anneaux de téléportation verts |
+| Singularité 01 | Trou noir gravitationnel violet |
+| Singularité 02 | Faille dimensionnelle blanche et violette |
+
+## Contrat graphique commun
+Illustration source carrée, WebP 1024 × 1024 cible, sans cadre, valeur, texte ni marqueur d'interface incrusté. Fond spatial sombre ; portraits cadrés pour rester lisibles en miniature. Composant commun : cadre fin couleur faction (violet neutre pour Singularité), valeur/initiale en haut à gauche, insigne blanc d'alliance en haut à droite sauf Singularité, résistance actuelle en bas à droite pour les figures, multiplicateur de pile conservé. Indicateurs colorés de compatibilité d'attaque proposés lors de la validation des figures : toutes les factions pour L, les deux couleurs d'alliance pour C, seule couleur de faction pour A ; ne pas introduire de nouveaux emblèmes, contrôler la lisibilité et préserver les informations accessibles en détail. Alpha et Singularité : action Extraire/Déplacer clairement identifiée dans la réserve, flèches fonctionnelles dynamiques possibles, pas de résistance. Pas de logo répété, nom/classe en détail localisé FR/EN, mêmes illustrations sur plateau et détail. Préserver la géométrie carrée du plateau réel : neuf piles centrales numériques, douze positions périphériques pour figures, réserve séparée. Les maquettes validées sont des références de style et non des instantanés de règles : corriger toute figure au centre, tout mauvais insigne, ancienne enseigne ou résistance erronée visible dans une maquette. Ne pas reprendre ces anomalies.
+18 modèles de référence, 36 déclinaisons numériques ; progression 2–4 légers, 5–7 moyens, 8–10 lourds. Maquette 6 et planches 2/6/10 validées. Les silhouettes/angles effectifs des fichiers sont parfois proches ; affectations Orion et grades à confirmer en recette, sans bloquer l'intégration initiale. La matrice reste la cible artistique, pas une attestation de conformité parfaite.
+
+## Ressources remises au porteur
+Deux ZIP complémentaires remis dans la conversation, à extraire à la racine du dépôt :
+- ThunderFighter-36-illustrations.zip : 36 WebP numériques ; public/art/thunderfighter/ships/{nova,vector,aegis,solaris}/{02..10}.webp.
+- ThunderFighter-18-officiers-et-speciales.zip : 12 officiers + 6 spéciales ; public/art/thunderfighter/officers/{faction}/{lieutenant,commander,admiral}.webp ; public/art/thunderfighter/special/{faction}/alpha.webp ; public/art/thunderfighter/special/singularity/{01,02}.webp.
+- Manifeste et planche d'aperçu fournis dans chaque archive. Les chemins ci-dessus sont ceux des archives ; Amelia doit vérifier leur compatibilité avec l'architecture et le cache existants avant intégration.
+Les 54 ressources sont attendues sur GitHub après import par le porteur ; ne pas confondre livraison ZIP et publication effective. Vérifier les fichiers, manifestes, dimensions, décodage, intégrité et correspondances avant utilisation. Certains portraits se ressemblent et certains vaisseaux Orion ont des cadrages adaptés ; recette visuelle nécessaire. Les insignes définitifs restent à créer comme SVG locaux si absents.
+
+## Intégration et recette
+- Amelia : consulter src/application/thunderfighter-card-view.ts, thunderfighter-art.ts et les composants réels ; mapping des 54 cartes physiques stable, sans changer la logique. Réutiliser un composant graphique commun, ressources locales, cache PWA et absence de dépendance réseau. Préserver toutes les interactions, la réserve, les états cachés/neutralisés, l'armure et le multiplicateur. Aucune information future révélée.
+- Murat : contrôler 54 correspondances, deux emblèmes cohérents, quatre couleurs, L/C/A/α/S, résistance et armure, compatibilité des attaques, extraction et réaffectation, reprise et hors ligne, FR/EN, clavier/tactile, six résolutions du référentiel UX (360×640, 390×844, 412×915, 600×900, 844×390, 1366×768). Vérifier CI effective d'un même commit avant clôture.
+- [Référentiel UX plateau](ux-thunderfighter-board.md). Aucun script uv. Cette consolidation documentaire ne constitue ni développement, ni recette, ni clôture CAR-90 ; aucun ticket Jira modifié.
