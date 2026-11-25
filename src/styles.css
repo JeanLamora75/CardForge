@@ -572,3 +572,24 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-home .forge-cover:has(button:focus-visible){outline:3px solid #f4d8a3;outline-offset:3px;}
 .forge-home .forge-cover button:focus-visible{outline:3px solid #f4d8a3;outline-offset:-4px;border-radius:11px;}
 .forge-home .forge-settings-tile:focus-visible{outline-offset:3px;}
+
+/* World menus: safe-area layout and a consistent action hierarchy. */
+.forge-menu{--menu-safe-bottom:env(safe-area-inset-bottom,0px);}
+.forge-menu > .forge-menu-actions.context-actions{bottom:calc(var(--menu-gutter,32px) + var(--menu-safe-bottom));width:min(90%,540px,calc(100% - 2 * max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))));}
+@media(orientation:landscape){.forge-menu > .forge-menu-actions.context-actions{width:min(90%,900px,calc(100% - 2 * max(env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))));}}
+@media(orientation:portrait){.forge-menu[data-world="les-douze-tyrans"] > .forge-title,.forge-menu[data-world="midnight-syndicate"] > .forge-title{transform:translateX(min(8vw,48px));width:min(72%,390px);}}
+.forge-menu .forge-command{border-radius:10px;}
+.forge-menu .forge-command .forge-button-art{transition:filter 140ms ease,opacity 140ms ease;}
+.forge-menu .forge-command.primary-action .forge-button-art{opacity:1;filter:brightness(1.25) saturate(1.08) drop-shadow(0 0 2px var(--menu-highlight));}
+.forge-menu .forge-command.primary-action span{text-shadow:0 2px 4px #000,0 0 9px color-mix(in srgb,var(--menu-highlight) 45%,transparent);}
+.forge-menu .forge-command-back .forge-button-art{opacity:.72;filter:brightness(.85) saturate(.72);}
+@media(hover:hover){.forge-menu .forge-command:not(:disabled):hover .forge-button-art{opacity:1;filter:brightness(1.22);}.forge-menu .forge-command.primary-action:not(:disabled):hover .forge-button-art{filter:brightness(1.4) saturate(1.08);}}
+.forge-menu .forge-command:focus-visible{outline:3px solid var(--menu-highlight);outline-offset:2px;}
+.forge-menu .forge-command:not(:disabled):active .forge-button-art{filter:brightness(.78);}
+.forge-menu .forge-command:not(:disabled):active{transform:scale(.985);}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-menu .forge-command,:root:not([data-motion="on"]) .forge-menu .forge-command .forge-button-art{transition:none;transform:none;}}
+[data-motion="off"] .forge-menu .forge-command,[data-motion="off"] .forge-menu .forge-command .forge-button-art{transition:none;transform:none;}
+/* Keep the physical touch target at 44px while avoiding excessive art stretching. */
+.forge-menu .forge-button-art{max-width:100%;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-menu .forge-command:not(:disabled):active{transform:none;}}
+[data-motion="off"] .forge-menu .forge-command:not(:disabled):active{transform:none;}
