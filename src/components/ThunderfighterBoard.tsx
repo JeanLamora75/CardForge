@@ -3,7 +3,7 @@ import {thunderArt} from "../application/thunderfighter-art.ts";
 import { makeDeckWithJokers } from "../core/cards.ts";
 import {
   thunderfighterEngine, THUNDERFIGHTER_GAME_ID, THUNDERFIGHTER_RULES_VERSION,
-  getThunderfighterResult, getSearchPresentation, getFigurePlacementOptions,
+  getThunderfighterResult, getSearchPresentation, getFigurePlacementOptions, getActionShotAnalysis, type ThunderShot,
   type ThunderfighterState, type ThunderfighterAction,
 } from "../games/gridcannon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
@@ -84,7 +84,8 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
   const [selection, setSelection] = useState<ThunderfighterAction | null>(null);
   const [busy, setBusy] = useState(true);
-  const [effect,setEffect]=useState<{kind:string;serial:number}|null>(null);
+  const [effect,setEffect]=useState<{kind:string;serial:number;shots:ThunderShot[]}|null>(null);
+  useEffect(()=>{if(!effect)return;const timer=setTimeout(()=>setEffect(null),700);return()=>clearTimeout(timer);},[effect]);
   const effectSerial=useRef(0);
   const committing=useRef(false);
   const actionTrigger=useRef<HTMLElement|null>(null);
@@ -187,7 +188,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         setState(result.state);
         setLegal(session.current.getLegalActions());
         const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":action.type==="assign-armor"?"armor":action.type==="extract"||action.type==="reassign"?"special":"place";
-        setEffect({kind:effectKind,serial:++effectSerial.current});
+        setEffect({kind:effectKind,serial:++effectSerial.current,shots:getActionShotAnalysis(state,action).filter(shot=>shots.includes(shot.figureId))});
         playGameplayEffect(effectKind);
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
@@ -258,6 +259,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const armorRequired=legal.length>0&&legal.every(a=>a.type==="assign-armor");
   const instruction=armorRequired?(en?"Armor required · select the indicated enemy.":"Armure obligatoire · sélectionnez l’adversaire indiqué."):state?.pendingFigures.length?(en?"Choose an indicated sector.":"Choisissez un secteur indiqué."):en?"Drag or select a highlighted destination.":"Glissez ou sélectionnez une destination.";
+  const shotPreview=state&&selection?getActionShotAnalysis(state,selection):[];
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
   const placement = state && state.pendingFigures.length ? getFigurePlacementOptions(state) : null;
@@ -278,6 +280,19 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true" data-dragging={!!ghost&&!ghost.returning}>
         {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
+        <svg className="tf-shot-overlay" viewBox="0 0 500 500" aria-hidden="true">
+          {(shotPreview.length?shotPreview:effect?.shots??[]).map(shot=>{
+            const xy=(cell:number)=>[150+100*(cell%3),150+100*Math.floor(cell/3)];
+            const sector=[[150,50],[250,50],[350,50],[450,150],[450,250],[450,350],[350,450],[250,450],[150,450],[50,350],[50,250],[50,150]][shot.slot];
+            const [x,y]=xy(shot.trigger),[tx,ty]=sector;
+            return <g key={shot.figureId} className={shotPreview.length?"tf-shot-preview":"tf-shot-live"} data-success={shot.success} data-figure={shot.figureId}>
+              <path d={`M${x} ${y}L${tx} ${ty}`} pathLength="1"/>
+              {shot.contributors.map(c=>{const [cx,cy]=xy(c.cell);return <g key={c.cell} data-contributes={c.power>0}><rect x={cx-43} y={cy-43} width="86" height="86" rx="7"/><text x={cx} y={cy+18} textAnchor="middle">+{c.power}</text></g>;})}
+              <circle cx={tx} cy={ty} r="31"/>
+              <text x={tx} y={ty+5} textAnchor="middle">{shot.power}/{shot.resistance}</text>
+            </g>;
+          })}
+        </svg>
         <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-tf-kind="sector" data-tf-index={i} data-armor-target={armorRequired&&targetState("sector",i)==="legal"||undefined} data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
         <div className="thunder-middle">
           <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-armor-target={armorRequired&&targetState("sector",i)==="legal"||undefined} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
@@ -318,6 +333,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       <div className="thunder-confirm" hidden={!selection} role="group" aria-label={en?"Preview":"Prévisualisation"} data-selected={!!selection}>
         <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:null}</p>
+        {shotPreview.length?<div className="thunder-sr-only" aria-live="polite" data-i18n-ignore>{shotPreview.map(shot=><p key={shot.figureId}>{thunderCardView(state,shot.figureId,language)?.label}: {shot.power}/{shot.resistance} — {shot.success?(en?"Target neutralized":"Cible neutralisée"):(en?"Insufficient power":"Puissance insuffisante")}. {shot.contributors.map(c=>c.power).join(" + ")}.</p>)}</div>:null}
         <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
         <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
       </div>

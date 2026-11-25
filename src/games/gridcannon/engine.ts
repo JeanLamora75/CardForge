@@ -93,24 +93,28 @@ function resistance(state: Readonly<ThunderfighterState>, figureId: string): num
   return value(figureId) + (state.armorCards ?? [])
     .filter(armor => armor.figureId === figureId).reduce((sum, armor) => sum + value(armor.cardId), 0);
 }
-function shotPower(state: Readonly<ThunderfighterState>, figureId: string, middle: readonly number[]): number {
-  const rank = value(figureId);
-  const suit = suitOf(figureId);
-  return middle.reduce((sum, cell) => {
-    const top = state.grid[cell].at(-1);
-    if (!top) return sum;
-    const sourceSuit = suitOf(top);
-    if (rank === 12 && isRed(sourceSuit) !== isRed(suit)) return sum;
-    if (rank === 13 && sourceSuit !== suit) return sum;
-    return sum + value(top);
-  }, 0);
+export interface ThunderShot {
+  trigger: number;
+  slot: number;
+  figureId: string;
+  contributors: {cell:number;cardId:string|null;power:number}[];
+  power: number;
+  resistance: number;
+  success: boolean;
+}
+function shotContribution(state: Readonly<ThunderfighterState>, figureId: string, cell:number) {
+  const cardId=state.grid[cell].at(-1)??null;
+  const rank=value(figureId), suit=suitOf(figureId);
+  const sourceSuit=cardId?suitOf(cardId):"";
+  const power=cardId && (rank!==12||isRed(sourceSuit)===isRed(suit)) && (rank!==13||sourceSuit===suit) ? value(cardId):0;
+  return {cell,cardId,power};
 }
 /** The trigger card is never part of the two intermediate cards. */
-export function getShotTargets(state: Readonly<ThunderfighterState>, cell: number): string[] {
+export function getShotAnalysis(state: Readonly<ThunderfighterState>, cell: number): ThunderShot[] {
   if (state.phase !== 'playing' || !Number.isInteger(cell) || cell < 0 || cell > 8) return [];
   const axes = [...gridRows, ...gridColumns];
   const defeated = new Set(state.defeatedFigures ?? []);
-  const targets = new Set<string>();
+  const targets:ThunderShot[] = [];
   for (const axis of axes) {
     if (axis[0] !== cell && axis[2] !== cell) continue;
     const slot = axis === gridRows[0] ? cell === 0 ? 3 : 9
@@ -121,11 +125,27 @@ export function getShotTargets(state: Readonly<ThunderfighterState>, cell: numbe
       : cell === 2 ? 8 : 2;
     const figureId = state.figureSlots[slot];
     if (!figureId || defeated.has(figureId)) continue;
-    const middle = axis[0] === cell ? [axis[1],axis[2]] : [axis[0],axis[1]];
+    const middle = axis[0] === cell ? [axis[1],axis[2]] : [axis[1],axis[0]];
     // All endpoints and intermediate values are read from the same post-placement state.
-    if (shotPower(state, figureId, middle) >= resistance(state, figureId)) targets.add(figureId);
+    const contributors=middle.map(i=>shotContribution(state,figureId,i));
+    const power=contributors.reduce((sum,c)=>sum+c.power,0), required=resistance(state,figureId);
+    targets.push({trigger:cell,slot,figureId,contributors,power,resistance:required,success:power>=required});
   }
-  return [...targets];
+  return targets;
+}
+
+export function getShotTargets(state: Readonly<ThunderfighterState>, cell:number):string[] {
+  return [...new Set(getShotAnalysis(state,cell).filter(shot=>shot.success).map(shot=>shot.figureId))];
+}
+/** Read-only projection of the exact board used for an accepted shot-producing action. */
+export function getActionShotAnalysis(state:Readonly<ThunderfighterState>, action:ThunderfighterAction):ThunderShot[]{
+  if(state.phase!=="playing"||!getLegalActions(state).some(a=>JSON.stringify(a)===JSON.stringify(action)))return [];
+  if(action.type!=="place-number"&&action.type!=="reassign")return [];
+  const grid=state.grid.map(p=>[...p]);
+  const cell=action.type==="place-number"?action.cell:action.to;
+  if(action.type==="place-number")grid[cell].push(state.pendingNumeric!);
+  else grid[cell].push(grid[action.from].pop()!);
+  return getShotAnalysis({...state,grid},cell);
 }
 
 function similar(figureId: string, numberId: string): number {

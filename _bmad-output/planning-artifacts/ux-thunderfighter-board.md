@@ -40,3 +40,6 @@ Console à enveloppe commune pour stabiliser le plateau, pioche normale directe 
 
 ## V6 — CAR-91 (TF-UX-59 à TF-UX-72)
 Synthèse Amelia : priorité plateau, console compacte et stable, carte + consigne réunies, entraînement discret, réserve en réglette, sélection distincte de confirmation, armure obligatoire explicite, états légaux et sélection contrastés, HUD compact, détails et aide superposés. Ne pas modifier les règles ni la persistance. Conserver Pointer Events et accès clavier. Réserve pleine et phases exceptionnelles ne doivent jamais être coupées. Contrôler six résolutions FR/EN et toutes phases. Les illustrations finales restent CAR-90.
+
+## TF-UX-73–81 — Combat lisible
+Trajectoires et contributions calculées par le moteur, puissance/résistance et succès/échec avant confirmation, laser et impact après action acceptée, deux axes simultanés, respect du mouvement réduit. Superposition non interactive sans changement de géométrie. La carte déclencheuse est exclue, même couleur pour Dame et même enseigne pour Roi. Tests de régression ciblés. Aucun changement de sauvegarde.

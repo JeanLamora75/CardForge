@@ -1065,3 +1065,20 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .tf-drag-source .tf-tactical:active{filter:brightness(1.18);}
 .thunder-board .tf-action-status[data-transient=true]{bottom:2px;font-size:.65rem;}
 @media(orientation:landscape) and (min-width:650px){.thunder-board .tf-special-list{grid-template-columns:repeat(2,minmax(0,1fr));}}
+
+/* Combat overlay: no layout changes and no pointer interception. */
+.thunder-board .thunder-battlefield{position:relative;}
+.tf-shot-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;overflow:hidden;}
+.tf-shot-overlay g{color:#9de6be;}
+.tf-shot-overlay g[data-success=false]{color:#ffc08f;}
+.tf-shot-overlay path,.tf-shot-overlay circle,.tf-shot-overlay rect{fill:none;stroke:currentColor;stroke-width:3;}
+.tf-shot-overlay .tf-shot-preview path{stroke-dasharray:.035 .025;opacity:.85;}
+.tf-shot-overlay rect{stroke-dasharray:5 4;}
+.tf-shot-overlay [data-contributes=false]{color:#abb4c2;}
+.tf-shot-overlay text{fill:currentColor;stroke:#081522;stroke-width:5;paint-order:stroke;font-weight:800;font-size:17px;}
+.tf-shot-overlay .tf-shot-live path{stroke:#ffdc92;stroke-width:6;stroke-dasharray:1;animation:tf-laser .4s ease-out both;}
+.tf-shot-overlay .tf-shot-live circle{stroke:#ffb96b;transform-box:fill-box;transform-origin:center;animation:tf-impact .65s ease-out both;}
+@keyframes tf-laser{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes tf-impact{0%,35%{opacity:0;transform:scale(.2)}60%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(1.7)}}
+:root[data-motion=off] .tf-shot-live{display:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-shot-live{display:none;}}
