@@ -91,6 +91,25 @@ const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',action
  {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.thunder-actions button',confirm:true},
  {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button',confirm:true}];
 
+async function immersiveScreens(){
+ for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
+  const context=await browser.newContext({viewport,reducedMotion:"reduce",hasTouch:viewport.width<900});
+  try{
+   const page=await context.newPage();await page.goto(HOST);await ready(page);
+   await page.locator(".forge-grid button").last().waitFor();
+   assert.equal(await page.locator(".forge-cover img").count(),5);
+   assert.ok(await page.locator(".forge-cover img").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
+   for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
+    await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
+    await page.locator(".forge-title img").evaluate(i=>i.decode());
+    assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.left>=0&&r.bottom<=innerHeight+1&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
+    await page.locator(".forge-command").filter({hasText:/Règles|Rules/}).click();await page.locator(".context-page").waitFor();
+   }
+   await context.setOffline(true);await page.goto(HOST+"#game/regicide");await page.locator(".forge-title img").evaluate(i=>i.decode());
+  }finally{await context.close();}
+ }
+}
 async function journey(locale,mobile){
   const context=await browser.newContext({
     locale:locale==='fr'?'fr-FR':'en-US',
@@ -357,6 +376,7 @@ async function journey(locale,mobile){
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
+  await immersiveScreens();
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])
       await journey(locale,mobile);

@@ -5,7 +5,7 @@ import { readSharedSettings, saveSharedSettings, type SharedSettings } from "./a
 import { resumeAudio, suspendAudio, updateAudioPreferences } from "./application/audio.ts";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
 import {
-  availableGameActions, EMPTY_PROGRESS, readCatalogGameProgress,
+  EMPTY_PROGRESS, readCatalogGameProgress,
   type CatalogGameProgress,
 } from "./application/catalog-navigation";
 import {
@@ -19,6 +19,7 @@ import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
 import RegicideLearning from "./components/RegicideLearning.tsx";
 import RegicideRulebook from "./components/RegicideRulebook.tsx";
+import { Gallery, WorldMenu, WorldLogo, theme } from "./components/ImmersiveMenu";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -91,10 +92,11 @@ function GameDetail({
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => { titleRef.current?.focus(); }, [section, game.id]);
-  const actions = availableGameActions(game, progress);
+  const [learn, setLearn] = useState(false);
   const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
   const subPage = section !== "detail";
 
+  if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")} credits={<details className="forge-credits"><summary>{language==="fr"?"Crédits":"Credits"}</summary><p>{game.originalGame} · {game.authors}</p></details>}/>;
   return (
     <section className={`detail ${game.accent}`} aria-labelledby="game-title">
       <div className="detail-navigation">
@@ -103,58 +105,13 @@ function GameDetail({
         </button>
         <span className="status" data-status={game.status}>{statusLabel(game)}</span>
       </div>
-      {section === "detail" ? (
-        <div className="detail-layout">
-          <div className="detail-art" aria-hidden="true"><span>{game.icon}</span></div>
-          <div className="detail-copy">
-            <span className="eyebrow">Un univers CardForge</span>
-            <h1 id="game-title" ref={titleRef} tabIndex={-1}>{game.title}</h1>
-            <p className="setting">{game.setting}</p>
-            <p className="detail-description">{game.description}</p>
-            {progress.indicator === "active" ? (
-              <p className="save-indicator" role="status">● Une partie enregistrée est présente sur cet appareil.</p>
-            ) : null}
-            <h2>Découvrez les mécanismes</h2>
-            <p>{game.mechanics}</p>
-            <div className="context-actions" aria-label={`Actions pour ${game.title}`}>
-              {actions.resume && game.playableRoute ? (
-                <a className="primary-action" href={game.playableRoute}>Reprendre</a>
-              ) : null}
-              {actions.newGame && game.playableRoute && progress.indicator !== "active" ? (
-                <a className="primary-action" href={game.playableRoute}>Jouer</a>
-              ) : null}
-              {actions.newGame && progress.indicator === "active" ? (
-                <span className="availability-note">Nouvelle partie : confirmation de remplacement requise dans le parcours de jeu.</span>
-              ) : null}
-              {game.id === "regicide" ? <button type="button" className="primary-action" data-i18n-ignore onClick={() => go("board")}>{language==="fr"?"Ouvrir le plateau de recette":"Open internal test board"}</button> : null}
-              {game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? <button type="button" className="primary-action" onClick={() => go("board")}>Ouvrir le plateau {game.title}</button> : null}
-              <button type="button" className="secondary-action" onClick={() => go("rules")}>Règles</button>
-              <button type="button" className="secondary-action" onClick={() => go("statistics")}>Statistiques</button>
-            </div>
-            <p className="help-note">Les plateaux sont accessibles en préversion avec tutoriel facultatif et sauvegarde locale.</p>
-            <details className="source-credits">
-              <summary>Origine du jeu et crédits</summary>
-              <dl className="game-facts">
-                <div><dt>Mode</dt><dd>Solo</dd></div>
-                <div><dt>Règles d’origine</dt><dd>{game.originalGame}</dd></div>
-                <div><dt>Crédits</dt><dd>{game.authors}</dd></div>
-              </dl>
-            </details>
-            {!canPlay(game) ? (
-              <p className="availability-note" role="status">
-                <strong>{statusLabel(game)}</strong> — La publication officielle n’est pas encore autorisée.
-                {game.id === "regicide" || game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture" ? "Le plateau expérimental est accessible en préversion interne uniquement ; cela ne vaut pas autorisation de diffusion." : "Aucun lancement de jeu n’est proposé."}
-              </p>
-            ) : null}
-          </div>
-        </div>
-      ) : (
+      {(
         <div className={section === "board" ? "board-page" : "context-page"}>
           <span className="eyebrow">{game.title}</span>
           <h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>
-          {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} /> : section === "rules" ? (
+          {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "rules" ? (
             <>
               <p>{game.mechanics}</p>
               {game.id === "regicide" ? <RegicideRulebook language={language} /> : (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <Rulebook gameId={game.id} language={language} /> : <p className="help-note">Les règles détaillées de ce jeu à venir ne sont pas encore intégrées.</p>}
@@ -310,14 +267,17 @@ export default function App() {
     lastTrigger.current = trigger;
     navigate({ page: "game", gameId: game.id, section: "detail" });
   };
+  const galleryScroll=useRef(0);
+  const immersive=route.page==="game" && route.section==="detail";
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main ref={surfaceRef} className="shell">
-      <header className="topbar">
+    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":""}`} style={route.page==="catalog"?theme("cardforge"):undefined}>
+      {route.page==="catalog"?<><div className="forge-world-bg" aria-hidden="true"/><div className="forge-effect" aria-hidden="true"/></>:null}
+      {!immersive?<header className="topbar">
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
-          <span className="brand-icon" aria-hidden="true">♠</span> CardForge
+          {route.page==="catalog"?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}
         </button>
         <div className="topbar-actions">
           <label className="language-switch"><span className="language-label">Langue</span>
@@ -332,7 +292,7 @@ export default function App() {
           }}
             aria-label="Paramètres">⚙ Paramètres</button>
         </div>
-      </header>
+      </header>:null}
       {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
@@ -344,56 +304,15 @@ export default function App() {
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} language={language}
           hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
-        <>
-          <section className="hero" aria-labelledby="heading">
-            <span className="eyebrow">Cinq mondes · Une collection</span>
-            <h1 id="heading">Un paquet de cartes.<br/><em>Des mondes à explorer.</em></h1>
-            <p>Retrouvez le plaisir des règles originales dans cinq univers de cartes illustrées.
-              Une collection gratuite, sans publicité, imaginée pour le jeu en solo.</p>
-          </section>
-          <section className="catalog" aria-labelledby="catalog-title">
-            <div className="section-head">
-              <h2 id="catalog-title">Choisissez votre univers</h2>
-              <span>{games.length} jeux dans la collection</span>
-            </div>
-            <p className="catalog-notice">Les plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck sont accessibles en préversion depuis leurs fiches.</p>
-            <div className="game-grid">
-              {games.map(game => (
-                <article className={`game-card ${game.accent}`} key={game.id} aria-labelledby={`name-${game.id}`}>
-                  <div className="game-art" aria-hidden="true"><span>{game.icon}</span></div>
-                  <div className="game-body">
-                    <div className="game-meta">
-                      <span className="world-label">{game.setting}</span>
-                      <span className="status" data-status={game.status}>{statusLabel(game)}</span>
-                    </div>
-                    <h3 id={`name-${game.id}`}>{game.title}</h3>
-                    <p>{game.description}</p>
-                    {(progress[game.id]?.indicator === "active") ?
-                      <p className="save-indicator">● Partie en cours sur cet appareil</p> : null}
-                    <div className="card-actions">
-                      <button className="secondary-action" type="button"
-                        onClick={event => openGame(game, event.currentTarget)}
-                        aria-label={`Découvrir ${game.title}`}>
-                        Découvrir <span aria-hidden="true">↗</span>
-                      </button>
-                      {canPlay(game) && game.playableRoute ? (
-                        <a className="primary-action" href={game.playableRoute}>Jouer</a>
-                      ) : null}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
-        </>
+        <Gallery language={language} progress={progress} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
       )}
-      <footer className="app-footer">
+      {!immersive?<footer className="app-footer">
         <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck en préversion</span>
         <button type="button" className="credits-footer-link" onClick={() => {
           if (route.page !== "about") settingsOrigin.current = route;
           navigate({ page: "about" });
         }}>À propos · Crédits et licences</button>
-      </footer>
+      </footer>:null}
     </main>
   );
 }

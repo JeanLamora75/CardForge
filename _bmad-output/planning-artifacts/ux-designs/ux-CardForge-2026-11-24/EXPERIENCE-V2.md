@@ -32,6 +32,6 @@ Menu : fond sans texte incrusté, titre et commandes indépendants, accessibles 
 Six maquettes et six fonds PNG originaux générés dans la conversation et validés visuellement par le porteur pour les maquettes. Les fonds seuls sont des déclinaisons, pas des captures pixel-identiques.
 Destination prévue : `public/assets/worlds/{cardforge,thunderfighter,grim-delve,midnight-syndicate,skydeck,les-douze-tyrans}.png`.
 Maquettes : `mockups/{cardforge,thunderfighter,grim-delve,midnight-syndicate,skydeck,les-douze-tyrans}.png` dans ce dossier.
-**Statut au moment de cette rédaction :** transfert des fichiers binaires non confirmé. Ne pas considérer les chemins comme existants avant vérification. Variantes paysage, jaquettes, logos, textures de boutons et calques animés restent à produire.
+**Statut :** 46 PNG présents sur main. Voir ASSETS.md pour le pipeline d’optimisation, les limites et le manifeste.
 ## Recette
 Murat : 320×568, 390×844, 844×390, tablette et desktop ; navigation tactile/souris/clavier, FR/EN, retour position galerie, sauvegardes inchangées, absence de scroll des menus, mouvement réduit, ressources locales et PWA hors ligne. Comparer les captures avec les maquettes approuvées. Aucune validation CI prétendue sans exécution réelle.

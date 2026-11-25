@@ -43,9 +43,9 @@ export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGa
   </article>;
 }
 
-export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange }: { gameId: PlayableLearningGame; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void }) {
+export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange, initialLearn=false }: { gameId: PlayableLearningGame; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void; initialLearn?:boolean }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
-  const [mode, setMode] = useState<LearningChoice | null>(() => readLearningPreferences(local(), gameId).choice);
+  const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
   const [tutorialRun, setTutorialRun] = useState(0);
   const [saveWarning, setSaveWarning] = useState(false);
