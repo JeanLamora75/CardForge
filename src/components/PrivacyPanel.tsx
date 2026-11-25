@@ -63,13 +63,13 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
 
   return <section className="privacy-panel" aria-labelledby="privacy-title" data-i18n-ignore>
     <h2 id="privacy-title">{english ? "Privacy and my data" : "Confidentialité et mes données"}</h2>
-    <p>{english
+    <p className="privacy-summary"><strong>{english?"Your data stays on this device":"Vos données restent sur votre appareil"}</strong></p><details className="forge-privacy-details"><summary>{english?"Privacy information":"Informations de confidentialité"}</summary><p>{english
       ? "CardForge runs without an account, advertising or game-data synchronization. Saved games, results, statistics and preferences are stored in this browser, on this device. Closing or navigating away does not delete them."
       : "CardForge fonctionne sans compte, sans publicité et sans synchronisation des données de jeu. Les parties, résultats, statistiques et préférences sont stockés dans ce navigateur, sur cet appareil. Quitter l’application ou changer d’écran ne les efface pas."}</p>
     <p>{english
       ? "The source-rule links open GitHub only if you choose them. Your browser or operating system may manage storage, backups or deletion independently of CardForge."
-      : "Les liens vers les règles sources ouvrent GitHub uniquement si vous les choisissez. Votre navigateur ou système d’exploitation peut gérer son stockage, ses sauvegardes ou son effacement indépendamment de CardForge."}</p>
-    <details className="forge-privacy-details"><summary>{english ? "What is stored?" : "Quelles données sont conservées ?"}</summary>
+      : "Les liens vers les règles sources ouvrent GitHub uniquement si vous les choisissez. Votre navigateur ou système d’exploitation peut gérer son stockage, ses sauvegardes ou son effacement indépendamment de CardForge."}</p></details>
+    <details className="forge-privacy-details inventory-details"><summary>{english ? "What is stored?" : "Quelles données sont conservées ?"}</summary>
     <ul className="privacy-inventory">{PRIVACY_INVENTORY.map(item =>
       <li key={item.id}>
         <strong>{english ? item.descriptionEn : item.descriptionFr}</strong>
@@ -80,8 +80,8 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
     <h3>{english ? "Manage my data" : "Gérer mes données"}</h3>
     <p>{english ? "Choose precisely what to erase. Nothing is deleted until you confirm a detailed warning." :
       "Choisissez précisément ce que vous souhaitez effacer. Aucune donnée n’est supprimée sans confirmation du périmètre affiché."}</p>
-    <div className="privacy-actions" data-policy={DELETION_POLICY}>
-      <div className="privacy-action">
+    <div className="privacy-actions" data-policy={DELETION_POLICY} inert={!!pending}>
+      <details className="privacy-action"><summary>{english?"Manage a game’s data":"Gérer les données d’un jeu"}</summary>
         <label htmlFor="privacy-game">{english ? "Game" : "Jeu"}</label>
         <select id="privacy-game" disabled={busy || !!pending} value={selectedGame}
           onChange={event => setSelectedGame(event.target.value as PrivacyGameId)}>
@@ -93,16 +93,15 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
           onClick={event => request({ kind: "game", gameId: selectedGame }, event.currentTarget)}>
           {english ? "Delete this game's data" : "Supprimer les données de ce jeu"}
         </button>
-      </div>
-      <div className="privacy-action">
-        <h4>{english ? "Preferences only" : "Préférences uniquement"}</h4>
+      </details>
+      <details className="privacy-action"><summary>{english ? "Preferences only" : "Préférences uniquement"}</summary>
         <p>{english ? "Clears CardForge language, shared settings and learning choices. Preserves ALL game saves, results and statistics." :
           "Efface la langue, les réglages et les choix d’apprentissage CardForge. Conserve TOUTES les parties, résultats et statistiques."}</p>
         <button className="secondary-action privacy-danger" type="button" disabled={busy || !!pending}
           onClick={event => request({ kind: "preferences" }, event.currentTarget)}>
           {english ? "Delete preferences" : "Supprimer les préférences"}
         </button>
-      </div>
+      </details>
       <div className="privacy-action">
         <h4>{english ? "All CardForge data" : "Toutes les données CardForge"}</h4>
         <p>{english ? "Irreversibly erases every game's saves, results and statistics, plus all CardForge preferences." :

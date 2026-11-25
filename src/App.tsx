@@ -153,7 +153,7 @@ export default function App() {
       document.removeEventListener("visibilitychange", onVisibility);
       suspendAudio();
     };
-  }, [preferences.music, preferences.sounds]);
+  }, []);
   useEffect(() => {
     document.documentElement.dataset.motion = preferences.animations;
   }, [preferences.animations]);
@@ -209,7 +209,7 @@ export default function App() {
     const onEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !event.defaultPrevented) {
         event.preventDefault();
-        back();
+        if(route.page==="about")navigate({page:"settings"});else back();
       }
     };
     window.addEventListener("keydown", onEscape);

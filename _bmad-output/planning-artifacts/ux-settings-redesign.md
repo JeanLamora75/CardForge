@@ -24,3 +24,12 @@ Conserver le routage #settings et #about, catégories internes à Settings. Reto
 CAR-30, CAR-36, CAR-37 ; Epic CAR-6. Jira CAR-82 : https://lmn24.atlassian.net/browse/CAR-82.
 ## Validation
 Publication du code ne vaut pas réussite de CI. Recette visuelle et résultats effectifs requis.
+
+## Recette V2 — SET-14 à SET-25
+- SET-14/15 : volumes indépendants 0–100 %, zéro coupe immédiatement le bus. Migration true → 100 (niveau historique), false → 0 ; même clé de stockage, autres préférences conservées, booléens dérivés pour compatibilité.
+- SET-16 : bouton de test des effets, volontaire, désactivé à zéro.
+- SET-17/18 : titres et descriptions séparés, SVG originaux locaux.
+- SET-19/20 : en-têtes compacts, retour supérieur sur sous-pages, statut nominal masqué visuellement, version uniquement À propos et crédits.
+- SET-21/22 : panneaux dépliables confidentialité, données par jeu, préférences, crédits avec logos et notices complètes.
+- SET-23/24 : marges et styles harmonisés, confirmations et droits inchangés.
+- SET-25 : tests unitaires migration et gains, E2E FR/EN, responsive et hors ligne ; résultats effectifs requis avant clôture.

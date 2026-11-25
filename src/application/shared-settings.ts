@@ -2,7 +2,9 @@
 export type AnimationPreference = "system" | "on" | "off";
 export type SharedSettings = Readonly<{
   music: boolean;
+  musicVolume: number;
   sounds: boolean;
+  soundsVolume: number;
   animations: AnimationPreference;
   hints: boolean;
 }>;
@@ -12,17 +14,20 @@ export interface SettingsStorage {
 }
 export const SETTINGS_KEY = "cardforge.settings.v1";
 export const DEFAULT_SETTINGS: SharedSettings = Object.freeze({
-  music: false, sounds: false, animations: "system", hints: true,
+  music: false, sounds: false, musicVolume: 0, soundsVolume: 0, animations: "system", hints: true,
 });
 const validAnimation = (value: unknown): value is AnimationPreference =>
   value === "system" || value === "on" || value === "off";
 
+export function normalizeVolume(value: unknown, legacy: unknown): number {
+  return typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(100, Math.round(value))) : legacy === true ? 100 : 0;
+}
 export function normalizeSettings(value: unknown): SharedSettings {
   if (!value || typeof value !== "object" || Array.isArray(value)) return { ...DEFAULT_SETTINGS };
   const stored = value as Record<string, unknown>;
+  const musicVolume=normalizeVolume(stored.musicVolume,stored.music), soundsVolume=normalizeVolume(stored.soundsVolume,stored.sounds);
   return {
-    music: typeof stored.music === "boolean" ? stored.music : DEFAULT_SETTINGS.music,
-    sounds: typeof stored.sounds === "boolean" ? stored.sounds : DEFAULT_SETTINGS.sounds,
+    music: musicVolume>0, sounds: soundsVolume>0, musicVolume, soundsVolume,
     animations: validAnimation(stored.animations) ? stored.animations : DEFAULT_SETTINGS.animations,
     hints: typeof stored.hints === "boolean" ? stored.hints : DEFAULT_SETTINGS.hints,
   };
@@ -31,7 +36,16 @@ export function readSharedSettings(storage: SettingsStorage | null): SharedSetti
   if (!storage) return { ...DEFAULT_SETTINGS };
   try {
     const raw = storage.getItem(SETTINGS_KEY);
-    if (raw !== null) return normalizeSettings(JSON.parse(raw));
+    if (raw !== null) {
+      const parsed: unknown=JSON.parse(raw); const normalized=normalizeSettings(parsed);
+      if(parsed && typeof parsed==="object" && !Array.isArray(parsed)){
+        const old=parsed as Record<string,unknown>;
+        if(typeof old.musicVolume!=="number" || typeof old.soundsVolume!=="number"){
+          try{storage.setItem(SETTINGS_KEY,JSON.stringify(normalized));}catch{/* Keep working with normalized in-memory values. */}
+        }
+      }
+      return normalized;
+    }
     // Preserve an explicit legacy opt-out when graduating from per-game hints.
     const old = ["clear-the-dungeon", "gridcannon"].map(game => {
       const item = storage.getItem("cardforge.learning.v1." + game);

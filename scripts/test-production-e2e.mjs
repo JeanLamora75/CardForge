@@ -160,16 +160,22 @@ async function immersiveScreens(){
    await page.locator("#settings-language").waitFor();
    await page.locator(".forge-settings-footer .back-link").click();
    await page.locator('[data-settings-category="audio"]').click();
-   assert.equal(await page.getByRole("switch").count(),2);
-   const music=page.getByRole("switch").first(), beforeMusic=await music.isChecked();
-   await music.click();assert.equal(await music.isChecked(),!beforeMusic);await music.click();
+   assert.equal(await page.getByRole("slider").count(),2);
+   const music=page.locator("#musicVolume"),sounds=page.locator("#soundsVolume");
+   await music.fill("0");await sounds.fill("35");
+   assert.equal(await sounds.inputValue(),"35");await page.locator(".audio-preview").click();
+   await sounds.fill("0");assert.ok(await page.locator(".audio-preview").isDisabled());
+   await sounds.focus();await page.keyboard.press("ArrowRight");assert.equal(await sounds.inputValue(),"1");
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("cardforge.settings.v1")).soundsVolume),1);
+   await sounds.fill("0");
    await page.locator(".forge-settings-footer .back-link").click();
    await page.locator('[data-settings-category="comfort"]').click();
    await page.locator("#settings-animations").waitFor();
    await page.locator(".forge-settings-footer .back-link").click();
    await page.locator('[data-settings-category="privacy"]').click();
-   await page.locator(".forge-privacy-details summary").click();
+   await page.locator(".inventory-details summary").click();
    assert.ok(await page.locator(".privacy-inventory li").count()>=7);
+   await page.locator("details.privacy-action summary").first().click();
    await page.locator(".privacy-action button").first().click();
    await page.getByRole("alertdialog").waitFor();
    assert.ok(await page.locator(".privacy-confirm-actions button").first().evaluate(n=>document.activeElement===n));
@@ -179,6 +185,9 @@ async function immersiveScreens(){
    await page.locator('[data-settings-category="about"]').click();
    await page.locator(".settings-credits").click();
    await page.locator(".credits-page").waitFor();
+   assert.equal(await page.locator("details.credits-item summary img").count(),5);
+   await page.locator("details.credits-item summary").first().click();
+   assert.ok(await page.locator("details.credits-item").first().getAttribute("open")!==null);
    await page.locator(".credits-page .back-link").click();
    await page.locator('[data-settings-category="language"]').waitFor();
    await page.locator(".forge-settings-footer .back-link").click();
@@ -243,6 +252,10 @@ async function immersiveScreens(){
     await page.locator(".forge-command").filter({hasText:/Règles|Rules/i}).click();await page.locator(".context-page").waitFor();
    }
    await context.setOffline(true);
+   await page.goto(HOST+"#settings");await page.reload();await page.locator('[data-settings-category="audio"]').click();
+   assert.equal(await page.locator("#soundsVolume").inputValue(),"0");
+   await page.locator("#soundsVolume").fill("25");assert.equal(await page.locator("#soundsVolume").inputValue(),"25");
+   await page.locator("#soundsVolume").fill("0");
    for(const [id,family] of Object.entries({"gridcannon":"Rajdhani","clear-the-dungeon":"Cinzel","loot-the-loop":"Josefin Sans","card-capture":"Alegreya SC","regicide":"Kaushan Script"})){
     await page.goto(HOST+"#game/"+id);await page.reload();await page.locator(".forge-title img").evaluate(i=>i.decode());
     assert.ok(await page.evaluate(async family=>{const s=getComputedStyle(document.querySelector(".forge-command span"));const faces=await document.fonts.load(s.fontWeight+" "+s.fontSize+' "'+family+'"',"Règles New game");return faces.length>0&&faces.every(f=>f.status==="loaded");},family),"offline font "+family);
