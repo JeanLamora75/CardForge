@@ -15,7 +15,7 @@ test("generated worker precaches complete shell, build chunks, manifest and icon
   for (const asset of ["./", "./index.html",...PWA_PUBLIC_ASSETS,"./assets/main-abc.js","./assets/main-def.css","./assets/game-icon.svg"]) {
     assert.ok(output.includes(asset),asset);
   }
-  assert.ok(output.includes("cache.addAll(URLS)"));
+  assert.ok(output.includes('cache.addAll(URLS.map(url => new Request(url, { cache: "reload" })))'));
   assert.ok(output.includes("await caches.delete(CACHE_NAME)"));
   assert.ok(output.includes("event.ports[0]?.postMessage"));
   assert.ok(output.includes("event.request"));
