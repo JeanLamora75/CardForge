@@ -7,3 +7,6 @@ Les trois WebP fournis par le porteur du projet sont présents sur main (commit 
 
 ## Finition V2 TF-END-20–30
 Composant Command exporté sans modification de l'accueil ; trois emblèmes SVG décoratifs, typographie Rajdhani, boutons illustrés partagés, rapport compact avec fermeture haut/bas et focus restauré. Aucun changement moteur ou stockage. Les emblèmes sont des ressources vectorielles, non des peintures cinématiques. CI précédente 45673995541 réussie ; nouvelle CI et captures des trois états sur six résolutions à vérifier. Workflow manuel sans uv.
+
+## Finition finale
+TF-END-31–37 : code CSS et composant actualisés. TF-END-38 reste à vérifier sur navigateur. CI V2 45675490722 : unitaires, IndexedDB, build, PWA réussis ; E2E timeout sur reprise menu fr/touch (ligne 526), cause non établie. Nouvelle CI requise. Aucun uv, aucune modification du moteur ni des sauvegardes.

@@ -49,3 +49,6 @@ Maquettes Sally validées : victoire bleu/or, défaite catastrophe rouge/cuivre,
 
 ## Finition immersive TF-END-20–30
 Réutilisation du composant Command et du logo de l'accueil ; trois médaillons vectoriels originaux, bandeau métallique et HUD biseauté, logo en haut, actions en bas, rapport de mission stylé avec fermeture fixe et Échap natif. Suppression des doublons de pioche et score. Trois fonds WebP conservés. Recette réelle six résolutions requise.
+
+## TF-END-31–38 — Finitions
+Typographie Rajdhani, bandeau affiné, cadres continus biseautés, rapport trois métriques sur une ligne et historique 2×2, taux pleine largeur avec jauge uniquement si défini, particules décoratives respectant mouvement réduit, trois états cohérents. Fonds et règles inchangés. Validation six résolutions à effectuer.
