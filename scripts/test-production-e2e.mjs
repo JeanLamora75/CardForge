@@ -367,7 +367,7 @@ async function journey(locale,mobile){
         assert.equal(await page.locator('.thunder-battlefield .thunder-slot').count(),12);
         assert.equal(await page.locator('.thunder-metrics>span').count(),3);
         assert.equal(await page.locator('.thunder-id,.thunder-command-page .status').count(),0);
-        assert.doesNotMatch(await page.locator('.thunder-metrics').innerText(),/54|physical/i);
+        assert.doesNotMatch(await page.locator('.thunder-metrics').innerText(),/Cartes physiques|physical cards/i);
         assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+2;}));
         assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>n.getBoundingClientRect().bottom<=document.querySelector('.thunder-action-zone').getBoundingClientRect().top));
       }
@@ -386,7 +386,7 @@ async function journey(locale,mobile){
         assert.deepEqual(await readSaved(page,game.id),before,'inspection must not write');
         if(mobile)await detail.getByRole('button').click();else await page.keyboard.press('Escape');
         await detail.waitFor({state:'detached'});
-        assert.equal(await card.evaluate(n=>document.activeElement===n),true);
+        await page.waitForFunction(id=>document.activeElement?.getAttribute('data-card-id')===id,id);
         assert.deepEqual(await readSaved(page,game.id),before);
       }
       if(game.id==='loot-the-loop'){
@@ -553,9 +553,54 @@ async function journey(locale,mobile){
         await offline.locator(game.root).waitFor({state:'visible',timeout:15000});
         const restored=await readSaved(offline,game.id);
         assert.deepEqual(restored,saved[game.id],game.name+' must survive offline cold tab reopen without shuffling');
-        await offline.getByText(/Partie locale restaurée|Partie restaurée sans remélange|Partie reprise · sauvegarde locale|Game resumed · local save|Game restored|restored without/).first().waitFor({timeout:10000});
+        if(game.id==='gridcannon'){
+          await offline.locator('.thunder-battlefield[data-ready=true]').waitFor();
+          assert.deepEqual(await readSaved(offline,game.id),saved[game.id]);
+          const tops=saved[game.id].state.grid.flatMap(p=>p.length?[p.at(-1)]:[]);
+          assert.deepEqual(await offline.locator('.thunder-grid .tf-tactical').evaluateAll(nodes=>nodes.map(n=>n.dataset.cardId)),tops);
+          assert.ok(await offline.locator('.thunder-grid img.tf-ship').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
+        }else await offline.getByText(/Partie locale restaurée|Partie restaurée sans remélange|Partie reprise · sauvegarde locale|Game resumed · local save|Game restored|restored without/).first().waitFor({timeout:10000});
         await offline.goto(HOST+'#game/'+game.id+'/rules',{waitUntil:'domcontentloaded'});
         await offline.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
+      }
+      // Prepared valid snapshots exercise special actions on the actual offline production board.
+      await offline.goto(HOST+'#game/gridcannon/board');
+      const tf=offline.locator('.thunder-board');
+      const tfSave=saved.gridcannon;
+      const ids=[...['hearts','diamonds','clubs','spades'].flatMap(s=>Array.from({length:13},(_,i)=>s+'-'+(i+1))),'joker-1','joker-2'];
+      for(const scenario of ['extract','reassign','armor','search','replacement']){
+        const grid=Array.from({length:9},(_,i)=>['hearts-'+(i+2)]);
+        const enemy='spades-11',reserve=scenario==='extract'?['clubs-1']:scenario==='reassign'?['joker-1']:[];
+        const figureSlots=Array(12).fill(null);figureSlots[0]=enemy;
+        const pendingNumeric=scenario==='armor'?'spades-2':null;
+        if(scenario==='armor')grid[0]=['diamonds-10'];
+        const phase=scenario==='search'?'searching':scenario==='replacement'?'replacement-offer':'playing';
+        const defeatedFigures=scenario==='search'?[enemy]:[];
+        const used=new Set([...grid.flat(),enemy,...reserve,...(pendingNumeric?[pendingNumeric]:[])]);
+        const remaining=ids.filter(id=>!used.has(id));
+        const drawPile=scenario==='search'?['clubs-2',...remaining.filter(id=>id!=='clubs-2')]:remaining;
+        const state={...tfSave.state,phase,outcome:'in-progress',grid,figureSlots,defeatedFigures,drawPile,pendingNumeric,pendingFigures:[],specialReserve:reserve,spentSpecials:[],armorCards:[],lastShot:[],searchBuffer:[],placingFromSearch:false,replacementSlot:null,replacementUsed:false,victoryScore:null,lossReason:null};
+        // Armor requires a value strictly below all exposed piles.
+        if(scenario==='armor'){state.grid[0]=['diamonds-10'];}
+        const fixture={...tfSave,sessionId:tfSave.sessionId+'-'+scenario,state};
+        await offline.evaluate(async fixture=>{const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}},fixture);
+        await offline.reload();await tf.locator('.thunder-battlefield[data-ready=true]').waitFor();
+        const target=(kind,index)=>tf.locator('.tf-target[data-target-kind="'+kind+'"][data-target-index="'+index+'"]');
+        async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
+        async function selectAction(){if(scenario==='extract'||scenario==='reassign')await selectSpecial();else if(scenario==='armor')await interact(offline,target('sector',0),mobile);else if(scenario==='replacement')await interact(offline,target('pile',0),mobile);else await interact(offline,tf.getByRole('button',{name:locale==='fr'?'Révéler la prochaine carte':'Reveal next card',exact:true}),mobile);}
+        await selectAction();await tf.locator('.thunder-confirm').waitFor();
+        assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
+        if(scenario==='search')assert.equal(await tf.locator('[data-card-id="clubs-2"]').count(),0);
+        await interact(offline,tf.locator('.thunder-confirm .back-link'),mobile);
+        assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
+        await selectAction();await interact(offline,tf.locator('.thunder-confirm .primary-action'),mobile);
+        const after=await waitSavedChanged(offline,'gridcannon',fixture);
+        if(scenario==='extract'){assert.deepEqual(after.state.grid[0],[]);assert.ok(after.state.spentSpecials.includes('clubs-1'));}
+        if(scenario==='reassign'){assert.deepEqual(after.state.grid[8],[]);assert.equal(after.state.grid[0].at(-1),'hearts-10');assert.ok(after.state.spentSpecials.includes('joker-1'));}
+        if(scenario==='armor')assert.deepEqual(after.state.armorCards,[{figureId:enemy,cardId:'spades-2'}]);
+        if(scenario==='search')assert.deepEqual(after.state.searchBuffer,['clubs-2']);
+        if(scenario==='replacement')assert.equal(after.state.phase,'replacement-draw');
+        await offline.reload();await tf.locator('.thunder-battlefield[data-ready=true]').waitFor();assert.deepEqual(await readSaved(offline,'gridcannon'),after);
       }
       await offline.goto(HOST+'#game/regicide/board');
       await offline.locator('.ldt-resumed').waitFor();

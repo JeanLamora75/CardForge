@@ -57,10 +57,11 @@ function resistance(state: ThunderfighterState, id: string): number {
     .reduce((sum, armor) => sum + valueOf(armor.cardId), 0);
 }
 export function previewThunderfighterAction(state: ThunderfighterState, action: ThunderfighterAction) {
+  if(!isThunderActionLegal(thunderfighterEngine.getLegalActions(state),action))return {accepted:false as const,message:"Action non autorisée."};
+  if(action.type==="draw-search"||action.type==="draw-card"||action.type==="draw-replacement")return {accepted:true as const,message:actionLabel(action),resultingShots:[],resultingOutcome:state.outcome,changingCards:true};
   const snapshot = structuredClone(state);
   const next = thunderfighterEngine.transition(snapshot, action);
-  if (!next.accepted) return { accepted: false as const, message: "Action refusée par le moteur." };
-  if(action.type==="draw-search"||action.type==="draw-card"||action.type==="draw-replacement")return {accepted:true as const,message:actionLabel(action),resultingShots:[],resultingOutcome:state.outcome,changingCards:true};
+  if (!next.accepted) return { accepted: false as const, message: "Action non autorisée." };
   const before = getThunderfighterResult(state);
   const after = getThunderfighterResult(next.state);
   const shots = (next.state.defeatedFigures ?? []).filter(id => !(state.defeatedFigures ?? []).includes(id));
@@ -167,7 +168,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   async function confirm() {
     if (busy || committing.current || !selection || !session.current || !state) return;
     if (!isThunderActionLegal(session.current.getLegalActions(),selection)) {
-      setSelection(null);
+      setLegal(session.current.getLegalActions());setSpecial(null);setTargetChoice(null);setSelection(null);
       setNotice("Cette action n'est plus autorisée.");
       return;
     }
@@ -178,7 +179,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       if (!result.accepted) setNotice("Action refusée : " + result.reason);
       else {
         const nextResult = getThunderfighterResult(result.state);
-        const shots = result.state.lastShot ?? [];
+        const shots = (result.state.defeatedFigures??[]).filter(id=>!(state.defeatedFigures??[]).includes(id));
         setState(result.state);
         setLegal(session.current.getLegalActions());
         const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":selection.type==="assign-armor"?"armor":selection.type==="extract"||selection.type==="reassign"?"special":"place";
@@ -207,7 +208,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     const label=(en?(kind==="pile"?(choosingSource?"Select source pile ":"Select pile "):"Select sector "):(kind==="pile"?(choosingSource?"Sélectionner la pile source ":"Sélectionner la pile "):"Sélectionner le secteur "))+(index+1);
     return <button type="button" data-i18n-ignore className="tf-target" data-target-kind={kind} data-target-index={index} aria-label={label} aria-pressed={selected} disabled={busy} onClick={event=>{if(busy||committing.current)return;if(choosingSource&&special){setSelection(null);setTargetChoice(null);setSpecial({...special,from:index});actionTrigger.current=event.currentTarget;return;}if(actions.length===1){choose(actions[0]);actionTrigger.current=event.currentTarget;}else{actionTrigger.current=event.currentTarget;setSelection(null);setTargetChoice({kind,index});}}}><span aria-hidden="true">{selected?"✓":"+"}</span></button>;
   }
-  function targetState(kind:BoardTarget["kind"],index:number){return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
+  function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
   const placement = state && state.pendingFigures.length ? getFigurePlacementOptions(state) : null;
@@ -226,7 +227,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         state.phase === "searching" ? "Toutes les figures actuellement en jeu ont été vaincues : cherchez la prochaine figure, sans dévoiler les cartes suivantes." :
         state.pendingNumeric ? "Examinez les neuf piles : votre carte doit être au moins aussi forte que le sommet. Prévisualisez un tir avant de confirmer." :
         "Piochez une carte ; observez les éventuelles figures et cartes spéciales. Un As extrait une pile ; un Joker réaffecte une carte supérieure."}</p>
-      <p>Objectif : comprendre les placements, les résistances, les tirs sur deux axes et la réserve spéciale. Toutes les décisions suivent Gridcannon V2.</p>
+      <p>Objectif : comprendre les placements, les résistances, les tirs sur deux axes et la réserve spéciale. </p>
     </section> : null}
     {hintsEnabled && state ? <details className="learning-context" open={tutorial}>
       <summary>Aide sur les actions autorisées ({legal.length})</summary>
@@ -241,7 +242,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       <h3>Champ de bataille · 3 × 3</h3>
-      <div className="thunder-battlefield">
+      <div className="thunder-battlefield" data-ready="true">
         {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
         <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span>Libre</span>}{renderTarget("sector",i)}</div>)}</div>
         <div className="thunder-middle">
@@ -267,7 +268,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       {search?.visible ? <section className="thunder-search" aria-label="Recherche">
         <h3>Recherche d'un adversaire</h3>
         <p data-i18n-ignore>{en?"Revealed number cards":"Cartes numériques révélées"} : {search.revealedNumerics.length}. {en?"They will return to the bottom of the deck.":"Elles seront replacées sous la pioche."}</p>
-        <div className="thunder-reserve">{search.revealedNumerics.map(id => renderCard(id))}</div>
+        <div className="thunder-reserve tf-search-cards">{search.revealedNumerics.map(id => renderCard(id))}</div>
         {search.integrityStatus === "invalid" ? <p role="alert">La partie ne peut pas continuer normalement.</p> : null}
       </section> : null}
       <h3>Actions autorisées</h3>

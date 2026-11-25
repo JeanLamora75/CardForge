@@ -855,3 +855,9 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 @keyframes tf-confirm-glow{0%{opacity:0}35%{opacity:.8}100%{opacity:0}}
 :root[data-motion=off] .thunder-board .tf-battle-effect{animation:none;opacity:0;}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .thunder-board .tf-battle-effect{animation:none;opacity:0;}}
+
+.thunder-board [data-target-state="source"]{border-color:#8ab9ed;box-shadow:inset 0 0 0 2px #8ab9ed;background:#263f59;}
+.thunder-board .tf-search-cards .tf-tactical{flex:0 0 64px;height:64px;}
+.thunder-board .thunder-middle:has([data-target-state="legal"],[data-target-state="selected"]) :is(.thunder-pile,.thunder-slot){height:max(106px,var(--tf-cell));}
+.thunder-board :is(.thunder-top-slots,.thunder-bottom-slots):has([data-target-state]) .thunder-slot{height:max(106px,var(--tf-cell));}
+.thunder-board .thunder-pile[data-target-state="source"] .tf-tactical{margin-bottom:0;}

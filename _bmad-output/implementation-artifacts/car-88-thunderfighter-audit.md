@@ -1,0 +1,3 @@
+# CAR-88 — Audit de non-régression
+
+Audit statique CAR-83 à 87 : correction de l'assertion de reprise supprimée, contrôle de rendu des sommets et images hors ligne, prévisualisation des pioches sans transition simulée, effets fondés sur les nouvelles neutralisations, source Joker visible, résistance sans double comptage visuel, Jokers distingués. Ajout des scénarios navigateur sur sauvegardes préparées (extraction, réaffectation, armure, recherche, remplacement) avec annulation, confirmation et reprise. Aucun moteur ni stockage modifié. CI non attestée : le connecteur de runs filtre les Pull Requests, les statuts combinés sont vides. Tests et recette utilisateur restent à exécuter ; ne pas clôturer. Workflow manuel sans uv.
