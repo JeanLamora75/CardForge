@@ -374,7 +374,7 @@ async function journey(locale,mobile){
         assert.equal(await page.locator('.thunder-id,.thunder-command-page .status').count(),0);
         assert.doesNotMatch(await page.locator('.thunder-metrics').innerText(),/Cartes physiques|physical cards/i);
         assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return r.left>=0&&r.right<=innerWidth+1&&document.documentElement.scrollWidth<=innerWidth+2;}));
-        assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>n.getBoundingClientRect().bottom<=document.querySelector('.thunder-action-zone').getBoundingClientRect().top));
+        assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-action-zone').getBoundingClientRect();return r.bottom<=c.top||r.right<=c.left;}));
       }
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
@@ -409,7 +409,8 @@ async function journey(locale,mobile){
         const action=direct?target:page.locator(game.actions).first();
         await interact(page,action,mobile);
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
-        await page.locator('.thunder-confirm').waitFor({state:'visible'});
+        await page.locator('.thunder-confirm[data-selected=true]').waitFor({state:'visible'});
+        if(mobile){assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&c.top>=0&&c.bottom<=innerHeight+1;}),'board and confirmation visible together');}
         const onCancel=await readSaved(page,game.id);
         assert.deepEqual(onCancel,before,'Thunderfighter preview must not write');
         await interact(page,page.locator('.thunder-confirm button.back-link'),mobile);
@@ -444,7 +445,8 @@ async function journey(locale,mobile){
       if(game.id==='loot-the-loop'){
         assert.deepEqual(after.state.deck.map(c=>c.id),before.state.deck.map(c=>c.id));
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
-        await page.locator('.ms-board').getByText(/Action enregistrée|Action saved/).waitFor();
+        await page.locator('.ms-board').getByText(/Partie reprise · sauvegarde locale|Game resumed · local save/).waitFor();
+        assert.deepEqual(await readSaved(page,game.id),after,'Midnight Syndicate resume must preserve the committed action');
         await page.locator('.topbar .settings-button, .tf-command-header .settings-button').click();
         await page.locator('[data-settings-category="language"]').click();
         await select.selectOption(locale==='fr'?'en':'fr');
@@ -593,7 +595,7 @@ async function journey(locale,mobile){
         const target=(kind,index)=>tf.locator('.tf-target[data-target-kind="'+kind+'"][data-target-index="'+index+'"]');
         async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
         async function selectAction(){if(scenario==='extract'||scenario==='reassign')await selectSpecial();else if(scenario==='armor')await interact(offline,target('sector',0),mobile);else if(scenario==='replacement')await interact(offline,target('pile',0),mobile);else await interact(offline,tf.getByRole('button',{name:locale==='fr'?'Révéler la prochaine carte':'Reveal next card',exact:true}),mobile);}
-        await selectAction();await tf.locator('.thunder-confirm').waitFor();
+        await selectAction();await tf.locator('.thunder-confirm[data-selected=true]').waitFor();
         assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
         if(scenario==='search')assert.equal(await tf.locator('[data-card-id="clubs-2"]').count(),0);
         await interact(offline,tf.locator('.thunder-confirm .back-link'),mobile);

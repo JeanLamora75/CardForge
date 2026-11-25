@@ -25,3 +25,6 @@ Règles : game-rules/gridcannon.md (V2, arbitrages existants prioritaires). Code
 
 ## Revue V2 validée le 25 novembre 2026
 CAR-89 : TF-UX-09 bandeau unique logo/retour/aide/paramètres ; 10 regrouper aide/règles/tutoriel ; 11 carte courante visible ; 12 géométrie stable ; 13 cases vides sobres ; 14 marqueurs compacts ; 15 supprimer valeurs répétées ; 16 réserve compacte ; 18 portrait/paysage/desktop ; 19 retirer redondances ; 20 tests FR/EN clavier tactile hors ligne. CAR-90 : TF-UX-17 illustrations définitives séparées. La carte courante est placée avant le plateau en portrait pour rester visible pendant la sélection ; en paysage elle est latérale. Aucun changement du moteur ni stockage. Les cibles de sélection et consultation restent distinctes. Recette réelle et CI obligatoires avant clôture.
+
+## V3 validée — TF-UX-21 à TF-UX-30
+Surface plein écran adaptative (21), dimensionnement hauteur/largeur (22), console permanente (23), géométrie stable (24), fond spatial SVG local (25), habillage cockpit (26), cases translucides (27), aide/règles en dialogue (28), logo centré agrandi (29), assertions de visibilité simultanée (30). Console en bas portrait et latérale paysage ; défilement interne pour réserve/recherche et repli sur très petits écrans ou tutoriel. Aucun changement de moteur ni sauvegarde. CAR-90 inchangée.

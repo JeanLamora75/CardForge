@@ -215,7 +215,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const revealed=search?.visible?search.revealedNumerics:[];
   const detail=state&&inspected?thunderCardView(state,inspected,language,revealed):null;
   function renderCard(id:string){const view=state?thunderCardView(state,id,language,revealed):null;return view?<ThunderTacticalCard key={id} card={view} locale={language} onInspect={()=>{inspectTrigger.current=document.activeElement as HTMLElement;setInspected(id);}}/>:null;}
-  return <section className="thunder-board" aria-labelledby="thunder-title" onKeyDown={event=>{if(event.key==="Escape"&&!event.defaultPrevented&&(selection||targetChoice||special)&&!inspected){event.preventDefault();event.stopPropagation();if(!busy)cancelSelection();}}}>
+  return <section className={`thunder-board${tutorial?" tf-training":""}${state?.outcome==="in-progress"?" tf-live":""}`} aria-labelledby="thunder-title" onKeyDown={event=>{if(event.key==="Escape"&&!event.defaultPrevented&&(selection||targetChoice||special)&&!inspected){event.preventDefault();event.stopPropagation();if(!busy)cancelSelection();}}}>
     <h2 id="thunder-title" className="thunder-sr-only">Poste de commandement</h2>
     {!state?<p className="thunder-notice" role="status" aria-live="polite">{notice}</p>:null}
     {tutorial && state ? <section className="learning-lesson" aria-label="Mission Thunderfighter">
@@ -241,9 +241,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
-      <div className="tf-combat-layout"><div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
-      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
-</div>
+      <div className="tf-combat-layout">
       <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true">
         {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
@@ -260,6 +258,10 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       </div>
       <div className="thunder-action-zone">
+<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
+</div>
+      <div className="tf-console-scroll">
       <section className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
         <h3>{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
         {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit">{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
@@ -280,20 +282,15 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
           <button type="button" className="secondary-action" key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:actionLabel(action)}</button>
         ) : <p>Aucune action disponible.</p>}
       </div> : null}
-      {selection && preview ? <div className="thunder-confirm" role="group" aria-label="Prévisualisation">
-        <h3>Prévisualisation</h3>
-        <p>{preview.message}</p>
-
-        <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !preview.accepted} onClick={() => void confirm()}>{tutorial ? "Confirmer le coup d’entraînement" : "Confirmer et enregistrer ce coup"}</button>
-        <button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>Annuler sans modifier</button>
-      </div> : null}
+      </div>
+      <div className="thunder-confirm" role="group" aria-label={en?"Preview":"Prévisualisation"} data-selected={!!selection}>
+        <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:<span data-i18n-ignore>{en?"Select an action.":"Sélectionnez une action."}</span>}</p>
+        <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
+        <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
       </div>
       <p className="thunder-notice" role="status" aria-live="polite">{notice}</p>
-      <details className="thunder-extra"><summary>Résistance et armure</summary>
-      <div className="thunder-armor">{figures.filter((id): id is string => id !== null).map(id =>
-        <p key={id}>{labelOf(id)} · Résistance {resistance(state, id)} ({valueOf(id)} + {(state.armorCards ?? []).filter(a => a.figureId === id).reduce((sum, a) => sum + valueOf(a.cardId), 0)} armure) · {state.defeatedFigures?.includes(id) ? "Neutralisé" : "Actif"}</p>
-      )}</div>
-      </details>
+      </div>
+
     </>}
     {detail?<ThunderCardDetail card={detail} locale={language} onClose={closeInspect}/>:null}
   </section>;

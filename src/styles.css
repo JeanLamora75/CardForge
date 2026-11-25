@@ -897,3 +897,36 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .thunder-metrics span{padding:3px 2px;}
 .thunder-board .thunder-extra{font-size:.85rem;}
 @media(orientation:landscape) and (min-width:600px){.thunder-board .tf-combat-layout{flex-direction:row;justify-content:center;align-items:flex-start;}.thunder-board .tf-current-card{max-width:150px;}.thunder-board .thunder-battlefield{--tf-cell:clamp(50px,12vh,84px);width:min(100%,440px);}.thunder-board .tf-current-card .tf-pending-card{flex-direction:column;}}
+
+/* The live command deck budgets space for the whole board and both action buttons. */
+.shell.thunder-command-surface{box-sizing:border-box;min-height:100dvh;padding:4px max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));background:#081522 url("./assets/thunderfighter-space.svg") center/cover fixed;}
+.thunder-command-page{padding:0;max-width:900px;}
+.thunder-command-page .tf-command-header{grid-template-columns:88px minmax(0,1fr) 44px 44px;gap:3px;background:linear-gradient(175deg,#52636d 0%,#263c4a 8%,#0d1b27 80%,#3d505b);border-color:#72858e;}
+.tf-command-header .tf-header-back{justify-self:start;}
+.tf-command-header h1 img{height:48px;max-width:280px;width:100%;object-fit:contain;}
+.tf-help-dialog{box-sizing:border-box;max-width:min(92vw,650px);width:100%;max-height:85dvh;overflow:auto;background:#102532;color:#e4edf1;border:1px solid #809dab;border-radius:10px;padding:12px;}
+.tf-help-dialog::backdrop{background:#040b14c9;}
+.tf-dialog-close{min-height:44px;float:right;}
+.tf-help-dialog .learning-toolbar{clear:both;}
+.thunder-board.tf-live:not(.tf-training){padding:0;max-width:900px;}
+.thunder-board .thunder-metrics{margin:3px 0;gap:4px;}
+.thunder-board .thunder-metrics span{background:linear-gradient(#162c3c,#07131e);border-color:#587584;}
+.thunder-board .tf-combat-layout{display:block;}
+.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{--tf-gap:3px;--tf-cell:clamp(44px,calc((100dvh - 310px)/5),100px);width:min(100%,calc(var(--tf-cell)*5 + 22px));padding:3px;box-sizing:border-box;background:radial-gradient(ellipse,#30516a26,#07152238);border-color:#587584;}
+.thunder-board .thunder-battlefield .thunder-slot,.thunder-board .thunder-battlefield .thunder-pile{background:#0b203040;border:1px dashed #6e9cb366;box-shadow:none;}
+.thunder-board .thunder-battlefield [data-target-state=legal]{border:1px solid #7acda4;box-shadow:inset 0 0 0 1px #7acda4;background:#193e3666;}
+.thunder-board .thunder-battlefield [data-target-state=selected]{border:2px solid #f2bc76;background:#4a372588;}
+.thunder-board .thunder-battlefield [data-target-state=source]{border:2px solid #8ab9ed;background:#263f5988;}
+.thunder-board .thunder-battlefield .thunder-pile>strong{font-size:.6rem;}
+.thunder-board .thunder-action-zone{box-sizing:border-box;width:100%;margin:4px auto 0;padding:5px;background:linear-gradient(170deg,#3d515e,#132631 15%,#0c1b26 90%,#364953);border-color:#71858f;display:grid;gap:4px;}
+.thunder-board .tf-current-card .tf-pending-card{min-height:48px;background:#08182699;border-color:#617d8b;}
+.thunder-board .tf-current-card .tf-tactical{height:48px;width:48px;flex-basis:48px;}
+.thunder-board .tf-current-card .thunder-pending{font-size:.86rem;}
+.thunder-board .tf-console-scroll{max-height:76px;overflow:auto;overscroll-behavior:contain;min-height:32px;scrollbar-width:thin;}
+.thunder-board .tf-special-console{margin:0;padding:2px 5px;background:#0a1a26a0;}
+.thunder-board .thunder-confirm{display:grid;grid-template-columns:1fr 1.5fr;gap:5px;margin:0;padding:0;border:0;background:none;}
+.thunder-board .tf-preview-line{grid-column:1/-1;min-height:32px;max-height:42px;overflow:auto;font-size:.8rem;line-height:1.25;margin:0;color:#e8d4b7;}
+.thunder-board .thunder-confirm button{min-height:44px;font-size:.95rem;}
+.thunder-board .thunder-notice{max-height:28px;overflow:auto;margin:0;padding:0 3px;border:0;background:none;font-size:.75rem;}
+.thunder-board .thunder-notice:empty{display:none;}
+@media(orientation:landscape) and (min-width:650px){.thunder-board.tf-live:not(.tf-training){display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:5px;align-items:start;}.thunder-board.tf-live:not(.tf-training) .thunder-metrics{grid-column:1/-1;}.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{grid-column:1;}.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{grid-column:2;margin:0;}.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{--tf-cell:clamp(44px,calc((100dvh - 120px)/5),100px);}.thunder-board.tf-live:not(.tf-training) .tf-console-scroll{max-height:clamp(76px,calc(100dvh - 300px),300px);}}
