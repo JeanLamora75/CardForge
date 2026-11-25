@@ -1,0 +1,324 @@
+[
+  {
+    "path": "public/assets/worlds/cardforge.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "f388af7f621f02ac1b57c426c004a0f39590d9f6d6b9494d94dc56d6f10852bd"
+  },
+  {
+    "path": "public/assets/worlds/thunderfighter.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "0698f4c2a12416c12d93e986612d5aa0b96ec48d14e320edb064ebd43c3686db"
+  },
+  {
+    "path": "public/assets/worlds/grim-delve.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "9ebb725b2bfb89569a5692295fbee784d02131c24d95d9fe3cba1f5b1af746a3"
+  },
+  {
+    "path": "public/assets/worlds/midnight-syndicate.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "7a631b5ea28362db44557c6ab82ffe168b7b8b6462ef9a88ea76aaba574ed6e7"
+  },
+  {
+    "path": "public/assets/worlds/skydeck.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "8c528fa94a413e74ee246d591dcb00633f8863b133c742d2380229f1a20023a2"
+  },
+  {
+    "path": "public/assets/worlds/les-douze-tyrans.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "7d03c111a53a1bb30847cbc90a73f8bc8095c5d219c2b049d9959366f123e3a6"
+  },
+  {
+    "path": "public/assets/worlds-landscape/cardforge.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "6b0cd3a6248422d009b9920bf36e812c49e38f9165e55cf906d21608061bb810"
+  },
+  {
+    "path": "public/assets/worlds-landscape/thunderfighter.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "604d57fa1a84ba7a26199e32e4a24b736cdaf22c1a814388f1bd29a11ba78b76"
+  },
+  {
+    "path": "public/assets/worlds-landscape/grim-delve.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "f2b9988a63dd139da020d784cadb4824c9de18a6a37d7b003b6fb7250d795ae0"
+  },
+  {
+    "path": "public/assets/worlds-landscape/midnight-syndicate.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "1752e50d501e0bea1e6ebcf460648f1a7bdcc13581d2e1f4775187c5570b5c83"
+  },
+  {
+    "path": "public/assets/worlds-landscape/skydeck.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "6356c117ba3e2929ba7737cf627acfaaa53a5af2ec58ce653c7b7f5f8acc3727"
+  },
+  {
+    "path": "public/assets/worlds-landscape/les-douze-tyrans.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "aac422b78c1153fb409d801afe07fabed0510319f03113f939976691adf47ed0"
+  },
+  {
+    "path": "public/assets/covers/thunderfighter.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGB",
+    "sha256": "1aa2488eed9de4351fcbe6c66f186dfd370ca39b99de015635731809bbcaf6ad"
+  },
+  {
+    "path": "public/assets/covers/grim-delve.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGB",
+    "sha256": "eb1f723c02728402e889c1e4b15277e818e2090bb2987a1ae0b784a4b341a343"
+  },
+  {
+    "path": "public/assets/covers/midnight-syndicate.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGB",
+    "sha256": "9b4823118800c1f3cdec10a2d89b5406ab9cb26fa514b5d4d3c97af67b6c7d43"
+  },
+  {
+    "path": "public/assets/covers/skydeck.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGB",
+    "sha256": "da56e32fb05d977116673a3037454c7e00eae30384c06fc53e253f70254c1356"
+  },
+  {
+    "path": "public/assets/covers/les-douze-tyrans.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGB",
+    "sha256": "c32b97d399d3b1775a7c85bb365c625f8329c429334d3c6aeb9a59f1f8778f05"
+  },
+  {
+    "path": "public/assets/logos/cardforge.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "c98e1f575960c6756736d310d6389d54223c45e54192b2c8924e2caf68a957eb"
+  },
+  {
+    "path": "public/assets/logos/thunderfighter.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "ad376cf6112b10604a961d1d46929f7571165bf98d7f36ac5f90929aa16e135b"
+  },
+  {
+    "path": "public/assets/logos/grim-delve.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "22b3ad4863535ec51657d62b99d289fd04677369f22e98df4588b5ee21fc9df6"
+  },
+  {
+    "path": "public/assets/logos/midnight-syndicate.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "f62d715d0276affd21c9073723b351ba4b6b1e97f1853e43d46e83aa9723e18c"
+  },
+  {
+    "path": "public/assets/logos/skydeck.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "36e59e7ff816677254355659a22ecafc06d6f447b966692dc0c1d8df81b8b31e"
+  },
+  {
+    "path": "public/assets/logos/les-douze-tyrans.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "ff30f07138ef2f1208bba10cf7b9910ab22f67f6dfc09213f833690d592915db"
+  },
+  {
+    "path": "public/assets/buttons/cardforge.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "3fc0e443b93c9954eda36cddf0fc8ccca041513a9909266beaca651b7e401642"
+  },
+  {
+    "path": "public/assets/buttons/thunderfighter.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "08f6607aa15c5303adfe3fd2838809486a3973d8f383a871f3b0adec9681c675"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "9de69c018901a3a23c976978a74beb882ddd69dec0d8e76be9a428b524bab785"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "2868830100b8fcd40fcb4198f781be1e72624923635f04e441e0c70e2a5eb011"
+  },
+  {
+    "path": "public/assets/buttons/skydeck.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "63543cddc83a1f29ee1510edb5016f470e873f174ef60037f0a81ac44aacc68f"
+  },
+  {
+    "path": "public/assets/buttons/les-douze-tyrans.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "53235940f0b0493a754cc8896ca23e7d339490536688635ed3bd706d6edead18"
+  },
+  {
+    "path": "public/assets/banners/cardforge.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "3bdcd30b56beb67d5a4f371d7f802140dcad218ff4b325b3346d4e8763fa8770"
+  },
+  {
+    "path": "public/assets/banners/thunderfighter.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "e061378d0a6047be65b889c4f46724a23b0c5884e1c5b1004565241ae7d0d3a7"
+  },
+  {
+    "path": "public/assets/banners/grim-delve.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "c1922a83594eb49ab3d50b0761c0ffd106d9f19b32d7ab5ba9d29c25bff8b9bd"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "a2ebe0802e7a4a3f14f211a2fcbbf2a705bb5733f51c6fae15be2f2c8dcd615e"
+  },
+  {
+    "path": "public/assets/banners/skydeck.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "aa4608b8123c5ce829bff2e0a787b1b4e28df203d87fb3e253223532a5afd74e"
+  },
+  {
+    "path": "public/assets/effects/cardforge.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "56fd881a65b7d4d5ce0a0be6a1921d59f228aa63648d1eebe3d9a68d9cf6d431"
+  },
+  {
+    "path": "public/assets/effects/thunderfighter.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "da380c9164a4fe1984e925eadf04135aac602a6c7122bc45b1fae120b9e696d6"
+  },
+  {
+    "path": "public/assets/effects/grim-delve.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "a3dad47976bdd56b09f4ae75fb72fe322997deb430594fe8804132ce71601305"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "018f264a1c0b583304edd522536719008d8293abbd4e61d1df12870b49fc6c44"
+  },
+  {
+    "path": "public/assets/effects/skydeck.png",
+    "width": 1774,
+    "height": 887,
+    "mode": "RGBA",
+    "sha256": "769a79fb79fea8458dd4261ad3862ea973d6a3f4522f0bbbde29f2c47c457cfc"
+  },
+  {
+    "path": "public/assets/effects/les-douze-tyrans.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "94351c1f835f23953712e196bf3afe0a80f23b28d0b5af5a49b08767e209ed1d"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/cardforge.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "95e356ff154b580e6a4a23cb00bb80b31b49ee6589d02328b32cc57ebb824343"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/thunderfighter.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "f88fdf22c75f704e760ab6071ee66ce1c44ebaec8b929ae412a6b3000f4025c8"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/grim-delve.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "485f2494afa7d9f141d292e47aa644ba239265ae25f7f630b17b44364394a6e8"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/midnight-syndicate.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "197f1ba6812bcb7d8bc6ec3b9f48a9cc01f706a54b016ca6d9fa34f14e469e97"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/skydeck.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "4dd552b9205d592adfe8c36fd63a88b6823c76d47d9aa632067e03abe354b131"
+  },
+  {
+    "path": "_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/mockups/les-douze-tyrans.png",
+    "width": 1448,
+    "height": 1086,
+    "mode": "RGB",
+    "sha256": "3a013b69b8cc9188832eb229430e1a590a0b702df292478b7b2fc2e8ae707584"
+  }
+]

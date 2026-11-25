@@ -1,0 +1,3 @@
+# Ressources graphiques UX V2
+
+46 PNG originaux. Voir assets-manifest.json pour les chemins, dimensions et SHA-256. Les fichiers de public/assets sont les ressources de travail ; les maquettes sont réservées à la documentation. Les effets sont des compositions statiques à animer et non des sprites indépendants. Le bouton Les Douze Tyrans reprend la variante décorative rouge et jade ; pas de bandeau supplémentaire distinct. Les jaquettes sont verticales, contrairement aux bannières de la maquette de galerie. Préserver leur ratio et adapter la galerie ; une variante horizontale pourra être nécessaire. Ne pas considérer la fidélité pixel à pixel comme acquise. Aucune modification des moteurs ou du verrou de publication. Aucun script uv.
