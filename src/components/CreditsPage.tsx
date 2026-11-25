@@ -22,14 +22,13 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
         {item.gameId === "loot-the-loop" ? <p>{en ? "Based on Loot the Loop, Wil Su (Isaludo)" : "d’après Loot the Loop, Wil Su (Isaludo)"}</p> : null}
         <dl>
           <div><dt>{en ? "Original game" : "Jeu source"}</dt><dd>{item.originalTitle}</dd></div>
-          <div><dt>{en ? "Original creator(s)" : "Auteur(s) du jeu source"}</dt><dd>{item.originalAuthors}</dd></div>
+          <div><dt>{en ? "Original creator(s)" : "Auteur(s) du jeu source"}</dt><dd>{en ? item.originalAuthors.replace(" et "," and ") : item.originalAuthors}</dd></div>
           <div><dt>{en ? "CardForge presentation" : "Présentation CardForge"}</dt><dd>{en ? item.visualUniverseEn : item.visualUniverseFr}</dd></div>
         </dl>
         <a href={item.source} target="_blank" rel="noopener noreferrer">{en ? "Original reference" : "Référence du jeu source"} <span aria-hidden="true">↗</span></a>
         <h4>{en ? "Licence notice" : "Notice de licence"}</h4>
-        <p>{en ? item.licenceEn : item.licenceFr}</p>
-        <h4>{en ? "Publication status" : "Statut des autorisations"}</h4>
-        <p className="credits-warning">{en ? item.permissionEn : item.permissionFr}</p>
+        <p>{item.gameId==="clear-the-dungeon" ? (en?"Original rule documents: Creative Commons BY-NC-ND 4.0.":"Documents de règles originaux : Creative Commons BY-NC-ND 4.0.") : (en?"Original works remain subject to their respective rights.":"Les œuvres originales restent soumises à leurs droits respectifs.")}</p>
+
       </details>)}
     </div>
     <details className="credits-section"><summary>{en ? "Original CardForge work" : "Créations propres à CardForge"}</summary>
@@ -43,16 +42,14 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
     </ul>
     </details><details className="credits-section"><summary>{en ? "Legal notices and useful references" : "Notices et références utiles"}</summary>
     <p>{en
-      ? "An explicit Creative Commons licence for a source rulebook is not a blanket permission to distribute an adaptation. Other source licences and permissions have not been independently cleared. No game title is represented here as legally cleared for public release."
-      : "Une licence Creative Commons affichée sur un livret source ne vaut pas autorisation générale de diffuser une adaptation. Les licences et permissions des autres sources ne sont pas considérées comme vérifiées. Aucun titre n’est présenté ici comme juridiquement validé pour une diffusion publique."}</p>
+      ? "Credits do not imply endorsement by the original authors or permission to redistribute their works. This preview is not authorized for public distribution."
+      : "Les crédits n’impliquent ni soutien des auteurs originaux ni autorisation de redistribuer leurs œuvres. Cette version d’essai n’est pas destinée à une diffusion publique."}</p>
     <ul className="credits-references">
-      <li><a href={NOTICE_REFERENCES.creativeCommons} target="_blank" rel="noopener noreferrer">Creative Commons BY-NC-ND 4.0</a></li>
-      <li><a href={NOTICE_REFERENCES.copyrightStudy} target="_blank" rel="noopener noreferrer">{en ? "Clear the Dungeon rights research" : "Étude des droits Clear the Dungeon"}</a></li>
-      <li><a href={NOTICE_REFERENCES.releaseGate} target="_blank" rel="noopener noreferrer">{en ? "Release clearance gate (CAR-43)" : "Vérification juridique avant diffusion (CAR-43)"}</a></li>
-      <li><a href={NOTICE_REFERENCES.project} target="_blank" rel="noopener noreferrer">{en ? "CardForge source code and dependencies" : "Code source CardForge et dépendances"}</a></li>
+      <li><a href={en ? "https://creativecommons.org/licenses/by-nc-nd/4.0/deed.en" : NOTICE_REFERENCES.creativeCommons} target="_blank" rel="noopener noreferrer">Creative Commons BY-NC-ND 4.0</a></li>
+
     </ul>
     <p className="help-note">{en
-      ? "Third-party software licences are governed by their respective packages; the project dependency manifest can be consulted in the linked repository. This page does not replace a final licence inventory before release."
-      : "Les licences des bibliothèques tierces sont propres à chaque dépendance ; leur manifeste est consultable dans le dépôt lié. Cette page ne remplace pas l’inventaire définitif des licences avant diffusion."}</p>
+      ? "Third-party software remains subject to its own licences."
+      : "Les logiciels tiers restent soumis à leurs licences respectives."}</p>
   </details></section>;
 }

@@ -189,6 +189,9 @@ async function immersiveScreens(){
    await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="privacy"]').click();
    assert.equal(await page.locator(".privacy-sensitive-zone").count(),1);
+   await page.locator(".forge-privacy-details summary").first().click();
+   assert.doesNotMatch(await page.locator(".privacy-panel").innerText(),/GitHub|Jira|IndexedDB|localStorage/i);
+   await page.locator(".forge-privacy-details summary").first().click();
    assert.equal(await page.locator(".settings-top-back").count(),1);
    await page.locator(".inventory-details summary").click();
    assert.ok(await page.locator(".privacy-inventory li").count()>=7);
@@ -203,6 +206,11 @@ async function immersiveScreens(){
    await page.locator(".settings-credits").click();
    await page.locator(".credits-page").waitFor();
    assert.equal(await page.locator("details.credits-item summary img").count(),5);
+   await page.locator(".credits-page details").evaluateAll(nodes=>nodes.forEach(n=>n.open=true));
+   assert.doesNotMatch(await page.locator(".credits-page").innerText(),/GitHub|Jira|CAR-43|porteur du projet|project owner|jeu CardForge à venir|upcoming CardForge game/i);
+   assert.equal(await page.locator('.credits-page a[href*="lmn24.atlassian.net"], .credits-page a[href*="github.com/JeanLamora75/CardForge"]').count(),0);
+   assert.equal(await page.locator('.credits-page a[href*="licenses/fonts/"]').count(),5);
+   await page.locator(".credits-page details").evaluateAll(nodes=>nodes.forEach(n=>n.open=false));
    await page.locator("details.credits-item summary").first().click();
    assert.ok(await page.locator("details.credits-item").first().getAttribute("open")!==null);
    await page.locator(".credits-page .settings-top-back").click();

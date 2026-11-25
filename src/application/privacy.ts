@@ -10,19 +10,19 @@ export type PrivacyDataCategory = Readonly<{
 }>;
 export const PRIVACY_INVENTORY: readonly PrivacyDataCategory[] = Object.freeze([
   { id: "sessions", area: "indexeddb", descriptionFr: "Partie en cours ou dernière partie de chaque jeu", descriptionEn: "Current or most recent game for each title",
-    effectFr: "Contient les cartes, leur ordre et l’état nécessaire à une reprise fidèle.", effectEn: "Contains cards, draw order and the state needed to resume exactly." },
+    effectFr: "Permet de reprendre votre partie là où vous l’avez laissée.", effectEn: "Lets you resume your game where you left off." },
   { id: "results", area: "indexeddb", descriptionFr: "Résultats des parties terminées ou abandonnées", descriptionEn: "Results of completed or abandoned games",
-    effectFr: "Conserve les issues historiques, distinctes des parties actives.", effectEn: "Keeps historical outcomes separate from current games." },
+    effectFr: "Conserve votre historique de parties.", effectEn: "Keeps your game history." },
   { id: "statistics", area: "indexeddb", descriptionFr: "Statistiques de chaque jeu", descriptionEn: "Statistics for each game",
     effectFr: "Compteurs de victoires, défaites et abandons.", effectEn: "Counts wins, losses and abandoned games." },
   { id: "language", area: "localStorage", descriptionFr: "Langue choisie", descriptionEn: "Chosen language",
-    effectFr: "Préférence FR/EN utilisée au prochain lancement.", effectEn: "FR/EN preference for the next launch." },
+    effectFr: "Langue utilisée au prochain lancement.", effectEn: "Language used the next time you play." },
   { id: "settings", area: "localStorage", descriptionFr: "Réglages communs", descriptionEn: "Shared settings",
     effectFr: "Musique, sons, animations et aides.", effectEn: "Music, sound effects, animations and hints." },
   { id: "learning", area: "localStorage", descriptionFr: "Choix d’apprentissage propres aux jeux", descriptionEn: "Per-game learning choices",
-    effectFr: "Choix tutoriel ou partie normale et anciennes préférences d’aide.", effectEn: "Tutorial or normal play choice and legacy hint preferences." },
+    effectFr: "Vos choix de tutoriel et d’aide.", effectEn: "Your tutorial and hint choices." },
   { id: "tutorial", area: "memory", descriptionFr: "Parties d'entraînement", descriptionEn: "Practice games",
-    effectFr: "En mémoire temporaire : sans résultat ni statistique.", effectEn: "Temporary memory only, without results or statistics." },
+    effectFr: "Non sauvegardées et exclues des statistiques.", effectEn: "Not saved or included in statistics." },
 ]);
 export const DELETION_POLICY = "approved-option-b" as const;
 export const PRIVACY_GAME_IDS = [

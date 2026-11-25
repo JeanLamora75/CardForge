@@ -43,3 +43,6 @@ Publication du code ne vaut pas réussite de CI. Recette visuelle et résultats 
 - SET-33 : À propos centré avec logo, version, gratuité, absence de publicité et restriction de diffusion.
 - SET-34 : titres centrés par grille symétrique, bandeau commun y compris crédits.
 - SET-35 : tests FR/EN et huit résolutions adaptés, contrôles de navigation, résumés et zone sensible ; CI et recette nécessaires.
+
+## Audit éditorial FR/EN — 25 novembre 2026
+Les textes des cinq catégories, de la confidentialité, des confirmations, des crédits et des alertes de sauvegarde sont destinés au joueur. Retirer les références internes GitHub/Jira, les états de suivi juridique par jeu et le vocabulaire de stockage technique de l’interface. Conserver les données d’attribution internes, les auteurs, les sources originales, les notices de licence, les trois périmètres de suppression et la restriction de diffusion de la préversion. La simplification ne constitue pas une validation juridique ni une autorisation de publication. Tests E2E des textes et liens dans les deux langues.

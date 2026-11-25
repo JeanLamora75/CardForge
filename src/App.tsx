@@ -236,8 +236,8 @@ export default function App() {
         </button>
         {route.page!=="catalog"&&!settingsSurface?<div className="topbar-actions"><button className="settings-button" type="button" onClick={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} aria-label="Paramètres">⚙ Paramètres</button></div>:null}
       </header>:null}
-      {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
-      {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
+      {settingsSaveFailed ? <p className="storage-warning" role="status" data-i18n-ignore>{language==="en"?"Your settings work for this session but could not be saved.":"Vos réglages s’appliquent pour cette session, mais n’ont pas pu être enregistrés."}</p> : null}
+      {languageSaveFailed ? <p className="storage-warning" role="status" data-i18n-ignore>{language==="en"?"Your chosen language could not be saved for next time.":"Votre langue n’a pas pu être mémorisée pour la prochaine session."}</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
       <OfflineReadiness language={language} />
       {route.page === "about" ? <CreditsPage language={language} onBack={()=>navigate({page:"settings"})} /> :

@@ -55,8 +55,8 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
       window.location.reload();
     } catch {
       setFeedback(english
-        ? "Deletion could not be fully completed. Your browser may have blocked storage; check your data before retrying."
-        : "La suppression n’a pas pu être entièrement effectuée. Le navigateur a peut-être bloqué le stockage ; vérifiez vos données avant de réessayer.");
+        ? "Some data could not be deleted. Check your data before trying again."
+        : "Certaines données n’ont pas pu être supprimées. Vérifiez vos données avant de réessayer.");
       setPending(null);
     } finally { setBusy(false); }
   }
@@ -67,8 +67,8 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
       ? "CardForge runs without an account, advertising or game-data synchronization. Saved games, results, statistics and preferences are stored in this browser, on this device. Closing or navigating away does not delete them."
       : "CardForge fonctionne sans compte, sans publicité et sans synchronisation des données de jeu. Les parties, résultats, statistiques et préférences sont stockés dans ce navigateur, sur cet appareil. Quitter l’application ou changer d’écran ne les efface pas."}</p>
     <p>{english
-      ? "The source-rule links open GitHub only if you choose them. Your browser or operating system may manage storage, backups or deletion independently of CardForge."
-      : "Les liens vers les règles sources ouvrent GitHub uniquement si vous les choisissez. Votre navigateur ou système d’exploitation peut gérer son stockage, ses sauvegardes ou son effacement indépendamment de CardForge."}</p></details>
+      ? "Your data may be lost if you clear your browser’s app data. Links to external websites open only when you select them."
+      : "Vos données peuvent être perdues si vous effacez les données de l’application dans votre navigateur. Les sites externes ne s’ouvrent que si vous choisissez un lien."}</p></details>
     <details className="forge-privacy-details inventory-details"><summary>{english ? "What is stored?" : "Quelles données sont conservées ?"}</summary>
     <ul className="privacy-inventory">{PRIVACY_INVENTORY.map(item =>
       <li key={item.id}>
@@ -78,8 +78,8 @@ export default function PrivacyPanel({ language }: { language: Locale }) {
       </li>
     )}</ul></details>
     <h3>{english ? "Manage my data" : "Gérer mes données"}</h3>
-    <p>{english ? "Choose precisely what to erase. Nothing is deleted until you confirm a detailed warning." :
-      "Choisissez précisément ce que vous souhaitez effacer. Aucune donnée n’est supprimée sans confirmation du périmètre affiché."}</p>
+    <p>{english ? "Choose what to delete. You will be asked to confirm." :
+      "Choisissez les données à supprimer. Une confirmation vous sera demandée."}</p>
     <div className="privacy-actions" data-policy={DELETION_POLICY} inert={!!pending}>
       <details className="privacy-action"><summary>{english?"Manage a game’s data":"Gérer les données d’un jeu"}</summary>
         <label htmlFor="privacy-game">{english ? "Game" : "Jeu"}</label>

@@ -85,7 +85,7 @@ export default function OfflineReadiness({ language }: { language: Locale }) {
     status.phase === "reload-required" ?
     (english ? "Offline files installed — reload to activate offline play" : "Ressources installées — rechargez pour activer le jeu hors ligne") :
     status.phase === "unsupported" ?
-    (english ? "Offline mode requires the installed app on HTTPS or localhost" : "Mode hors ligne disponible dans l’application publiée en HTTPS ou sur localhost") :
+    (english ? "Offline play is not available in this environment" : "Le jeu hors ligne n’est pas disponible dans cet environnement") :
     status.phase === "error" ?
     (english ? "Offline installation unavailable; a connection may be required" : "Installation hors ligne indisponible ; une connexion peut être nécessaire") :
     (english ? "Preparing the complete offline collection…" : "Préparation complète des ressources hors ligne…");
