@@ -448,7 +448,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 
 /* Immersive surfaces and shared image layers. */
 .forge-home,.forge-full{isolation:isolate;width:100%;max-width:none;padding:0;margin:0;background:#101018;}
-.forge-home{position:relative;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+.forge-home{position:relative;width:100%;min-height:100dvh;height:auto;display:block;overflow:visible;}
 .forge-world-bg{display:block;position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
 .forge-world-bg img{display:block;width:100%;height:100%;object-fit:cover;}
 .forge-world-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0001,transparent 45%,#0004);}
@@ -456,7 +456,7 @@ h1[tabindex="-1"]:focus { outline: none; }
 @keyframes forge-drift{from{transform:translateY(0);opacity:.08}to{transform:translateY(-12px);opacity:.19}}
 .forge-home > :not(.forge-world-bg):not(.forge-effect){position:relative;z-index:2;}
 .world-logo{display:block;width:100%;height:auto;object-fit:contain;}
-.forge-gallery{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;}
+.forge-gallery{width:100%;min-height:0;overflow:visible;touch-action:pan-y;}
 .forge-grid{display:grid;margin:auto;}
 .forge-cover.game-card{display:block;background:none;}
 .forge-cover button{position:relative;display:block;width:100%;border:0;padding:0;background:none;color:#fff;}
@@ -492,12 +492,12 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 [data-motion="off"] .forge-effect,[data-motion="off"] .forge-exit-art{animation:none;}
 .settings-about{margin:24px 0;}
 /* Gallery: a single, illustrated collection rather than a website header. */
-.forge-home .forge-gallery-header{justify-content:center;min-height:0;padding: max(8px,env(safe-area-inset-top)) 18px 0;flex:none;}
+.forge-home .forge-gallery-header{justify-content:center;min-height:0;padding:max(8px,env(safe-area-inset-top)) 18px 0;border:0;background:transparent;}
 .forge-home .forge-gallery-header .brand{width:min(66vw,250px);display:block;line-height:0;}
 .forge-home .forge-gallery-header .world-logo{max-height:16dvh;object-fit:contain;}
 .forge-home .offline-readiness{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:.72rem;color:#f0d8ae;background:#0c1014a8;border:0;border-radius:20px;padding:5px 12px;margin:2px auto 3px;max-width:calc(100% - 24px);}
 .forge-home .offline-readiness small{font-size:.66rem;color:#d1c7b4;}
-.forge-home .forge-gallery{padding:8px max(16px,env(safe-area-inset-right)) 24px max(16px,env(safe-area-inset-left));}
+.forge-home .forge-gallery{padding:14px max(8px,env(safe-area-inset-right,0px)) calc(64px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));}
 .forge-home .forge-gallery h2{font-size:clamp(1.25rem,4vw,1.8rem);margin:8px 0 22px;letter-spacing:.015em;}
 .forge-home .forge-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;max-width:980px;}
 .forge-home .forge-cover.game-card{border-radius:12px;box-shadow:0 7px 22px #0009;}
@@ -515,7 +515,7 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-settings-caption small{font-size:.72rem;color:#e1d2b7;}
 .forge-cover button:focus-visible,.forge-settings-tile:focus-visible{outline:3px solid #f4d8a3;outline-offset:4px;}
 .forge-home .app-footer{background:#0a0b0cbd;}
-@media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:420px;gap:24px;}.forge-home .forge-settings-tile{aspect-ratio:3/4;}}
+@media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:none;gap:16px;}.forge-home .forge-settings-tile{aspect-ratio:3/4;}}
 @media(orientation:landscape) and (max-width:1024px){.forge-home .forge-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:680px;gap:18px;}.forge-home .forge-gallery-header .world-logo{max-height:14dvh;}}
 
 /* Compact landscape tiles use existing wide artwork and separate, uncut logos. */
@@ -532,8 +532,13 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-home .forge-settings-tile{min-height:0;aspect-ratio:2/1;flex-direction:row;gap:16px;padding:12px 18px;}
 .forge-home .forge-settings-emblem{width:25%;max-width:72px;max-height:none;padding:10px;box-sizing:border-box;}
 .forge-home .forge-settings-caption strong{font-size:clamp(1.1rem,4vw,1.65rem);}
-@media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:600px;gap:16px;}}
+@media(orientation:portrait){.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:none;gap:16px;}}
 
 
 /* On a narrow portrait viewport, art and controls occupy the available width. */
 @media(orientation:portrait) and (max-width:600px){.forge-home .forge-grid{width:100%;max-width:none;}.forge-home .forge-gallery-header .brand{width:68%;max-width:320px;}.forge-menu>.forge-title{width:80%;max-width:none;}.forge-menu>.forge-menu-actions.context-actions{width:calc(100% - 32px);}}
+
+/* The gallery scrolls as a single page, including its logo; artwork stays behind it. */
+.forge-home > .forge-world-bg,.forge-home > .forge-effect{position:fixed;}
+.forge-home .forge-grid{width:100%;}
+@media(orientation:portrait){.forge-home .forge-grid{width:100%;max-width:none;margin:0;}.forge-home .forge-cover.game-card,.forge-home .forge-settings-card{width:100%;min-width:0;}}

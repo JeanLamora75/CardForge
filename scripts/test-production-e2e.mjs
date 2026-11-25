@@ -143,6 +143,11 @@ async function immersiveScreens(){
    assert.equal(await page.locator(".forge-home select, .forge-home .settings-button").count(),0);
    assert.equal(await page.locator(".forge-grid > :last-child").getAttribute("class"),"forge-settings-card");
    if(viewport.width<viewport.height)assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),1);
+   await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"}));
+   const end=await page.locator(".forge-settings-tile").evaluate(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:innerHeight,scrollY,scrollHeight:document.documentElement.scrollHeight};});
+   assert.ok(end.top>=0&&end.height-end.bottom>=63, "settings must be fully visible with bottom margin: "+JSON.stringify(end));
+   if(viewport.width<viewport.height){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
+   if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390.png"});}
    await page.locator(".forge-settings-tile").click();
    await page.locator("#settings-language").waitFor();
    await page.locator(".settings-credits").click();

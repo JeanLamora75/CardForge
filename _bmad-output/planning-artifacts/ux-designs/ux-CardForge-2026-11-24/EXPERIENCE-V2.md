@@ -57,3 +57,6 @@ Hypothèse principale après captures répétées : le lanceur impose un viewpor
 
 ## Recette — échelle du lanceur
 Captures : galerie et menus réduits à environ un quart de la largeur ; décor plein écran. Hypothèse zoom navigateur persistant ou métriques forcées. Réinitialiser uniquement les préférences de zoom du profil de test, supprimer le facteur de pixels forcé et l’émulation tactile du lanceur Windows ; journaliser dimensions CSS, fenêtre, DPR et échelle. En portrait étroit : jaquettes 2:1 et zone de commandes au moins 85 % de la largeur, logo catalogue au moins 50 %. Maintenir commandes dans la moitié inférieure, marge basse et cibles de 44 px. Validation réelle Windows encore nécessaire.
+
+## Galerie pleine page — 25 novembre 2026
+Supprimer le défilement interne et le séparateur de l'en-tête : logo et cartes défilent dans le même document. Fond illustré fixe derrière la galerie. Portrait : une carte panoramique 2:1 par ligne, sans largeur maximale, marges latérales 8 px ou zone sûre. Fin de page : 64 px minimum après la carte Paramètres, plus zone sûre ; contrôle géométrique après défilement jusqu'en bas. Les menus individuels, les règles et sauvegardes restent inchangés. Validation CI et visuelle à constater.

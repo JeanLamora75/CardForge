@@ -248,6 +248,7 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
   useEffect(() => {
+    if (route.page !== "catalog") window.scrollTo({top:0,behavior:"instant"});
     if (route.page === "catalog") {
       const trigger = lastTrigger.current;
       if (trigger?.isConnected) trigger.focus();
