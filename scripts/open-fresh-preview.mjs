@@ -5,9 +5,9 @@ export async function openFreshPreview(context,page,url,version){
  const onError=error=>{errors.push(error.stack??String(error));};
  const onConsole=message=>{if(message.type()==='error')errors.push(message.text());};
  page.on('pageerror',onError);page.on('console',onConsole);
- async function waitForGallery(){
-  try{await page.locator('.forge-gallery').waitFor({timeout:15000});}
-  catch(error){throw new Error('Catalogue unavailable at '+page.url()+'\n'+(errors.join('\n')||'No browser exception captured')+'\n'+(await page.locator('body').innerText().catch(()=>'')),{cause:error});}
+ async function waitForSurface(){
+  try{await page.locator('.forge-gallery, .forge-menu, .board-page, .context-page').first().waitFor({timeout:15000});}
+  catch(error){throw new Error('Interface unavailable at '+page.url()+'\n'+(errors.join('\n')||'No browser exception captured')+'\n'+(await page.locator('body').innerText().catch(()=>'')),{cause:error});}
  }
  const cdp=await context.newCDPSession(page);
  try{
@@ -20,7 +20,7 @@ export async function openFreshPreview(context,page,url,version){
 
 
   await page.goto(url,{waitUntil:'load',timeout:30000});
-  await waitForGallery();
+  await waitForSurface();
   await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
   await page.evaluate(async()=>{
    const registration=await navigator.serviceWorker.register(new URL('sw.js',document.baseURI),{scope:'./',updateViaCache:'none'});
@@ -44,7 +44,7 @@ export async function openFreshPreview(context,page,url,version){
  }
  try{
  await page.reload({waitUntil:'load'});
- await waitForGallery();
+ await waitForSurface();
  await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
  }finally{page.off('pageerror',onError);page.off('console',onConsole);}
 }

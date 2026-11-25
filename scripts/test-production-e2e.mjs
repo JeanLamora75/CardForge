@@ -163,6 +163,7 @@ async function immersiveScreens(){
    if(viewport.width<600){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
    if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390-"+locale+".png"});}
    await page.locator(".forge-settings-tile").click();
+   await page.locator(".settings-top-back").waitFor();
    assert.equal(await page.locator(".settings-top-back").count(),1);
    assert.equal(await page.locator(".forge-settings-footer").count(),0);
    assert.ok(await page.locator(".forge-settings-heading").evaluate(n=>{const r=n.getBoundingClientRect(),h=n.querySelector("h1").getBoundingClientRect();return Math.abs((h.left+h.right-r.left-r.right)/2)<2;}),"centered settings title");
