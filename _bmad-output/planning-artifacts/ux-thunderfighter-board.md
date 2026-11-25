@@ -52,3 +52,6 @@ Réutilisation du composant Command et du logo de l'accueil ; trois médaillons 
 
 ## TF-END-31–38 — Finitions
 Typographie Rajdhani, bandeau affiné, cadres continus biseautés, rapport trois métriques sur une ligne et historique 2×2, taux pleine largeur avec jauge uniquement si défini, particules décoratives respectant mouvement réduit, trois états cohérents. Fonds et règles inchangés. Validation six résolutions à effectuer.
+
+## Référentiel artistique des cartes numériques V1 — 25 novembre 2026
+Voir [matrice de production Phoenix/Orion](thunderfighter-card-art-v1.md) : 18 modèles, 36 déclinaisons, enseignes classiques, palettes Nova/Vector/Aegis/Solaris et insignes d'alliance validés. Le rendu 6 validé sert de référence. Les classes et angles sont des prescriptions artistiques à éprouver, sans modification du moteur. Périmètre CAR-90 ; aucun ticket modifié.
