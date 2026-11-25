@@ -1,0 +1,3 @@
+# CAR-85 — Sélection directe et confirmation
+
+Projection des actions légales place-number, place-figure et start-replacement vers les emplacements. Marqueurs +/✓, boutons distincts de l’inspection, clavier/tactile, choix en cas d’ambiguïté. Les actions de pioche, réserve, recherche et armure restent accessibles par les commandes existantes jusqu’à CAR-86. Prévisualisation existante sans écriture, annulation et retour du focus lorsque le déclencheur reste présent, confirmation verrouillée par ref synchrone et vérification des actions légales courantes de la session. Aucun moteur ni stockage modifié. Défilement autorisé pour préserver les deux cibles. Tests unitaires et E2E adaptés, non exécutés dans cette session. Workflow manuel sans uv.

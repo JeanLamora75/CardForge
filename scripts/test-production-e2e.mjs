@@ -90,7 +90,7 @@ async function ready(page){
   return probe;
 }
 const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',actions:'.grim-hand button.grim-card',confirm:false},
- {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.thunder-actions button',confirm:true},
+ {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.tf-target, .thunder-actions button.secondary-action',confirm:true},
  {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button',confirm:true}];
 
 async function stalePreviewRecovery(){
@@ -395,13 +395,18 @@ async function journey(locale,mobile){
         await interact(page,page.locator(game.actions).first(),mobile);
         await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
       }else if(game.confirm){
-        await interact(page,page.locator(game.actions).first(),mobile);
+        const target=page.locator('.tf-target').first();
+        const direct=await target.count()>0;
+        const action=direct?target:page.locator(game.actions).first();
+        await interact(page,action,mobile);
+        if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
         await page.locator('.thunder-confirm').waitFor({state:'visible'});
         const onCancel=await readSaved(page,game.id);
         assert.deepEqual(onCancel,before,'Thunderfighter preview must not write');
         await interact(page,page.locator('.thunder-confirm button.back-link'),mobile);
         assert.deepEqual(await readSaved(page,game.id),before,'cancel must not write');
-        await interact(page,page.locator(game.actions).first(),mobile);
+        if(direct)assert.equal(await target.getAttribute('aria-pressed'),'false');
+        await interact(page,action,mobile);
         await interact(page,page.locator('.thunder-confirm button.primary-action'),mobile);
       }else{
         await interact(page,page.locator(game.actions).first(),mobile);
