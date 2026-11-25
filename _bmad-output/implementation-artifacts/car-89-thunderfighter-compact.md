@@ -10,3 +10,6 @@ CI précédente 45655483334 : compilation et unitaires réussis, parcours FR cla
 
 ## V5
 CI V4 45656684281 : unitaires, build, PWA réussis ; E2E square board en échec, 26 captures archivées. Suppression des contraintes V4 et de la zone console défilable ; hauteur intrinsèque, plateau largeur et hauteur explicites ; réserve compacte et historique recherche superposé. Tests de matrice ajoutés ; couverture effective et captures V5 à vérifier. Aucun uv ni modification moteur/stockage.
+
+## Correctif tactile V5.1
+CI 45658106464 : 465 tests unitaires réussis, 78 mesures géométriques sans débordement ni commandes hors viewport, parcours FR clavier/souris complet ; échec du dépôt tactile. Hypothèse : transfert de capture implicite tactile du descendant vers le conteneur déclenche lostpointercapture et annule le geste. Capture explicite sur la carte dès pointerdown, propriétaire conservé jusqu'à la fin ; événements de perte filtrés, suppression de l'annulation pointerleave. Test tactile conservé, capture d'échec et absence de dialogue parasite ajoutées. CSS, moteur et stockage inchangés. Validation CI requise.

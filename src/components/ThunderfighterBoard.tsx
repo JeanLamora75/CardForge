@@ -97,7 +97,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const [targetChoice,setTargetChoice]=useState<BoardTarget|null>(null);
   const [special,setSpecial]=useState<SpecialSelection|null>(null);
   const searchDialog=useRef<HTMLDialogElement>(null);
-  const drag=useRef<{id:string;pointer:number;x:number;y:number;active:boolean;context:SpecialSelection|null;origin:HTMLElement}|null>(null);
+  const drag=useRef<{id:string;pointer:number;x:number;y:number;active:boolean;context:SpecialSelection|null;origin:HTMLElement;capture:HTMLElement}|null>(null);
   const [ghost,setGhost]=useState<{id:string;x:number;y:number;returning?:boolean}|null>(null);
   const suppressClick=useRef(false);
   const returnTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
@@ -233,18 +233,21 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     if(!legal.some(a=>contextualThunderTarget(a,figures,context)))return;
     if(returnTimer.current!==null)clearTimeout(returnTimer.current);
     setGhost(null);suppressClick.current=false;
-    drag.current={id,pointer:event.pointerId,x:event.clientX,y:event.clientY,active:false,context,origin:event.currentTarget};
+    const capture=(event.target as Element).closest<HTMLElement>(".tf-tactical");
+    if(!capture)return;
+    drag.current={id,pointer:event.pointerId,x:event.clientX,y:event.clientY,active:false,context,origin:event.currentTarget,capture};
+    capture.setPointerCapture(event.pointerId);
   }
   function moveDrag(event:ReactPointerEvent<HTMLElement>){
     const g=drag.current;if(!g||g.pointer!==event.pointerId)return;
     if(!g.active&&Math.hypot(event.clientX-g.x,event.clientY-g.y)<7)return;
-    if(!g.active){g.active=true;g.origin.setPointerCapture(event.pointerId);setSpecial(g.context);setSelection(null);setTargetChoice(null);if(g.context)specialTrigger.current=g.origin.querySelector("button.tf-special-use");}
+    if(!g.active){g.active=true;setSpecial(g.context);setSelection(null);setTargetChoice(null);if(g.context)specialTrigger.current=g.origin.querySelector("button.tf-special-use");}
     event.preventDefault();setGhost({id:g.id,x:event.clientX,y:event.clientY});
   }
   function finishDrag(event:ReactPointerEvent<HTMLElement>,cancel=false){
     const g=drag.current;if(!g||g.pointer!==event.pointerId)return;
     drag.current=null;
-    if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
+    if(g.capture.hasPointerCapture(event.pointerId))g.capture.releasePointerCapture(event.pointerId);
     if(!g.active)return;
     suppressClick.current=true;
     const cell=cancel?null:document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>("[data-tf-kind][data-tf-index]");
@@ -252,7 +255,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     if(cell&&(kind==="pile"||kind==="sector")&&selectTarget(kind,index,g.context,g.origin.querySelector("button.tf-tactical")??g.origin)){setGhost(null);}
     else{setSpecial(null);setSelection(null);setTargetChoice(null);const rect=g.origin.querySelector("button.tf-tactical")?.getBoundingClientRect()??g.origin.getBoundingClientRect();setGhost({id:g.id,x:rect.left+rect.width/2,y:rect.top+rect.height/2,returning:true});returnTimer.current=setTimeout(()=>setGhost(null),190);}
   }
-  function dragHandlers(id:string,context:SpecialSelection|null){return {onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>startDrag(e,id,context),onPointerMove:moveDrag,onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e),onPointerCancel:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onLostPointerCapture:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onPointerLeave:(e:ReactPointerEvent<HTMLElement>)=>{if(drag.current&&!drag.current.active)finishDrag(e,true);},onClickCapture:(e:ReactMouseEvent<HTMLElement>)=>{if(suppressClick.current&&e.detail!==0){suppressClick.current=false;e.preventDefault();e.stopPropagation();}}};}
+  function dragHandlers(id:string,context:SpecialSelection|null){return {onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>startDrag(e,id,context),onPointerMove:moveDrag,onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e),onPointerCancel:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onLostPointerCapture:(e:ReactPointerEvent<HTMLElement>)=>{if(drag.current?.capture===e.target)finishDrag(e,true);},onClickCapture:(e:ReactMouseEvent<HTMLElement>)=>{if(suppressClick.current&&e.detail!==0){suppressClick.current=false;e.preventDefault();e.stopPropagation();}}};}
   const previewId=selection?.type==="place-number"||selection?.type==="assign-armor"?state?.pendingNumeric:selection?.type==="place-figure"?state?.pendingFigures[0]:selection?.type==="reassign"?state?.grid[selection.from]?.at(-1):null;
   function renderPreview(kind:BoardTarget["kind"],index:number){return previewId&&selectedTarget?.kind===kind&&selectedTarget.index===index?<img className="tf-drop-preview" src={thunderArt[previewId]} alt="" aria-hidden="true"/>:null;}
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}

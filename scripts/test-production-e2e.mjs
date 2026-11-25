@@ -444,8 +444,10 @@ async function journey(locale,mobile){
           await dragTo(2,2);
           assert.equal(await page.locator('.thunder-confirm').getAttribute('data-selected'),'false');
           assert.deepEqual(await readSaved(page,game.id),before,'invalid drop must not write');
-          await dragTo(dest.x+dest.width/2,dest.y+dest.height/2);
-          await page.locator('.thunder-confirm[data-selected=true]').waitFor();
+          const currentDest=await target.boundingBox();assert.ok(currentDest);
+          await dragTo(currentDest.x+currentDest.width/2,currentDest.y+currentDest.height/2);
+          try{await page.locator('.thunder-confirm[data-selected=true]').waitFor({timeout:10000});}catch(error){await page.screenshot({path:'ux-screenshots/tf-drag-failure-'+locale+'-'+(mobile?'touch':'mouse')+'.png'});throw error;}
+          assert.equal(await page.locator('.tf-card-detail[open]').count(),0,'drag must not open card details');
           assert.deepEqual(await readSaved(page,game.id),before,'drop must not write');
         }else await interact(page,action,mobile);
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
