@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
+import { readFileSync, writeFileSync, rmSync } from 'node:fs';
+import { openFreshPreview } from './open-fresh-preview.mjs';
 
 const HOST = 'http://127.0.0.1:4388/';
 const vite = spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port','4388','--strictPort'],{stdio:['ignore','pipe','pipe']});
@@ -91,6 +93,29 @@ const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',action
  {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.thunder-actions button',confirm:true},
  {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button',confirm:true}];
 
+async function stalePreviewRecovery(){
+ const context=await browser.newContext();
+ try{
+  const page=await context.newPage();
+  // Install a deliberately stale worker on the same origin which serves the old launcher.
+  writeFileSync('dist/legacy-preview-worker.js', `self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{if(e.request.mode==='navigate')e.respondWith(new Response('<html><body>OLD LAUNCHER</body></html>',{headers:{'Content-Type':'text/html'}}));});`);
+  // Seed an ordinary same-origin page without running the real app registration.
+  await page.route(HOST,route=>route.fulfill({contentType:'text/html',body:'<html><body>seed</body></html>'}));
+  await page.goto(HOST);
+  await page.evaluate(async()=>{await navigator.serviceWorker.register('/legacy-preview-worker.js');await navigator.serviceWorker.ready;});
+  await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+  await page.unroute(HOST);
+  await page.reload();
+  await page.getByText('OLD LAUNCHER').waitFor();
+  await page.evaluate(()=>localStorage.setItem('preview-preserve','yes'));
+  const version=readFileSync('dist/sw.js','utf8').match(/const CACHE_NAME = PREFIX \\+ "([a-f0-9]{8})";/)?.[1];
+  assert.ok(version);
+  await openFreshPreview(context,page,HOST,version);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('preview-preserve')),'yes');
+  await context.setOffline(true);
+  await page.reload();await page.locator('.forge-gallery').waitFor();
+ }finally{await context.close();rmSync('dist/legacy-preview-worker.js',{force:true});}
+}
 async function immersiveScreens(){
  for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
   const context=await browser.newContext({viewport,reducedMotion:"reduce",hasTouch:viewport.width<900});
@@ -376,6 +401,7 @@ async function journey(locale,mobile){
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
+  await stalePreviewRecovery();
   await immersiveScreens();
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])

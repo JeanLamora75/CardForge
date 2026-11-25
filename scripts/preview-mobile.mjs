@@ -1,6 +1,8 @@
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { openFreshPreview } from './open-fresh-preview.mjs';
 import { createInterface } from 'node:readline';
 import { chromium, devices } from 'playwright';
 
@@ -57,13 +59,17 @@ try {
   }
   if (context) {
     const page = context.pages()[0] || await context.newPage();
-    await page.goto(url);
+    const worker = readFileSync('dist/sw.js','utf8');
+    const version = worker.match(/const CACHE_NAME = PREFIX \+ "([a-f0-9]{8})";/)?.[1];
+    if (!version) throw new Error('Version du build PWA introuvable.');
+    await openFreshPreview(context,page,url,version);
+    console.log('Interface UX V2 chargee ; cache PWA du build '+version+' controle.');
     context.on('close',()=>{void stop();});
     console.log('\nVue mobile Pixel 7. Profil de test persistant : '+profileRoot);
     console.log('Attendez le message "prets hors ligne" dans CardForge.');
     console.log('Dans cette console : O + Entree = hors ligne ; N + Entree = en ligne ; Q + Entree = quitter.');
   } else {
-    console.log('Ouverture du navigateur par defaut, sans emulation mobile.');
+    console.log('Ouverture du navigateur par defaut, sans emulation mobile. Si une ancienne interface apparait, Ctrl+F5 puis recharger apres activation de la PWA.');
     spawn('cmd.exe',['/d','/c','start','',''+url],{stdio:'ignore',windowsHide:true});
     console.log('F12 puis Ctrl+Shift+M pour la vue mobile. Utilisez Network > Offline pour tester.');
     console.log('Q + Entree = arreter le serveur.');
