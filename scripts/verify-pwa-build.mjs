@@ -17,7 +17,7 @@ for (const file of paths) {
 }
 assert.ok(paths.some(file => /^\.\/assets\/.*\.js$/.test(file)), "built JS must be cached");
 assert.ok(paths.some(file => /^\.\/assets\/.*\.css$/.test(file)), "built CSS must be cached");
-assert.match(worker, /await cache\.addAll\(URLS\)/);
+assert.match(worker, /await cache\.addAll\(URLS\.map\(url => new Request\(url, \{ cache: "reload" \}\)\)\)/, "precache must fetch every asset without stale HTTP cache");
 assert.match(worker, /await caches\.delete\(CACHE_NAME\)/);
 assert.match(worker, /key\.startsWith\(PREFIX\)/);
 assert.doesNotMatch(worker, /indexedDB\.deleteDatabase|localStorage\.clear/);
