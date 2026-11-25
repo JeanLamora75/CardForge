@@ -19,7 +19,7 @@ import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
 import RegicideLearning from "./components/RegicideLearning.tsx";
 import RegicideRulebook from "./components/RegicideRulebook.tsx";
-import { Gallery, WorldMenu, WorldLogo, theme } from "./components/ImmersiveMenu";
+import { Gallery, WorldMenu, WorldLogo, WorldBackdrop } from "./components/ImmersiveMenu";
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -272,8 +272,8 @@ export default function App() {
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":""}`} style={route.page==="catalog"?theme("cardforge"):undefined}>
-      {route.page==="catalog"?<><div className="forge-world-bg" aria-hidden="true"/><div className="forge-effect" aria-hidden="true"/></>:null}
+    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":""}`}>
+      {route.page==="catalog"?<WorldBackdrop slug="cardforge"/>:null}
       {!immersive?<header className="topbar">
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">

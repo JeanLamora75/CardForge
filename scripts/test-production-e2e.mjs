@@ -117,13 +117,11 @@ async function stalePreviewRecovery(){
  }finally{await context.close();rmSync('dist/legacy-preview-worker.js',{force:true});}
 }
 async function assertPaintedArt(page,selector,kind){
- const values=await page.locator(selector).evaluateAll(nodes=>nodes.map(n=>({background:getComputedStyle(n).backgroundImage,visible:n.getBoundingClientRect().width>0&&n.getBoundingClientRect().height>0})));
- assert.ok(values.length>0,selector);
- for(const v of values){
-  assert.ok(v.visible,selector+" must have a painted area");
-  const url=v.background.match(/url\(["']?(.*?)["']?\)/)?.[1];
-  assert.ok(url&&url.includes("/art/"+kind+"/"),selector+" missing "+kind+": "+v.background);
-  await page.evaluate(async src=>{const image=new Image();image.src=src;await image.decode();if(!image.naturalWidth)throw Error(src);},url);
+ const nodes=page.locator(selector);
+ assert.ok(await nodes.count()>0,selector);
+ for(const node of await nodes.all()){
+  const value=await node.evaluate(async img=>{await img.decode();const r=img.getBoundingClientRect();const s=getComputedStyle(img);return {url:img.currentSrc,width:img.naturalWidth,visible:r.width>0&&r.height>0&&s.visibility==="visible"&&s.display!=="none"&&Number(s.opacity)>0};});
+  assert.ok(value.visible&&value.width>0&&value.url.includes("/assets/"+kind+"/"),JSON.stringify(value));
  }
 }
 async function immersiveScreens(){
@@ -133,15 +131,17 @@ async function immersiveScreens(){
    const page=await context.newPage();await page.goto(HOST);await ready(page);
    await page.locator(".forge-grid button").last().waitFor();
    assert.equal(await page.locator(".forge-cover img").count(),5);
-   await assertPaintedArt(page,".forge-home > .forge-world-bg",viewport.width>viewport.height?"worlds-landscape":"worlds");
+   await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
+   if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+".png"}); }
    assert.ok(await page.locator(".forge-cover img").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
    for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
     await page.locator(".forge-title img").evaluate(i=>i.decode());
-    await assertPaintedArt(page,".forge-menu .forge-world-bg",viewport.width>viewport.height?"worlds-landscape":"worlds");
-    await assertPaintedArt(page,".forge-command","buttons");
+    await assertPaintedArt(page,".forge-menu .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
+    await assertPaintedArt(page,".forge-button-art","buttons");
     await assertPaintedArt(page,".forge-menu .forge-effect","effects");
+    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/"+id+"-"+viewport.width+".png"}); }
     assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.left>=0&&r.bottom<=innerHeight+1&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
     await page.locator(".forge-command").filter({hasText:/Règles|Rules/}).click();await page.locator(".context-page").waitFor();
