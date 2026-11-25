@@ -34,6 +34,14 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
      const width=Math.min(window.innerWidth,vv?.width??window.innerWidth);
      menu.style.setProperty("--visible-menu-height",height+"px");
      menu.style.setProperty("--visible-menu-width",width+"px");
+     const count=5;
+     const margin=Math.min(32,Math.max(16,height*.04));
+     const rowHeight=44;
+     const gap=6;
+     const rows=Math.floor((height/2-margin+gap)/(rowHeight+gap));
+     const columns=Math.max(1,Math.ceil(count/Math.max(1,rows)));
+     menu.style.setProperty("--menu-columns",String(columns));
+     menu.style.setProperty("--menu-gutter",margin+"px");
    }
    fit();
    const observer=new ResizeObserver(fit);observer.observe(menu);
@@ -47,8 +55,7 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  <WorldBackdrop slug={slug}/>{transition?<img className="forge-exit-art" src={art("effects",slug)} alt="" aria-hidden="true"/>:null}
  <h1 id="game-title" className="forge-title" tabIndex={-1}><WorldLogo slug={slug} title={title}/></h1>
  <div className="forge-menu-actions context-actions">
- {active?<Command slug={slug} primary onClick={()=>go(onBoard)} disabled={transition}>{fr?"Reprendre":"Resume"}</Command>:null}
- <Command slug={slug} primary={!active} onClick={()=>go(onBoard)} disabled={transition}>{active?(fr?"Ouvrir le plateau":"Open board"):(fr?"Nouvelle partie":"New game")}</Command>
+ <Command slug={slug} primary onClick={()=>go(onBoard)} disabled={transition}>{active?(fr?"Reprendre":"Resume"):(fr?"Nouvelle partie":"New game")}</Command>
  <Command slug={slug} onClick={()=>go(onLearn)} disabled={transition}>{fr?"Apprendre":"Learn"}</Command>
  <Command slug={slug} onClick={()=>go(onRules)} disabled={transition}>{fr?"Règles":"Rules"}</Command>
  <Command slug={slug} onClick={()=>go(onStats)} disabled={transition}>{fr?"Statistiques":"Statistics"}</Command>

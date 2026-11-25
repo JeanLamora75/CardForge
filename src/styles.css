@@ -474,7 +474,7 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-menu[data-world="les-douze-tyrans"]{--menu-highlight:#f8dc9a;--menu-shade:#221018;}
 .forge-menu > .forge-title{position:relative;z-index:2;flex:0 0 auto;margin:0;width:min(76%,390px);height:clamp(68px,19dvh,180px);}
 .forge-title .world-logo{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 10px #0008);}
-.forge-menu > .forge-menu-actions.context-actions{position:relative;z-index:2;isolation:isolate;flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr);grid-auto-rows:clamp(44px,5.5dvh,54px);align-items:stretch;justify-items:stretch;gap:5px;width:min(100%,460px);margin:auto 0 0;}
+.forge-menu > .forge-menu-actions.context-actions{position:absolute;z-index:2;isolation:isolate;left:50%;transform:translateX(-50%);bottom:calc(var(--menu-gutter,32px) + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(var(--menu-columns,2),minmax(0,1fr));grid-auto-rows:44px;gap:6px;width:min(calc(100% - 32px),460px);margin:0;align-items:stretch;justify-items:stretch;}
 .forge-menu-actions::before{content:"";position:absolute;inset:-70px -16px -48px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,transparent,color-mix(in srgb,var(--menu-shade) 60%,transparent) 32%,color-mix(in srgb,var(--menu-shade) 85%,transparent));mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);}
 .forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{position:relative;isolation:isolate;display:grid;place-items:center;width:100%;height:100%;min-height:44px;margin:0;padding:0 12%;border:0;background:none;box-shadow:none;color:#fff5dc;font:600 clamp(.85rem,2.8vw,1.05rem)/1.15 Georgia,serif;letter-spacing:.015em;text-align:center;text-shadow:0 2px 4px #000,0 0 5px #000;overflow:hidden;}
 .forge-button-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none;clip-path:polygon(0% 28%,6% 8%,18% 3%,82% 3%,94% 8%,100% 28%,100% 72%,94% 92%,82% 97%,18% 97%,6% 92%,0% 72%);opacity:.88;filter:brightness(.93) saturate(.88);}
@@ -486,8 +486,8 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-command:active{transform:scale(.985);}
 .forge-exit-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:4;pointer-events:none;animation:forge-exit .32s ease-in forwards;}
 @keyframes forge-exit{from{opacity:0;transform:scale(.96)}to{opacity:.8;transform:scale(1.03)}}
-@media(orientation:landscape){.forge-menu{padding-bottom:max(48px,env(safe-area-inset-bottom));}.forge-menu>.forge-title{width:min(43%,360px);height:clamp(60px,25dvh,150px);}.forge-menu>.forge-menu-actions.context-actions{width:min(100%,900px);grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:clamp(44px,10dvh,56px);gap:8px;}}
-@media(orientation:portrait) and (max-height:520px){.forge-menu{padding-bottom:24px;}.forge-menu>.forge-title{height:60px;}.forge-menu>.forge-menu-actions.context-actions{grid-auto-rows:44px;gap:3px;}}
+@media(orientation:landscape){.forge-menu>.forge-title{width:min(43%,360px);height:clamp(60px,25dvh,150px);}.forge-menu>.forge-menu-actions.context-actions{width:min(calc(100% - 32px),900px);}}
+@media(orientation:portrait) and (max-height:520px){.forge-menu>.forge-title{height:60px;}}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-effect,:root:not([data-motion="on"]) .forge-exit-art{animation:none;}}
 [data-motion="off"] .forge-effect,[data-motion="off"] .forge-exit-art{animation:none;}
 .settings-about{margin:24px 0;}
