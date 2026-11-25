@@ -8,7 +8,7 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
   useEffect(() => { heading.current?.focus(); }, []);
 
   return <section className="context-page credits-page" aria-labelledby="credits-heading">
-    <button type="button" className="back-link" onClick={onBack}>{en ? "← Back to catalogue" : "← Retour au catalogue"}</button>
+    <button type="button" className="back-link" onClick={onBack}>{en ? "← Back to settings" : "← Retour aux paramètres"}</button>
     <h1 id="credits-heading" tabIndex={-1} ref={heading}>{en ? "About CardForge and credits" : "À propos de CardForge et crédits"}</h1>
     <p><strong>CardForge — v{APP_VERSION}</strong></p>
     <p>{en

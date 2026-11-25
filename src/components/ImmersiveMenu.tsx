@@ -22,7 +22,7 @@ export function Gallery({language,progress,open,openSettings,scrollTop,onScroll}
  <div className="forge-grid">{order.map(id=>{const game=games.find(g=>g.id===id)!;const slug=slugs[id];return <article key={id} data-game-id={id} className="game-card forge-cover"><h3 className="forge-sr">{game.title}</h3><button type="button" aria-label={(fr?"Découvrir ":"Discover ")+game.title} onClick={e=>open(id,e.currentTarget)}><img className="forge-tile-scene" src={art("worlds-landscape",slug)} alt="" draggable={false}/><img className="forge-tile-logo" src={art("logos",slug)} alt="" draggable={false}/>{progress[id]?.indicator==="active"?<span className="forge-save"><span aria-hidden="true">◆</span> {fr?"Partie en cours":"Game in progress"}</span>:null}</button></article>;})}<article className="forge-settings-card"><button type="button" className="forge-settings-tile" onClick={e=>openSettings(e.currentTarget)}><img className="forge-settings-art" src={art("worlds","cardforge")} alt="" draggable={false}/><span className="forge-settings-emblem" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.3"><path d="M26 5h12l2 8 7 4 8-2 6 10-6 6v8l6 6-6 10-8-2-7 4-2 8H26l-2-8-7-4-8 2-6-10 6-6v-8l-6-6 6-10 8 2 7-4z" transform="translate(0 -3) scale(1 .98)"/><circle cx="32" cy="32" r="12"/><circle cx="32" cy="32" r="5"/></svg></span><span className="forge-settings-caption"><strong>{fr?"Paramètres":"Settings"}</strong><small>{fr?"Langue · Son · Accessibilité":"Language · Sound · Accessibility"}</small></span></button></article></div>
  </section>;
 }
-export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRules,onStats,credits}:{id:GameId;title:string;language:Locale;active:boolean;onBack:()=>void;onBoard:()=>void;onLearn:()=>void;onRules:()=>void;onStats:()=>void;credits:ReactNode}){
+export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRules,onStats}:{id:GameId;title:string;language:Locale;active:boolean;onBack:()=>void;onBoard:()=>void;onLearn:()=>void;onRules:()=>void;onStats:()=>void}){
  const menuRef=useRef<HTMLElement>(null);
  useLayoutEffect(()=>{
    const menu=menuRef.current;
@@ -30,8 +30,8 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
    function fit(){
      if(!menu)return;
      const vv=window.visualViewport;
-     const height=Math.min(window.innerHeight,vv?.height??window.innerHeight,menu.getBoundingClientRect().height);
-     const width=Math.min(window.innerWidth,vv?.width??window.innerWidth,menu.getBoundingClientRect().width);
+     const height=Math.min(window.innerHeight,vv?.height??window.innerHeight);
+     const width=Math.min(window.innerWidth,vv?.width??window.innerWidth);
      menu.style.setProperty("--visible-menu-height",height+"px");
      menu.style.setProperty("--visible-menu-width",width+"px");
    }
@@ -53,6 +53,6 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  <Command slug={slug} onClick={()=>go(onRules)} disabled={transition}>{fr?"Règles":"Rules"}</Command>
  <Command slug={slug} onClick={()=>go(onStats)} disabled={transition}>{fr?"Statistiques":"Statistics"}</Command>
  <Command slug={slug} back onClick={()=>go(onBack)} disabled={transition}>{fr?"Retour":"Back"}</Command>
- </div><div className="forge-menu-foot">{credits}<span>{fr?"Préversion interne · diffusion non autorisée":"Internal preview · public release not authorized"}</span></div>
+ </div>
  </section>;
 }

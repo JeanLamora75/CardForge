@@ -44,3 +44,7 @@ Portrait : une jaquette par ligne, largeur maximale 420 px, galerie défilante t
 
 ## Galerie panoramique — 25 novembre 2026
 Demande validée : cartes deux fois plus larges que hautes (2:1), une par ligne en portrait, Paramètres en dernière position au même ratio. Réutiliser les illustrations paysage et les logos séparés pour éviter de couper les titres des anciennes jaquettes verticales. Retirer le titre de galerie et les messages de réussite hors ligne/connexion de l'accueil ; conserver le service worker, les alertes d'installation et le nom accessible de la galerie. Cartouche de sauvegarde compact. Menus et moteurs inchangés.
+
+## Menus immersifs — composition simplifiée (25 novembre 2026)
+Brief Sally : logo centré, illustration dominante, zone de commandes en bas avec voile propre à chaque univers, commandes compactes et Retour entièrement visible. Supprimer crédits et mentions du menu et du pied de page ; accès Paramètres > Crédits et licences > Retour aux paramètres. Les droits et verrous de publication restent inchangés.
+Implémentation Amelia : remplacer les règles CSS accumulées par une seule composition flex, dimensionnée sur visualViewport, sans coordonnées calculées par multiplication CSS ; conserver 44 px minimum et une marge basse de 48 px en taille standard. Les tests vérifient le centrage, l'accès aux crédits et les commandes. Validation CI et visuelle à constater.

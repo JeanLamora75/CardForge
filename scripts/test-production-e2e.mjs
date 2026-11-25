@@ -141,6 +141,10 @@ async function immersiveScreens(){
    if(viewport.width<viewport.height)assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),1);
    await page.locator(".forge-settings-tile").click();
    await page.locator("#settings-language").waitFor();
+   await page.locator(".settings-credits").click();
+   await page.locator(".credits-page").waitFor();
+   await page.locator(".credits-page .back-link").click();
+   await page.locator("#settings-language").waitFor();
    await page.locator(".context-page .back-link").click();
    await page.locator(".forge-gallery").waitFor();
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
@@ -158,11 +162,12 @@ async function immersiveScreens(){
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
     if(viewport.width<viewport.height){
       const geometry=await page.locator(".forge-menu-actions").evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,viewport:innerWidth,bottom:r.bottom,height:innerHeight};});
-      assert.ok(geometry.width>=Math.min(geometry.viewport*.88,540)-1,JSON.stringify(geometry));
+      assert.ok(geometry.width>=Math.min(geometry.viewport-32,460)-1,JSON.stringify(geometry));
       assert.ok(geometry.bottom<=geometry.height-48,JSON.stringify(geometry));
     }
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
-    assert.equal(await page.locator(".forge-menu > .forge-return").count(),0);
+    assert.equal(await page.locator(".forge-menu > .forge-return,.forge-menu-foot,.forge-credits").count(),0);
+    assert.ok(await page.locator(".forge-title").evaluate(n=>{const r=n.getBoundingClientRect();return Math.abs(r.x+r.width/2-innerWidth/2)<2;}),"logo centered");
     assert.match(await page.locator(".forge-command").last().innerText(),/^(Retour|Back)$/);
     assert.equal(await page.locator(".forge-command.primary-action").count(),1);
     assert.equal(await page.locator(".forge-command-back").count(),1);

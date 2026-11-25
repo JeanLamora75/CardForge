@@ -96,7 +96,7 @@ function GameDetail({
   const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
   const subPage = section !== "detail";
 
-  if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")} credits={<details className="forge-credits"><summary>{language==="fr"?"Crédits":"Credits"}</summary><p>{game.originalGame} · {game.authors}</p></details>}/>;
+  if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
     <section className={`detail ${game.accent}`} aria-labelledby="game-title">
       <div className="detail-navigation">
@@ -132,8 +132,9 @@ function GameDetail({
   );
 }
 
-function Settings({ onBack, language, onLanguageChange, preferences, onPreferencesChange }: {
+function Settings({ onBack, onCredits, language, onLanguageChange, preferences, onPreferencesChange }: {
   onBack: () => void;
+  onCredits: () => void;
   language: Locale;
   onLanguageChange: (locale: Locale) => void;
   preferences: SharedSettings;
@@ -177,6 +178,7 @@ function Settings({ onBack, language, onLanguageChange, preferences, onPreferenc
         <p className="help-note">Les réglages s’appliquent à tous les jeux, sans changer les cartes, les règles ni les sauvegardes. La lecture audio dépend des autorisations du navigateur.</p>
       </fieldset>
       <PrivacyPanel language={language} />
+      <section className="settings-about" data-i18n-ignore><h2>{language==="fr"?"À propos":"About"}</h2><button type="button" className="secondary-action settings-credits" onClick={onCredits}>{language==="fr"?"Crédits et licences":"Credits and licences"}</button><p className="help-note">{language==="fr"?"Préversion interne · diffusion non autorisée":"Internal preview · public release not authorized"}</p></section>
     </section>
   );
 }
@@ -287,8 +289,8 @@ export default function App() {
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
       {error ? <p className="storage-warning" role="alert">{error}</p> : null}
       <OfflineReadiness language={language} />
-      {route.page === "about" ? <CreditsPage language={language} onBack={back} /> :
-      route.page === "settings" ? <Settings onBack={back} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
+      {route.page === "about" ? <CreditsPage language={language} onBack={()=>navigate({page:"settings"})} /> :
+      route.page === "settings" ? <Settings onBack={back} onCredits={()=>navigate({page:"about"})} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} language={language}
@@ -296,13 +298,6 @@ export default function App() {
       ) : (
         <Gallery language={language} progress={progress} openSettings={button=>{lastTrigger.current=button;lastGalleryControl.current=".forge-settings-tile";settingsOrigin.current=HOME;navigate({page:"settings"});}} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
       )}
-      {!immersive?<footer className="app-footer">
-        <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck en préversion</span>
-        <button type="button" className="credits-footer-link" onClick={() => {
-          if (route.page !== "about") settingsOrigin.current = route;
-          navigate({ page: "about" });
-        }}>À propos · Crédits et licences</button>
-      </footer>:null}
     </main>
   );
 }
