@@ -152,6 +152,9 @@ async function immersiveScreens(){
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
     assert.equal(await page.locator(".forge-menu > .forge-return").count(),0);
     assert.match(await page.locator(".forge-command").last().innerText(),/^(Retour|Back)$/);
+    assert.equal(await page.locator(".forge-command.primary-action").count(),1);
+    assert.equal(await page.locator(".forge-command-back").count(),1);
+    assert.ok(await page.locator(".forge-command.primary-action .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity))>await page.locator(".forge-command-back .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity)),"primary action must stand out from return");
     assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect(),l=n.querySelector("span").getBoundingClientRect();return Math.abs((r.top+r.bottom-l.top-l.bottom)/2)<=2;})),"labels must be vertically centered");
     if(viewport.width<viewport.height) assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().bottom<=innerHeight-50),"menu must leave room below commands");
     await page.locator(".forge-command").last().click();

@@ -9,8 +9,8 @@ export function WorldBackdrop({slug}:{slug:string}){return <>
  <picture className="forge-world-bg" aria-hidden="true"><source media="(orientation: landscape)" srcSet={art("worlds-landscape",slug)}/><img src={art("worlds",slug)} alt="" draggable={false}/></picture>
  <img className="forge-effect" src={art("effects",slug)} alt="" aria-hidden="true" draggable={false}/>
  </>;}
-function Command({slug,primary=false,disabled,onClick,children}:{slug:string;primary?:boolean;disabled:boolean;onClick:()=>void;children:ReactNode}){
- return <button type="button" className={"forge-command"+(primary?" primary-action":"")} disabled={disabled} onClick={onClick}><img className="forge-button-art" src={art("buttons",slug)} alt="" aria-hidden="true" draggable={false}/><span>{children}</span></button>;
+function Command({slug,primary=false,back=false,disabled,onClick,children}:{slug:string;primary?:boolean;back?:boolean;disabled:boolean;onClick:()=>void;children:ReactNode}){
+ return <button type="button" className={"forge-command"+(primary?" primary-action":"")+(back?" forge-command-back":"")} disabled={disabled} onClick={onClick}><img className="forge-button-art" src={art("buttons",slug)} alt="" aria-hidden="true" draggable={false}/><span>{children}</span></button>;
 }
 export function WorldLogo({slug,title}:{slug:string;title:string}){return <img className="world-logo" src={art("logos",slug)} alt={title} draggable={false}/>;}
 export function Gallery({language,progress,open,scrollTop,onScroll}:{language:Locale;progress:Partial<Record<GameId,CatalogGameProgress>>;open:(id:GameId,button:HTMLButtonElement)=>void;scrollTop:number;onScroll:(v:number)=>void}){
@@ -32,11 +32,11 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  <h1 id="game-title" className="forge-title" tabIndex={-1}><WorldLogo slug={slug} title={title}/></h1>
  <div className="forge-menu-actions context-actions">
  {active?<Command slug={slug} primary onClick={()=>go(onBoard)} disabled={transition}>{fr?"Reprendre":"Resume"}</Command>:null}
- <Command slug={slug} primary onClick={()=>go(onBoard)} disabled={transition}>{active?(fr?"Ouvrir le plateau":"Open board"):(fr?"Nouvelle partie":"New game")}</Command>
+ <Command slug={slug} primary={!active} onClick={()=>go(onBoard)} disabled={transition}>{active?(fr?"Ouvrir le plateau":"Open board"):(fr?"Nouvelle partie":"New game")}</Command>
  <Command slug={slug} onClick={()=>go(onLearn)} disabled={transition}>{fr?"Apprendre":"Learn"}</Command>
  <Command slug={slug} onClick={()=>go(onRules)} disabled={transition}>{fr?"Règles":"Rules"}</Command>
  <Command slug={slug} onClick={()=>go(onStats)} disabled={transition}>{fr?"Statistiques":"Statistics"}</Command>
- <Command slug={slug} onClick={()=>go(onBack)} disabled={transition}>{fr?"Retour":"Back"}</Command>
+ <Command slug={slug} back onClick={()=>go(onBack)} disabled={transition}>{fr?"Retour":"Back"}</Command>
  </div><div className="forge-menu-foot">{credits}<span>{fr?"Préversion interne · diffusion non autorisée":"Internal preview · public release not authorized"}</span></div>
  </section>;
 }

@@ -532,3 +532,27 @@ h1[tabindex="-1"]:focus { outline: none; }
 .forge-menu .forge-command span{display:block;line-height:1.15;margin:0;padding:0;transform:none;text-align:center;}
 .forge-menu>.forge-menu-foot{grid-row:3;margin:0 0 clamp(8px,5dvh,44px);min-height:26px;align-self:end;}
 @media(orientation:landscape){.forge-menu>.forge-menu-actions.context-actions{width:min(96%,940px);max-width:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:clamp(4px,2dvh,16px);}.forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{height:clamp(44px,10dvh,60px);}.forge-menu>.forge-menu-foot{margin-bottom:clamp(4px,2dvh,16px);}}
+
+/* A restrained visual hierarchy leaves the artwork as the hero. */
+.forge-full>.forge-menu{--menu-highlight:#efc78c;--menu-shadow:#090d15;padding-inline:max(10px,env(safe-area-inset-left)) max(10px,env(safe-area-inset-right));}
+.forge-menu[data-world="thunderfighter"]{--menu-highlight:#ffe0a4;}
+.forge-menu[data-world="grim-delve"]{--menu-highlight:#ffc697;}
+.forge-menu[data-world="midnight-syndicate"]{--menu-highlight:#f3d49a;}
+.forge-menu[data-world="skydeck"]{--menu-highlight:#ffe2b3;}
+.forge-menu[data-world="les-douze-tyrans"]{--menu-highlight:#f8dc9a;}
+.forge-menu>.forge-title{width:min(76vw,420px);margin-top:clamp(4px,1.7dvh,15px);}
+.forge-menu>.forge-title .world-logo{max-height:21dvh;filter:drop-shadow(0 3px 10px #0008);}
+.forge-menu>.forge-menu-actions.context-actions{width:100%;max-width:540px;gap:clamp(4px,.7dvh,7px);margin-bottom:clamp(8px,2dvh,18px);position:relative;isolation:isolate;}
+.forge-menu>.forge-menu-actions::before{content:"";position:absolute;inset:-22px -10px -12px;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,#080c1480,transparent 74%);}
+.forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{height:clamp(44px,5.8dvh,58px);padding-inline:12%;width:100%;font-size:clamp(.86rem,2.8vw,1.04rem);font-weight:600;letter-spacing:.015em;filter:none;transition:filter 160ms ease,transform 160ms ease;}
+.forge-menu .forge-button-art{opacity:.88;filter:brightness(.91) saturate(.84);transition:opacity 160ms ease,filter 160ms ease;}
+.forge-menu .forge-command.primary-action .forge-button-art{opacity:1;filter:brightness(1.12) saturate(1.06);}
+.forge-menu .forge-command.primary-action span{color:var(--menu-highlight);font-weight:700;}
+.forge-menu .forge-command-back{margin-top:4px;}
+.forge-menu .forge-command-back .forge-button-art{opacity:.75;filter:brightness(.85) saturate(.72);}
+.forge-menu .forge-command:hover .forge-button-art,.forge-menu .forge-command:focus-visible .forge-button-art{opacity:1;filter:brightness(1.18) saturate(1);}
+.forge-menu .forge-command:active{transform:scale(.985);}
+.forge-menu>.forge-menu-foot{background:none;color:#efe5d4;font-size:.64rem;opacity:.86;margin-bottom:clamp(6px,3.5dvh,30px);}
+@media(orientation:landscape){.forge-menu>.forge-title{width:min(43vw,360px);margin-top:0;}.forge-menu>.forge-menu-actions.context-actions{width:min(96%,940px);max-width:none;gap:6px 12px;margin-bottom:8px;}.forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{height:clamp(44px,10dvh,58px);}.forge-menu .forge-command-back{margin-top:0;}.forge-menu>.forge-menu-foot{margin-bottom:6px;}}
+@media(prefers-reduced-motion:reduce){.forge-menu .forge-command,.forge-menu .forge-button-art{transition:none;}}
+[data-motion="off"] .forge-menu .forge-command,[data-motion="off"] .forge-menu .forge-button-art{transition:none;}

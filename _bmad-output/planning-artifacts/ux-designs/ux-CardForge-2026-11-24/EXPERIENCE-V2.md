@@ -35,3 +35,6 @@ Maquettes : `mockups/{cardforge,thunderfighter,grim-delve,midnight-syndicate,sky
 **Statut :** 46 PNG présents sur main. Voir ASSETS.md pour le pipeline d’optimisation, les limites et le manifeste.
 ## Recette
 Murat : 320×568, 390×844, 844×390, tablette et desktop ; navigation tactile/souris/clavier, FR/EN, retour position galerie, sauvegardes inchangées, absence de scroll des menus, mouvement réduit, ressources locales et PWA hors ligne. Comparer les captures avec les maquettes approuvées. Aucune validation CI prétendue sans exécution réelle.
+
+## Affinage visuel des menus — 25 novembre 2026
+Suite à la recette visuelle du menu Thunderfighter : conserver les illustrations originales, les commandes larges et Retour en dernière position. Donner la priorité visuelle à Reprendre (si sauvegarde active) ou Nouvelle partie ; atténuer les autres textures sans sacrifier les libellés ; conserver des espacements réguliers et des cibles de 44 px minimum. Pas de modification des actions ou des sauvegardes. Ces choix de finition sont proposés par Sally et implémentés pour recette, non encore validés visuellement par le porteur.
