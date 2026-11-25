@@ -186,7 +186,21 @@ async function immersiveScreens(){
     }
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
     assert.equal(await page.locator(".forge-menu > .forge-return,.forge-menu-foot,.forge-credits").count(),0);
-    assert.ok(await page.locator(".forge-title").evaluate((n,shift)=>{const r=n.getBoundingClientRect();const offset=r.x+r.width/2-innerWidth/2;return shift?Math.abs(offset-Math.min(innerWidth*.16,96))<=2&&r.right<=innerWidth:r.left>=0&&Math.abs(offset)<2;},viewport.width<viewport.height&&["regicide","loot-the-loop"].includes(id)),"logo placement per world");
+    assert.ok(await page.locator(".forge-title").evaluate((n,{id,portrait})=>{
+      const r=n.getBoundingClientRect(),menu=n.closest(".forge-menu").getBoundingClientRect(),img=n.querySelector("img"),image=img.getBoundingClientRect(),style=getComputedStyle(img);
+      const offset=r.x+r.width/2-innerWidth/2;
+      if(portrait&&id==="loot-the-loop"){
+        const safeProbe=document.createElement("div");
+        safeProbe.style.paddingRight="env(safe-area-inset-right, 0px)";
+        n.append(safeProbe);
+        const safeRight=parseFloat(getComputedStyle(safeProbe).paddingRight)||0;
+        safeProbe.remove();
+        const margin=menu.right-r.right;
+        return Math.abs(margin-Math.max(6,safeRight))<=1&&r.left>=menu.left&&image.right<=menu.right&&image.left>=menu.left&&image.top>=menu.top&&image.bottom<=menu.bottom&&img.naturalWidth>0&&img.naturalHeight>0&&style.objectFit==="contain"&&style.objectPosition==="100% 50%";
+      }
+      if(portrait&&id==="regicide")return Math.abs(offset-Math.min(innerWidth*.16,96))<=2&&r.right<=innerWidth;
+      return r.left>=0&&Math.abs(offset)<2;
+    },{id,portrait:viewport.width<viewport.height}),"logo placement per world");
     assert.equal(await page.locator(".forge-command").count(),5);
     await page.keyboard.press("Tab");
     await page.locator(".forge-command").first().focus();
