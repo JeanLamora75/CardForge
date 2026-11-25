@@ -1088,9 +1088,9 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-command-page:has(.tf-ending){max-width:none;margin:0;padding:0;width:100%;}
 .thunder-command-page:has(.tf-ending) .tf-command-header{display:none;}
 .thunder-command-page:has(.tf-ending) :is(.board-page,.game-learning,.tf-training-wrap){width:100%;margin:0;padding:0;max-width:none;}
-.tf-ending.game-final-screen{--end-accent:#f3bc70;box-sizing:border-box;margin:0;border:0;border-radius:0;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;place-items:center;background:linear-gradient(0deg,#050b14 2%,#050b14b3 45%,#050b1410 100%),url("./assets/thunderfighter-end-win.svg") center top/cover;color:#fff3df;}
-.tf-ending.game-final-screen[data-result=loss]{--end-accent:#ff916c;background:linear-gradient(0deg,#100a0c 2%,#100a0cb3 45%,#100a0c10 100%),url("./assets/thunderfighter-end-loss.svg") center top/cover;}
-.tf-ending.game-final-screen[data-training=true]{--end-accent:#85d5f8;background:linear-gradient(0deg,#071421,#07142188),url("./assets/thunderfighter-space.svg") center/cover;}
+.tf-ending.game-final-screen{--end-accent:#f3bc70;box-sizing:border-box;margin:0;border:0;border-radius:0;min-height:100dvh;padding:max(10px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:grid;place-items:center;background:linear-gradient(0deg,#050b14 2%,#050b14b3 45%,#050b1410 100%),url("./assets/thunderfighter-end-win.webp") center top/cover;color:#fff3df;}
+.tf-ending.game-final-screen[data-result=loss]{--end-accent:#ff916c;background:linear-gradient(0deg,#100a0c 2%,#100a0cb3 45%,#100a0c10 100%),url("./assets/thunderfighter-end-loss.webp") center top/cover;}
+.tf-ending.game-final-screen[data-training=true]{--end-accent:#85d5f8;background:linear-gradient(0deg,#071421,#07142188),url("./assets/thunderfighter-end-training.webp") center top/cover;}
 .tf-ending-main{width:min(100%,650px);display:flex;flex-direction:column;align-items:center;gap:clamp(5px,1.5dvh,14px);text-align:center;}
 .tf-ending .world-logo{width:clamp(120px,38vw,250px);height:clamp(40px,10dvh,90px);object-fit:contain;}
 .tf-ending-hero{width:100%;color:var(--end-accent);filter:drop-shadow(0 0 10px #000);}

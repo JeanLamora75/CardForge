@@ -27,6 +27,11 @@ assert.match(worker, /await cache\.addAll\(URLS\.map\(url => new Request\(url, \
 assert.match(worker, /await caches\.delete\(CACHE_NAME\)/);
 assert.match(worker, /key\.startsWith\(PREFIX\)/);
 assert.doesNotMatch(worker, /indexedDB\.deleteDatabase|localStorage\.clear/);
+for (const outcome of ["win","loss","training"]) {
+  const prefix = "./assets/thunderfighter-end-"+outcome+"-";
+  assert.ok(paths.some(file=>file.startsWith(prefix)&&file.endsWith(".webp")), "missing offline mission artwork: "+outcome);
+}
+assert.ok(!paths.some(file=>/^\.\/assets\/thunderfighter-end-(win|loss)-.*\.svg$/.test(file)), "obsolete ending SVG in offline bundle");
 const manifest = JSON.parse(text("manifest.webmanifest"));
 assert.equal(manifest.display, "standalone");
 assert.equal(manifest.start_url, "./");
