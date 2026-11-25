@@ -30,8 +30,8 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
    function fit(){
      if(!menu)return;
      const vv=window.visualViewport;
-     const height=Math.min(window.innerHeight,vv?.height??window.innerHeight);
-     const width=Math.min(window.innerWidth,vv?.width??window.innerWidth);
+     const height=Math.min(window.innerHeight,document.documentElement.clientHeight,vv?.height??window.innerHeight);
+     const width=Math.min(window.innerWidth,document.documentElement.clientWidth,vv?.width??window.innerWidth);
      menu.style.setProperty("--visible-menu-height",height+"px");
      menu.style.setProperty("--visible-menu-width",width+"px");
      const count=5;

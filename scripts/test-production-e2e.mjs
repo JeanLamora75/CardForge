@@ -465,8 +465,8 @@ async function journey(locale,mobile){
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
-  await stalePreviewRecovery();
   await immersiveScreens();
+  await stalePreviewRecovery();
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])
       await journey(locale,mobile);

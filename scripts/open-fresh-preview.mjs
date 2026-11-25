@@ -6,6 +6,11 @@ export async function openFreshPreview(context,page,url,version){
   await cdp.send('Network.enable');
   await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});
   await cdp.send('Network.setBypassServiceWorker',{bypass:true});
+  // Remove obsolete registrations before the first online load; keep IndexedDB and preferences.
+  await page.goto(url,{waitUntil:'load',timeout:30000});
+  await page.evaluate(async()=>{for(const registration of await navigator.serviceWorker.getRegistrations())if(registration.scope===new URL('./',document.baseURI).href&&!registration.active?.scriptURL.endsWith('/sw.js'))await registration.unregister();});
+
+
   await page.goto(url,{waitUntil:'load',timeout:30000});
   await page.locator('.forge-gallery').waitFor({timeout:15000});
   await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
@@ -23,8 +28,7 @@ export async function openFreshPreview(context,page,url,version){
     controller.postMessage({type:'CARDFORGE_CHECK_OFFLINE'},[channel.port2]);
    });
   },version,{timeout:60000});
-  await page.reload({waitUntil:"load"});
-  await page.locator(".forge-gallery").waitFor({timeout:15000});
+
  }finally{
   await cdp.send('Network.setBypassServiceWorker',{bypass:false}).catch(()=>{});
   await cdp.send('Network.setCacheDisabled',{cacheDisabled:false}).catch(()=>{});

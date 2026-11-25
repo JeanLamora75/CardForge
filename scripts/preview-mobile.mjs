@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { readFileSync } from 'node:fs';
 import { openFreshPreview } from './open-fresh-preview.mjs';
 import { createInterface } from 'node:readline';
-import { chromium, devices } from 'playwright';
+import { chromium } from 'playwright';
 
 const host = '127.0.0.1';
 const port = 4173;
@@ -49,8 +49,8 @@ try {
   for (const channel of ['msedge','chrome']) {
     try {
       context = await chromium.launchPersistentContext(join(profileRoot,channel),{
-        channel,headless:false,...devices['Pixel 7'],
-        args:['--window-size=520,1000'],
+        channel,headless:false,viewport:null,hasTouch:true,
+        args:['--window-size=440,760','--force-device-scale-factor=1'],
       });
       break;
     } catch (error) {
@@ -65,8 +65,8 @@ try {
     await openFreshPreview(context,page,url,version);
     console.log('Interface UX V2 chargee ; cache PWA du build '+version+' controle.');
     context.on('close',()=>{void stop();});
-    console.log('\nVue mobile Pixel 7. Profil de test persistant : '+profileRoot);
-    console.log('Attendez le message "prets hors ligne" dans CardForge.');
+    console.log('\nVue mobile responsive : surface réelle de la fenêtre, sans viewport artificiel. Profil de test persistant : '+profileRoot);
+    console.log('Le cache du build courant a été vérifié.');
     console.log('Dans cette console : O + Entree = hors ligne ; N + Entree = en ligne ; Q + Entree = quitter.');
   } else {
     console.log('Ouverture du navigateur par defaut, sans emulation mobile. Si une ancienne interface apparait, Ctrl+F5 puis recharger apres activation de la PWA.');

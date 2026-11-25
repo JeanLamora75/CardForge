@@ -51,3 +51,6 @@ Implémentation Amelia : remplacer les règles CSS accumulées par une seule com
 
 ## Contrainte de composition des menus — 25 novembre 2026
 La moitié supérieure est réservée à l’illustration : aucune commande au-dessus du milieu de la surface visible. Marge basse dynamique de 16 à 32 px hors zone sûre. Cinq commandes au maximum : fusion de Reprendre et Ouvrir le plateau, qui déclenchaient exactement la même action. Nouvelle partie reste disponible via le plateau existant. Disposition en plusieurs colonnes si cinq cibles de 44 px avec espacement de 6 px ne tiennent pas dans la moitié basse. Les tests contrôlent les limites géométriques, avec ou sans sauvegarde. Validation CI à constater.
+
+## Recette Windows — surface réelle
+Hypothèse principale après captures répétées : le lanceur impose un viewport Pixel 7 de hauteur fixe, qui peut dépasser la zone cliente réellement visible dans la fenêtre Windows. Le lanceur conserve le profil, le port et les données, mais ne force plus de viewport émulé : la fenêtre étroite est redimensionnable et le layout s’adapte à sa surface réelle. Les tests de géométrie sont exécutés avant le scénario de cache historique, qui bloquait jusqu’ici leur exécution. Validation Windows à confirmer.
