@@ -791,3 +791,33 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .thunder-reserve>.thunder-card{flex:0 0 auto;min-height:50px;width:64px;}
 .thunder-command-page :is(button,summary,input):focus-visible{outline:3px solid #f1bc79;outline-offset:2px;}
 @media(min-width:760px){.thunder-board{max-width:700px;margin:auto;}.thunder-board .thunder-action-zone{max-width:700px;margin-inline:auto;}}
+
+.thunder-board .tf-tactical{position:relative;width:100%;min-width:0;min-height:44px;display:grid;grid-template-rows:1fr;place-items:center;cursor:pointer;overflow:hidden;color:#a9bdc9;}
+.thunder-board .thunder-slot,.thunder-board .thunder-pile{height:max(62px,var(--tf-cell));}
+.thunder-board .tf-tactical[data-suit=hearts]{color:#d29b87;}
+.thunder-board .tf-tactical[data-suit=diamonds]{color:#e6bd83;}
+.thunder-board .tf-tactical[data-suit=clubs]{color:#a8c9a6;}
+.thunder-board .tf-tactical[data-suit=spades]{color:#a9c9e3;}
+.thunder-board .tf-tactical[data-defeated=true]{opacity:.7;}
+.tf-ship{width:100%;height:100%;max-width:100%;min-height:0;display:block;}
+.tf-tactical .tf-ship{position:absolute;inset:7px 10%;width:80%;height:calc(100% - 14px);opacity:.85;}
+.tf-card-corner,.tf-card-bottom{position:absolute;z-index:1;line-height:1;color:#fff1d6;text-shadow:0 1px 3px #000,0 0 3px #000;background:#081420c9;border-radius:2px;padding:1px 3px;}
+.tf-card-corner{top:1px;left:1px;right:1px;display:flex;justify-content:space-between;font-size:.8rem;}
+.tf-card-bottom{bottom:1px;right:1px;font-weight:700;font-size:.85rem;}
+.tf-card-bottom small{font-size:.65rem;}
+.thunder-board .tf-pending-card{display:flex;align-items:center;gap:8px;}
+.thunder-board .tf-pending-card .tf-tactical{flex:0 0 64px;height:72px;}
+.thunder-board .tf-pending-card p{flex:1;min-width:0;}
+.tf-card-detail{box-sizing:border-box;width:min(90vw,340px);max-height:90dvh;overflow:auto;padding:14px;border:1px solid #9ab8c9;border-radius:12px;background:#102532;color:#e4edf1;box-shadow:0 12px 60px #000b;font-family:Rajdhani,Arial,sans-serif;}
+.tf-card-detail::backdrop{background:#030913cc;}
+.tf-card-detail header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.thunder-board .tf-card-detail h2{margin:0;font-size:1.45rem;}
+.tf-card-detail header button{width:44px;height:44px;flex:none;background:#263b4c;border:1px solid #8ba9ba;border-radius:6px;color:#fff;font-size:1.7rem;}
+.tf-detail-art{position:relative;aspect-ratio:3/4;max-height:36dvh;margin:8px auto;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:12px;border:2px solid #93aaba;border-radius:9px;background:radial-gradient(ellipse,#365a6d,#091722);color:#a9c9e3;}
+.tf-detail-art[data-figure=true]{background:radial-gradient(ellipse,#785343,#261b23);border-color:#dcaa80;}
+.tf-detail-art>span,.tf-detail-art>strong{z-index:1;color:#ffe1b1;font-size:1.2rem;}
+.tf-detail-art .tf-ship{flex:1;min-height:0;width:85%;}
+.tf-card-detail dl{margin:8px 0;}
+.tf-card-detail dl>div{display:flex;justify-content:space-between;border-bottom:1px solid #426274;padding:4px 0;}
+.tf-card-detail dd{margin:0;font-weight:700;color:#f0c28a;}
+.tf-card-detail p{margin:8px 0;font-size:1rem;}

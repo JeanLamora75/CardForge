@@ -373,6 +373,19 @@ async function journey(locale,mobile){
       }
       const before=await readSaved(page,game.id);
       assert.ok(before,'start must persist '+game.name);
+      if(game.id==='gridcannon'){
+        const card=page.locator('.thunder-grid .tf-tactical').first();
+        const id=await card.getAttribute('data-card-id');
+        await interact(page,card,mobile);
+        const detail=page.locator('.tf-card-detail[open]');await detail.waitFor();
+        assert.equal(await detail.getAttribute('data-card-id'),id);
+        assert.equal(await detail.getByRole('button',{name:locale==='fr'?'Fermer la carte':'Close card'}).count(),1);
+        assert.deepEqual(await readSaved(page,game.id),before,'inspection must not write');
+        if(mobile)await detail.getByRole('button').click();else await page.keyboard.press('Escape');
+        await detail.waitFor({state:'detached'});
+        assert.equal(await card.evaluate(n=>document.activeElement===n),true);
+        assert.deepEqual(await readSaved(page,game.id),before);
+      }
       if(game.id==='loot-the-loop'){
         assert.equal(await page.locator('.ms-top .ms-hidden').count(),2);
         await interact(page,page.locator(game.actions).first(),mobile);

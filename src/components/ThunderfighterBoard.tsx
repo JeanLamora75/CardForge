@@ -13,6 +13,9 @@ import { createTutorialSession } from "../application/learning.ts";
 import { makeThunderfighterSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
 import { playGameplayEffect } from "../application/audio.ts";
+import type {Locale} from "../i18n/language.ts";
+import {thunderCardView} from "../application/thunderfighter-card-view.ts";
+import {ThunderTacticalCard,ThunderCardDetail} from "./ThunderfighterCard.tsx";
 
 type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAction>, "getState" | "getLegalActions" | "dispatch">;
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
@@ -33,18 +36,6 @@ function labelOf(id: string): string {
   if ("kind" in card) return `Joker ${id.slice(-1)} · Réaffectation`;
   const rank = ({ 1: "As", 11: "Valet", 12: "Dame", 13: "Roi" } as Record<number, string>)[card.rank] ?? String(card.rank);
   return `${rank} de ${suits[card.suit][1]} (${suits[card.suit][0]})`;
-}
-function Card({ id, defeated = false }: { id: string; defeated?: boolean }) {
-  const card = inventory.get(id);
-  const figure = card && "rank" in card && card.rank >= 11;
-  return <span className="thunder-card" data-figure={figure || undefined} data-defeated={defeated || undefined}
-    aria-label={`${labelOf(id)}${defeated ? ", neutralisé" : ""}`}>
-    <span className="thunder-emblem" aria-hidden="true">{figure ? "✦" : "◈"}</span>
-    <strong>{card && "rank" in card ? `${card.rank===1?"A":card.rank===11?"J":card.rank===12?"Q":card.rank===13?"K":card.rank} ${suits[card.suit][0]}` : "Joker"}</strong>
-    <small>{valueOf(id)}</small>
-
-    {defeated ? <b>Neutralisé</b> : null}
-  </span>;
 }
 function actionLabel(action: ThunderfighterAction): string {
   switch (action.type) {
@@ -88,12 +79,15 @@ export function previewThunderfighterAction(state: ThunderfighterState, action: 
     changingCards: after.physicalCardCount === 54,
   };
 }
-export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void }) {
+export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial, language="fr" }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void; language?:Locale }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<ThunderfighterState | null>(null);
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
   const [selection, setSelection] = useState<ThunderfighterAction | null>(null);
   const [busy, setBusy] = useState(true);
+  const [inspected,setInspected]=useState<string|null>(null);
+  const inspectTrigger=useRef<HTMLElement|null>(null);
+  function closeInspect(){setInspected(null);requestAnimationFrame(()=>inspectTrigger.current?.focus());}
   const [notice, setNotice] = useState("Chargement de Thunderfighter…");
   useEffect(() => {
     let cancelled = false;
@@ -186,6 +180,9 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
   const placement = state && state.pendingFigures.length ? getFigurePlacementOptions(state) : null;
+  const revealed=search?.visible?search.revealedNumerics:[];
+  const detail=state&&inspected?thunderCardView(state,inspected,language,revealed):null;
+  function renderCard(id:string){const view=state?thunderCardView(state,id,language,revealed):null;return view?<ThunderTacticalCard key={id} card={view} locale={language} onInspect={()=>{inspectTrigger.current=document.activeElement as HTMLElement;setInspected(id);}}/>:null;}
   return <section className="thunder-board" aria-labelledby="thunder-title">
     <h2 id="thunder-title" className="thunder-sr-only">Poste de commandement</h2>
     {!state?<p className="thunder-notice" role="status" aria-live="polite">{notice}</p>:null}
@@ -214,24 +211,24 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       {state.outcome !== "in-progress" ? <GameResultPanel summary={makeThunderfighterSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       <h3>Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield">
-        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot"><small>Nord {i + 1}</small>{id ? <Card id={id} defeated={state.defeatedFigures?.includes(id)} /> : <span>Libre</span>}</div>)}</div>
+        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot"><small>Nord {i + 1}</small>{id ? renderCard(id) : <span>Libre</span>}</div>)}</div>
         <div className="thunder-middle">
-          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i}><small>Ouest {i - 8}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
+          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}</div>)}</div>
           <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i}>
             <strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>{i + 1} · {pile.length}</strong>
-            {pile.length ? <Card id={pile[pile.length - 1]} /> : <span aria-label="Emplacement vide">—</span>}
+            {pile.length ? renderCard(pile[pile.length - 1]) : <span aria-label="Emplacement vide">—</span>}
           </div>)}</div>
-          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i}><small>Est {i - 2}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
+          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}</div>)}</div>
         </div>
-        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div key={i} className="thunder-slot"><small>Sud {i - 5}</small>{figures[i] ? <Card id={figures[i]!} defeated={state.defeatedFigures?.includes(figures[i]!)} /> : <span>Libre</span>}</div>)}</div>
+        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div key={i} className="thunder-slot"><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span>Libre</span>}</div>)}</div>
       </div>
       <div className="thunder-action-zone">
-      {state.pendingFigures[0] ? <p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p> : null}
-      {state.pendingNumeric ? <p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p> : null}
+      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>. Choisissez une destination autorisée ou une action spéciale.</p></div> : null}
       {search?.visible ? <section className="thunder-search" aria-label="Recherche">
         <h3>Recherche d'un adversaire</h3>
         <p>Cartes numériques traversées : {search.revealedNumerics.length}. Elles seront replacées sous la pioche.</p>
-        <div className="thunder-reserve">{search.revealedNumerics.map(id => <Card key={id} id={id} />)}</div>
+        <div className="thunder-reserve">{search.revealedNumerics.map(id => renderCard(id))}</div>
         {search.integrityStatus === "invalid" ? <p role="alert">La partie ne peut pas continuer normalement.</p> : null}
       </section> : null}
       <h3>Actions autorisées</h3>
@@ -254,9 +251,10 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <p key={id}>{labelOf(id)} · Résistance {resistance(state, id)} ({valueOf(id)} + {(state.armorCards ?? []).filter(a => a.figureId === id).reduce((sum, a) => sum + valueOf(a.cardId), 0)} armure) · {state.defeatedFigures?.includes(id) ? "Neutralisé" : "Actif"}</p>
       )}</div>
       </details><details className="thunder-extra"><summary>Réserve spéciale · {state.specialReserve.length}</summary>
-      <div className="thunder-reserve">{state.specialReserve.map(id => <Card key={id} id={id} />)}</div>
+      <div className="thunder-reserve">{state.specialReserve.map(id => renderCard(id))}</div>
       <p className="help-note">Actions spéciales consommées : {state.spentSpecials.length}. </p>
 </details>
     </>}
+    {detail?<ThunderCardDetail card={detail} locale={language} onClose={closeInspect}/>:null}
   </section>;
 }

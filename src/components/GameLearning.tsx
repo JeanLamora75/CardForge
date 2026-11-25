@@ -80,10 +80,10 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
       {showRules ? <Rulebook gameId={gameId} language={language} /> : null}
       {mode === "learn" ? <div key={tutorialRun}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
-          gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
+          gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
-        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard hintsEnabled={hintsEnabled} />}
+        <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard language={language} hintsEnabled={hintsEnabled} />}
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}
     {mode === null ? <button className="back-link" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>{showRules ? "Masquer les règles" : "Lire les règles avant de choisir"}</button> : null}

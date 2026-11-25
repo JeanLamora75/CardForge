@@ -1,0 +1,3 @@
+# CAR-84 — Double représentation
+
+Projection commune des cartes visibles, vue tactique et dialogue de détail FR/EN, consultation sans action ni sauvegarde, retour du focus, fermeture clavier/tactile. Résistance et armure calculées à partir de l’état existant. Les sommets de piles seuls, figures visibles, réserve et carte en cours sont consultables ; aucun accès à la pioche cachée. Silhouettes SVG locales provisoires, illustrations définitives CAR-87. Symboles classiques conservés provisoirement pour la lisibilité. Tests unitaires et E2E ajoutés ; validation effective non réalisée dans cette session. Workflow manuel sans uv.
