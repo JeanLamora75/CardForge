@@ -834,3 +834,12 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board [data-target-state]:has(.tf-tactical){height:max(106px,var(--tf-cell));justify-content:flex-start;}
 .thunder-board [data-target-state] .tf-tactical{flex:1;min-height:44px;margin-bottom:44px;}
 .thunder-board .thunder-middle:has(.thunder-pile[data-target-state]) :is(.thunder-pile,.thunder-slot){height:max(106px,var(--tf-cell));}
+
+.thunder-board .tf-special-console{border:1px solid #57798b;background:#101f2c;border-radius:6px;padding:6px;margin-bottom:6px;}
+.thunder-board .tf-special-list{display:flex;flex-wrap:wrap;gap:6px;}
+.thunder-board .tf-special-unit{width:76px;display:flex;flex-direction:column;gap:3px;}
+.thunder-board .tf-special-unit .tf-tactical{height:64px;flex:none;}
+.thunder-board .tf-special-use{min-height:44px;padding:4px;font-size:.75rem;}
+.thunder-board .tf-special-use[aria-pressed=true]{border-color:#f2bc76;background:#523c25;color:#ffe3b6;}
+.thunder-board .tf-special-instruction{font-size:.85rem;}
+.thunder-board .tf-special-instruction p{margin:4px 0;}

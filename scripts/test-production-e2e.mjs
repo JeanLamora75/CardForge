@@ -395,6 +395,7 @@ async function journey(locale,mobile){
         await interact(page,page.locator(game.actions).first(),mobile);
         await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
       }else if(game.confirm){
+        assert.equal(await page.locator('.tf-special-console').count(),1);
         const target=page.locator('.tf-target').first();
         const direct=await target.count()>0;
         const action=direct?target:page.locator(game.actions).first();

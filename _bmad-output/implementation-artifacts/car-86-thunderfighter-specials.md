@@ -1,0 +1,3 @@
+# CAR-86 — Réserve, armures et recherche
+
+Réserve visible : inspection et usage distincts, As par choix de pile, Joker par choix source puis destination, armure par secteur fourni par les actions légales. Annulation ne consomme rien ; confirmation existante unique. Recherche par révélation unitaire, prévisualisation des tirages sans résultat anticipé, buffer visible uniquement selon getSearchPresentation. Moteur et stockage inchangés. Tests unitaires des projections et contrôle E2E de présence de réserve ajoutés ; scénarios E2E complets des actions spéciales et validation CI restent à réaliser. Workflow manuel sans uv.
