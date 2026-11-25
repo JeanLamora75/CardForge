@@ -522,3 +522,13 @@ h1[tabindex="-1"]:focus { outline: none; }
 .forge-menu-foot{min-height:26px;margin-bottom:clamp(4px,1.5dvh,14px);}
 @media(orientation:portrait){.forge-menu-actions.context-actions{width:100%;max-width:620px;}.forge-title{max-height:24%;}.forge-title .world-logo{max-height:24dvh;}}
 @media(orientation:landscape){.forge-menu-actions.context-actions{width:min(96%,940px);max-width:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:clamp(4px,2dvh,16px);}.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{height:clamp(44px,10dvh,66px);}}
+
+/* Menu composition uses explicit viewport tracks rather than auto margins. */
+.forge-full>.forge-menu{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto auto;justify-items:center;align-items:start;align-content:stretch;box-sizing:border-box;padding: max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));}
+.forge-menu>.forge-title{grid-row:1;align-self:start;height:auto;max-height:none;min-height:0;}
+.forge-menu>.forge-title .world-logo{height:auto;max-height:22dvh;width:100%;object-fit:contain;}
+.forge-menu>.forge-menu-actions.context-actions{grid-row:2;display:grid;width:100%;max-width:620px;grid-template-columns:minmax(0,1fr);gap:3px;margin:0 0 clamp(8px,3dvh,26px);align-items:stretch;justify-items:stretch;}
+.forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{display:grid;place-items:center;align-content:center;justify-content:center;width:100%;height:clamp(44px,6.3dvh,60px);min-height:44px;box-sizing:border-box;margin:0;padding:0 12%;line-height:1.15;}
+.forge-menu .forge-command span{display:block;line-height:1.15;margin:0;padding:0;transform:none;text-align:center;}
+.forge-menu>.forge-menu-foot{grid-row:3;margin:0 0 clamp(8px,5dvh,44px);min-height:26px;align-self:end;}
+@media(orientation:landscape){.forge-menu>.forge-menu-actions.context-actions{width:min(96%,940px);max-width:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:clamp(4px,2dvh,16px);}.forge-menu .forge-command,.forge-menu .forge-command.primary-action,.forge-menu .forge-command.primary-action:hover{height:clamp(44px,10dvh,60px);}.forge-menu>.forge-menu-foot{margin-bottom:clamp(4px,2dvh,16px);}}

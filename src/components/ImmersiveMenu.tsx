@@ -29,7 +29,6 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  function go(action:()=>void){if(locked.current)return;locked.current=true;const motion=document.documentElement.dataset.motion;const reduce=motion==="off"||(motion!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches);if(reduce){action();return;}setTransition(true);timer.current=window.setTimeout(action,320);}
  return <section className={"forge-menu"+(transition?" forge-transition":"")} data-world={slug} data-i18n-ignore aria-labelledby="game-title">
  <WorldBackdrop slug={slug}/>{transition?<img className="forge-exit-art" src={art("effects",slug)} alt="" aria-hidden="true"/>:null}
- <button className="forge-return back-link" type="button" disabled={transition} onClick={()=>go(onBack)} aria-label={fr?"Retour au catalogue":"Back to catalogue"}>←</button>
  <h1 id="game-title" className="forge-title" tabIndex={-1}><WorldLogo slug={slug} title={title}/></h1>
  <div className="forge-menu-actions context-actions">
  {active?<Command slug={slug} primary onClick={()=>go(onBoard)} disabled={transition}>{fr?"Reprendre":"Resume"}</Command>:null}
@@ -37,6 +36,7 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  <Command slug={slug} onClick={()=>go(onLearn)} disabled={transition}>{fr?"Apprendre":"Learn"}</Command>
  <Command slug={slug} onClick={()=>go(onRules)} disabled={transition}>{fr?"Règles":"Rules"}</Command>
  <Command slug={slug} onClick={()=>go(onStats)} disabled={transition}>{fr?"Statistiques":"Statistics"}</Command>
+ <Command slug={slug} onClick={()=>go(onBack)} disabled={transition}>{fr?"Retour":"Back"}</Command>
  </div><div className="forge-menu-foot">{credits}<span>{fr?"Préversion interne · diffusion non autorisée":"Internal preview · public release not authorized"}</span></div>
  </section>;
 }
