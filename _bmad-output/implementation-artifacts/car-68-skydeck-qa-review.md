@@ -1,0 +1,7 @@
+# CAR-68 — Revue Murat (partielle)
+Référentiel Murat .agents/skills/bmad-agent-qa/SKILL.md et workflow 05-validation, lecture manuelle sans uv.
+CI c8947fa / 45392545109 : 402 succès, 1 échec (registre de migrations attendu à trois jeux), aucun contrôle aval exécuté. Correction du test pour quatre moteurs, y compris restauration effective et rejet de version inconnue.
+Matrice CC-T01–16 : test moteur card-capture.test.mjs pour T01–15, skydeck-persistence.test.mjs pour T16. Assertions examinées : répartition, retour initial, phases, ordre, recyclage, défausse, enseignes/somme, figures, Joker, B, perte protégée, C, exclusivité, victoire, restauration. Traçabilité ajoutée au garde strict, avec test négatif CC-T02. La traçabilité n'est pas une certification de fidélité.
+CC-R01–04 : non confirmés par source primaire, conventions provisoires conservées ; CC-R05 couvert par T15 ; CC-R06 droits absents. AC1 partiel.
+AC2 : ajout de tests transaction terminale avec échec, victoire/défaite sans score, reprise terminale, isolation des trois autres jeux. E2E FR/EN et reprise hors ligne déjà présents ; scénarios terminaux UI à compléter. AC3 : nouvelle CI à vérifier sur SHA publié. AC4 : gate public reste fermé, notes actualisées sans prétendre que les preuves sont acquises.
+Décision : NO GO conformité finale et diffusion ; recette interne non assimilée à diffusion publique. Aucun accès web externe sans autorisation.

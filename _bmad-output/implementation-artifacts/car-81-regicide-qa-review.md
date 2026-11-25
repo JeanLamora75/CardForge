@@ -1,0 +1,5 @@
+# CAR-81 — Murat / Mary / Amelia
+CI antérieure 45451661764 (3bcb153) : huit contrôles réussis. QA-01 : source officielle p.2 et clarification secondaire du concepteur (BGG direct 403), passage solo interdit, défaite sans recours. QA-02 : audit AST Regicide ajouté. QA-03 : références combos corrigées. QA-04 : scénarios navigateur hors ligne FR/EN clavier/tactile sur états préparés, pas partie naturelle intégrale. QA-05 : contrôle MVP cinq jeux. QA-06 : preuves techniques précédentes actualisées, conformité finale en attente. REG-R09 : aucune permission inventée ; publication publique interdite. CI corrective à vérifier. Sans uv. Revue manuelle adaptée au connecteur.
+
+## Revue de la CI corrective
+Run 45463037409, SHA 720ec8dd95e1f4e09961597a43196bd9f8d7ebcf : 453/454 tests réussis ; échec du fixture CAR-40 (ENOENT regicide.md). Contrôles suivants non exécutés. Amelia complète le fixture avec un scénario REG valide et un scénario absent, sans affaiblir le gate. Nouvelle CI requise avant GO technique. REG-R09 reste bloquant.

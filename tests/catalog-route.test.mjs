@@ -120,3 +120,10 @@ test('about-and-credits route is direct-linkable and returns to the originating 
   assert.deepEqual(backRoute(about,origin),origin);
   assert.deepEqual(backRoute(about,{page:'settings'}),HOME);
 });
+
+test('Skydeck internal board route is available without opening public publication',()=>{
+  const game=games.find(g=>g.id==='card-capture');
+  assert.equal(canPlay(game),false);
+  assert.equal(game.playableRoute,null);
+  assert.deepEqual(parseCatalogRoute('#game/card-capture/board'),{page:'game',gameId:'card-capture',section:'board'});
+});

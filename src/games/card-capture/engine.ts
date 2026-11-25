@@ -8,6 +8,7 @@ export interface SkydeckSetup { seed: number }
 export interface SkydeckState {
   rulesVersion: typeof SKYDECK_RULES_VERSION;
   seed: number;
+  recycleCount: number;
   round: number;
   phase: SkydeckPhase;
   outcome: GameOutcome;
@@ -20,7 +21,7 @@ export interface SkydeckState {
   enemyCapture: string[];
 }
 export type SkydeckPhase = 'enemy' | 'discard' | 'draw' | 'capture' | 'finished';
-export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' }>;
+export type SkydeckAction = Readonly<{ type: 'advance-enemy' | 'discard-none' | 'draw' | 'abandon' } | { type: 'discard'; cardIds: readonly string[] } | { type: 'capture-a'; targetPosition: number; cardIds: readonly string[]; jokerCopyId?: string } | { type: 'capture-b'; cardId: string } | { type: 'capture-c'; targetPosition: number; cardIds: readonly string[] }>;
 
 const canonical = makeDeckWithJokers();
 const playerIds = new Set(canonical.filter(c=>isJokerCard(c)||[2,3,4].includes(c.rank)).map(c=>c.id));
@@ -44,7 +45,7 @@ export function prepareSkydeck(player:readonly string[], enemy:readonly string[]
   // booklet has not yet established a more specific ordering.
   const returned=drawn.filter(id=>protectedIds.has(id));
   return {
-    rulesVersion:SKYDECK_RULES_VERSION,seed,round:1,phase:'enemy',outcome:'in-progress',
+    rulesVersion:SKYDECK_RULES_VERSION,seed,recycleCount:0,round:1,phase:'enemy',outcome:'in-progress',
     playerDeck:[...player],enemyDeck:[...enemy.slice(4),...returned],
     enemyLine:drawn.map(id=>protectedIds.has(id)?null:id),
     hand:[],discard:[],enemyCapture:[],
@@ -57,17 +58,39 @@ function createInitialState(setup:SkydeckSetup):SkydeckState {
   return prepareSkydeck(shuffle([...playerIds],random),shuffle([...enemyIds],random),setup.seed);
 }
 const allIds = new Set(canonical.map(c=>c.id));
+const cardsById = new Map(canonical.map(card=>[card.id,card]));
+function captureOptions(targetId:string,selected:readonly string[]): (string|undefined)[] {
+  const target=cardsById.get(targetId);
+  if(!target||isJokerCard(target)||selected.length===0)return [];
+  const value=(rank:number)=>rank===1?14:rank;
+  let total=0;
+  let jokers=0;
+  const references:{id:string;value:number}[]=[];
+  for(const id of selected){
+    const card=cardsById.get(id);
+    if(!card)return [];
+    if(isJokerCard(card)){jokers++;continue;}
+    if(card.suit!==target.suit)return [];
+    const strength=value(card.rank);
+    total+=strength;
+    references.push({id,value:strength});
+  }
+  if(jokers===0)return total>=value(target.rank)?[undefined]:[];
+  // Lucas Gentry explicitly confirmed both Jokers may copy the same card.
+  return references.filter(card=>total+jokers*card.value>=value(target.rank)).map(card=>card.id);
+}
 function validateState(value:unknown):ValidationResult {
   if(!record(value))return {valid:false,errors:['state must be an object']};
   const errors:string[]=[];
-  const fields=['rulesVersion','seed','round','phase','outcome','playerDeck','enemyDeck','enemyLine','hand','discard','enemyCapture'];
+  const fields=['rulesVersion','seed','recycleCount','round','phase','outcome','playerDeck','enemyDeck','enemyLine','hand','discard','enemyCapture'];
   if(Object.keys(value).length!==fields.length||fields.some(key=>!Object.hasOwn(value,key)))errors.push('invalid state fields');
   const phase=value.phase;
   const outcome=value.outcome;
   if(value.rulesVersion!==SKYDECK_RULES_VERSION||!validSeed(value.seed)||
+     typeof value.recycleCount!=='number'||!Number.isSafeInteger(value.recycleCount)||value.recycleCount<0||value.recycleCount>0xffff_ffff||
      typeof value.round!=='number'||!Number.isSafeInteger(value.round)||value.round<1||
-     !['enemy','discard','draw','capture','finished'].includes(String(phase))||
-     !['in-progress','win','loss','abandoned'].includes(String(outcome))||
+     (typeof phase!=='string'||!['enemy','discard','draw','capture','finished'].includes(phase))||
+     (typeof outcome!=='string'||!['in-progress','win','loss','abandoned'].includes(outcome))||
      (phase==='finished')!==(outcome!=='in-progress'))
     errors.push('invalid phase or metadata');
   const zones: string[][]=[];
@@ -87,9 +110,13 @@ function validateState(value:unknown):ValidationResult {
   if(enemyDeck.some(id=>!enemyIds.has(id)))errors.push('invalid enemy deck');
   if(hand.length>4)errors.push('hand exceeds four cards');
   if(phase==='capture'&&hand.length!==4)errors.push('capture requires a full hand');
-  if(outcome==='in-progress'&&enemyCapture.some(id=>protectedIds.has(id)))errors.push('protected card in enemy capture');
+  if(outcome!=='loss'&&enemyCapture.some(id=>protectedIds.has(id)))errors.push('protected card in enemy capture');
   if(outcome==='win'&&(enemyDeck.length!==0||occupied.length!==0||enemyCapture.some(id=>protectedIds.has(id))))
     errors.push('invalid win');
+  if(outcome==='loss'&&!enemyCapture.some(id=>protectedIds.has(id)))
+    errors.push('unconfirmed loss condition');
+  if(outcome==='in-progress'&&enemyDeck.length===0&&occupied.length===0)
+    errors.push('no remaining enemy in active game');
   if(value.round===1&&phase!=='finished'){
     if(!exactPartition([...playerDeck,...hand,...discard],playerIds)||
        !exactPartition([...enemyDeck,...occupied],enemyIds)||enemyCapture.length)
@@ -99,9 +126,10 @@ function validateState(value:unknown):ValidationResult {
       const holes=4-occupied.length;
       if(holes>0&&!enemyDeck.slice(-holes).every(id=>protectedIds.has(id)))errors.push('invalid returned cards');
     }
-    if(phase==='discard'&&(hand.length||discard.length))errors.push('invalid first discard');
+    if((phase==='discard'||phase==='draw')&&(hand.length||discard.length))errors.push('invalid first discard');
+    if(value.recycleCount!==0)errors.push('invalid first round recycle count');
   }
-  if(lineValid&&['discard','draw','capture'].includes(String(phase))){
+  if(lineValid&&(phase==='discard'||phase==='draw'||phase==='capture')){
     const compact=Array.from(line).every((id,i)=>i<occupied.length?id!==null:id===null);
     if(!compact||(enemyDeck.length>0&&occupied.length!==4))errors.push('enemy line must be filled before player phases');
   }
@@ -112,15 +140,119 @@ function getLegalActions(state:Readonly<SkydeckState>):readonly SkydeckAction[]{
   if(!validateState(state).valid||state.outcome!=='in-progress')return [];
   switch(state.phase){
     case 'enemy': return [{type:'advance-enemy'}];
-    case 'discard': return [{type:'discard-none'}];
-    case 'draw': return state.playerDeck.length>=4-state.hand.length?[{type:'draw'}]:[];
+    case 'discard': {
+      const choices: SkydeckAction[]=[{type:'discard-none'},{type:'discard',cardIds:[]}];
+      for(let mask=1;mask<2**state.hand.length;mask++){
+        choices.push({type:'discard',cardIds:state.hand.filter((_,i)=>(mask&(1<<i))!==0)});
+      }
+      return choices;
+    }
+    case 'draw': return state.playerDeck.length+state.discard.length>=4-state.hand.length &&
+      (state.playerDeck.length>=4-state.hand.length||state.recycleCount<0xffff_ffff)?[{type:'draw'}]:[];
+    case 'capture': {
+      const choices:SkydeckAction[]=[];
+      for(let index=0;index<state.enemyLine.length;index++){
+        const target=state.enemyLine[index];
+        if(target===null)continue;
+        for(let mask=1;mask<2**state.hand.length;mask++){
+          const cardIds=state.hand.filter((_,i)=>(mask&(1<<i))!==0);
+          for(const jokerCopyId of captureOptions(target,cardIds)){
+            choices.push(jokerCopyId===undefined
+              ?{type:'capture-a',targetPosition:index+1,cardIds}
+              :{type:'capture-a',targetPosition:index+1,cardIds,jokerCopyId});
+          }
+        }
+      }
+      if(state.enemyLine[0]!==null)for(const cardId of state.hand)choices.push({type:'capture-b',cardId});
+      for(let index=0;index<state.enemyLine.length;index++){
+        if(state.enemyLine[index]===null)continue;
+        for(let i=0;i<state.hand.length;i++){
+          for(let j=i+1;j<state.hand.length;j++){
+            choices.push({type:'capture-c',targetPosition:index+1,cardIds:[state.hand[i],state.hand[j]]});
+          }
+        }
+      }
+      return choices;
+    }
     default: return [];
   }
 }
+/** Resolve a completed capture, never infer defeat from a missing A option. */
+function resolveCapture(state:SkydeckState):SkydeckState {
+  const lost=state.enemyCapture.some(id=>protectedIds.has(id));
+  const won=!lost&&state.enemyDeck.length===0&&state.enemyLine.every(id=>id===null);
+  return {...state,phase:lost||won?'finished':'enemy',
+    outcome:lost?'loss':won?'win':'in-progress',
+    round:lost||won?state.round:state.round+1};
+}
+
+export type SkydeckPublicState = Readonly<{
+  round:number;
+  phase:SkydeckPhase;
+  outcome:GameOutcome;
+  hand:readonly string[];
+  enemyLine:readonly (string|null)[];
+  counts:Readonly<{playerDeck:number;enemyDeck:number;discard:number;enemyCapture:number}>;
+  actions:readonly SkydeckAction[];
+  blockedReason:'unconfirmed-insufficient-personal-cards'|null;
+}>;
+
+/** A detached view for the board. Neither the shuffle seed nor any hidden card is exposed. */
+export function inspectSkydeck(state:Readonly<SkydeckState>):SkydeckPublicState {
+  if(!validateState(state).valid)throw new TypeError('invalid Skydeck state');
+  const blocked=state.outcome==='in-progress'&&state.phase==='draw'&&
+    state.hand.length+state.playerDeck.length+state.discard.length<4;
+  return {
+    round:state.round,phase:state.phase,outcome:state.outcome,
+    hand:[...state.hand],enemyLine:[...state.enemyLine],
+    counts:{playerDeck:state.playerDeck.length,enemyDeck:state.enemyDeck.length,
+      discard:state.discard.length,enemyCapture:state.enemyCapture.length},
+    actions:getLegalActions(state),
+    blockedReason:blocked?'unconfirmed-insufficient-personal-cards':null,
+  };
+}
+
 function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>):TransitionResult<SkydeckState>{
   const reject=(reason:string):TransitionResult<SkydeckState>=>({accepted:false,state,reason});
-  if(!record(action)||Object.keys(action).length!==1||
-     !getLegalActions(state).some(legal=>legal.type===action.type))return reject('illegal action or phase');
+  if(!record(action))return reject('invalid action');
+  if(action.type==='abandon'){
+    if(Object.keys(action).length!==1||!validateState(state).valid||state.outcome!=='in-progress')
+      return reject('illegal abandonment');
+    const next:SkydeckState={...state,phase:'finished',outcome:'abandoned'};
+    return validateState(next).valid?{accepted:true,state:next}:reject('invalid abandonment');
+  }
+  const legal=getLegalActions(state);
+  if(action.type==='discard'){
+    if(Object.keys(action).length!==2||!Array.isArray(action.cardIds)||
+       !Array.from(action.cardIds).every(id=>typeof id==='string')||
+       new Set(action.cardIds).size!==action.cardIds.length||
+       !legal.some(candidate=>candidate.type==='discard'&&candidate.cardIds.length===action.cardIds.length&&
+         candidate.cardIds.every(id=>action.cardIds.includes(id))))return reject('illegal discard selection or phase');
+  }else if(action.type==='capture-a'){
+    if(Object.keys(action).length!==(Object.hasOwn(action,'jokerCopyId')?4:3)||
+       (Object.hasOwn(action,'jokerCopyId')&&typeof action.jokerCopyId!=='string')||
+       !Number.isInteger(action.targetPosition)||
+       !Array.isArray(action.cardIds)||!Array.from(action.cardIds).every(id=>typeof id==='string')||
+       new Set(action.cardIds).size!==action.cardIds.length||
+       !legal.some(candidate=>candidate.type==='capture-a'&&candidate.targetPosition===action.targetPosition&&
+         candidate.jokerCopyId===action.jokerCopyId&&
+         candidate.cardIds.length===action.cardIds.length&&candidate.cardIds.every(id=>action.cardIds.includes(id))))
+      return reject('illegal capture selection or phase');
+  }else if(action.type==='capture-b'){
+    if(Object.keys(action).length!==2||typeof action.cardId!=='string'||
+       !legal.some(candidate=>candidate.type==='capture-b'&&candidate.cardId===action.cardId))
+      return reject('illegal enemy capture or phase');
+  }else if(action.type==='capture-c'){
+    if(Object.keys(action).length!==3||!Number.isInteger(action.targetPosition)||
+       !Array.isArray(action.cardIds)||action.cardIds.length!==2||
+       !Array.from(action.cardIds).every(id=>typeof id==='string')||
+       new Set(action.cardIds).size!==2||
+       !legal.some(candidate=>candidate.type==='capture-c'&&candidate.targetPosition===action.targetPosition&&
+         candidate.cardIds.every(id=>action.cardIds.includes(id))))
+      return reject('illegal retreat selection or phase');
+  }else if(Object.keys(action).length!==1||!legal.some(candidate=>candidate.type===action.type)){
+    return reject('illegal action or phase');
+  }
   let next:SkydeckState;
   switch(action.type){
     case 'advance-enemy': {
@@ -132,10 +264,59 @@ function transition(state:Readonly<SkydeckState>,action:Readonly<SkydeckAction>)
       break;
     }
     case 'discard-none': next={...state,phase:'draw'};break;
+    case 'discard': {
+      const selected=new Set(action.cardIds);
+      next={...state,phase:'draw',hand:state.hand.filter(id=>!selected.has(id)),
+        discard:[...state.discard,...state.hand.filter(id=>selected.has(id))]};
+      break;
+    }
     case 'draw': {
       const count=4-state.hand.length;
-      next={...state,phase:'capture',playerDeck:state.playerDeck.slice(count),
-        hand:[...state.hand,...state.playerDeck.slice(0,count)]};
+      const drawn=state.playerDeck.slice(0,count);
+      let playerDeck=state.playerDeck.slice(count);
+      let discard=state.discard;
+      let recycleCount=state.recycleCount;
+      if(drawn.length<count){
+        recycleCount++;
+        // Each recycling has an independent reproducible stream; the counter
+        // is serialized, so restoration never relies on hidden PRNG state.
+        const recycleSeed=(state.seed+Math.imul(recycleCount,0x9e3779b9))>>>0;
+        const recycled=shuffle(discard,createSeededRandom(recycleSeed));
+        const needed=count-drawn.length;
+        drawn.push(...recycled.slice(0,needed));
+        playerDeck=recycled.slice(needed);
+        discard=[];
+      }
+      next={...state,phase:'capture',playerDeck,discard,recycleCount,hand:[...state.hand,...drawn]};
+      break;
+    }
+    case 'capture-a': {
+      const index=action.targetPosition-1;
+      const target=state.enemyLine[index];
+      if(target===null||target===undefined)return reject('missing enemy');
+      const selected=new Set(action.cardIds);
+      const enemyLine=state.enemyLine.map((id,i)=>i===index?null:id);
+      next=resolveCapture({...state,enemyLine,hand:state.hand.filter(id=>!selected.has(id)),
+        discard:[...state.discard,...state.hand.filter(id=>selected.has(id)),target]});
+      break;
+    }
+    case 'capture-b': {
+      const target=state.enemyLine[0];
+      if(target===null||target===undefined)return reject('missing enemy in position one');
+      const enemyLine=state.enemyLine.map((id,i)=>i===0?null:id);
+      const enemyCapture=[...state.enemyCapture,target,action.cardId];
+      next=resolveCapture({...state,enemyLine,enemyCapture,hand:state.hand.filter(id=>id!==action.cardId)});
+      break;
+    }
+    case 'capture-c': {
+      const index=action.targetPosition-1;
+      const target=state.enemyLine[index];
+      if(target===null||target===undefined)return reject('missing enemy');
+      const selected=new Set(action.cardIds);
+      const enemyCapture=[...state.enemyCapture,...state.hand.filter(id=>selected.has(id))];
+      next=resolveCapture({...state,enemyLine:state.enemyLine.map((id,i)=>i===index?null:id),
+        enemyDeck:[...state.enemyDeck,target],enemyCapture,
+        hand:state.hand.filter(id=>!selected.has(id))});
       break;
     }
     default:return reject('unknown action');

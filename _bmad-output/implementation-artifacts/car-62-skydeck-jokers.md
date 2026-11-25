@@ -1,0 +1,5 @@
+# CAR-62 — Copie des Jokers Skydeck
+Amelia — implémentation directe main, sans uv.
+AC1 : copie de valeur et enseigne d'une carte normale effectivement engagée. Le moteur énumère les références suffisantes ; l'action indique jokerCopyId explicitement. AC2 : refus des références absentes, externes, Joker, mauvaise enseigne, valeurs arbitraires ; identités joker-1 et joker-2 conservées dans la défausse et au recyclage. Les captures sans Joker restent compatibles.
+AC3 : CC-R03 non confirmé par le PDF primaire. Garde provisoire : deux Jokers simultanés refusés avec ou sans carte normale. Les tests de cette garde ne prouvent pas une règle officielle. Aucun choix fonctionnel définitif n'est revendiqué. Validation finale CAR-62 bloquée sur cette preuve documentaire.
+Tests CC-T10 et CC-R03, conservation des 54 cartes et refus immuables. CI CAR-61 verte sur ee722e2 ; CI du nouveau commit à constater. Pas de modification des autres jeux, ni du catalogue.

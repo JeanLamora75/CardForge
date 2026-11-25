@@ -28,7 +28,7 @@ export async function readCatalogGameProgress(
   const state = save.state;
   const savedOutcome = typeof state === 'object' && state !== null && 'outcome' in state
     ? state.outcome : undefined;
-  if (savedOutcome !== 'in-progress' && savedOutcome !== 'win' && savedOutcome !== 'loss') {
+  if (savedOutcome !== 'in-progress' && savedOutcome !== 'win' && savedOutcome !== 'loss' && savedOutcome !== 'abandoned') {
     throw new Error('Inconsistent saved game outcome');
   }
   return {

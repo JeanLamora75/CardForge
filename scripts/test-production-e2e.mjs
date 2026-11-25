@@ -32,6 +32,21 @@ async function readSaved(page,id){
     });}finally{db.close();}
   },id);
 }
+async function installSkydeckFixture(page, save, outcome){
+  const target=outcome==='win'?'hearts-9':'hearts-13';
+  const hand=['hearts-4','hearts-5','clubs-2','spades-3'];
+  const old=save.state;
+  const ids=[...old.playerDeck,...old.enemyDeck,...old.enemyLine.filter(Boolean),...old.hand,...old.discard,...old.enemyCapture];
+  const state={...old,round:2,phase:'capture',outcome:'in-progress',hand,enemyDeck:[],enemyLine:[target,null,null,null],playerDeck:ids.filter(id=>id!==target&&!hand.includes(id)),discard:[],enemyCapture:[]};
+  const fixture={...save,sessionId:save.sessionId+'-'+outcome,state};
+  await page.evaluate(async fixture=>{
+    const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+    try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}
+  },fixture);
+  await page.reload();
+  await page.locator('.sd-resumed').waitFor();
+  return fixture;
+}
 async function waitSavedChanged(page,id,before){
   for(let i=0;i<100;i++){
     const current=await readSaved(page,id);
@@ -172,6 +187,74 @@ async function journey(locale,mobile){
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       assert.equal(await page.locator('html').getAttribute('lang'),locale);
     }
+    // Skydeck normal play: persistence and exact offline resume.
+    await page.goto(HOST+'#game/card-capture/board');
+    await page.locator('.learning-intro').waitFor();
+    await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
+    const sd=page.locator('.sd-board');
+    await sd.waitFor();
+    await interact(page,sd.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
+    await sd.locator('.sd-line:not(.sd-hand) button[data-position="1"]').waitFor();
+    assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
+    const initial=await sd.locator('[role=status]').textContent();
+    await interact(page,sd.locator('.sd-preview'),mobile);
+    await interact(page,sd.locator('.sd-confirm button.secondary-action'),mobile);
+    assert.equal(await sd.locator('[role=status]').textContent(),initial);
+    for(let phase=0;phase<3;phase++){
+      await interact(page,sd.locator('.sd-preview'),mobile);
+      await interact(page,sd.locator('.sd-confirm button.primary-action'),mobile);
+    }
+    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    assert.equal(await sd.locator('.sd-hand button').count(),4);
+    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
+    assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));
+    saved['card-capture']=await readSaved(page,'card-capture');
+    assert.ok(saved['card-capture']);
+    assert.equal(saved['card-capture'].state.phase,'capture');
+    // CAR-78 internal Regicide board: keyboard/touch, bilingual, preview cancellation.
+    await page.goto(HOST+'#game/regicide/board');
+    const ldt=page.locator('.ldt-board');
+    await interact(page,ldt.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
+    await ldt.locator('.ldt-hand button').first().waitFor();
+    assert.equal(await ldt.locator('.ldt-hand button').count(),8);
+    const original=await ldt.locator('.ldt-status').textContent();
+    await interact(page,ldt.locator('.ldt-hand button').first(),mobile);
+    await interact(page,ldt.locator('.ldt-preview'),mobile);
+    await ldt.locator('.ldt-confirm').waitFor();
+    assert.equal(await ldt.locator('.ldt-status').textContent(),original);
+    await interact(page,ldt.locator('.ldt-confirm .secondary-action'),mobile);
+    assert.equal(await ldt.locator('.ldt-status').textContent(),original);
+    await interact(page,ldt.locator('.ldt-preview'),mobile);
+    await interact(page,ldt.locator('.ldt-confirm .primary-action'),mobile);
+    await ldt.locator('.ldt-next').waitFor();
+    assert.equal(await ldt.locator('.ldt-hand button').count(),7);
+    assert.match(await ldt.locator('.ldt-status').textContent(),/Pouvoirs|Powers/);
+    await interact(page,ldt.locator('.ldt-next'),mobile);
+    await interact(page,ldt.locator('.ldt-confirm .primary-action'),mobile);
+    await ldt.getByRole('button',{name:locale==='fr'?'Résoudre les dégâts':'Resolve damage'}).waitFor();
+    assert.match(await ldt.locator('.ldt-status').textContent(),/Dégâts|Damage/);
+    await interact(page,ldt.locator('.ldt-next'),mobile);
+    await interact(page,ldt.locator('.ldt-confirm .primary-action'),mobile);
+    await ldt.locator('.ldt-confirm').waitFor({state:'hidden'});
+    assert.match(await ldt.locator('.ldt-status').textContent(),/Riposte|Retaliation|Attaque|Attack/);
+    const regicideSave=await readSaved(page,'regicide');
+    assert.ok(regicideSave);
+    assert.equal(regicideSave.formatVersion,1);
+    await page.reload();
+    await ldt.locator('.ldt-resumed').waitFor();
+    assert.deepEqual(await readSaved(page,'regicide'),regicideSave);
+    saved.regicide=regicideSave;
+    await interact(page,page.getByRole('button',{name:locale==='fr'?'Recrutement exact':'Exact recruitment'}),mobile);
+    await ldt.locator('.ldt-hand button').first().waitFor();
+    await interact(page,ldt.locator('.ldt-hand button').first(),mobile);
+    await interact(page,ldt.locator('.ldt-preview'),mobile);
+    await interact(page,ldt.locator('.ldt-confirm .primary-action'),mobile);
+    await ldt.locator('.ldt-next').waitFor();
+    assert.deepEqual(await readSaved(page,'regicide'),regicideSave);
+    await interact(page,page.getByRole('button',{name:locale==='fr'?'Partie normale':'Normal game',exact:true}),mobile);
+    await ldt.locator('.ldt-resumed').waitFor();
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+4));
     await page.close();
     await context.setOffline(true);
     const offline=await context.newPage();
@@ -208,6 +291,57 @@ async function journey(locale,mobile){
         await offline.goto(HOST+'#game/'+game.id+'/rules',{waitUntil:'domcontentloaded'});
         await offline.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       }
+      await offline.goto(HOST+'#game/regicide/board');
+      await offline.locator('.ldt-resumed').waitFor();
+      assert.deepEqual(await readSaved(offline,'regicide'),saved.regicide);
+      // CAR-81: real terminal transitions on prepared snapshots; not a natural full playthrough.
+      const reg=offline.locator('.ldt-board');
+      for(const scenario of ['joker','win','loss','abandoned']){
+        const base=saved.regicide.state;
+        const ids=[base.activeEnemy,...base.castle,...base.hand,...base.tavern,...base.discard,...base.combat,...base.pending].filter(Boolean);
+        const enemy=scenario==='win'?'spades-13':'spades-11';
+        const castle=scenario==='win'?[]:ids.filter(id=>Number(id.split('-')[1])>=11&&id!==enemy).sort((a,b)=>Number(a.split('-')[1])-Number(b.split('-')[1]));
+        const hand=scenario==='win'?['clubs-10']:scenario==='loss'?[]:['hearts-1'];
+        const state={...base,turn:12,phase:scenario==='loss'?'retaliation':'play',outcome:'in-progress',activeEnemy:enemy,castle,hand,discard:[],combat:[],pending:[],shield:0,enemyHealth:scenario==='win'?20:20,enemyAttack:scenario==='win'?20:10,tavern:ids.filter(id=>id!==enemy&&!castle.includes(id)&&!hand.includes(id)),jokers:base.jokers.map(j=>({...j,used:scenario==='loss'}))};
+        const fixture={...saved.regicide,sessionId:saved.regicide.sessionId+'-'+scenario,state};
+        await offline.evaluate(async fixture=>{
+          const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+          try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}
+        },fixture);
+        await offline.reload();await reg.locator('.ldt-resumed').waitFor();
+        const confirm=async()=>{await interact(offline,reg.locator('.ldt-confirm .primary-action'),mobile);await reg.locator('.ldt-confirm').waitFor({state:'hidden'});};
+        if(scenario==='joker'){await interact(offline,reg.locator('.ldt-jokers button').first(),mobile);await confirm();assert.equal((await readSaved(offline,'regicide')).state.jokers[0].used,true);}
+        else if(scenario==='win'){await interact(offline,reg.locator('.ldt-hand button').first(),mobile);await interact(offline,reg.locator('.ldt-preview'),mobile);await confirm();for(let i=0;i<2;i++){await interact(offline,reg.locator('.ldt-next'),mobile);await confirm();}}
+        else {await interact(offline,reg.getByRole('button',{name:scenario==='loss'?(locale==='fr'?'Accepter la défaite':'Accept defeat'):(locale==='fr'?'Abandonner':'Abandon'),exact:true}),mobile);await confirm();}
+        const durable=await readSaved(offline,'regicide');assert.equal(durable.state.outcome,scenario==='joker'?'in-progress':scenario);await offline.reload();await reg.locator('.ldt-resumed').waitFor();assert.deepEqual(await readSaved(offline,'regicide'),durable);
+      }
+      await offline.goto(HOST+'#game/regicide/rules');
+      await offline.getByRole('heading',{name:locale==='fr'?'Règles des Douze Tyrans':'Twelve Tyrants rules'}).waitFor();
+      await offline.goto(HOST+'#game/card-capture/board',{waitUntil:'domcontentloaded'});
+      await offline.locator('.sd-resumed').waitFor();
+      assert.deepEqual(await readSaved(offline,'card-capture'),saved['card-capture']);
+      // Prepared late-game snapshots exercise real UI transitions, not a full natural playthrough.
+      const sd=offline.locator('.sd-board');
+      for(const outcome of ['win','loss','abandoned']){
+        const fixture=await installSkydeckFixture(offline,saved['card-capture'],outcome);
+        if(outcome==='abandoned'){
+          await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
+        }else{
+          if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}),mobile);
+          else await interact(offline,sd.locator('[data-position="1"]'),mobile);
+          await interact(offline,sd.locator('.sd-hand button').nth(outcome==='win'?0:2),mobile);
+          if(outcome==='win')await interact(offline,sd.locator('.sd-hand button').nth(1),mobile);
+          await interact(offline,sd.locator('.sd-preview'),mobile);
+        }
+        await interact(offline,sd.locator('.sd-confirm button.primary-action'),mobile);
+        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        assert.equal((await readSaved(offline,'card-capture')).state.outcome,outcome);
+        await offline.reload();
+        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
+      }
+      await offline.goto(HOST+'#game/card-capture/rules');
+      await offline.getByRole('heading',{name:locale==='fr'?'Règles de Skydeck':'Skydeck rules'}).waitFor();
       assert.equal(await offline.locator('html').getAttribute('lang'),locale);
       // Mobile browser uses real touch events, no desktop-only hover action.
       await offline.goto(HOST+'#game/loot-the-loop/board',{waitUntil:'domcontentloaded'});
@@ -216,7 +350,7 @@ async function journey(locale,mobile){
       assert.ok(msScreen.scroll<=msScreen.width+4,JSON.stringify({label,msScreen}));
       const screen=await offline.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
       assert.ok(screen.scroll<=screen.width+4,JSON.stringify({label,screen}));
-      console.log('CAR-42 production:',label,'three games played and resumed offline, rules and localization verified; cache '+probe.version);
+      console.log('CAR-42 production:',label,'four games played and resumed offline, rules and localization verified; cache '+probe.version);
     }finally{await offline.close();}
   }finally{await context.close();}
 }
@@ -226,7 +360,7 @@ try{
   for(const locale of ['fr','en'])
     for(const mobile of [false,true])
       await journey(locale,mobile);
-  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, three games, offline service worker.');
+  console.log('CAR-42 PRODUCTION E2E PASS — FR/EN desktop keyboard and touch-emulated mobile, four games, offline service worker.');
 }finally{
   if(browser)await browser.close();
   vite.kill('SIGTERM');
