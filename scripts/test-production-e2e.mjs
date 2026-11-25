@@ -270,7 +270,7 @@ async function journey(locale,mobile){
       await page.goto(HOST+'#game/'+game.id);
       await page.locator('.forge-menu[data-saved="yes"]').waitFor();
       assert.equal(await page.locator('.forge-command').count(),6);
-      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-30&&r.height>=44;})),'saved menu: all six commands must fit');
+      assert.ok(await page.locator('.forge-command').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();const e=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return r.top>=0&&r.bottom<=Math.min(innerHeight,visualViewport?.height??innerHeight)-30&&r.height>=44&&!!e&&n.contains(e);})), 'saved menu: all six commands must fit and be clickable');
       if(mobile){const {mkdirSync}=await import('node:fs');mkdirSync('ux-screenshots',{recursive:true});await page.screenshot({path:'ux-screenshots/'+game.id+'-saved-'+locale+'.png'});}
       await page.goto(HOST+'#game/'+game.id+'/board');
       await page.locator(game.root).waitFor();

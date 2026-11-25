@@ -30,7 +30,7 @@ self.addEventListener("install", event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      await cache.addAll(URLS);
+      await cache.addAll(URLS.map(url => new Request(url, { cache: "reload" })));
       for (const url of URLS) {
         if (!await cache.match(url)) throw new Error("Incomplete offline cache: " + url);
       }
@@ -74,8 +74,9 @@ self.addEventListener("fetch", event => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const shell = await cache.match(new URL("./index.html", self.registration.scope).href);
+      try { const live = await fetch(request, { cache: "no-store" }); if (live.ok) return live; } catch { /* offline */ }
       if (shell) return shell;
-      return fetch(request);
+      return Response.error();
     })());
     return;
   }

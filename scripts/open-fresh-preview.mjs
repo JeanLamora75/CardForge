@@ -23,6 +23,8 @@ export async function openFreshPreview(context,page,url,version){
     controller.postMessage({type:'CARDFORGE_CHECK_OFFLINE'},[channel.port2]);
    });
   },version,{timeout:60000});
+  await page.reload({waitUntil:"load"});
+  await page.locator(".forge-gallery").waitFor({timeout:15000});
  }finally{
   await cdp.send('Network.setBypassServiceWorker',{bypass:false}).catch(()=>{});
   await cdp.send('Network.setCacheDisabled',{cacheDisabled:false}).catch(()=>{});

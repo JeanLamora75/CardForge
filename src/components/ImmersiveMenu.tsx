@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { games, type GameId } from "../catalog";
 import type { Locale } from "../i18n/language";
 import type { CatalogGameProgress } from "../application/catalog-navigation";
@@ -23,10 +23,27 @@ export function Gallery({language,progress,open,openSettings,scrollTop,onScroll}
  </section>;
 }
 export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRules,onStats,credits}:{id:GameId;title:string;language:Locale;active:boolean;onBack:()=>void;onBoard:()=>void;onLearn:()=>void;onRules:()=>void;onStats:()=>void;credits:ReactNode}){
+ const menuRef=useRef<HTMLElement>(null);
+ useLayoutEffect(()=>{
+   const menu=menuRef.current;
+   if(!menu)return;
+   function fit(){
+     if(!menu)return;
+     const vv=window.visualViewport;
+     const height=Math.min(window.innerHeight,vv?.height??window.innerHeight,menu.getBoundingClientRect().height);
+     const width=Math.min(window.innerWidth,vv?.width??window.innerWidth,menu.getBoundingClientRect().width);
+     menu.style.setProperty("--visible-menu-height",height+"px");
+     menu.style.setProperty("--visible-menu-width",width+"px");
+   }
+   fit();
+   const observer=new ResizeObserver(fit);observer.observe(menu);
+   window.addEventListener("resize",fit);window.visualViewport?.addEventListener("resize",fit);
+   return ()=>{observer.disconnect();window.removeEventListener("resize",fit);window.visualViewport?.removeEventListener("resize",fit);};
+ },[]);
  const fr=language==="fr";const slug=slugs[id];const [transition,setTransition]=useState(false);const timer=useRef<number|undefined>(undefined);const locked=useRef(false);
  useEffect(()=>()=>window.clearTimeout(timer.current),[]);
  function go(action:()=>void){if(locked.current)return;locked.current=true;const motion=document.documentElement.dataset.motion;const reduce=motion==="off"||(motion!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches);if(reduce){action();return;}setTransition(true);timer.current=window.setTimeout(action,320);}
- return <section className={"forge-menu"+(transition?" forge-transition":"")} data-world={slug} data-saved={active?"yes":"no"} data-i18n-ignore aria-labelledby="game-title">
+ return <section ref={menuRef} className={"forge-menu"+(transition?" forge-transition":"")} data-world={slug} data-saved={active?"yes":"no"} data-i18n-ignore aria-labelledby="game-title">
  <WorldBackdrop slug={slug}/>{transition?<img className="forge-exit-art" src={art("effects",slug)} alt="" aria-hidden="true"/>:null}
  <h1 id="game-title" className="forge-title" tabIndex={-1}><WorldLogo slug={slug} title={title}/></h1>
  <div className="forge-menu-actions context-actions">
