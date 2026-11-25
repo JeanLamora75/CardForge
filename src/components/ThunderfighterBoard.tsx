@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from "react";
+import {thunderArt} from "../application/thunderfighter-art.ts";
 import { makeDeckWithJokers } from "../core/cards.ts";
 import {
   thunderfighterEngine, THUNDERFIGHTER_GAME_ID, THUNDERFIGHTER_RULES_VERSION,
@@ -95,6 +96,11 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const confirmButton=useRef<HTMLButtonElement>(null);
   const [targetChoice,setTargetChoice]=useState<BoardTarget|null>(null);
   const [special,setSpecial]=useState<SpecialSelection|null>(null);
+  const drag=useRef<{id:string;pointer:number;x:number;y:number;active:boolean;context:SpecialSelection|null;origin:HTMLElement}|null>(null);
+  const [ghost,setGhost]=useState<{id:string;x:number;y:number;returning?:boolean}|null>(null);
+  const suppressClick=useRef(false);
+  const returnTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  useEffect(()=>()=>{if(returnTimer.current!==null)clearTimeout(returnTimer.current);},[]);
   const specialTrigger=useRef<HTMLButtonElement|null>(null);
   const en=language==="en";
   useEffect(()=>{if(selection)confirmButton.current?.focus();},[selection]);
@@ -201,13 +207,53 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const ambiguousActions=targetChoice?contextualThunderActions(legal,figures,special,targetChoice.kind,targetChoice.index):[];
   const activeSpecial=special?specialThunderActions(legal,special.cardId):[];
   const choosingSource=!!special&&special.from===undefined&&activeSpecial.some(a=>a.type==="reassign");
+  function selectTarget(kind:BoardTarget["kind"],index:number,context:SpecialSelection|null,trigger:HTMLElement){
+    if(busy||committing.current)return false;
+    const actions=contextualThunderActions(legal,figures,context,kind,index);
+    if(!actions.length)return false;
+    setSpecial(context);actionTrigger.current=trigger;
+    if(context&&context.from===undefined&&actions.some(a=>a.type==="reassign")){
+      setSelection(null);setTargetChoice(null);setSpecial({...context,from:index});return true;
+    }
+    if(actions.length===1){setSelection(actions[0]);setTargetChoice(null);}
+    else{setSelection(null);setTargetChoice({kind,index});}
+    return true;
+  }
   function renderTarget(kind:BoardTarget["kind"],index:number){
     const actions=contextualThunderActions(legal,figures,special,kind,index);
     if(!actions.length)return null;
     const selected=selectedTarget?.kind===kind&&selectedTarget.index===index;
     const label=(en?(kind==="pile"?(choosingSource?"Select source pile ":"Select pile "):"Select sector "):(kind==="pile"?(choosingSource?"Sélectionner la pile source ":"Sélectionner la pile "):"Sélectionner le secteur "))+(index+1);
-    return <button type="button" data-i18n-ignore className="tf-target" data-target-kind={kind} data-target-index={index} aria-label={label} aria-pressed={selected} disabled={busy} onClick={event=>{if(busy||committing.current)return;if(choosingSource&&special){setSelection(null);setTargetChoice(null);setSpecial({...special,from:index});actionTrigger.current=event.currentTarget;return;}if(actions.length===1){choose(actions[0]);actionTrigger.current=event.currentTarget;}else{actionTrigger.current=event.currentTarget;setSelection(null);setTargetChoice({kind,index});}}}><span aria-hidden="true">{selected?"✓":"+"}</span></button>;
+    return <button type="button" data-i18n-ignore className="tf-target" data-target-kind={kind} data-target-index={index} aria-label={label} aria-pressed={selected} disabled={busy} onClick={event=>selectTarget(kind,index,special,event.currentTarget)}><span aria-hidden="true">{selected?"✓":"+"}</span></button>;
   }
+  function startDrag(event:ReactPointerEvent<HTMLElement>,id:string,context:SpecialSelection|null){
+    if(busy||committing.current||!event.isPrimary||event.button!==0||drag.current)return;
+    if(!(event.target as Element).closest(".tf-tactical"))return;
+    if(!legal.some(a=>contextualThunderTarget(a,figures,context)))return;
+    if(returnTimer.current!==null)clearTimeout(returnTimer.current);
+    setGhost(null);suppressClick.current=false;
+    drag.current={id,pointer:event.pointerId,x:event.clientX,y:event.clientY,active:false,context,origin:event.currentTarget};
+  }
+  function moveDrag(event:ReactPointerEvent<HTMLElement>){
+    const g=drag.current;if(!g||g.pointer!==event.pointerId)return;
+    if(!g.active&&Math.hypot(event.clientX-g.x,event.clientY-g.y)<7)return;
+    if(!g.active){g.active=true;g.origin.setPointerCapture(event.pointerId);setSpecial(g.context);setSelection(null);setTargetChoice(null);if(g.context)specialTrigger.current=g.origin.querySelector("button.tf-special-use");}
+    event.preventDefault();setGhost({id:g.id,x:event.clientX,y:event.clientY});
+  }
+  function finishDrag(event:ReactPointerEvent<HTMLElement>,cancel=false){
+    const g=drag.current;if(!g||g.pointer!==event.pointerId)return;
+    drag.current=null;
+    if(event.currentTarget.hasPointerCapture(event.pointerId))event.currentTarget.releasePointerCapture(event.pointerId);
+    if(!g.active)return;
+    suppressClick.current=true;
+    const cell=cancel?null:document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>("[data-tf-kind][data-tf-index]");
+    const kind=cell?.dataset.tfKind,index=Number(cell?.dataset.tfIndex);
+    if(cell&&(kind==="pile"||kind==="sector")&&selectTarget(kind,index,g.context,g.origin.querySelector("button.tf-tactical")??g.origin)){setGhost(null);}
+    else{setSpecial(null);setSelection(null);setTargetChoice(null);const rect=g.origin.querySelector("button.tf-tactical")?.getBoundingClientRect()??g.origin.getBoundingClientRect();setGhost({id:g.id,x:rect.left+rect.width/2,y:rect.top+rect.height/2,returning:true});returnTimer.current=setTimeout(()=>setGhost(null),190);}
+  }
+  function dragHandlers(id:string,context:SpecialSelection|null){return {onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>startDrag(e,id,context),onPointerMove:moveDrag,onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e),onPointerCancel:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onLostPointerCapture:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onPointerLeave:(e:ReactPointerEvent<HTMLElement>)=>{if(drag.current&&!drag.current.active)finishDrag(e,true);},onClickCapture:(e:ReactMouseEvent<HTMLElement>)=>{if(suppressClick.current&&e.detail!==0){suppressClick.current=false;e.preventDefault();e.stopPropagation();}}};}
+  const previewId=selection?.type==="place-number"||selection?.type==="assign-armor"?state?.pendingNumeric:selection?.type==="place-figure"?state?.pendingFigures[0]:selection?.type==="reassign"?state?.grid[selection.from]?.at(-1):null;
+  function renderPreview(kind:BoardTarget["kind"],index:number){return previewId&&selectedTarget?.kind===kind&&selectedTarget.index===index?<img className="tf-drop-preview" src={thunderArt[previewId]} alt="" aria-hidden="true"/>:null;}
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
@@ -245,26 +291,26 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true">
         {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
-        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
+        <div className="thunder-top-slots">{figures.slice(0, 3).map((id, i) => <div key={i} className="thunder-slot" data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Nord {i + 1}</small>{id ? renderCard(id) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
         <div className="thunder-middle">
-          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
-          <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i} data-target-state={targetState("pile",i)}>
-            <strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>×{pile.length}</strong>
-            {pile.length ? renderCard(pile[pile.length - 1]) : <span aria-label="Emplacement vide">—</span>}{renderTarget("pile",i)}
+          <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
+          <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i} data-tf-kind="pile" data-tf-index={i} data-target-state={targetState("pile",i)}>
+            {pile.length>1?<strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>×{pile.length}</strong>:null}
+            {pile.length ? renderCard(pile[pile.length - 1]) : <span aria-label="Emplacement vide">—</span>}{renderPreview("pile",i)}{renderTarget("pile",i)}
           </div>)}</div>
-          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
+          <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
         </div>
-        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div className="thunder-slot" key={i} data-target-state={targetState("sector",i)}><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderTarget("sector",i)}</div>)}</div>
+        <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
       </div>
       </div>
       <div className="thunder-action-zone">
-<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card">{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
-      {state.pendingNumeric ? <div className="tf-pending-card">{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
+<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
 </div>
       <div className="tf-console-scroll">
-      <section className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
+      <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
         <h3>{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
-        {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit">{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
+        {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit tf-drag-source" {...dragHandlers(id,special?.cardId===id?special:{cardId:id})}>{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
         <details className="tf-reserve-info"><summary>{en?"Details":"Détail"}</summary><small>{en?"Used":"Utilisées"} : {state.spentSpecials.length}</small></details>
         {special&&!selection?<div className="tf-special-instruction"><p>{choosingSource?(en?"Choose the source pile.":"Choisissez la pile source."):special.from!==undefined?(en?"Choose the destination for pile ":"Choisissez la destination de la pile ")+(special.from+1):en?"Choose the pile to extract.":"Choisissez la pile à extraire."}</p><button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>{en?"Cancel special action":"Annuler l’action spéciale"}</button></div>:null}
       </section>
@@ -276,7 +322,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </section> : null}
       <h3 className="thunder-sr-only">Actions autorisées</h3>
       {state.outcome === "in-progress" && !selection ? <div className="thunder-actions">
-        {!special&&legal.some(action=>contextualThunderTarget(action,figures,null))?<p data-i18n-ignore className="tf-target-hint">{en?"Choose a highlighted destination on the board.":"Choisissez une destination en surbrillance sur le plateau."}</p>:null}
+        
         {targetChoice?<div className="tf-target-choices"><p data-i18n-ignore>{en?"Choose an action":"Choisissez une action"}</p>{ambiguousActions.map((action,index)=><button type="button" className="secondary-action" key={index} disabled={busy} onClick={()=>choose(action)}>{actionLabel(action)}</button>)}<button type="button" className="back-link" onClick={cancelSelection}>{en?"Cancel":"Annuler"}</button></div>:null}
         {legal.length ? fallbackActions.map((action, index) =>
           <button type="button" className="secondary-action" key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:actionLabel(action)}</button>
@@ -284,7 +330,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div> : null}
       </div>
       <div className="thunder-confirm" role="group" aria-label={en?"Preview":"Prévisualisation"} data-selected={!!selection}>
-        <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:<span data-i18n-ignore>{en?"Select an action.":"Sélectionnez une action."}</span>}</p>
+        <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:<span data-i18n-ignore>{en?"Drag the card or select a highlighted destination.":"Glissez la carte ou sélectionnez une destination."}</span>}</p>
         <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
         <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
       </div>
@@ -292,6 +338,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
 
     </>}
+    {ghost?<img className={`tf-drag-ghost${ghost.returning?" returning":""}`} src={thunderArt[ghost.id]} style={{left:ghost.x,top:ghost.y}} alt="" aria-hidden="true"/>:null}
     {detail?<ThunderCardDetail card={detail} locale={language} onClose={closeInspect}/>:null}
   </section>;
 }

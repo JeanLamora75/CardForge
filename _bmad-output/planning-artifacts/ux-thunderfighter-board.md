@@ -28,3 +28,6 @@ CAR-89 : TF-UX-09 bandeau unique logo/retour/aide/paramètres ; 10 regrouper aid
 
 ## V3 validée — TF-UX-21 à TF-UX-30
 Surface plein écran adaptative (21), dimensionnement hauteur/largeur (22), console permanente (23), géométrie stable (24), fond spatial SVG local (25), habillage cockpit (26), cases translucides (27), aide/règles en dialogue (28), logo centré agrandi (29), assertions de visibilité simultanée (30). Console en bas portrait et latérale paysage ; défilement interne pour réserve/recherche et repli sur très petits écrans ou tutoriel. Aucun changement de moteur ni sauvegarde. CAR-90 inchangée.
+
+## V4 — TF-UX-31 à TF-UX-42
+Grille CSS unique 5×5, 21 positions identiques, conteneur viewport, console stable. Pointer Events souris/tactile, capture, seuil 7 px, fantôme, dépôt illégal annulé, aperçu graphique, sélection clic/clavier conservée. As et Joker via contexte de réserve. Le dépôt ne valide jamais. Tests CDP touch et souris, géométrie, intégrité avant confirmation. Petit écran <640 px portrait : repli défilable. CAR-90 séparée.

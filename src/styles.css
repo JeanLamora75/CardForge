@@ -930,3 +930,56 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .thunder-notice{max-height:28px;overflow:auto;margin:0;padding:0 3px;border:0;background:none;font-size:.75rem;}
 .thunder-board .thunder-notice:empty{display:none;}
 @media(orientation:landscape) and (min-width:650px){.thunder-board.tf-live:not(.tf-training){display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,300px);gap:5px;align-items:start;}.thunder-board.tf-live:not(.tf-training) .thunder-metrics{grid-column:1/-1;}.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{grid-column:1;}.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{grid-column:2;margin:0;}.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{--tf-cell:clamp(44px,calc((100dvh - 120px)/5),100px);}.thunder-board.tf-live:not(.tf-training) .tf-console-scroll{max-height:clamp(76px,calc(100dvh - 300px),300px);}}
+
+/* V4: one explicit 5×5 grid. Nested rows cannot change track sizes. */
+.thunder-board .thunder-battlefield{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr));gap:3px;aspect-ratio:1;box-sizing:border-box;padding:3px;}
+.thunder-board .thunder-battlefield :is(.thunder-top-slots,.thunder-bottom-slots,.thunder-middle,.thunder-grid,.thunder-side-slots){display:contents;}
+.thunder-board .thunder-battlefield :is(.thunder-slot,.thunder-pile){grid-row:auto;grid-column:auto;width:100%;height:100%!important;min-height:0;min-width:0;box-sizing:border-box;overflow:hidden;}
+.thunder-board .thunder-top-slots .thunder-slot:nth-child(1){grid-area:1/2}.thunder-board .thunder-top-slots .thunder-slot:nth-child(2){grid-area:1/3}.thunder-board .thunder-top-slots .thunder-slot:nth-child(3){grid-area:1/4}
+.thunder-board .thunder-middle>.thunder-side-slots:first-child .thunder-slot:nth-child(1){grid-area:2/1}.thunder-board .thunder-middle>.thunder-side-slots:first-child .thunder-slot:nth-child(2){grid-area:3/1}.thunder-board .thunder-middle>.thunder-side-slots:first-child .thunder-slot:nth-child(3){grid-area:4/1}
+.thunder-board .thunder-middle>.thunder-side-slots:last-child .thunder-slot:nth-child(1){grid-area:2/5}.thunder-board .thunder-middle>.thunder-side-slots:last-child .thunder-slot:nth-child(2){grid-area:3/5}.thunder-board .thunder-middle>.thunder-side-slots:last-child .thunder-slot:nth-child(3){grid-area:4/5}
+.thunder-board .thunder-grid .thunder-pile:nth-child(1){grid-area:2/2}
+.thunder-board .thunder-grid .thunder-pile:nth-child(2){grid-area:2/3}
+.thunder-board .thunder-grid .thunder-pile:nth-child(3){grid-area:2/4}
+.thunder-board .thunder-grid .thunder-pile:nth-child(4){grid-area:3/2}
+.thunder-board .thunder-grid .thunder-pile:nth-child(5){grid-area:3/3}
+.thunder-board .thunder-grid .thunder-pile:nth-child(6){grid-area:3/4}
+.thunder-board .thunder-grid .thunder-pile:nth-child(7){grid-area:4/2}
+.thunder-board .thunder-grid .thunder-pile:nth-child(8){grid-area:4/3}
+.thunder-board .thunder-grid .thunder-pile:nth-child(9){grid-area:4/4}
+.thunder-board .thunder-bottom-slots .thunder-slot:nth-child(1){grid-area:5/2}.thunder-board .thunder-bottom-slots .thunder-slot:nth-child(2){grid-area:5/3}.thunder-board .thunder-bottom-slots .thunder-slot:nth-child(3){grid-area:5/4}
+.thunder-board .thunder-battlefield .tf-tactical{position:relative;flex:1 1 0;min-height:0!important;min-width:0;height:100%;margin:0!important;padding:0;}
+.thunder-board .tf-target{width:min(44px,100%);height:min(44px,100%);}
+.thunder-board .tf-special-console[hidden]{display:none;}
+.thunder-board .tf-drag-source .tf-tactical{touch-action:none;cursor:grab;user-select:none;}
+.tf-drag-ghost{position:fixed;z-index:200;pointer-events:none;width:76px;height:76px;object-fit:contain;transform:translate(-50%,-50%);border:2px solid #edbf83;border-radius:6px;box-shadow:0 8px 25px #0009;}
+.tf-drag-ghost.returning{transition:left 180ms ease-out,top 180ms ease-out;}
+.tf-drop-preview{position:absolute;inset:3px;width:calc(100% - 6px);height:calc(100% - 6px);object-fit:contain;opacity:.75;pointer-events:none;z-index:2;border:1px solid #efc28c;border-radius:4px;}
+.thunder-board .thunder-confirm .primary-action:not(:disabled){background:#edba7e;color:#17212b;box-shadow:0 0 12px #e9ae6344;}
+@media(prefers-reduced-motion:reduce){.tf-drag-ghost.returning{transition:none;}}
+:root[data-motion=off] .tf-drag-ghost.returning{transition:none;}
+@media(min-height:640px) and (orientation:portrait){
+.shell.thunder-command-surface:has(.tf-live:not(.tf-training)){height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column;}
+.thunder-command-page:has(.tf-live:not(.tf-training)){width:100%;flex:1;min-height:0;display:flex;flex-direction:column;}
+.thunder-command-page:has(.tf-live:not(.tf-training)) .board-page,.thunder-command-page:has(.tf-live:not(.tf-training)) .game-learning{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;margin:0;}
+.thunder-board.tf-live:not(.tf-training){display:grid;grid-template-rows:auto minmax(0,1fr) 180px;gap:4px;flex:1;min-height:0;width:100%;margin:0 auto;}
+.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{min-height:0;display:grid;place-items:center;container-type:size;}
+.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{width:min(100cqw,100cqh,550px);height:auto;max-width:none;aspect-ratio:1;}
+.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{height:180px;min-height:0;display:grid;grid-template-rows:54px minmax(0,1fr) 72px;gap:2px;margin:0;position:relative;}
+.thunder-board.tf-live:not(.tf-training) .tf-current-card:empty{display:block;}
+.thunder-board.tf-live:not(.tf-training) .tf-current-card .tf-pending-card{height:54px;min-height:0;box-sizing:border-box;}
+.thunder-board.tf-live:not(.tf-training) .tf-console-scroll{min-height:0;max-height:none;overflow:auto;}
+.thunder-board.tf-live:not(.tf-training) .thunder-confirm{grid-template-rows:24px 44px;gap:2px;}
+.thunder-board.tf-live:not(.tf-training) .tf-preview-line{min-height:0;max-height:24px;}
+.thunder-board.tf-live:not(.tf-training) .thunder-notice{position:absolute;top:0;right:0;max-width:50%;pointer-events:none;display:none;}
+}
+@media(orientation:landscape) and (min-width:650px) and (min-height:360px){
+.shell.thunder-command-surface:has(.tf-live:not(.tf-training)){height:100dvh;min-height:0;overflow:hidden;display:flex;flex-direction:column;}
+.thunder-command-page:has(.tf-live:not(.tf-training)),.thunder-command-page:has(.tf-live:not(.tf-training)) .board-page,.thunder-command-page:has(.tf-live:not(.tf-training)) .game-learning{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;margin:0 auto;}
+.thunder-board.tf-live:not(.tf-training){flex:1;min-height:0;width:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(200px,290px);grid-template-rows:auto minmax(0,1fr);}
+.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{display:grid;place-items:center;min-height:0;container-type:size;}
+.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{width:min(100cqw,100cqh,550px);height:auto;max-width:none;}
+.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0;height:100%;overflow:auto;}
+.thunder-board.tf-live:not(.tf-training) .tf-console-scroll{min-height:0;max-height:none;overflow:auto;}
+.thunder-board.tf-live:not(.tf-training) .thunder-notice{display:none;}
+}

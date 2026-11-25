@@ -407,8 +407,31 @@ async function journey(locale,mobile){
         const target=page.locator('.tf-target').first();
         const direct=await target.count()>0;
         const action=direct?target:page.locator(game.actions).first();
-        await interact(page,action,mobile);
+        const source=page.locator('.tf-current-card .tf-tactical').first();
+        const geometry=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect(),cells=[...n.querySelectorAll('.thunder-slot,.thunder-pile')].map(e=>{const b=e.getBoundingClientRect();return [b.width,b.height]});return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,confirm:c.bottom,scroll:document.documentElement.scrollHeight,viewport:innerHeight,cells};});
+        const original=await geometry();
+        if(direct&&await source.count()){
+          const src=await source.boundingBox(),dest=await target.boundingBox();
+          assert.ok(src&&dest);
+          const dragTo=async(x,y)=>{
+            const sx=src.x+src.width/2,sy=src.y+src.height/2;
+            if(mobile){const cdp=await page.context().newCDPSession(page);try{await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:sx,y:sy}]});for(let i=1;i<=24;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:sx+(x-sx)*i/24,y:sy+(y-sy)*i/24}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});}finally{await cdp.detach();}}
+            else{await page.mouse.move(sx,sy);await page.mouse.down();await page.mouse.move(x,y,{steps:24});await page.mouse.up();}
+          };
+          await dragTo(2,2);
+          assert.equal(await page.locator('.thunder-confirm').getAttribute('data-selected'),'false');
+          assert.deepEqual(await readSaved(page,game.id),before,'invalid drop must not write');
+          await dragTo(dest.x+dest.width/2,dest.y+dest.height/2);
+          await page.locator('.thunder-confirm[data-selected=true]').waitFor();
+          assert.deepEqual(await readSaved(page,game.id),before,'drop must not write');
+        }else await interact(page,action,mobile);
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
+        const selectedGeometry=await geometry();
+        assert.ok(Math.abs(original.w-original.h)<=1,'square board');
+        assert.equal(original.cells.length,21);
+        assert.ok(original.cells.every(([w,h])=>Math.abs(w-h)<=1&&Math.abs(w-original.cells[0][0])<=1),'identical square cells');
+        assert.deepEqual([selectedGeometry.x,selectedGeometry.y,selectedGeometry.w,selectedGeometry.h],[original.x,original.y,original.w,original.h],'board must not move during preview');
+        assert.ok(selectedGeometry.scroll<=selectedGeometry.viewport+1,'no document scrolling');
         await page.locator('.thunder-confirm[data-selected=true]').waitFor({state:'visible'});
         if(mobile){assert.ok(await page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&c.top>=0&&c.bottom<=innerHeight+1;}),'board and confirmation visible together');}
         const onCancel=await readSaved(page,game.id);
