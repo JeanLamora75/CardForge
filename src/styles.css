@@ -554,3 +554,21 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 @media(hover:hover){.forge-home .forge-cover.game-card:hover,.forge-home .forge-settings-tile:hover{border-color:#e8b777;box-shadow:0 0 12px #e8b77744;}}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-home .forge-cover.game-card,:root:not([data-motion="on"]) .forge-home .forge-settings-tile{transition:none;transform:none;}}
 [data-motion="off"] .forge-home .forge-cover.game-card,[data-motion="off"] .forge-home .forge-settings-tile{transition:none;transform:none;}
+
+/* Catalogue: viewport-width layout, compact utility tile and visible keyboard focus. */
+.forge-home > .forge-world-bg img{transform:scale(1.035);}
+.forge-home > .forge-world-bg::after{background:linear-gradient(90deg,#10101885,transparent 5%,transparent 95%,#10101885),linear-gradient(180deg,#0001,transparent 45%,#0004);}
+.forge-home .forge-grid{grid-template-columns:minmax(0,1fr);max-width:1280px;margin-inline:auto;}
+@media(min-width:600px){.forge-home .forge-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}}
+@media(min-width:1100px){.forge-home .forge-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}}
+.forge-home .forge-settings-card{align-self:end;}
+.forge-home .forge-settings-tile{aspect-ratio:10/3;min-height:44px;padding:8px 6%;gap:8px;}
+.forge-home .forge-settings-art{object-fit:contain;object-position:left center;}
+.forge-home .forge-settings-caption{width:60%;gap:4px;}
+.forge-home .forge-settings-caption strong{font-size:clamp(1rem,3.5vw,1.5rem);}
+.forge-home .forge-settings-caption small{font-size:clamp(.65rem,1.7vw,.78rem);}
+.forge-home .forge-save{right:3%;bottom:5%;gap:6px;padding:4px 10px;}
+.forge-save svg{flex:none;width:1em;height:1em;color:#e4c58b;}
+.forge-home .forge-cover:has(button:focus-visible){outline:3px solid #f4d8a3;outline-offset:3px;}
+.forge-home .forge-cover button:focus-visible{outline:3px solid #f4d8a3;outline-offset:-4px;border-radius:11px;}
+.forge-home .forge-settings-tile:focus-visible{outline-offset:3px;}
