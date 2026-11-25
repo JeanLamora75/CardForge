@@ -226,6 +226,7 @@ export default function App() {
   const [route, setRoute] = useState<CatalogRoute>(() => parseCatalogRoute(window.location.hash));
   const { progress, error } = useCatalogProgress();
   const lastTrigger = useRef<HTMLElement | null>(null);
+  const lastGalleryControl = useRef<string | null>(null);
   const brandRef = useRef<HTMLButtonElement>(null);
   const settingsOrigin = useRef<CatalogRoute>(HOME);
 
@@ -248,7 +249,7 @@ export default function App() {
     if (route.page === "catalog") {
       const trigger = lastTrigger.current;
       if (trigger?.isConnected) trigger.focus();
-      else brandRef.current?.focus();
+      else if(lastGalleryControl.current) surfaceRef.current?.querySelector<HTMLElement>(lastGalleryControl.current)?.focus({preventScroll:true});
     }
   }, [route]);
   useEffect(() => {
@@ -265,6 +266,7 @@ export default function App() {
 
   const openGame = (game: GameEntry, trigger: HTMLButtonElement) => {
     lastTrigger.current = trigger;
+    lastGalleryControl.current = `[data-game-id="${game.id}"] button`;
     navigate({ page: "game", gameId: game.id, section: "detail" });
   };
   const galleryScroll=useRef(0);
@@ -274,24 +276,12 @@ export default function App() {
   return (
     <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":""}`}>
       {route.page==="catalog"?<WorldBackdrop slug="cardforge"/>:null}
-      {!immersive?<header className="topbar">
+      {!immersive?<header className={route.page==="catalog"?"topbar forge-gallery-header":"topbar"}>
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
           {route.page==="catalog"?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}
         </button>
-        <div className="topbar-actions">
-          <label className="language-switch"><span className="language-label">Langue</span>
-            <select aria-label="Langue / Language" value={language} onChange={event => selectLanguage(event.target.value as Locale)}>
-              <option value="fr">FR</option><option value="en">EN</option>
-            </select>
-          </label>
-          <span className="pill">Collection solo · En création</span>
-          <button className="settings-button" type="button" onClick={() => {
-            if (route.page !== "settings") settingsOrigin.current = route;
-            navigate({ page: "settings" });
-          }}
-            aria-label="Paramètres">⚙ Paramètres</button>
-        </div>
+        {route.page!=="catalog"&&route.page!=="settings"?<div className="topbar-actions"><button className="settings-button" type="button" onClick={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} aria-label="Paramètres">⚙ Paramètres</button></div>:null}
       </header>:null}
       {settingsSaveFailed ? <p className="storage-warning" role="status">Les réglages fonctionnent maintenant, mais ne peuvent pas être enregistrés sur cet appareil.</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status">La langue choisie fonctionne maintenant, mais ne peut pas être mémorisée sur cet appareil.</p> : null}
@@ -304,7 +294,7 @@ export default function App() {
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} language={language}
           hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
-        <Gallery language={language} progress={progress} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
+        <Gallery language={language} progress={progress} openSettings={button=>{lastTrigger.current=button;lastGalleryControl.current=".forge-settings-tile";settingsOrigin.current=HOME;navigate({page:"settings"});}} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
       )}
       {!immersive?<footer className="app-footer">
         <span>CardForge · Collection en construction · Plateaux Grim Delve, Thunderfighter, Midnight Syndicate et Skydeck en préversion</span>

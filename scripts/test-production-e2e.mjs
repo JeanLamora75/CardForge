@@ -131,6 +131,13 @@ async function immersiveScreens(){
    const page=await context.newPage();await page.goto(HOST);await ready(page);
    await page.locator(".forge-grid button").last().waitFor();
    assert.equal(await page.locator(".forge-cover img").count(),5);
+   assert.equal(await page.locator(".forge-home select, .forge-home .settings-button").count(),0);
+   assert.equal(await page.locator(".forge-grid > :last-child").getAttribute("class"),"forge-settings-card");
+   if(viewport.width<viewport.height)assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),1);
+   await page.locator(".forge-settings-tile").click();
+   await page.locator("#settings-language").waitFor();
+   await page.locator(".context-page .back-link").click();
+   await page.locator(".forge-gallery").waitFor();
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+".png"}); }
@@ -184,8 +191,12 @@ async function journey(locale,mobile){
   try{
     await page.goto(HOST);
     const probe=await ready(page);
-    const select=page.locator('.topbar-actions select');
+    assert.equal(await page.locator('.forge-home select').count(),0);
+    await interact(page,page.locator('.forge-settings-tile'),mobile);
+    const select=page.locator('#settings-language');
     await select.selectOption(locale);
+    await page.locator('.context-page .back-link').click();
+    await page.locator('.forge-gallery').waitFor();
     assert.equal(await page.locator('html').getAttribute('lang'),locale);
     assert.equal(await page.getByRole('heading',{name:'Choisissez votre univers'}).count(),locale==='fr'?1:0);
     assert.equal(await page.getByRole('heading',{name:'Choose your universe'}).count(),locale==='en'?1:0);
@@ -255,10 +266,12 @@ async function journey(locale,mobile){
         assert.deepEqual(after.state.deck.map(c=>c.id),before.state.deck.map(c=>c.id));
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
         await page.locator('.ms-board').getByText(/Action enregistrée|Action saved/).waitFor();
+        await page.locator('.topbar .settings-button').click();
         await select.selectOption(locale==='fr'?'en':'fr');
         assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');
         assert.deepEqual(await readSaved(page,game.id),after,'switching language must not alter game state');
         await select.selectOption(locale);
+        await page.locator('.context-page .back-link').click();
       }
       await page.goto(HOST+'#game/'+game.id+'/rules');
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();

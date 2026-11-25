@@ -72,7 +72,7 @@ export default function OfflineReadiness({ language }: { language: Locale }) {
     };
   }, []);
   const message = status.phase === "ready" ?
-    (english ? "Grim Delve and Thunderfighter ready offline" : "Grim Delve et Thunderfighter prêts hors ligne") :
+    (english ? "Collection ready offline" : "Collection prête hors ligne") :
     status.phase === "reload-required" ?
     (english ? "Offline files installed — reload to activate offline play" : "Ressources installées — rechargez pour activer le jeu hors ligne") :
     status.phase === "unsupported" ?
