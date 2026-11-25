@@ -17,6 +17,12 @@ for (const file of paths) {
 }
 assert.ok(paths.some(file => /^\.\/assets\/.*\.js$/.test(file)), "built JS must be cached");
 assert.ok(paths.some(file => /^\.\/assets\/.*\.css$/.test(file)), "built CSS must be cached");
+for (const family of ["rajdhani","cinzel","alegreyasc","josefinsans","kaushanscript"]) {
+  assert.ok(paths.some(file=>file.startsWith("./assets/"+family+"-") && file.endsWith(".ttf")), "missing cached font: "+family);
+  const notice = "./licenses/fonts/"+family+".txt";
+  assert.ok(paths.includes(notice), "missing cached licence: "+family);
+  assert.match(text(notice.slice(2)), /SIL OPEN FONT LICENSE Version 1\.1/);
+}
 assert.match(worker, /await cache\.addAll\(URLS\.map\(url => new Request\(url, \{ cache: "reload" \}\)\)\)/, "precache must fetch every asset without stale HTTP cache");
 assert.match(worker, /await caches\.delete\(CACHE_NAME\)/);
 assert.match(worker, /key\.startsWith\(PREFIX\)/);

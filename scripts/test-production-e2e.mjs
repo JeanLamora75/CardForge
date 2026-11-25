@@ -169,6 +169,10 @@ async function immersiveScreens(){
    for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
     await page.locator(".forge-title img").evaluate(i=>i.decode());
+    const family={"gridcannon":"Rajdhani","clear-the-dungeon":"Cinzel","loot-the-loop":"Josefin Sans","card-capture":"Alegreya SC","regicide":"Kaushan Script"}[id];
+    await page.evaluate(async family=>{const node=document.querySelector(".forge-command span");const s=getComputedStyle(node);const faces=await document.fonts.load(s.fontWeight+" "+s.fontSize+' "'+family+'"',"Nouvelle partie Règles Statistiques Reprendre New game");if(!faces.length||faces.some(f=>f.status!=="loaded"))throw Error("font not loaded: "+family);},family);
+    assert.ok(await page.locator(".forge-command span").evaluateAll((nodes,family)=>nodes.every(n=>{const s=getComputedStyle(n),r=n.getBoundingClientRect(),b=n.parentElement.getBoundingClientRect();return s.fontFamily.includes(family)&&r.left>=b.left&&r.right<=b.right&&r.top>=b.top&&r.bottom<=b.bottom&&n.scrollWidth<=n.clientWidth+1;}),family),"labels fit with themed font "+family);
+
     await assertPaintedArt(page,".forge-menu .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
     await assertPaintedArt(page,".forge-button-art","buttons");
     await assertPaintedArt(page,".forge-menu .forge-effect","effects");
@@ -182,12 +186,12 @@ async function immersiveScreens(){
     }
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
     assert.equal(await page.locator(".forge-menu > .forge-return,.forge-menu-foot,.forge-credits").count(),0);
-    assert.ok(await page.locator(".forge-title").evaluate((n,shift)=>{const r=n.getBoundingClientRect();const offset=r.x+r.width/2-innerWidth/2;return shift?offset>=8&&offset<=innerWidth*.12&&r.right<=innerWidth:r.left>=0&&Math.abs(offset)<2;},viewport.width<viewport.height&&["regicide","loot-the-loop"].includes(id)),"logo placement per world");
+    assert.ok(await page.locator(".forge-title").evaluate((n,shift)=>{const r=n.getBoundingClientRect();const offset=r.x+r.width/2-innerWidth/2;return shift?Math.abs(offset-Math.min(innerWidth*.16,96))<=2&&r.right<=innerWidth:r.left>=0&&Math.abs(offset)<2;},viewport.width<viewport.height&&["regicide","loot-the-loop"].includes(id)),"logo placement per world");
     assert.equal(await page.locator(".forge-command").count(),5);
     await page.keyboard.press("Tab");
     await page.locator(".forge-command").first().focus();
     assert.ok(await page.locator(".forge-command").first().evaluate(n=>n.matches(":focus-visible")&&getComputedStyle(n).outlineStyle==="solid"),"visible keyboard focus");
-    assert.match(await page.locator(".forge-command").last().innerText(),/^(Retour|Back)$/);
+    assert.match(await page.locator(".forge-command").last().textContent(),/^(Retour|Back)$/);
     assert.equal(await page.locator(".forge-command.primary-action").count(),1);
     if(viewport.width<=600&&viewport.width<viewport.height)assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().width>=innerWidth*.85),"portrait commands must fill available width");
     assert.equal(await page.locator(".forge-command-back").count(),1);
@@ -199,9 +203,13 @@ async function immersiveScreens(){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
 
 
-    await page.locator(".forge-command").filter({hasText:/Règles|Rules/}).click();await page.locator(".context-page").waitFor();
+    await page.locator(".forge-command").filter({hasText:/Règles|Rules/i}).click();await page.locator(".context-page").waitFor();
    }
-   await context.setOffline(true);await page.goto(HOST+"#game/regicide");await page.locator(".forge-title img").evaluate(i=>i.decode());
+   await context.setOffline(true);
+   for(const [id,family] of Object.entries({"gridcannon":"Rajdhani","clear-the-dungeon":"Cinzel","loot-the-loop":"Josefin Sans","card-capture":"Alegreya SC","regicide":"Kaushan Script"})){
+    await page.goto(HOST+"#game/"+id);await page.reload();await page.locator(".forge-title img").evaluate(i=>i.decode());
+    assert.ok(await page.evaluate(async family=>{const s=getComputedStyle(document.querySelector(".forge-command span"));const faces=await document.fonts.load(s.fontWeight+" "+s.fontSize+' "'+family+'"',"Règles New game");return faces.length>0&&faces.every(f=>f.status==="loaded");},family),"offline font "+family);
+   }
   }finally{await context.close();}
  }
 }

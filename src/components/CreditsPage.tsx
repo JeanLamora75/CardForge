@@ -35,6 +35,11 @@ export default function CreditsPage({ language, onBack }: { language: Locale; on
     <p>{en
       ? "The application code, game interfaces, visual settings, illustrated-universe concepts and locally generated audio are CardForge project work. The visual universes must not be confused with illustrations or other protected expression from the source games. This statement does not assign a licence to reuse project assets."
       : "Le code de l’application, les interfaces de jeu, les choix de présentation, les concepts d’univers illustrés et l’ambiance sonore générée localement constituent des travaux du projet CardForge. Ces univers ne doivent pas être confondus avec les illustrations ou autres éléments protégés des œuvres sources. Cette mention n’accorde pas de licence de réutilisation des éléments CardForge."}</p>
+    <h2>{en ? "Game menu typography" : "Typographies des menus de jeu"}</h2>
+    <p>{en ? "The five embedded typefaces are distributed under the SIL Open Font License 1.1. Full copyright and licence notices are supplied locally." : "Les cinq polices intégrées sont distribuées sous licence SIL Open Font License 1.1. Les mentions de copyright et les licences intégrales sont fournies localement."}</p>
+    <ul className="credits-references">
+      {([["Rajdhani","rajdhani"],["Cinzel","cinzel"],["Alegreya SC","alegreyasc"],["Josefin Sans","josefinsans"],["Kaushan Script","kaushanscript"]] as const).map(([name,slug]) => <li key={slug}><a href={import.meta.env.BASE_URL+"licenses/fonts/"+slug+".txt"} target="_blank" rel="noopener noreferrer">{name} — SIL OFL 1.1</a></li>)}
+    </ul>
     <h2>{en ? "Legal notices and useful references" : "Notices et références utiles"}</h2>
     <p>{en
       ? "An explicit Creative Commons licence for a source rulebook is not a blanket permission to distribute an adaptation. Other source licences and permissions have not been independently cleared. No game title is represented here as legally cleared for public release."
