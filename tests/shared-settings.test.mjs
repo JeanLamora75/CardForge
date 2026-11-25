@@ -15,7 +15,7 @@ test("shared sound and visual settings default to silent system behavior", () =>
   assert.deepEqual(readSharedSettings(storage()), DEFAULT_SETTINGS);
   assert.deepEqual(readSharedSettings(null), DEFAULT_SETTINGS);
   assert.deepEqual(normalizeSettings({ music:true, sounds:false, musicVolume:100, soundsVolume:0, animations:"off", hints:false }),
-    { music:true, sounds:false, animations:"off", hints:false });
+    { music:true, sounds:false, musicVolume:100, soundsVolume:0, animations:"off", hints:false });
 });
 test("four controls persist separately and invalid data never enables unwanted sound", () => {
   const db=storage();

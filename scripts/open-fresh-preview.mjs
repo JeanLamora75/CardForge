@@ -1,6 +1,14 @@
 // Use the persistent browser profile without reusing stale navigation responses.
 // Only the first online navigation bypasses the old worker; game storage is untouched.
 export async function openFreshPreview(context,page,url,version){
+ const errors=[];
+ const onError=error=>{errors.push(error.stack??String(error));};
+ const onConsole=message=>{if(message.type()==='error')errors.push(message.text());};
+ page.on('pageerror',onError);page.on('console',onConsole);
+ async function waitForGallery(){
+  try{await page.locator('.forge-gallery').waitFor({timeout:15000});}
+  catch(error){throw new Error('Catalogue unavailable at '+page.url()+'\n'+(errors.join('\n')||'No browser exception captured')+'\n'+(await page.locator('body').innerText().catch(()=>'')),{cause:error});}
+ }
  const cdp=await context.newCDPSession(page);
  try{
   await cdp.send('Network.enable');
@@ -12,7 +20,7 @@ export async function openFreshPreview(context,page,url,version){
 
 
   await page.goto(url,{waitUntil:'load',timeout:30000});
-  await page.locator('.forge-gallery').waitFor({timeout:15000});
+  await waitForGallery();
   await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
   await page.evaluate(async()=>{
    const registration=await navigator.serviceWorker.register(new URL('sw.js',document.baseURI),{scope:'./',updateViaCache:'none'});
@@ -34,7 +42,9 @@ export async function openFreshPreview(context,page,url,version){
   await cdp.send('Network.setCacheDisabled',{cacheDisabled:false}).catch(()=>{});
   await cdp.detach().catch(()=>{});
  }
+ try{
  await page.reload({waitUntil:'load'});
- await page.locator('.forge-gallery').waitFor({timeout:15000});
+ await waitForGallery();
  await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
+ }finally{page.off('pageerror',onError);page.off('console',onConsole);}
 }
