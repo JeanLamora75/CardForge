@@ -715,3 +715,8 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-settings-page .forge-volume-controls button{flex:none;}
 .forge-settings-page .privacy-confirm{position:relative;z-index:5;}
 .forge-settings-page .credits-item summary span{min-width:0;overflow-wrap:anywhere;}
+
+/* Offline readiness never participates in page layout. Only persistent actionable states appear. */
+.shell .offline-readiness[data-offline-notice="hidden"]{position:fixed;top:0;left:0;width:1px;height:1px;min-height:0;max-width:1px;overflow:hidden;clip-path:inset(50%);margin:0;padding:0;border:0;white-space:nowrap;pointer-events:none;}
+.shell .offline-readiness[data-offline-notice="visible"]{position:fixed;top:auto;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:80;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;width:max-content;max-width:calc(100% - 24px);height:auto;min-height:0;overflow:visible;clip-path:none;margin:0;padding:10px 14px;border:1px solid #9b8050;border-radius:12px;background:#211b1bf5;color:#f2dfb5;font-size:.82rem;white-space:normal;box-shadow:0 4px 16px #0008;}
+.shell .offline-readiness[data-offline-notice="visible"] button{min-height:44px;}

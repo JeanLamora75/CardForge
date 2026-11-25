@@ -70,9 +70,9 @@ async function interact(page,locator,mobile,key='Enter'){
   }
 }
 async function ready(page){
-  await page.locator('[data-offline-phase="ready"]').waitFor({timeout:30000}).catch(async()=>{
+  await page.locator('[data-offline-phase="ready"]').waitFor({state:"attached",timeout:30000}).catch(async()=>{
     await page.reload();
-    await page.locator('[data-offline-phase="ready"]').waitFor({timeout:30000});
+    await page.locator('[data-offline-phase="ready"]').waitFor({state:"attached",timeout:30000});
   });
   assert.equal(await page.evaluate(()=>!!navigator.serviceWorker.controller),true,'PWA must be controlled before offline claim');
   const probe=await page.evaluate(async()=>{
@@ -142,6 +142,13 @@ async function immersiveScreens(){
    assert.ok(await page.locator(".forge-settings-tile").evaluate(n=>{const r=n.getBoundingClientRect();return r.height>=44&&r.width/r.height>=2.8;}),"settings tile must be compact and touch accessible");
    await page.locator(".forge-tile-scene,.forge-tile-logo,.forge-settings-art").evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
    assert.ok(await page.locator(".forge-home .offline-readiness[data-offline-phase=ready]").evaluate(n=>n.getBoundingClientRect().height<=1),"ready status must not occupy visible gallery space");
+   assert.ok(await page.locator(".forge-home .offline-readiness").evaluate(n=>{
+     const card=document.querySelector(".forge-cover");const before=card.getBoundingClientRect().top;
+     const phase=n.dataset.offlinePhase,notice=n.dataset.offlineNotice;
+     try{for(const p of ["installing","ready","reload-required","error"]){n.dataset.offlinePhase=p;n.dataset.offlineNotice="hidden";if(n.getBoundingClientRect().height>1||card.getBoundingClientRect().top!==before)return false;}
+     for(const p of ["reload-required","error"]){n.dataset.offlinePhase=p;n.dataset.offlineNotice="visible";if(getComputedStyle(n).position!=="fixed"||card.getBoundingClientRect().top!==before)return false;}return true;
+     }finally{n.dataset.offlinePhase=phase;n.dataset.offlineNotice=notice;}
+   }),"offline status and warning must never shift gallery");
    assert.equal(await page.locator(".forge-home select, .forge-home .settings-button").count(),0);
    assert.equal(await page.locator(".forge-grid > :last-child").getAttribute("class"),"forge-settings-card");
    assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),viewport.width<600?1:viewport.width<1100?2:3);
@@ -474,7 +481,7 @@ async function journey(locale,mobile){
     offline.on('console',message=>{if(message.type()==='error')browserErrors.push('console '+message.text());});
     try{
       await offline.goto(HOST,{waitUntil:'domcontentloaded',timeout:15000});
-      await offline.locator('[data-offline-phase="ready"]').waitFor({timeout:20000}).catch(async error=>{
+      await offline.locator('[data-offline-phase="ready"]').waitFor({state:"attached",timeout:20000}).catch(async error=>{
         const diagnostic=await offline.evaluate(async()=>{
           const scripts=[...document.scripts].map(x=>({url:x.src,type:x.type}));
           const keys=await caches.keys();
@@ -491,7 +498,7 @@ async function journey(locale,mobile){
         });
         throw new Error('Offline cold restart did not become ready: '+JSON.stringify({diagnostic,browserErrors}),{cause:error});
       });
-      await offline.locator('.offline-readiness small').getByText(locale==='fr'?'Hors connexion':'Offline',{exact:true}).waitFor();
+      await offline.locator('.offline-readiness small').getByText(locale==='fr'?'Hors connexion':'Offline',{exact:true}).waitFor({state:"attached"});
       for(const game of GAMES){
         await offline.goto(HOST+'#game/'+game.id+'/board',{waitUntil:'domcontentloaded',timeout:15000});
         await offline.locator(game.root).waitFor({state:'visible',timeout:15000});

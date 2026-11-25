@@ -22,3 +22,8 @@ export function hasServiceWorkerSupport(
 ): boolean {
   return supported && secureContext && production;
 }
+
+/** Transient states must not interrupt the catalogue. Delay actionable warnings. */
+export function offlineNoticeDelay(phase: OfflinePhase): number | null {
+  return phase === "reload-required" || phase === "error" ? 8000 : null;
+}

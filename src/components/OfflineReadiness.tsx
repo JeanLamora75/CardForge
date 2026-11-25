@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hasServiceWorkerSupport, resolveOfflineStatus, type OfflineProbe, type OfflineStatus } from "../application/offline-readiness.ts";
+import { hasServiceWorkerSupport, resolveOfflineStatus, offlineNoticeDelay, type OfflineProbe, type OfflineStatus } from "../application/offline-readiness.ts";
 import type { Locale } from "../i18n/language.ts";
 
 function inspect(worker: ServiceWorker): Promise<OfflineProbe | null> {
@@ -22,6 +22,15 @@ function inspect(worker: ServiceWorker): Promise<OfflineProbe | null> {
 export default function OfflineReadiness({ language }: { language: Locale }) {
   const english = language === "en";
   const [status, setStatus] = useState<OfflineStatus>({ phase: "installing" });
+  const [noticePhase,setNoticePhase]=useState<OfflineStatus["phase"] | null>(null);
+  useEffect(()=>{
+    setNoticePhase(null);
+    const delay=offlineNoticeDelay(status.phase);
+    if(delay===null)return;
+    const timer=window.setTimeout(()=>setNoticePhase(status.phase),delay);
+    return ()=>window.clearTimeout(timer);
+  },[status.phase]);
+  const showNotice=noticePhase===status.phase;
   const [online, setOnline] = useState(() => navigator.onLine);
   useEffect(() => {
     const onNetwork = () => setOnline(navigator.onLine);
@@ -80,11 +89,11 @@ export default function OfflineReadiness({ language }: { language: Locale }) {
     status.phase === "error" ?
     (english ? "Offline installation unavailable; a connection may be required" : "Installation hors ligne indisponible ; une connexion peut être nécessaire") :
     (english ? "Preparing the complete offline collection…" : "Préparation complète des ressources hors ligne…");
-  return <section className="offline-readiness" role="status" aria-live="polite" data-offline-phase={status.phase}>
+  return <section className="offline-readiness" role="status" aria-live={showNotice?"polite":"off"} data-offline-phase={status.phase} data-offline-notice={showNotice?"visible":"hidden"}>
     <span aria-hidden="true">{status.phase === "ready" ? "✓" : status.phase === "error" ? "!" : "◌"}</span>
     <span>{message}</span>
     {status.phase === "ready" ? <small>{online ? (english ? "Connected" : "Connecté") : (english ? "Offline" : "Hors connexion")}</small> : null}
-    {status.phase === "reload-required" ? <button type="button" className="secondary-action" onClick={() => window.location.reload()}>
+    {showNotice && status.phase === "reload-required" ? <button type="button" className="secondary-action" onClick={() => window.location.reload()}>
       {english ? "Activate" : "Activer"}
     </button> : null}
   </section>;
