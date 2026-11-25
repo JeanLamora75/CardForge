@@ -10,7 +10,7 @@ export function WorldBackdrop({slug}:{slug:string}){return <>
  <picture className="forge-world-bg" aria-hidden="true"><source media="(orientation: landscape)" srcSet={art("worlds-landscape",slug)}/><img src={art("worlds",slug)} alt="" draggable={false}/></picture>
  <img className="forge-effect" src={art("effects",slug)} alt="" aria-hidden="true" draggable={false}/>
  </>;}
-function Command({slug,primary=false,back=false,disabled,onClick,children}:{slug:string;primary?:boolean;back?:boolean;disabled:boolean;onClick:()=>void;children:ReactNode}){
+export function Command({slug,primary=false,back=false,disabled,onClick,children}:{slug:string;primary?:boolean;back?:boolean;disabled:boolean;onClick:()=>void;children:ReactNode}){
  return <button type="button" className={"forge-command"+(primary?" primary-action":"")+(back?" forge-command-back":"")} disabled={disabled} onClick={onClick}><img className="forge-button-art" src={art("buttons",slug)} alt="" aria-hidden="true" draggable={false}/><span>{children}</span></button>;
 }
 export function WorldLogo({slug,title}:{slug:string;title:string}){return <img className="world-logo" src={art("logos",slug)} alt={title} draggable={false}/>;}

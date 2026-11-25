@@ -46,3 +46,6 @@ Trajectoires et contributions calculées par le moteur, puissance/résistance et
 
 ## CAR-92 — Fin de mission cinématique
 Maquettes Sally validées : victoire bleu/or, défaite catastrophe rouge/cuivre, entraînement bleu, logo, résultat et motif, trois métriques maximum, commandes visibles, statistiques en dialogue. Score officiel en victoire remplace la pioche sur la vue principale. Aucun plateau ni HUD actif. TF-END-01–09 ; responsive six résolutions, FR/EN, clavier/tactile, hors ligne, préférence de mouvement. Fond SVG local original (interprétation vectorielle de la maquette, non photoréaliste). Aucun changement moteur/stockage.
+
+## Finition immersive TF-END-20–30
+Réutilisation du composant Command et du logo de l'accueil ; trois médaillons vectoriels originaux, bandeau métallique et HUD biseauté, logo en haut, actions en bas, rapport de mission stylé avec fermeture fixe et Échap natif. Suppression des doublons de pioche et score. Trois fonds WebP conservés. Recette réelle six résolutions requise.

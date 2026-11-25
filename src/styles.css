@@ -1116,3 +1116,34 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .tf-ending-dialog dl div{display:flex;justify-content:space-between;gap:10px;padding:6px;border-bottom:1px solid #496272;}
 .tf-ending-dialog dd{margin:0;font-weight:700;}
 @media(orientation:landscape) and (max-height:500px){.tf-ending-main{gap:4px;}.tf-ending .world-logo{height:35px;}.tf-ending-hero svg{height:30px;}.tf-ending.game-final-screen h2{font-size:1.65rem;}.tf-ending-metrics span{display:none;}.tf-ending-metrics>div{padding:3px;}.tf-ending .tf-ending-details-link{min-height:44px;}}
+
+/* End-of-mission shares the menu's actual illustrated command artwork. */
+.tf-ending.game-final-screen{display:flex;justify-content:center;align-items:stretch;background-position:center top;--end-metal:#a76e50;}
+.tf-ending-main{min-height:calc(100dvh - 24px);justify-content:flex-end;gap:clamp(5px,1dvh,11px);padding-bottom:clamp(6px,2dvh,22px);position:relative;}
+.tf-ending .world-logo{width:min(78%,390px);height:clamp(70px,17dvh,150px);margin-bottom:auto;object-fit:contain;flex:none;}
+.tf-ending-hero{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tf-ending-emblem{width:clamp(80px,24vw,145px);height:clamp(44px,9dvh,84px);object-fit:contain;filter:drop-shadow(0 3px 6px #000);}
+.tf-ending-banner{width:100%;padding:8px 14px;clip-path:polygon(5% 0,95% 0,100% 28%,100% 72%,95% 100%,5% 100%,0 72%,0 28%);background:linear-gradient(180deg,var(--end-accent),#222d35 8%,#101924 18%,#121923 82%,#53636a 92%,var(--end-accent));}
+.tf-ending.game-final-screen h2{font-family:Rajdhani,Arial,sans-serif;font-size:clamp(1.65rem,8vw,3.6rem);font-weight:700;color:var(--end-accent);letter-spacing:.07em;}
+.tf-ending-subtitle{font-family:Rajdhani,Arial,sans-serif;}
+.tf-ending-metrics>div{clip-path:polygon(7% 0,93% 0,100% 12%,100% 88%,93% 100%,7% 100%,0 88%,0 12%);border-radius:0;background:linear-gradient(155deg,#38505bdb,#101e2bed 24%,#111e2be6 80%,#394c56db);padding:6px 4px;}
+.tf-ending-metrics svg{width:20px;height:20px;color:var(--end-accent);}
+.tf-ending-metrics strong{font-family:Rajdhani,Arial,sans-serif;}
+.tf-ending .tf-ending-actions{grid-template-columns:1fr;gap:3px;}
+.tf-ending .forge-command,.tf-ending .forge-command.primary-action,.tf-ending .forge-command.primary-action:hover{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;width:100%;height:clamp(44px,6.5dvh,62px);min-height:44px;border:0;border-radius:4px;background:none;padding:0 8%;color:#e2edf4;font:700 clamp(.95rem,3.8vw,1.25rem)/1.1 Rajdhani,Arial,sans-serif;letter-spacing:.075em;text-transform:uppercase;text-shadow:0 1px 3px #000;cursor:pointer;}
+.tf-ending .forge-command.primary-action{color:#fff1c9;}
+.tf-ending .forge-command:focus-visible,.tf-report-close:focus-visible,.tf-ending-details-link:focus-visible{outline:3px solid var(--end-accent);outline-offset:2px;}
+.tf-ending-details-link{background:transparent;border:0;text-decoration:underline;text-underline-offset:4px;color:#e2edf4;font-family:Rajdhani,Arial,sans-serif;font-weight:700;}
+.tf-ending-dialog{background:linear-gradient(140deg,#2c434f,#101e2a 30%,#0b1822);border:2px solid #82949c;border-radius:4px;box-shadow:inset 0 0 0 3px #182a36,0 12px 40px #000b;}
+.tf-ending-dialog header{padding:8px 12px;background:#0a1926;border-bottom:1px solid #9b8064;font-family:Rajdhani,Arial,sans-serif;color:#f0ce9f;}
+.tf-ending-dialog header h3{margin:0;text-transform:uppercase;}
+.tf-ending-dialog header small{font-size:.65rem;letter-spacing:.13em;}
+.tf-ending-dialog .tf-report-close{width:44px;min-height:44px;color:#eed1ab;background:#203744;border:1px solid #82949c;border-radius:4px;font-size:1.6rem;line-height:1;}
+.tf-ending-dialog-content h3{font-family:Rajdhani,Arial,sans-serif;color:#f0ce9f;text-transform:uppercase;}
+.tf-ending-dialog-content dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:4px 0 12px;}
+.tf-ending-dialog-content dl div{display:flex;flex-direction:column-reverse;align-items:center;justify-content:center;text-align:center;gap:2px;padding:5px;background:#132b3a;border:1px solid #516978;border-radius:3px;}
+.tf-ending-dialog-content dt{font-size:.78rem;}
+.tf-ending-dialog-content dd{font-family:Rajdhani,Arial,sans-serif;font-size:1.35rem;color:#efc895;}
+.tf-ending-dialog footer{padding:6px;flex:none;border-top:1px solid #647984;}
+@media(orientation:landscape) and (max-height:500px){.tf-ending-main{min-height:calc(100dvh - 20px);padding-bottom:0;gap:3px;max-width:680px;}.tf-ending .world-logo{height:44px;width:200px;}.tf-ending-emblem{height:35px;width:70px;}.tf-ending-banner{padding:3px 10px;}.tf-ending.game-final-screen h2{font-size:1.5rem;}.tf-ending .tf-ending-actions{grid-template-columns:1fr 1fr;}.tf-ending-metrics svg{display:none;}.tf-ending-metrics>div{padding:2px;}.tf-ending-details-link{min-height:36px;}.tf-ending-subtitle{margin:0;}}
+@media(max-height:650px) and (orientation:portrait){.tf-ending .world-logo{height:75px;}.tf-ending-emblem{height:46px;}.tf-ending-main{gap:4px;}.tf-ending-banner{padding:5px 12px;}}
