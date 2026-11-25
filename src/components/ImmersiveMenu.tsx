@@ -36,11 +36,12 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
      menu.style.setProperty("--visible-menu-height",height+"px");
      menu.style.setProperty("--visible-menu-width",width+"px");
      const count=5;
-     const margin=Math.min(32,Math.max(16,height*.04));
+     const margin=Math.max(32,Math.min(48,Math.round(height*.04)));
+     const safeBottom=parseFloat(getComputedStyle(menu).getPropertyValue("--menu-safe-bottom"))||0;
      const rowHeight=44;
      const gap=6;
-     const rows=Math.floor((height/2-margin+gap)/(rowHeight+gap));
-     const columns=Math.max(1,Math.ceil(count/Math.max(1,rows)));
+     const rows=Math.max(1,Math.floor((height/2-margin-safeBottom+gap)/(rowHeight+gap)));
+     const columns=Math.min(count,Math.ceil(count/rows));
      menu.style.setProperty("--menu-columns",String(columns));
      menu.style.setProperty("--menu-gutter",margin+"px");
    }
