@@ -368,8 +368,10 @@ async function journey(locale,mobile){
       const card=page.locator('.game-card').filter({has:page.getByRole('heading',{name:game.name})});
       await interact(page,card.getByRole('button'),mobile,'Enter');
       await interact(page,page.locator('.context-actions button.primary-action').first(),mobile,'Space');
-      await page.locator('.learning-intro').waitFor({state:'visible',timeout:15000});
-      await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
+      if(game.id!=='gridcannon'){
+        await page.locator('.learning-intro').waitFor({state:'visible',timeout:15000});
+        await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
+      }
       await page.locator(game.root).waitFor({state:'visible',timeout:20000});
       const first=page.locator(game.root+' button.primary-action').filter({hasText:/Commencer une partie|Start a game|Start playing/}).first();
       await interact(page,first,mobile);
@@ -425,6 +427,9 @@ async function journey(locale,mobile){
         await interact(page,page.locator(game.actions).first(),mobile);
         await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
       }else if(game.confirm){
+        await page.evaluate(()=>localStorage.setItem('cardforge.learning.v1.gridcannon',JSON.stringify({choice:'learn',hintsEnabled:true})));
+        await page.reload();await page.locator('.thunder-board.tf-live:not(.tf-training)').waitFor();
+        assert.deepEqual(await readSaved(page,game.id),before,'remembered tutorial must not override resume');
         const help=page.locator('.tf-help-toggle');
         const dialog=page.locator('.tf-game-help');
         await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
@@ -437,6 +442,15 @@ async function journey(locale,mobile){
         await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
         await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
         assert.deepEqual(await readSaved(page,game.id),before,'Escape must preserve save');
+        await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
+        await interact(page,dialog.getByRole('button',{name:/^Tutoriel$|^Tutorial$/}),mobile);
+        await page.locator('.thunder-board.tf-training .tf-training-guide').waitFor();
+        await thunderScreens(page,label+'-tutorial');
+        assert.deepEqual(await readSaved(page,game.id),before,'tutorial must not alter ordinary save');
+        await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
+        await interact(page,dialog.getByRole('button',{name:/Jouer librement|Play freely/}),mobile);
+        await page.locator('.thunder-board.tf-live:not(.tf-training)').waitFor();
+        assert.deepEqual(await readSaved(page,game.id),before,'exit tutorial restores ordinary save');
         assert.equal(await page.locator('.tf-special-console').count(),1);
         const target=page.locator('.tf-target').first();
         const direct=await target.count()>0;

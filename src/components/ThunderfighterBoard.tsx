@@ -23,11 +23,6 @@ type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAct
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
 const suits = { hearts: ["♥", "Cœur"], diamonds: ["♦", "Carreau"], clubs: ["♣", "Trèfle"], spades: ["♠", "Pique"] } as const;
 const options = { gameId: THUNDERFIGHTER_GAME_ID, rulesVersion: THUNDERFIGHTER_RULES_VERSION, formatVersion: 1 };
-const phaseLabels: Record<ThunderfighterState["phase"], string> = {
-  "initial-figures": "Positionnement initial des adversaires", "replacement-offer": "Remplacement facultatif",
-  "replacement-draw": "Pioche de remplacement", "replacement-figures": "Placement des adversaires révélés",
-  "placing-figure": "Placement d'un adversaire", playing: "Tour de jeu", searching: "Recherche d'un adversaire",
-};
 function valueOf(id: string): number {
   const card = inventory.get(id);
   return card && "rank" in card ? card.rank : 10;
@@ -270,22 +265,6 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   return <section className={`thunder-board${tutorial?" tf-training":""}${state?.outcome==="in-progress"?" tf-live":""}`} aria-labelledby="thunder-title" onKeyDown={event=>{if(event.key==="Escape"&&!event.defaultPrevented&&(selection||targetChoice||special)&&!inspected){event.preventDefault();event.stopPropagation();if(!busy)cancelSelection();}}}>
     <h2 id="thunder-title" className="thunder-sr-only">Poste de commandement</h2>
     {!state?<p className="thunder-notice" role="status" aria-live="polite">{notice}</p>:null}
-    {tutorial && state ? <section className="learning-lesson" aria-label="Mission Thunderfighter">
-      <h3>Mission d'entraînement · {phaseLabels[state.phase]}</h3>
-      <p>{state.outcome !== "in-progress" ? "Mission terminée : vous pouvez recommencer l'entraînement ou jouer librement." :
-        state.pendingFigures.length ? "Placez la figure dans un des secteurs proposés. Les emplacements sont déterminés par la ressemblance avec les cartes visibles." :
-        state.phase === "replacement-offer" ? "Vous pouvez garder les neuf piles initiales ou remplacer une carte : testez les deux options en recommençant l'exercice." :
-        state.phase === "replacement-draw" ? "La carte initiale est sous la pioche. Révélez le remplacement puis placez les figures éventuellement rencontrées." :
-        state.phase === "searching" ? "Toutes les figures actuellement en jeu ont été vaincues : cherchez la prochaine figure, sans dévoiler les cartes suivantes." :
-        state.pendingNumeric ? "Examinez les neuf piles : votre carte doit être au moins aussi forte que le sommet. Prévisualisez un tir avant de confirmer." :
-        "Piochez une carte ; observez les éventuelles figures et cartes spéciales. Un As extrait une pile ; un Joker réaffecte une carte supérieure."}</p>
-      <p>Objectif : comprendre les placements, les résistances, les tirs sur deux axes et la réserve spéciale. </p>
-    </section> : null}
-    {hintsEnabled && state ? <details className="learning-context" open={tutorial}>
-      <summary>Aide sur les actions autorisées ({legal.length})</summary>
-      <p>{legal.filter(a => a.type === "place-number").length} destination(s) numériques, {legal.filter(a => a.type === "place-figure").length} secteur(s) pour figure, {legal.filter(a => a.type === "extract" || a.type === "reassign").length} action(s) spéciale(s).</p>
-      <p>Les Valets demandent 11 points, les Dames 12 avec la même couleur, les Rois 13 avec la même enseigne. Le score officiel ne dépend que de la réserve inutilisée en cas de victoire.</p>
-    </details> : null}
     {!state ? <button type="button" className="primary-action" onClick={() => void start()} disabled={busy}>Commencer une partie</button> : <>
       <div className="thunder-metrics">
         <span><small>Pioche</small><strong>{state.drawPile.length}</strong></span>
@@ -310,6 +289,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       </div>
       <div className="thunder-action-zone" data-console-phase={selection?"confirm":special?"special":state.phase==="searching"?"search":state.pendingNumeric||state.pendingFigures.length?"place":"draw"}>
+{tutorial?<div className="tf-training-guide" data-i18n-ignore><strong>{en?"Training · no save":"Entraînement · sans sauvegarde"}</strong>{hintsEnabled?<span>{state.pendingFigures.length?(en?"Place the enemy in a highlighted sector.":"Placez l’adversaire dans un secteur indiqué."):legal.some(a=>a.type==="assign-armor")?(en?"Assign armor to an indicated enemy.":"Attribuez l’armure à un adversaire indiqué."):state.phase==="replacement-offer"?(en?"Keep or replace an initial card.":"Conservez ou remplacez une carte initiale."):state.phase==="searching"?(en?"Reveal the next search card.":"Révélez la prochaine carte de recherche."):state.pendingNumeric?(en?"Select a legal pile and confirm.":"Choisissez une pile autorisée et confirmez."):en?"Choose the next available action.":"Choisissez la prochaine action disponible."}</span>:null}</div>:null}
 <div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
       {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
 </div>

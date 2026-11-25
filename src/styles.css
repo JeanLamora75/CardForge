@@ -908,7 +908,7 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .tf-help-dialog::backdrop{background:#040b14c9;}
 .tf-dialog-close{min-height:44px;float:right;}
 .tf-help-dialog .learning-toolbar{clear:both;}
-.thunder-board.tf-live:not(.tf-training){padding:0;max-width:900px;}
+.thunder-board.tf-live{padding:0;max-width:900px;}
 .thunder-board .thunder-metrics{margin:3px 0;gap:4px;}
 .thunder-board .thunder-metrics span{background:linear-gradient(#162c3c,#07131e);border-color:#587584;}
 .thunder-board .tf-combat-layout{display:block;}
@@ -988,29 +988,29 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .tf-current-card .tf-pending-card{flex-direction:row;}
 .thunder-board .tf-current-card .tf-tactical{width:52px;height:52px;flex-basis:52px;}
 /* Height is a budget, not a clipping boundary: a smaller board yields to the console. */
-.shell.thunder-command-surface:has(.tf-live:not(.tf-training)){height:100dvh;min-height:100dvh;display:flex;flex-direction:column;overflow:visible;}
-.thunder-command-page:has(.tf-live:not(.tf-training)){flex:1;min-height:0;display:flex;flex-direction:column;}
-.thunder-command-page:has(.tf-live:not(.tf-training)) :is(.board-page,.game-learning){display:flex;flex-direction:column;flex:1;min-height:0;}
-.thunder-board.tf-live:not(.tf-training){box-sizing:border-box;display:grid;grid-template-rows:auto minmax(180px,1fr) auto;gap:4px;flex:1;min-height:0;width:100%;margin:0 auto;padding:0;}
-.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{display:grid;place-items:center;min-width:0;min-height:0;container-type:size;}
-.thunder-board.tf-live:not(.tf-training) .thunder-battlefield{width:min(100cqw,100cqh,550px);height:min(100cqw,100cqh,550px);max-width:none;max-height:none;aspect-ratio:1;}
+.shell.thunder-command-surface:has(.tf-live){height:100dvh;min-height:100dvh;display:flex;flex-direction:column;overflow:visible;}
+.thunder-command-page:has(.tf-live){flex:1;min-height:0;display:flex;flex-direction:column;}
+.thunder-command-page:has(.tf-live) :is(.board-page,.game-learning){display:flex;flex-direction:column;flex:1;min-height:0;}
+.thunder-board.tf-live{box-sizing:border-box;display:grid;grid-template-rows:auto minmax(180px,1fr) auto;gap:4px;flex:1;min-height:0;width:100%;margin:0 auto;padding:0;}
+.thunder-board.tf-live .tf-combat-layout{display:grid;place-items:center;min-width:0;min-height:0;container-type:size;}
+.thunder-board.tf-live .thunder-battlefield{width:min(100cqw,100cqh,550px);height:min(100cqw,100cqh,550px);max-width:none;max-height:none;aspect-ratio:1;}
 .thunder-command-page .tf-command-header{flex:none;margin:0 0 2px;}
 .thunder-board .thunder-metrics{margin:0;gap:3px;}
 .thunder-board .thunder-metrics span{padding:1px 2px;}
 .thunder-board .thunder-metrics strong{line-height:1;}
 @media(orientation:landscape) and (min-width:650px){
-.thunder-board.tf-live:not(.tf-training){grid-template-columns:minmax(0,1fr) minmax(220px,340px);grid-template-rows:auto minmax(180px,1fr);align-items:stretch;}
-.thunder-board.tf-live:not(.tf-training) .thunder-metrics{grid-column:1/-1;}
-.thunder-board.tf-live:not(.tf-training) .tf-combat-layout{grid-column:1;}
-.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{grid-column:2;align-self:center;}
+.thunder-board.tf-live{grid-template-columns:minmax(0,1fr) minmax(220px,340px);grid-template-rows:auto minmax(180px,1fr);align-items:stretch;}
+.thunder-board.tf-live .thunder-metrics{grid-column:1/-1;}
+.thunder-board.tf-live .tf-combat-layout{grid-column:1;}
+.thunder-board.tf-live .thunder-action-zone{grid-column:2;align-self:center;}
 }
 
 
 .thunder-board .thunder-confirm:not([data-selected=true]):not([hidden]){min-height:70px;}
 
 /* Keep the field independent of ordinary phase changes. The console can grow on exceptional small-screen states without clipping. */
-.thunder-board.tf-live:not(.tf-training){grid-template-rows:auto minmax(180px,1fr) minmax(226px,auto);}
-.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{align-self:stretch;justify-content:flex-start;min-height:226px;box-sizing:border-box;position:relative;}
+.thunder-board.tf-live{grid-template-rows:auto minmax(180px,1fr) minmax(226px,auto);}
+.thunder-board.tf-live .thunder-action-zone{align-self:stretch;justify-content:flex-start;min-height:226px;box-sizing:border-box;position:relative;}
 .thunder-board .tf-current-card .tf-pending-card{margin:0;min-height:58px;}
 .thunder-board .thunder-confirm:not([data-selected=true]):not([hidden]){min-height:0;}
 .thunder-board .tf-action-status[data-transient=true]{position:absolute;bottom:3px;left:6px;right:6px;margin:0;pointer-events:none;}
@@ -1020,8 +1020,8 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .tf-drop-preview .tf-card-corner,.thunder-board .tf-drop-preview .tf-card-bottom{color:#ffebc9;z-index:1;}
 .thunder-board .thunder-pile>strong[data-preview-count]{z-index:4;}
 @media(orientation:landscape) and (min-width:650px){
-.thunder-board.tf-live:not(.tf-training){grid-template-rows:auto minmax(180px,1fr);}
-.thunder-board.tf-live:not(.tf-training) .thunder-action-zone{align-self:center;min-height:0;}
+.thunder-board.tf-live{grid-template-rows:auto minmax(180px,1fr);}
+.thunder-board.tf-live .thunder-action-zone{align-self:center;min-height:0;}
 }
 
 /* Keep the exit outside the scrollable rulebook, including on small screens. */
@@ -1030,3 +1030,10 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .tf-game-help .tf-help-header{flex:none;padding:8px;background:#142d3c;border-bottom:1px solid #607d90;}
 .tf-game-help .tf-dialog-close{float:none;display:block;width:100%;min-height:44px;}
 .tf-game-help .tf-help-content{min-height:0;overflow:auto;padding:10px;overscroll-behavior:contain;}
+
+/* Training uses the same viewport and console as normal play. */
+.thunder-command-page .tf-training-wrap{display:flex;flex-direction:column;flex:1;min-height:0;width:100%;}
+.thunder-board .tf-training-guide{display:flex;flex-direction:column;gap:2px;font-size:.78rem;line-height:1.2;color:#cde3e8;}
+.thunder-board .tf-training-guide strong{color:#edbc80;}
+.thunder-board.tf-training .thunder-action-zone{min-height:260px;}
+@media(orientation:landscape) and (min-width:650px){.thunder-board.tf-training .thunder-action-zone{min-height:0;}}

@@ -45,7 +45,7 @@ export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGa
 
 export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange, initialLearn=false, thunderHelp=false, onCloseThunderHelp }: { gameId: PlayableLearningGame; thunderHelp?:boolean; onCloseThunderHelp?:()=>void; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void; initialLearn?:boolean }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
-  const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":readLearningPreferences(local(), gameId).choice);
+  const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":gameId==="gridcannon"?"play":readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
   const [tutorialRun, setTutorialRun] = useState(0);
   const [saveWarning, setSaveWarning] = useState(false);
@@ -87,8 +87,8 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
       </div>
     </section> : <>
       {gameId==="gridcannon"?<dialog ref={helpDialog} className="tf-help-dialog tf-game-help" aria-label={language==="en"?"Help and rules":"Aide et règles"} onClose={()=>{setShowRules(false);onCloseThunderHelp?.();}} onCancel={event=>{event.preventDefault();event.stopPropagation();closeHelp();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();closeHelp();}}}><header className="tf-help-header" data-i18n-ignore><button type="button" className="tf-dialog-close" onClick={closeHelp}>{language==="en"?"Resume game":"Reprendre la partie"}</button></header><div className="tf-help-content">{controls}<p data-i18n-ignore>{language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup."}</p></div></dialog>:controls}
-      {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
-      {mode === "learn" ? <div key={tutorialRun}>
+      {mode === "learn" && gameId!=="gridcannon" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
+      {mode === "learn" ? <div key={tutorialRun} className={gameId==="gridcannon"?"tf-training-wrap":undefined}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
           gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} />}
       </div> : gameId === "clear-the-dungeon" ?

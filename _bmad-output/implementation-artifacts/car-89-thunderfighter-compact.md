@@ -16,3 +16,6 @@ CI 45658106464 : 465 tests unitaires réussis, 78 mesures géométriques sans d�
 
 ## V5.2
 CI V5.1 45660062574 : dépôt tactile français réussi, échec suivant sur déplacement vertical 5,8125 px. Enveloppe commune console 226 px, sans overflow caché ; aperçu opaque avec rang/symbole, compteur futur, pioche normale directe via même dispatch légal, notification de succès 1,8 s. Tests existants conservés et assertions de pioche directe et stabilité ajoutées ; couverture de toutes les phases et CI complète à valider. Pas de uv.
+
+## Correctif reprise et tutoriel
+Thunderfighter ouvre le jeu normal par défaut, indépendamment de la préférence historique learn ; le tutoriel nécessite une demande explicite. Entraînement isolé conservé, indications compactes FR/EN dans la console et grille V5.2 commune. Tests E2E de préférence mémorisée, entrée/sortie tutoriel, sauvegarde inchangée et matrice de captures ajoutés. Validation CI nécessaire.
