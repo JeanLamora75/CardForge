@@ -451,6 +451,7 @@ async function journey(locale,mobile){
           assert.deepEqual(await readSaved(page,game.id),before,'drop must not write');
         }else await interact(page,action,mobile);
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
+        if(direct&&before.state.pendingNumeric){const projected=page.locator('.tf-drop-preview');if(await projected.count()){assert.equal(await projected.getAttribute('data-preview-id'),before.state.pendingNumeric);assert.ok(await projected.locator('.tf-card-corner strong').innerText());}}
         await thunderScreens(page,label+'-confirm');
         const selectedGeometry=await geometry();
         assert.ok(Math.abs(original.w-original.h)<=1,'square board');
@@ -478,7 +479,18 @@ async function journey(locale,mobile){
         page.once('dialog',dialog=>void dialog.accept());
         await interact(page,page.locator('.grim-actions button.secondary-action').filter({hasText:/Défausser|Discard/}).first(),mobile);
       }
-      const after=await waitSavedChanged(page,game.id,before);
+      let after=await waitSavedChanged(page,game.id,before);
+      if(game.id==='gridcannon'){
+        const draw=page.locator('.thunder-actions button').filter({hasText:/^Piocher une carte$|^Draw a card$/});
+        if(await draw.count()===1){
+          const bounds=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return [r.x,r.y,r.width,r.height];});
+          const drawBounds=await bounds();
+          await interact(page,draw,mobile);
+          after=await waitSavedChanged(page,game.id,after);
+          assert.equal(await page.locator('.thunder-confirm[data-selected=true]').count(),0,'ordinary draw requires one interaction');
+          assert.deepEqual(await bounds(),drawBounds,'draw must not resize or shift board');
+        }
+      }
       assert.ok(after,'action must leave a saved game');
       assert.notDeepEqual(after.state,before.state,'UI action must persist a different real-engine state for '+game.name);
       saved[game.id]=after;

@@ -77,7 +77,7 @@ export function previewThunderfighterAction(state: ThunderfighterState, action: 
     accepted: true as const,
     message: [actionLabel(action), replacement, removal, relocated, armor,
       shots.length ? `${hasDouble ? "Double tir" : "Tir"} : ${shots.map(labelOf).join(" et ")} neutralisé(s).` : "",
-      outcome, `Adversaires neutralisés : ${before.defeatedCount} → ${after.defeatedCount}.`]
+      outcome, before.defeatedCount!==after.defeatedCount?`Adversaires neutralisés : ${before.defeatedCount} → ${after.defeatedCount}.`:""]
       .filter(Boolean).join(" "),
     resultingShots: shots, resultingOutcome: after.outcome,
     changingCards: after.physicalCardCount === 54,
@@ -110,6 +110,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const inspectTrigger=useRef<HTMLElement|null>(null);
   function closeInspect(){setInspected(null);requestAnimationFrame(()=>inspectTrigger.current?.focus());}
   const [notice, setNotice] = useState("Chargement de Thunderfighter…");
+  useEffect(()=>{if(!/^(Coup enregistré|Coup d’entraînement) :/.test(notice))return;const timer=setTimeout(()=>setNotice(current=>current===notice?"":current),1800);return()=>clearTimeout(timer);},[notice]);
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -169,12 +170,13 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   function choose(action: ThunderfighterAction) {
     if (busy || committing.current || !isThunderActionLegal(legal,action)) return;
     if(!targetChoice)actionTrigger.current=document.activeElement as HTMLElement;
+    if(action.type==="draw-card"){void confirm(action);return;}
     setTargetChoice(null);
     setSelection(action);
   }
-  async function confirm() {
-    if (busy || committing.current || !selection || !session.current || !state) return;
-    if (!isThunderActionLegal(session.current.getLegalActions(),selection)) {
+  async function confirm(action:ThunderfighterAction|null=selection) {
+    if (busy || committing.current || !action || !session.current || !state) return;
+    if (!isThunderActionLegal(session.current.getLegalActions(),action)) {
       setLegal(session.current.getLegalActions());setSpecial(null);setTargetChoice(null);setSelection(null);
       setNotice("Cette action n'est plus autorisée.");
       return;
@@ -182,20 +184,20 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     committing.current=true;
     setBusy(true);
     try {
-      const result = await session.current.dispatch(selection);
+      const result = await session.current.dispatch(action);
       if (!result.accepted) setNotice("Action refusée : " + result.reason);
       else {
         const nextResult = getThunderfighterResult(result.state);
         const shots = (result.state.defeatedFigures??[]).filter(id=>!(state.defeatedFigures??[]).includes(id));
         setState(result.state);
         setLegal(session.current.getLegalActions());
-        const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":selection.type==="assign-armor"?"armor":selection.type==="extract"||selection.type==="reassign"?"special":"place";
+        const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":action.type==="assign-armor"?"armor":action.type==="extract"||action.type==="reassign"?"special":"place";
         setEffect({kind:effectKind,serial:++effectSerial.current});
         playGameplayEffect(effectKind);
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
           shots.length ? `${shots.length > 1 ? "Double tir" : "Tir"} : ${shots.map(labelOf).join(" et ")}.` :
-          `${tutorial ? "Coup d’entraînement" : "Coup enregistré"} : ${actionLabel(selection)}.`);
+          `${tutorial ? "Coup d’entraînement" : "Coup enregistré"} : ${actionLabel(action)}.`);
       }
       setSelection(null);setSpecial(null);setTargetChoice(null);
     } catch (error) { setNotice(storageRecoveryMessage(error, "write")); }
@@ -257,7 +259,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   }
   function dragHandlers(id:string,context:SpecialSelection|null){return {onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>startDrag(e,id,context),onPointerMove:moveDrag,onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e),onPointerCancel:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onLostPointerCapture:(e:ReactPointerEvent<HTMLElement>)=>{if(drag.current?.capture===e.target)finishDrag(e,true);},onClickCapture:(e:ReactMouseEvent<HTMLElement>)=>{if(suppressClick.current&&e.detail!==0){suppressClick.current=false;e.preventDefault();e.stopPropagation();}}};}
   const previewId=selection?.type==="place-number"||selection?.type==="assign-armor"?state?.pendingNumeric:selection?.type==="place-figure"?state?.pendingFigures[0]:selection?.type==="reassign"?state?.grid[selection.from]?.at(-1):null;
-  function renderPreview(kind:BoardTarget["kind"],index:number){return previewId&&selectedTarget?.kind===kind&&selectedTarget.index===index?<img className="tf-drop-preview" src={thunderArt[previewId]} alt="" aria-hidden="true"/>:null;}
+  function renderPreview(kind:BoardTarget["kind"],index:number){if(!state||!previewId||selectedTarget?.kind!==kind||selectedTarget.index!==index||selection?.type==="assign-armor")return null;const view=thunderCardView(state,previewId,language);return view?<span className="tf-drop-preview" data-preview-id={view.id} aria-hidden="true"><img src={thunderArt[view.id]} alt=""/><span className="tf-card-corner"><strong>{view.compact}</strong><span>{view.symbol}</span></span>{view.figure?<span className="tf-card-bottom">{view.resistance}</span>:null}</span>:null;}
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
@@ -299,7 +301,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <div className="thunder-middle">
           <div className="thunder-side-slots">{[11, 10, 9].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Ouest {i - 8}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
           <div className="thunder-grid">{state.grid.map((pile, i) => <div className="thunder-pile" key={i} data-tf-kind="pile" data-tf-index={i} data-target-state={targetState("pile",i)}>
-            {pile.length>1?<strong aria-label={`Pile ${i + 1} · ${pile.length} carte(s)`}>×{pile.length}</strong>:null}
+            {(()=>{const count=pile.length+(selection?.type==="place-number"&&selection.cell===i||selection?.type==="reassign"&&selection.to===i?1:0);return count>1?<strong aria-label={`Pile ${i + 1} · ${count} carte(s)`} data-preview-count={count}>×{count}</strong>:null;})()}
             {pile.length ? renderCard(pile[pile.length - 1]) : <span aria-label="Emplacement vide">—</span>}{renderPreview("pile",i)}{renderTarget("pile",i)}
           </div>)}</div>
           <div className="thunder-side-slots">{[3, 4, 5].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Est {i - 2}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
@@ -337,7 +339,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
         <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
       </div>
-      <p className="thunder-notice" role="status" aria-live="polite">{notice}</p>
+      <p className="thunder-notice tf-action-status" role="status" aria-live="polite" data-transient={/^(Coup enregistré|Coup d’entraînement) :/.test(notice)}>{notice}</p>
       </div>
 
     </>}

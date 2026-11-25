@@ -13,3 +13,6 @@ CI V4 45656684281 : unitaires, build, PWA réussis ; E2E square board en échec,
 
 ## Correctif tactile V5.1
 CI 45658106464 : 465 tests unitaires réussis, 78 mesures géométriques sans débordement ni commandes hors viewport, parcours FR clavier/souris complet ; échec du dépôt tactile. Hypothèse : transfert de capture implicite tactile du descendant vers le conteneur déclenche lostpointercapture et annule le geste. Capture explicite sur la carte dès pointerdown, propriétaire conservé jusqu'à la fin ; événements de perte filtrés, suppression de l'annulation pointerleave. Test tactile conservé, capture d'échec et absence de dialogue parasite ajoutées. CSS, moteur et stockage inchangés. Validation CI requise.
+
+## V5.2
+CI V5.1 45660062574 : dépôt tactile français réussi, échec suivant sur déplacement vertical 5,8125 px. Enveloppe commune console 226 px, sans overflow caché ; aperçu opaque avec rang/symbole, compteur futur, pioche normale directe via même dispatch légal, notification de succès 1,8 s. Tests existants conservés et assertions de pioche directe et stabilité ajoutées ; couverture de toutes les phases et CI complète à valider. Pas de uv.

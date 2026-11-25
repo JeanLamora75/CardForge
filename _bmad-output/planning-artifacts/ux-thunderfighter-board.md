@@ -34,3 +34,6 @@ Grille CSS unique 5×5, 21 positions identiques, conteneur viewport, console sta
 
 ## V5 validée — TF-UX-43 à TF-UX-50
 Console intrinsèque selon phase, réserve visible sans ascenseur, commandes non coupées, historique recherche en dialogue, espace disponible alloué au plateau carré, suppression du budget 180px et overflow hidden. Le moteur demeure la source des actions. Matrice Playwright 360×640, 390×844, 412×915, 600×900, 844×390, 1366×768 ; captures et mesures des commandes et du document. Pas de validation avant preuves effectives. CAR-90 distincte.
+
+## V5.2 — TF-UX-51 à TF-UX-58
+Console à enveloppe commune pour stabiliser le plateau, pioche normale directe (seulement draw-card, recherche/remplacement restent confirmés), prévisualisation complète du rang et symbole et compteur futur, suppression du bilan neutre, notification de succès temporaire, erreurs persistantes. Contrôles navigateur de la pioche en un clic et stabilité ajoutés. La réserve pleine ou une phase exceptionnelle peut demander davantage de place : couverture à compléter. Moteur/stockage et architecture V5.1 conservés.
