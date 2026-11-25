@@ -96,6 +96,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const confirmButton=useRef<HTMLButtonElement>(null);
   const [targetChoice,setTargetChoice]=useState<BoardTarget|null>(null);
   const [special,setSpecial]=useState<SpecialSelection|null>(null);
+  const searchDialog=useRef<HTMLDialogElement>(null);
   const drag=useRef<{id:string;pointer:number;x:number;y:number;active:boolean;context:SpecialSelection|null;origin:HTMLElement}|null>(null);
   const [ghost,setGhost]=useState<{id:string;x:number;y:number;returning?:boolean}|null>(null);
   const suppressClick=useRef(false);
@@ -303,25 +304,24 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <div className="thunder-bottom-slots">{[8, 7, 6].map(i => <div className="thunder-slot" key={i} data-tf-kind="sector" data-tf-index={i} data-target-state={targetState("sector",i)}><small>Sud {i - 5}</small>{figures[i] ? renderCard(figures[i]!) : <span className="tf-empty" aria-label="Libre">·</span>}{renderPreview("sector",i)}{renderTarget("sector",i)}</div>)}</div>
       </div>
       </div>
-      <div className="thunder-action-zone">
+      <div className="thunder-action-zone" data-console-phase={selection?"confirm":special?"special":state.phase==="searching"?"search":state.pendingNumeric||state.pendingFigures.length?"place":"draw"}>
 <div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p></div> : null}
       {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p></div> : null}
 </div>
-      <div className="tf-console-scroll">
+      <div className="tf-console-controls">
       <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
-        <h3>{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
+        <h3 className="thunder-sr-only">{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
         {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} className="tf-special-unit tf-drag-source" {...dragHandlers(id,special?.cardId===id?special:{cardId:id})}>{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
-        <details className="tf-reserve-info"><summary>{en?"Details":"Détail"}</summary><small>{en?"Used":"Utilisées"} : {state.spentSpecials.length}</small></details>
+        
         {special&&!selection?<div className="tf-special-instruction"><p>{choosingSource?(en?"Choose the source pile.":"Choisissez la pile source."):special.from!==undefined?(en?"Choose the destination for pile ":"Choisissez la destination de la pile ")+(special.from+1):en?"Choose the pile to extract.":"Choisissez la pile à extraire."}</p><button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>{en?"Cancel special action":"Annuler l’action spéciale"}</button></div>:null}
       </section>
       {search?.visible ? <section className="thunder-search" aria-label="Recherche">
-        <h3>Recherche d'un adversaire</h3>
-        <p data-i18n-ignore>{en?"Revealed number cards":"Cartes numériques révélées"} : {search.revealedNumerics.length}. {en?"They will return to the bottom of the deck.":"Elles seront replacées sous la pioche."}</p>
-        <div className="thunder-reserve tf-search-cards">{search.revealedNumerics.map(id => renderCard(id))}</div>
+        <button type="button" className="secondary-action tf-search-history" data-i18n-ignore onClick={()=>searchDialog.current?.showModal()}>{en?"Revealed cards":"Cartes révélées"} · {search.revealedNumerics.length}</button>
+        <dialog ref={searchDialog} className="tf-help-dialog" aria-label={en?"Revealed cards":"Cartes révélées"}><button type="button" className="tf-dialog-close" data-i18n-ignore onClick={()=>searchDialog.current?.close()}>{en?"Close":"Fermer"}</button><p data-i18n-ignore>{en?"Revealed cards return to the bottom of the deck.":"Les cartes révélées seront replacées sous la pioche."}</p><div className="thunder-reserve tf-search-cards">{search.revealedNumerics.map(id => renderCard(id))}</div></dialog>
         {search.integrityStatus === "invalid" ? <p role="alert">La partie ne peut pas continuer normalement.</p> : null}
       </section> : null}
       <h3 className="thunder-sr-only">Actions autorisées</h3>
-      {state.outcome === "in-progress" && !selection ? <div className="thunder-actions">
+      {state.outcome === "in-progress" && !selection && (targetChoice||fallbackActions.length>0||legal.length===0) ? <div className="thunder-actions">
         
         {targetChoice?<div className="tf-target-choices"><p data-i18n-ignore>{en?"Choose an action":"Choisissez une action"}</p>{ambiguousActions.map((action,index)=><button type="button" className="secondary-action" key={index} disabled={busy} onClick={()=>choose(action)}>{actionLabel(action)}</button>)}<button type="button" className="back-link" onClick={cancelSelection}>{en?"Cancel":"Annuler"}</button></div>:null}
         {legal.length ? fallbackActions.map((action, index) =>
@@ -329,8 +329,8 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         ) : <p>Aucune action disponible.</p>}
       </div> : null}
       </div>
-      <div className="thunder-confirm" role="group" aria-label={en?"Preview":"Prévisualisation"} data-selected={!!selection}>
-        <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:<span data-i18n-ignore>{en?"Drag the card or select a highlighted destination.":"Glissez la carte ou sélectionnez une destination."}</span>}</p>
+      <div className="thunder-confirm" hidden={!selection&&!state.pendingNumeric&&!state.pendingFigures.length} role="group" aria-label={en?"Preview":"Prévisualisation"} data-selected={!!selection}>
+        <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:!special&&(state.pendingNumeric||state.pendingFigures.length)?<span data-i18n-ignore>{en?"Drag the card or select a highlighted destination.":"Glissez la carte ou sélectionnez une destination."}</span>:null}</p>
         <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
         <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
       </div>

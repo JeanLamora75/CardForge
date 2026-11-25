@@ -31,3 +31,6 @@ Surface plein écran adaptative (21), dimensionnement hauteur/largeur (22), cons
 
 ## V4 — TF-UX-31 à TF-UX-42
 Grille CSS unique 5×5, 21 positions identiques, conteneur viewport, console stable. Pointer Events souris/tactile, capture, seuil 7 px, fantôme, dépôt illégal annulé, aperçu graphique, sélection clic/clavier conservée. As et Joker via contexte de réserve. Le dépôt ne valide jamais. Tests CDP touch et souris, géométrie, intégrité avant confirmation. Petit écran <640 px portrait : repli défilable. CAR-90 séparée.
+
+## V5 validée — TF-UX-43 à TF-UX-50
+Console intrinsèque selon phase, réserve visible sans ascenseur, commandes non coupées, historique recherche en dialogue, espace disponible alloué au plateau carré, suppression du budget 180px et overflow hidden. Le moteur demeure la source des actions. Matrice Playwright 360×640, 390×844, 412×915, 600×900, 844×390, 1366×768 ; captures et mesures des commandes et du document. Pas de validation avant preuves effectives. CAR-90 distincte.

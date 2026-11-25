@@ -7,3 +7,6 @@ Publication après revue utilisateur : fond spatial local, console permanente, d
 
 ## V4
 CI précédente 45655483334 : compilation et unitaires réussis, parcours FR clavier réussi, échec E2E visibilité simultanée sur mobile. Grille unique et budget viewport remplacent les règles de hauteur conflictuelles. Gestes Pointer Events, aperçu et tests ajoutés. Pas de modification moteur/stockage. Validation CI V4 non acquise. Workflow manuel sans uv.
+
+## V5
+CI V4 45656684281 : unitaires, build, PWA réussis ; E2E square board en échec, 26 captures archivées. Suppression des contraintes V4 et de la zone console défilable ; hauteur intrinsèque, plateau largeur et hauteur explicites ; réserve compacte et historique recherche superposé. Tests de matrice ajoutés ; couverture effective et captures V5 à vérifier. Aucun uv ni modification moteur/stockage.

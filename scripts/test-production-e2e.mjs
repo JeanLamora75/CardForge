@@ -11,6 +11,28 @@ vite.stdout.on('data',chunk=>{output+=String(chunk);});
 vite.stderr.on('data',chunk=>{output+=String(chunk);});
 let browser;
 
+async function thunderScreens(page,label){
+ const original=page.viewportSize();
+ const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});
+ const failures=[];
+ for(const [width,height] of [[360,640],[390,844],[412,915],[600,900],[844,390],[1366,768]]){
+  await page.setViewportSize({width,height});
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  await page.screenshot({path:'ux-screenshots/tf-v5-'+label+'-'+width+'x'+height+'.png'});
+  const result=await page.evaluate(()=>{
+   const board=document.querySelector('.thunder-battlefield'),consoleNode=document.querySelector('.thunder-action-zone');
+   const r=board.getBoundingClientRect();
+   const controls=[...consoleNode.querySelectorAll('button')].filter(n=>n.checkVisibility()&&!n.closest('dialog:not([open])'));
+   const clipped=controls.filter(n=>{const b=n.getBoundingClientRect();return b.top<0||b.bottom>innerHeight+1||b.left<0||b.right>innerWidth+1;}).map(n=>n.textContent);
+   return {width:r.width,height:r.height,top:r.top,bottom:r.bottom,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
+  });
+  console.log('TF V5',label,width,height,JSON.stringify(result));
+  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.clipped.length||result.scroll>height+1)failures.push({width,height,...result});
+ }
+ await page.setViewportSize(original);
+ assert.deepEqual(failures,[],'Thunderfighter V5 viewport matrix '+label);
+}
+
 async function waitForServer(){
   for(let i=0;i<100;i++){
     if(vite.exitCode!==null)throw new Error('Preview process exited: '+output);
@@ -409,6 +431,7 @@ async function journey(locale,mobile){
         const action=direct?target:page.locator(game.actions).first();
         const source=page.locator('.tf-current-card .tf-tactical').first();
         const geometry=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect(),cells=[...n.querySelectorAll('.thunder-slot,.thunder-pile')].map(e=>{const b=e.getBoundingClientRect();return [b.width,b.height]});return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,confirm:c.bottom,scroll:document.documentElement.scrollHeight,viewport:innerHeight,cells};});
+        await thunderScreens(page,label+'-initial');
         const original=await geometry();
         if(direct&&await source.count()){
           const src=await source.boundingBox(),dest=await target.boundingBox();
@@ -426,6 +449,7 @@ async function journey(locale,mobile){
           assert.deepEqual(await readSaved(page,game.id),before,'drop must not write');
         }else await interact(page,action,mobile);
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'true');
+        await thunderScreens(page,label+'-confirm');
         const selectedGeometry=await geometry();
         assert.ok(Math.abs(original.w-original.h)<=1,'square board');
         assert.equal(original.cells.length,21);
@@ -618,7 +642,9 @@ async function journey(locale,mobile){
         const target=(kind,index)=>tf.locator('.tf-target[data-target-kind="'+kind+'"][data-target-index="'+index+'"]');
         async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
         async function selectAction(){if(scenario==='extract'||scenario==='reassign')await selectSpecial();else if(scenario==='armor')await interact(offline,target('sector',0),mobile);else if(scenario==='replacement')await interact(offline,target('pile',0),mobile);else await interact(offline,tf.getByRole('button',{name:locale==='fr'?'Révéler la prochaine carte':'Reveal next card',exact:true}),mobile);}
+        await thunderScreens(offline,label+'-'+scenario);
         await selectAction();await tf.locator('.thunder-confirm[data-selected=true]').waitFor();
+        await thunderScreens(offline,label+'-'+scenario+'-confirm');
         assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
         if(scenario==='search')assert.equal(await tf.locator('[data-card-id="clubs-2"]').count(),0);
         await interact(offline,tf.locator('.thunder-confirm .back-link'),mobile);
