@@ -511,3 +511,14 @@ h1[tabindex="-1"]:focus { outline: none; }
 .forge-exit-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:4;pointer-events:none;animation:forge-exit .32s ease-in forwards;}
 .forge-title .world-logo{height:100%;max-height:25dvh;object-fit:contain;}
 .forge-menu-actions.context-actions{flex-shrink:0;}
+
+/* Keep the illustrated controls inside the safe viewport, with no rectangular matte. */
+.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;margin:0;}
+.forge-full>.forge-menu{position:relative;height:100%;min-height:0;padding: max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));}
+.forge-menu-actions.context-actions{width:100%;max-width:620px;margin:auto 0 clamp(8px,2.5dvh,24px);gap:4px;align-items:stretch;}
+.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{height:clamp(44px,7.2dvh,66px);min-height:44px;padding:4px 12%;background:transparent;box-shadow:none;}
+.forge-button-art{clip-path:polygon(0% 28%,6% 8%,18% 3%,82% 3%,94% 8%,100% 28%,100% 72%,94% 92%,82% 97%,18% 97%,6% 92%,0% 72%);}
+.forge-command{filter:drop-shadow(0 3px 5px #0008);}
+.forge-menu-foot{min-height:26px;margin-bottom:clamp(4px,1.5dvh,14px);}
+@media(orientation:portrait){.forge-menu-actions.context-actions{width:100%;max-width:620px;}.forge-title{max-height:24%;}.forge-title .world-logo{max-height:24dvh;}}
+@media(orientation:landscape){.forge-menu-actions.context-actions{width:min(96%,940px);max-width:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:clamp(4px,2dvh,16px);}.forge-command,.forge-command.primary-action,.forge-command.primary-action:hover{height:clamp(44px,10dvh,66px);}}

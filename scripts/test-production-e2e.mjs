@@ -144,6 +144,13 @@ async function immersiveScreens(){
     if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/"+id+"-"+viewport.width+".png"}); }
     assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.left>=0&&r.bottom<=innerHeight+1&&r.right<=innerWidth+1&&r.height>=44;})),id+" commands fit "+JSON.stringify(viewport));
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
+    if(viewport.width<viewport.height){
+      const geometry=await page.locator(".forge-menu-actions").evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,viewport:innerWidth,bottom:r.bottom,height:innerHeight};});
+      assert.ok(geometry.width>=geometry.viewport*.9,JSON.stringify(geometry));
+      assert.ok(geometry.bottom<=geometry.height-30,JSON.stringify(geometry));
+    }
+    assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
+
     await page.locator(".forge-command").filter({hasText:/Règles|Rules/}).click();await page.locator(".context-page").waitFor();
    }
    await context.setOffline(true);await page.goto(HOST+"#game/regicide");await page.locator(".forge-title img").evaluate(i=>i.decode());
