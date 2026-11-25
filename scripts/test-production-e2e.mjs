@@ -138,14 +138,15 @@ async function immersiveScreens(){
    }
    assert.equal(await page.getByRole("heading",{name:/Choisissez votre univers|Choose your universe/}).count(),0);
    assert.ok(await page.locator(".forge-cover button,.forge-settings-tile").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return Math.abs(r.width/r.height-2)<.06;})),"gallery tiles must be 2:1");
-   await page.locator(".forge-tile-scene,.forge-tile-logo").evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
+   await page.locator(".forge-tile-scene,.forge-tile-logo,.forge-settings-art").evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
    assert.ok(await page.locator(".forge-home .offline-readiness[data-offline-phase=ready]").evaluate(n=>n.getBoundingClientRect().height<=1),"ready status must not occupy visible gallery space");
    assert.equal(await page.locator(".forge-home select, .forge-home .settings-button").count(),0);
    assert.equal(await page.locator(".forge-grid > :last-child").getAttribute("class"),"forge-settings-card");
    if(viewport.width<viewport.height)assert.equal(await page.locator(".forge-grid").evaluate(n=>getComputedStyle(n).gridTemplateColumns.split(" ").length),1);
    await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:"instant"}));
    const end=await page.locator(".forge-settings-tile").evaluate(n=>{const r=n.getBoundingClientRect();return {top:r.top,bottom:r.bottom,height:innerHeight,scrollY,scrollHeight:document.documentElement.scrollHeight};});
-   assert.ok(end.top>=0&&end.height-end.bottom>=63, "settings must be fully visible with bottom margin: "+JSON.stringify(end));
+   assert.ok(end.top>=0&&end.height-end.bottom>=79, "settings must be fully visible with bottom margin: "+JSON.stringify(end));
+   assert.ok(await page.locator(".forge-settings-art").evaluate(n=>n.currentSrc.includes("settings-forge")||n.currentSrc.startsWith("data:image/svg+xml")),"dedicated settings art");
    if(viewport.width<viewport.height){assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.9)),"full-width portrait cards");}
    if(viewport.width===390){const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-gallery-end-390.png"});}
    await page.locator(".forge-settings-tile").click();

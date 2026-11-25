@@ -497,7 +497,7 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-home .forge-gallery-header .world-logo{max-height:16dvh;object-fit:contain;}
 .forge-home .offline-readiness{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:5px 8px;font-size:.72rem;color:#f0d8ae;background:#0c1014a8;border:0;border-radius:20px;padding:5px 12px;margin:2px auto 3px;max-width:calc(100% - 24px);}
 .forge-home .offline-readiness small{font-size:.66rem;color:#d1c7b4;}
-.forge-home .forge-gallery{padding:14px max(8px,env(safe-area-inset-right,0px)) calc(64px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));}
+.forge-home .forge-gallery{padding:14px max(12px,env(safe-area-inset-right,0px)) calc(80px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));}
 .forge-home .forge-gallery h2{font-size:clamp(1.25rem,4vw,1.8rem);margin:8px 0 22px;letter-spacing:.015em;}
 .forge-home .forge-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;max-width:980px;}
 .forge-home .forge-cover.game-card{border-radius:12px;box-shadow:0 7px 22px #0009;}
@@ -542,3 +542,15 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .forge-home > .forge-world-bg,.forge-home > .forge-effect{position:fixed;}
 .forge-home .forge-grid{width:100%;}
 @media(orientation:portrait){.forge-home .forge-grid{width:100%;max-width:none;margin:0;}.forge-home .forge-cover.game-card,.forge-home .forge-settings-card{width:100%;min-width:0;}}
+
+/* Gallery finishing: comfortable edges, dedicated settings illustration and tactile feedback. */
+.forge-home .forge-settings-tile{justify-content:flex-end;padding:12px 7%;box-shadow:0 7px 22px #0009;}
+.forge-home .forge-settings-art{opacity:1;object-position:center;}
+.forge-home .forge-settings-tile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,transparent 25%,#0d0c13aa 55%,#0d0c13df);}
+.forge-home .forge-settings-caption{width:54%;text-shadow:0 2px 6px #000;}
+.forge-home .forge-settings-caption small{line-height:1.4;}
+.forge-home .forge-cover.game-card,.forge-home .forge-settings-tile{transition:box-shadow 140ms ease,border-color 140ms ease,transform 140ms ease;}
+.forge-home .forge-cover.game-card:has(button:active),.forge-home .forge-settings-tile:active{transform:scale(.985);border-color:#f4d8a3;box-shadow:0 0 14px #e8b77766;}
+@media(hover:hover){.forge-home .forge-cover.game-card:hover,.forge-home .forge-settings-tile:hover{border-color:#e8b777;box-shadow:0 0 12px #e8b77744;}}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion="on"]) .forge-home .forge-cover.game-card,:root:not([data-motion="on"]) .forge-home .forge-settings-tile{transition:none;transform:none;}}
+[data-motion="off"] .forge-home .forge-cover.game-card,[data-motion="off"] .forge-home .forge-settings-tile{transition:none;transform:none;}

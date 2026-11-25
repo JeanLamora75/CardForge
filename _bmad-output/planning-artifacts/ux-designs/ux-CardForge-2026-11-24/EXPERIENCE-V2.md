@@ -60,3 +60,6 @@ Captures : galerie et menus réduits à environ un quart de la largeur ; décor 
 
 ## Galerie pleine page — 25 novembre 2026
 Supprimer le défilement interne et le séparateur de l'en-tête : logo et cartes défilent dans le même document. Fond illustré fixe derrière la galerie. Portrait : une carte panoramique 2:1 par ligne, sans largeur maximale, marges latérales 8 px ou zone sûre. Fin de page : 64 px minimum après la carte Paramètres, plus zone sûre ; contrôle géométrique après défilement jusqu'en bas. Les menus individuels, les règles et sauvegardes restent inchangés. Validation CI et visuelle à constater.
+
+## Finitions de la galerie — 25 novembre 2026
+Marges latérales 12 px, écart 16 px, marge finale 80 px + zone sûre. Carte Paramètres : illustration vectorielle originale dédiée (engrenages dorés, cartes, lueur de forge), texte FR/EN conservé en HTML. Micro-interactions à l'appui et au survol, sans délai ajouté à la navigation et respect de la réduction des mouvements. L'illustration SVG est importée par Vite et intégrée au bundle hors ligne. Contrôles de décodage et de fin de défilement renforcés ; rendu artistique et CI à constater.
