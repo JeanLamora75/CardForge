@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:net';
 import { join } from 'node:path';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { openFreshPreview } from './open-fresh-preview.mjs';
 import { createInterface } from 'node:readline';
 import { chromium } from 'playwright';
@@ -47,10 +47,20 @@ try {
   if (!ready) throw new Error('Le serveur de previsualisation ne repond pas.');
   const profileRoot = join(process.env.LOCALAPPDATA || process.env.TEMP || process.cwd(),'CardForge-Preview');
   for (const channel of ['msedge','chrome']) {
+    // Reset only zoom preferences of the dedicated preview profile, not its game data.
+    const preferencesPath=join(profileRoot,channel,'Default','Preferences');
+    if(existsSync(preferencesPath)){
+      const prefs=JSON.parse(readFileSync(preferencesPath,'utf8'));
+      if(prefs.partition){
+        prefs.partition.default_zoom_level=0;
+        delete prefs.partition.per_host_zoom_levels;
+      }
+      writeFileSync(preferencesPath,JSON.stringify(prefs));
+    }
     try {
       context = await chromium.launchPersistentContext(join(profileRoot,channel),{
-        channel,headless:false,viewport:null,hasTouch:true,
-        args:['--window-size=440,760','--force-device-scale-factor=1'],
+        channel,headless:false,viewport:null,
+        args:['--window-size=500,850'],
       });
       break;
     } catch (error) {
@@ -62,7 +72,14 @@ try {
     const worker = readFileSync('dist/sw.js','utf8');
     const version = worker.match(/const CACHE_NAME = PREFIX [+] "([a-f0-9]{8})";/)?.[1];
     if (!version) throw new Error('Version du build PWA introuvable.');
+    const cdp=await context.newCDPSession(page);
+    await cdp.send('Emulation.clearDeviceMetricsOverride');
+    await cdp.send('Emulation.setPageScaleFactor',{pageScaleFactor:1});
+    await cdp.detach();
     await openFreshPreview(context,page,url,version);
+    const metrics=await page.evaluate(()=>({width:innerWidth,height:innerHeight,outerWidth,outerHeight,dpr:devicePixelRatio,scale:visualViewport?.scale}));
+    console.log('Surface CSS / fenetre : '+JSON.stringify(metrics));
+    if(metrics.width>metrics.outerWidth*1.3)console.warn('Zoom navigateur anormal : utilisez Ctrl+0 dans la fenetre CardForge.');
     console.log('Interface UX V2 chargee ; cache PWA du build '+version+' controle.');
     context.on('close',()=>{void stop();});
     console.log('\nVue mobile responsive : surface réelle de la fenêtre, sans viewport artificiel. Profil de test persistant : '+profileRoot);

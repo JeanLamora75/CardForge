@@ -132,6 +132,10 @@ async function immersiveScreens(){
    await page.locator(".forge-grid button").last().waitFor();
    assert.equal(await page.locator(".forge-tile-scene").count(),5);
    assert.equal(await page.locator(".forge-tile-logo").count(),5);
+   if(viewport.width<=600&&viewport.width<viewport.height){
+     assert.ok(await page.locator(".forge-cover button").evaluateAll(nodes=>nodes.every(n=>n.getBoundingClientRect().width>=innerWidth*.85)),"portrait gallery must fill available width");
+     assert.ok(await page.locator(".forge-gallery-header .brand").evaluate(n=>n.getBoundingClientRect().width>=innerWidth*.5),"gallery logo must be readable");
+   }
    assert.equal(await page.getByRole("heading",{name:/Choisissez votre univers|Choose your universe/}).count(),0);
    assert.ok(await page.locator(".forge-cover button,.forge-settings-tile").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect();return Math.abs(r.width/r.height-2)<.06;})),"gallery tiles must be 2:1");
    await page.locator(".forge-tile-scene,.forge-tile-logo").evaluateAll(nodes=>Promise.all(nodes.map(n=>n.decode())));
@@ -162,7 +166,7 @@ async function immersiveScreens(){
     assert.ok(await page.evaluate(()=>document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2));
     if(viewport.width<viewport.height){
       const geometry=await page.locator(".forge-menu-actions").evaluate(n=>{const r=n.getBoundingClientRect();return {width:r.width,viewport:innerWidth,bottom:r.bottom,height:innerHeight};});
-      assert.ok(geometry.width>=Math.min(geometry.viewport-32,460)-1,JSON.stringify(geometry));
+      assert.ok(geometry.width>=Math.min(geometry.viewport-32,540)-1,JSON.stringify(geometry));
       assert.ok(geometry.bottom<=geometry.height-15,JSON.stringify(geometry));
     }
     assert.ok(await page.locator(".forge-button-art").evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).clipPath!=="none")),"button art must not expose rectangular corners");
@@ -170,6 +174,7 @@ async function immersiveScreens(){
     assert.ok(await page.locator(".forge-title").evaluate(n=>{const r=n.getBoundingClientRect();return Math.abs(r.x+r.width/2-innerWidth/2)<2;}),"logo centered");
     assert.match(await page.locator(".forge-command").last().innerText(),/^(Retour|Back)$/);
     assert.equal(await page.locator(".forge-command.primary-action").count(),1);
+    if(viewport.width<=600&&viewport.width<viewport.height)assert.ok(await page.locator(".forge-menu-actions").evaluate(n=>n.getBoundingClientRect().width>=innerWidth*.85),"portrait commands must fill available width");
     assert.equal(await page.locator(".forge-command-back").count(),1);
     assert.ok(await page.locator(".forge-command.primary-action .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity))>await page.locator(".forge-command-back .forge-button-art").evaluate(n=>Number(getComputedStyle(n).opacity)),"primary action must stand out from return");
     assert.ok(await page.locator(".forge-command").evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect(),l=n.querySelector("span").getBoundingClientRect();return Math.abs((r.top+r.bottom-l.top-l.bottom)/2)<=2;})),"labels must be vertically centered");

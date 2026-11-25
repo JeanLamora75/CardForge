@@ -54,3 +54,6 @@ La moitié supérieure est réservée à l’illustration : aucune commande au-d
 
 ## Recette Windows — surface réelle
 Hypothèse principale après captures répétées : le lanceur impose un viewport Pixel 7 de hauteur fixe, qui peut dépasser la zone cliente réellement visible dans la fenêtre Windows. Le lanceur conserve le profil, le port et les données, mais ne force plus de viewport émulé : la fenêtre étroite est redimensionnable et le layout s’adapte à sa surface réelle. Les tests de géométrie sont exécutés avant le scénario de cache historique, qui bloquait jusqu’ici leur exécution. Validation Windows à confirmer.
+
+## Recette — échelle du lanceur
+Captures : galerie et menus réduits à environ un quart de la largeur ; décor plein écran. Hypothèse zoom navigateur persistant ou métriques forcées. Réinitialiser uniquement les préférences de zoom du profil de test, supprimer le facteur de pixels forcé et l’émulation tactile du lanceur Windows ; journaliser dimensions CSS, fenêtre, DPR et échelle. En portrait étroit : jaquettes 2:1 et zone de commandes au moins 85 % de la largeur, logo catalogue au moins 50 %. Maintenir commandes dans la moitié inférieure, marge basse et cibles de 44 px. Validation réelle Windows encore nécessaire.
