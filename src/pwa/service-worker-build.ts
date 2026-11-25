@@ -75,6 +75,11 @@ self.addEventListener("fetch", event => {
       const cache = await caches.open(CACHE_NAME);
       const shell = await cache.match(new URL("./index.html", self.registration.scope).href);
       try { const live = await fetch(request, { cache: "no-store" }); if (live.ok) return live; } catch { /* offline */ }
+      // A locally distributed licence is a document, not an SPA route.
+      if (URLS.includes(url.href) && url.href !== new URL("./", self.registration.scope).href && url.href !== new URL("./index.html", self.registration.scope).href) {
+        const asset = await cache.match(url.href, { ignoreVary: true });
+        return asset || Response.error();
+      }
       if (shell) return shell;
       return Response.error();
     })());
