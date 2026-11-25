@@ -52,6 +52,11 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
   const name = names[gameId];
   const helpDialog=useRef<HTMLDialogElement>(null);
   useEffect(()=>{const node=helpDialog.current;if(gameId!=="gridcannon"||!node)return;if(thunderHelp&&!node.open)node.showModal();else if(!thunderHelp&&node.open)node.close();},[thunderHelp,gameId,mode]);
+  function closeHelp(){
+    helpDialog.current?.close();
+    setShowRules(false);
+    onCloseThunderHelp?.();
+  }
   function choose(choice: LearningChoice) {
     const next = { ...preferences, choice };
     setPreferences(next);
@@ -81,7 +86,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         <button className="secondary-action" type="button" onClick={() => choose("play")}>Jouer directement</button>
       </div>
     </section> : <>
-      {gameId==="gridcannon"?<dialog ref={helpDialog} className="tf-help-dialog" aria-label={language==="en"?"Help and rules":"Aide et règles"} onCancel={event=>{event.preventDefault();event.stopPropagation();onCloseThunderHelp?.();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();onCloseThunderHelp?.();}}}><button type="button" className="tf-dialog-close" onClick={onCloseThunderHelp} data-i18n-ignore>{language==="en"?"Close":"Fermer"}</button>{controls}<p data-i18n-ignore>{language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup."}</p></dialog>:controls}
+      {gameId==="gridcannon"?<dialog ref={helpDialog} className="tf-help-dialog tf-game-help" aria-label={language==="en"?"Help and rules":"Aide et règles"} onClose={()=>{setShowRules(false);onCloseThunderHelp?.();}} onCancel={event=>{event.preventDefault();event.stopPropagation();closeHelp();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();closeHelp();}}}><header className="tf-help-header" data-i18n-ignore><button type="button" className="tf-dialog-close" onClick={closeHelp}>{language==="en"?"Resume game":"Reprendre la partie"}</button></header><div className="tf-help-content">{controls}<p data-i18n-ignore>{language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup."}</p></div></dialog>:controls}
       {mode === "learn" ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
       {mode === "learn" ? <div key={tutorialRun}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :

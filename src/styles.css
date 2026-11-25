@@ -1023,3 +1023,10 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board.tf-live:not(.tf-training){grid-template-rows:auto minmax(180px,1fr);}
 .thunder-board.tf-live:not(.tf-training) .thunder-action-zone{align-self:center;min-height:0;}
 }
+
+/* Keep the exit outside the scrollable rulebook, including on small screens. */
+.tf-game-help:not([open]){display:none!important;}
+.tf-game-help[open]{display:flex;flex-direction:column;overflow:hidden;max-height:85dvh;padding:0;}
+.tf-game-help .tf-help-header{flex:none;padding:8px;background:#142d3c;border-bottom:1px solid #607d90;}
+.tf-game-help .tf-dialog-close{float:none;display:block;width:100%;min-height:44px;}
+.tf-game-help .tf-help-content{min-height:0;overflow:auto;padding:10px;overscroll-behavior:contain;}

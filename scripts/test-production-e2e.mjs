@@ -425,6 +425,18 @@ async function journey(locale,mobile){
         await interact(page,page.locator(game.actions).first(),mobile);
         await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
       }else if(game.confirm){
+        const help=page.locator('.tf-help-toggle');
+        const dialog=page.locator('.tf-game-help');
+        await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
+        await interact(page,dialog.getByRole('button',{name:/^Règles$|^Rules$/}),mobile);
+        await dialog.locator('.learning-rulebook').waitFor({state:'visible'});
+        await dialog.locator('.tf-help-content').evaluate(n=>n.scrollTop=n.scrollHeight);
+        await interact(page,dialog.locator('.tf-dialog-close'),mobile);
+        await dialog.waitFor({state:'hidden'});
+        assert.deepEqual(await readSaved(page,game.id),before,'closing help must not change save');
+        await interact(page,help,mobile);await dialog.waitFor({state:'visible'});
+        await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
+        assert.deepEqual(await readSaved(page,game.id),before,'Escape must preserve save');
         assert.equal(await page.locator('.tf-special-console').count(),1);
         const target=page.locator('.tf-target').first();
         const direct=await target.count()>0;
