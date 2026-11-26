@@ -1,0 +1,3 @@
+ThunderFighter — 36 illustrations numériques, 2 à 10 pour chaque faction.
+Extraire dans la racine du dépôt CardForge en conservant les chemins public/art/thunderfighter/ships/. Destination proposée, à confirmer avec Amelia.
+Les fichiers sont WebP 1024 x 1024. Le manifeste trace les sources et traitements. Les affectations Orion sont provisoires, la progression de masse est perfectible ; Aegis 10 provient du panneau droit d’un triptyque, deux Solaris utilisent un cadrage carré adapté. Les insignes décoratifs sur coque sont autorisés ; seuls les insignes d’alliance doivent figurer dans l’interface. Aucun changement des règles. Vérifier le rendu sur plateau avant intégration finale.

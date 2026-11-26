@@ -1,0 +1,182 @@
+[
+  {
+    "path": "public/art/thunderfighter/officers/nova/lieutenant.webp",
+    "source": "a_detailed_sci_fi_portrait_scene_a_close_up_reali.png",
+    "faction": "nova",
+    "rank": "lieutenant",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "febeaeb33a20e83522c00f5b51642ba548341ded552aba8ec50ee3ab111f2d4e"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/nova/commander.webp",
+    "source": "a_highly_detailed_realistic_sci_fi_portrait_close.png",
+    "faction": "nova",
+    "rank": "commander",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "060341392fcc83f2246aff1b31e4be06749cc11a7aa3ce2431226d3b8921f2b6"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/nova/admiral.webp",
+    "source": "a_highly_detailed_cinematic_sci_fi_portrait_an_ol.png",
+    "faction": "nova",
+    "rank": "admiral",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "9a7004582d0d87f712bba7f270f17ee0d5b70652575a9aa3a161da35fbefa69f"
+  },
+  {
+    "path": "public/art/thunderfighter/special/nova/alpha.webp",
+    "source": "a_cinematic_sci_fi_space_scene_a_massive_futurist.png",
+    "faction": "nova",
+    "rank": "alpha",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "5d52e8987f7db9e881af3b3debdbb99c2510d6f1a24095e5ac2a2e8f2b8bac23"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/vector/lieutenant.webp",
+    "source": "a_detailed_portrait_style_sci_fi_illustration_a_c.png",
+    "faction": "vector",
+    "rank": "lieutenant",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "7ffd4016a7e521a3642875f52dedc913d75da37d9fc1d927dcb0753801b623e6"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/vector/commander.webp",
+    "source": "a_detailed_cinematic_sci_fi_portrait_an_older_wh.png",
+    "faction": "vector",
+    "rank": "commander",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "a13aa6ff9f7122c6135063187981f7dc516803f41abf55398620ac6d7d80acdb"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/vector/admiral.webp",
+    "source": "a_highly_detailed_cinematic_sci_fi_portrait_illus.png",
+    "faction": "vector",
+    "rank": "admiral",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "847ce6586fa068f0ca184ad6ed4363a10dc8566eaec416368d60dcd82702a4bb"
+  },
+  {
+    "path": "public/art/thunderfighter/special/vector/alpha.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_dramatic_cinemat.png",
+    "faction": "vector",
+    "rank": "alpha",
+    "alliance": "Phoenix",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "1762c3e282cc08035acf028aefaa54b8c973da5deb3e1b423e68aeaf6748b18d"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/aegis/lieutenant.webp",
+    "source": "a_cinematic_detailed_realistic_digital_portrait_o.png",
+    "faction": "aegis",
+    "rank": "lieutenant",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "e953110dcec1200e828a1f67a5bd553751bf8e55a98fceddc2e8072a7cdc93ad"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/aegis/commander.webp",
+    "source": "a_detailed_cinematic_sci_fi_portrait_a_close_up.png",
+    "faction": "aegis",
+    "rank": "commander",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "0c54f9acfa9dfa1791fcacf64c215dcf12d1c0fd6b1f16e0c9625a63ea112645"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/aegis/admiral.webp",
+    "source": "a_detailed_realistic_cinematic_sci_fi_portrait_c.png",
+    "faction": "aegis",
+    "rank": "admiral",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "11da3d9ed61e9ffc774eb3f1d55fd03e13c7d873de0db10e78df28d8a1af0e18"
+  },
+  {
+    "path": "public/art/thunderfighter/special/aegis/alpha.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_dramatic_cinemat.png",
+    "faction": "aegis",
+    "rank": "alpha",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "a857c395c051dd0f79dadd1e44e6ed7d3e96a51decc686e99ff7995e07b43efa"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/solaris/lieutenant.webp",
+    "source": "a_detailed_cinematic_digital_illustration_a_clos.png",
+    "faction": "solaris",
+    "rank": "lieutenant",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "b2fd4b01c6202d8dea2cad277b9f571e04e6e3e3fe9b17cfdb0d52d501495840"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/solaris/commander.webp",
+    "source": "a_detailed_sci_fi_portrait_illustration_a_confide.png",
+    "faction": "solaris",
+    "rank": "commander",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "c8257a331a87de7d398d1a7043e02f6ac66a8e7a0fc9f2df932e52a590a351e7"
+  },
+  {
+    "path": "public/art/thunderfighter/officers/solaris/admiral.webp",
+    "source": "a_highly_detailed_realistic_sci_fi_portrait_illus.png",
+    "faction": "solaris",
+    "rank": "admiral",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "28cc463099bda008f447ab7159d8ed2b914ae1247b03f862ae9be1d844a53b4f"
+  },
+  {
+    "path": "public/art/thunderfighter/special/solaris/alpha.webp",
+    "source": "a_cinematic_sci_fi_scene_a_massive_futuristic_orb.png",
+    "faction": "solaris",
+    "rank": "alpha",
+    "alliance": "Orion",
+    "width": 1024,
+    "height": 1024,
+    "sha256": "11e736c367132fd0c01c94650ea1eb66d5284f1d07fc0e5de7004a82f28bd164"
+  },
+  {
+    "path": "public/art/thunderfighter/special/singularity/01.webp",
+    "source": "a_dramatic_space_scene_a_cinematic_high_detail_b.png",
+    "faction": null,
+    "rank": "singularity",
+    "alliance": null,
+    "width": 1024,
+    "height": 1024,
+    "sha256": "28abee0dc9e40959984e12db482c31ad5148968f21157921e6c2f1e14cf479c3"
+  },
+  {
+    "path": "public/art/thunderfighter/special/singularity/02.webp",
+    "source": "a_dramatic_space_scene_of_a_glowing_dimensional_ri.png",
+    "faction": null,
+    "rank": "singularity",
+    "alliance": null,
+    "width": 1024,
+    "height": 1024,
+    "sha256": "c16829f584e8658657403a9776c312a8b5c05ee18fc2ceed3dff18699c209596"
+  }
+]

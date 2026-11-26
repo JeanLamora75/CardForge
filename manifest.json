@@ -1,0 +1,614 @@
+[
+  {
+    "faction": "nova",
+    "valeur": 2,
+    "fichier": "public/art/thunderfighter/ships/nova/02.webp",
+    "source": "vaisseau_spatial_futuriste_aux_lueurs_orangées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "36279748df80f163e1b154369ff04345bb386ba5d719d78a1e3c7b0a0721c878",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 3,
+    "fichier": "public/art/thunderfighter/ships/nova/03.webp",
+    "source": "chasseur_spatial_futuriste_en_piqué.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "a1d21f52ffd3c087c12eb0c30ccfd7f368d224011d76e8465822e685e1f2ddcd",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 4,
+    "fichier": "public/art/thunderfighter/ships/nova/04.webp",
+    "source": "chasseur_d_assaut_futuriste_en_plein_vol.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "e78281141e7258ce48a31c6ff916a0151f73968908697d68ceb3735945a9cd61",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 5,
+    "fichier": "public/art/thunderfighter/ships/nova/05.webp",
+    "source": "frégate_futuriste_aux_propulseurs_ardents.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "0f203e860a635ee8a7a69cbe3a95cf8df809dbd6f01f2916029eaa0bbdd74602",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 6,
+    "fichier": "public/art/thunderfighter/ships/nova/06.webp",
+    "source": "chasseur_spatial_futuriste_aux_lueurs_orangées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "777ea69f600008c7fc8357e0ec31d6f51068906a99a8ec69b4edae4c1c87c44a",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 7,
+    "fichier": "public/art/thunderfighter/ships/nova/07.webp",
+    "source": "corvette_d_assaut_dans_une_nébuleuse_ardente.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "fd0c9504ca12c78be38a09daa0b2e74afd33a4df46d1a2b3768497ef94ea7bd0",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 8,
+    "fichier": "public/art/thunderfighter/ships/nova/08.webp",
+    "source": "destroyer_futuriste_aux_lueurs_orangées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "3afd25fd9ea41abd076eb7b0cdc656c3efed535b050b58334a218dc42747bea6",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 9,
+    "fichier": "public/art/thunderfighter/ships/nova/09.webp",
+    "source": "croiseur_spatial_futuriste_en_armure_lumineuse.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "f25bdf98e9f80e2e40cfa5c596bd9dfcd6f2ae676a2870b5926088c64f298cf9",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "nova",
+    "valeur": 10,
+    "fichier": "public/art/thunderfighter/ships/nova/10.webp",
+    "source": "cuirassé_spatial_aux_accents_orange.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "8d66ec278f6576945330491357722e76989a87869992e8cefa8cd6afdd3500b0",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 2,
+    "fichier": "public/art/thunderfighter/ships/vector/02.webp",
+    "source": "éclaireur_spatial_argenté_aux_propulseurs_ambrés.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "005e11539063f9dddc3f2d238059a128b4ac39c9d9866a9bf74efb40a903e8bd",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 3,
+    "fichier": "public/art/thunderfighter/ships/vector/03.webp",
+    "source": "intercepteur_futuriste_aux_lueurs_ambrées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "fbdfd6e6107618bedb0d65103242dbc25d5df140ca672ca56d1f7cd1ddc84e80",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 4,
+    "fichier": "public/art/thunderfighter/ships/vector/04.webp",
+    "source": "chasseur_d_assaut_futuriste_aux_lueurs_ambrées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "b3e64b189f64812bfbe67ae206a5dbdc42fd1fa7040fc91ce668e1c746889e76",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 5,
+    "fichier": "public/art/thunderfighter/ships/vector/05.webp",
+    "source": "frégate_spatiale_futuriste_argentée_aux_accents_am.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "e5451cf2279264fbc831f926603564c0363aa9c6632be11bc31216587b4d0f80",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 6,
+    "fichier": "public/art/thunderfighter/ships/vector/06.webp",
+    "source": "chasseur_spatial_vector_aux_lueurs_ambrées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "bec36b956f6c7d54bc4f0d104bd131b579f14bea4cc8d2cf6387638f530ac061",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 7,
+    "fichier": "public/art/thunderfighter/ships/vector/07.webp",
+    "source": "corvette_d_assaut_au_cœur_de_la_nébuleuse.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "a435e41caee57881b502cb47f82e0a58e53315d200fdaf3191080ce2d91cc641",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 8,
+    "fichier": "public/art/thunderfighter/ships/vector/08.webp",
+    "source": "destroyer_spatial_aux_lueurs_ambrées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "d48ba42846f41e026cf201a56051c6ee11d2565823a8ed53b0a9c18093226d1d",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 9,
+    "fichier": "public/art/thunderfighter/ships/vector/09.webp",
+    "source": "croiseur_d_attaque_futuriste_argenté.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "fbb9f3e35d2fdc6e2b67b1cef901dff34c5e68503e57017658f8ff18b4d2c8cc",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "vector",
+    "valeur": 10,
+    "fichier": "public/art/thunderfighter/ships/vector/10.webp",
+    "source": "vaisseau_amiral_futuriste_aux_lueurs_ambrées.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "092b9ed6d13820d1edc7e268159a29eac64a99f4856201691a6c3c06f4749e4c",
+    "affectation": "selon ordre de génération"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 2,
+    "fichier": "public/art/thunderfighter/ships/aegis/02.webp",
+    "source": "a_detailed_sci_fi_illustration_a_sleek_futuristic.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "6c680a9b65c89cc1d9b4e583130180a0bccd4cccaf1055bad22ee2db5827b474",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 3,
+    "fichier": "public/art/thunderfighter/ships/aegis/03.webp",
+    "source": "a_detailed_sci_fi_spaceship_illustration_a_sleek.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "cc13afc7cf56225fb22986446f92a81806b113110c3697a7acdbf8f143af55f9",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 4,
+    "fichier": "public/art/thunderfighter/ships/aegis/04.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_futuristic_aegis.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "578b7b60c83dfa5ba648bc9fb27939e1a6e933a5b390a7727de26e967a5e36cb",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 5,
+    "fichier": "public/art/thunderfighter/ships/aegis/05.webp",
+    "source": "a_detailed_sci_fi_space_illustration_a_futuristic.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "362e01c31ffdae17f9808f459ce2b21a437838b607a62026d6e2d520d3a61f1a",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 6,
+    "fichier": "public/art/thunderfighter/ships/aegis/06.webp",
+    "source": "a_detailed_sci_fi_scene_a_heavy_futuristic_aegis.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "41a6f63254e5fec86ff140a69684d64063b65ca307f44c07379dbb63a7b70282",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 7,
+    "fichier": "public/art/thunderfighter/ships/aegis/07.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_large_heavily_ar.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "36911c6cdbf17d66fd92844d19a8ac5ebf5ff67a8518ef139f10bd80f2cb9389",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 8,
+    "fichier": "public/art/thunderfighter/ships/aegis/08.webp",
+    "source": "a_highly_detailed_sci_fi_spaceship_in_space_a_sle.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "44ed3dd257dfd69d8168977e730456bbcc08e626da5fa0e5670d5b9b2cac4843",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 9,
+    "fichier": "public/art/thunderfighter/ships/aegis/09.webp",
+    "source": "a_detailed_sci_fi_scene_a_heavy_armored_space_bat.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "9cf5d50f79ac12cc669dd5253c660115b99561252b31f380005b0e93e3483b7c",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "aegis",
+    "valeur": 10,
+    "fichier": "public/art/thunderfighter/ships/aegis/10.webp",
+    "source": "a_wide_triptych_sci_fi_space_scene_with_three_sepa.png",
+    "dimensions_source": [
+      2172,
+      724
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "extraction du panneau droit du triptyque ; adaptation carrée sans déformation",
+    "sha256": "7d9ffe826458feb0a7e99003c51b76c4e4fec18f7ca074b2f38f4db5c2fa3328",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 2,
+    "fichier": "public/art/thunderfighter/ships/solaris/02.webp",
+    "source": "a_detailed_sci_fi_spaceship_scene_a_sleek_futuris.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "ee19d673adb8dadc45c5082f90730c8821ddf0491f49456332b6f0507b4a64d4",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 3,
+    "fichier": "public/art/thunderfighter/ships/solaris/03.webp",
+    "source": "a_detailed_sci_fi_spaceship_illustration_a_futuri.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "665add1d5bc11829a2c919236f82e43feb425e8c00829f7ef296a96ff154570d",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 4,
+    "fichier": "public/art/thunderfighter/ships/solaris/04.webp",
+    "source": "a_detailed_sci_fi_spaceship_illustration_in_outer.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "2ada3c087b8c86e92d4df7ba74e5e9bb1914dc9e0a6b5a258e82e00a0f6ff766",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 5,
+    "fichier": "public/art/thunderfighter/ships/solaris/05.webp",
+    "source": "a_detailed_sci_fi_digital_illustration_a_sleek_fu.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "5fc8bd3a3c6276147bace6ada789f64f285e9c98fd00e5b35995313a05b56254",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 6,
+    "fichier": "public/art/thunderfighter/ships/solaris/06.webp",
+    "source": "a_highly_detailed_sci_fi_spaceship_illustration_a.png",
+    "dimensions_source": [
+      1536,
+      1024
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement ; adaptation carrée sans déformation",
+    "sha256": "6b497b577709c3fab8db1b3b5b9dc0a7a632e954f7fe3a883ea7b345dc152de9",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 7,
+    "fichier": "public/art/thunderfighter/ships/solaris/07.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_sleek_futuristic.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "b5c2bda1720089a8d78548598b203ae891a34671b4d29c0bfa9a4bc9a45d0302",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 8,
+    "fichier": "public/art/thunderfighter/ships/solaris/08.webp",
+    "source": "a_highly_detailed_sci_fi_spacecraft_in_deep_space.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "17c6e4a83419654278c9b5a4f49968c53b4eec4c7f3480ccccc3363fb1fa54f5",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 9,
+    "fichier": "public/art/thunderfighter/ships/solaris/09.webp",
+    "source": "a_detailed_sci_fi_space_scene_a_highly_detailed.png",
+    "dimensions_source": [
+      1254,
+      1254
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement",
+    "sha256": "7eac1899df415049c49b2e68eddf40edb976a9415b11334b7e78ad48bd59bf44",
+    "affectation": "provisoire à valider sur plateau"
+  },
+  {
+    "faction": "solaris",
+    "valeur": 10,
+    "fichier": "public/art/thunderfighter/ships/solaris/10.webp",
+    "source": "a_detailed_futuristic_sci_fi_spaceship_on_a_dark_s.png",
+    "dimensions_source": [
+      1536,
+      1024
+    ],
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "traitement": "redimensionnement ; adaptation carrée sans déformation",
+    "sha256": "4c329c155c4641d4fab8607ef151f6a3f1d0f313107522f8d44b33718ac99de0",
+    "affectation": "provisoire à valider sur plateau"
+  }
+]
