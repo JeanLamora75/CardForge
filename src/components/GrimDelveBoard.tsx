@@ -9,6 +9,8 @@ import { storageRecoveryMessage } from "../application/storage-recovery-messages
 import { createTutorialSession } from "../application/learning.ts";
 import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
+import GrimDelveCard from "./GrimDelveCard.tsx";
+import { grimAttackProgress } from "../application/grim-delve-card-view.ts";
 import { playGameplayEffect } from "../application/audio.ts";
 import { translateUiText } from "../i18n/surface.ts";
 
@@ -39,17 +41,15 @@ function cardLabel(id: string) {
 function Card({ id, selected = false, onClick, disabled = false, target = false }: {
   id: string; selected?: boolean; onClick?: () => void; disabled?: boolean; target?: boolean;
 }) {
-  const card = cards.get(id);
-  const monster = card && "rank" in card && card.rank >= 11;
-  const figure = monster ? ("rank" in card! ? card.rank === 11 ? "♜" : card.rank === 12 ? "♛" : "♚" : "") : "✧";
-  return <button type="button" className="grim-card" data-monster={monster || undefined} data-faction={card && "suit" in card ? card.suit : "joker"} data-target={target || undefined}
-    aria-pressed={onClick ? selected : undefined} aria-label={cardLabel(id)}
-    onClick={onClick} disabled={disabled || !onClick}>
-    <span className="gd-card-value" aria-hidden="true">{valueOf(id)}</span><span className="gd-card-suit" aria-hidden="true">{card && "suit" in card ? symbols[card.suit] : "★"}</span><span className="grim-card-crest" aria-hidden="true">{figure}</span>
-    <strong>{card && "rank" in card ? (monster ? `${card.rank===11?"Valet":card.rank===12?"Dame":"Roi"} · ${factions[card.suit]}` : factions[card.suit]) : "Joker"}</strong>
-    <small className="gd-sr-only">{monster ? "Résistance" : "Puissance"} : {valueOf(id)}</small>
-    
-  </button>;
+  const card=cards.get(id);
+  const numbered=card && "rank" in card ? card : undefined;
+  const monster=!!numbered && numbered.rank>=11;
+  const rank=numbered?.rank;
+  const title=numbered ? (monster ? `${rank===11?"Valet":rank===12?"Dame":"Roi"} · ${factions[numbered.suit]}` : factions[numbered.suit]) : "Joker";
+  return <GrimDelveCard label={cardLabel(id)} title={title} value={valueOf(id)}
+    faction={numbered?.suit??"joker"} symbol={numbered?symbols[numbered.suit]:"★"}
+    crest={monster?(rank===11?"♜":rank===12?"♛":"♚"):"✧"} monster={monster}
+    selected={selected} target={target} onClick={onClick} disabled={disabled}/>;
 }
 const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
@@ -180,7 +180,8 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
           const monster = column[0];
           const attack = state.attacks.find(a => a.monsterId === monster);
           const target = actions.find(a => "monsterId" in a && a.monsterId === monster);
-          const power = attack?.powers.reduce((sum,p)=>sum+valueOf(p.cardId),0) ?? 0;
+          const powers = attack?.powers.map(p=>valueOf(p.cardId)) ?? [];
+          const progress = monster ? grimAttackProgress(powers,valueOf(monster)) : null;
           return <div className="grim-column" key={index}>
             <h4 className="gd-sr-only">Colonne {index + 1}</h4>
             {monster ? <div className="gd-monster-stack" data-hidden={column.length-1}><Card id={monster} target={!!target} onClick={target ? ()=>void dispatch(target) : undefined} disabled={busy}/></div> : <span className="gd-empty">Colonne libérée</span>}
@@ -189,9 +190,13 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
               <Card id={power.cardId} onClick={() => setSelected(power.cardId)} disabled={busy} selected={selected === power.cardId} />
               <small className="gd-sr-only">{power.handNumber === state.handNumber ? "Reprise possible selon le moteur" : "Pose antérieure"}</small>
             </div>)}
-            {monster ? Array.from({length:2-(attack?.powers.length??0)},(_,i)=><span className="gd-empty-slot" key={i} aria-label="Emplacement de puissance libre">+</span>) : null}
+            {monster ? Array.from({length:2-(attack?.powers.length??0)},(_,i)=><span className="gd-empty-slot" key={i} aria-label="Emplacement de puissance libre"><span aria-hidden="true">✧</span></span>) : null}
             </div>
-            {monster ? <small className="gd-power-total">{power} / {valueOf(monster)}</small> : null}
+            {progress ? <div className="gd-attack-progress" data-ready={progress.ready}>
+              <div className="gd-power-track" role="progressbar" aria-label={language==="fr"?"Puissance en préparation":"Prepared power"} aria-valuemin={0} aria-valuemax={progress.resistance} aria-valuenow={Math.min(progress.power,progress.resistance)} aria-valuetext={`${progress.power} / ${progress.resistance}${progress.ready?(language==="fr"?" · résistance atteinte":" · resistance reached"):""}`}>
+                <span style={{width:`${progress.percent}%`}}/>
+              </div><small className="gd-power-total">{progress.power} / {progress.resistance}</small>
+            </div>:null}
             {column.length > 1 ? <small className="gd-hidden-count"><span className="gd-hidden-cards" aria-hidden="true">{Array.from({length:column.length-1},(_,i)=><i key={i}/>)}</span><span>{column.length-1} <span className="gd-hidden-word">{language==="fr"?"masqué(s)":"hidden"}</span></span><span className="gd-sr-only">{language==="fr"?" monstre(s)":" monster(s)"}</span></small> : <small className="gd-hidden-count" aria-hidden="true"> </small>}
           </div>;
         })}
