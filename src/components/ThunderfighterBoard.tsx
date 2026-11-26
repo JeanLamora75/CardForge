@@ -77,7 +77,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   const [legal, setLegal] = useState<readonly ThunderfighterAction[]>([]);
   const [selection, setSelection] = useState<ThunderfighterAction | null>(null);
   const [busy, setBusy] = useState(true);
-  const [effect,setEffect]=useState<{kind:string;serial:number;shots:ThunderShot[]}|null>(null);
+  const [effect,setEffect]=useState<{kind:string;serial:number;shots:ThunderShot[];action:ThunderfighterAction["type"]}|null>(null);
   useEffect(()=>{if(!effect)return;const timer=setTimeout(()=>setEffect(null),700);return()=>clearTimeout(timer);},[effect]);
   const effectSerial=useRef(0);
   const committing=useRef(false);
@@ -181,7 +181,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         setState(result.state);
         setLegal(session.current.getLegalActions());
         const effectKind=nextResult.outcome==="win"?"victory":nextResult.outcome==="loss"?"defeat":shots.length?"shot":action.type==="assign-armor"?"armor":action.type==="extract"||action.type==="reassign"?"special":"place";
-        setEffect({kind:effectKind,serial:++effectSerial.current,shots:getActionShotAnalysis(state,action).filter(shot=>shots.includes(shot.figureId))});
+        setEffect({kind:effectKind,action:action.type,serial:++effectSerial.current,shots:getActionShotAnalysis(state,action).filter(shot=>shots.includes(shot.figureId))});
         playGameplayEffect(effectKind);
         setNotice(nextResult.outcome === "win" ? `Victoire ! Score : ${nextResult.officialScore}.` :
           nextResult.outcome === "loss" ? `Défaite : ${nextResult.reason === "armor" ? "armure excessive" : "impasse"}.` :
@@ -273,7 +273,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       <div className="tf-combat-layout">
       <h3 className="thunder-sr-only">Champ de bataille · 3 × 3</h3>
       <div className="thunder-battlefield" data-ready="true" data-dragging={!!ghost&&!ghost.returning}>
-        {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} aria-hidden="true"/>:null}
+        {effect?<span key={effect.serial} className="tf-battle-effect" data-effect={effect.kind} data-action={effect.action} aria-hidden="true"/>:null}
         <svg className="tf-shot-overlay" viewBox="0 0 500 500" aria-hidden="true">
           {(shotPreview.length?shotPreview:effect?.shots??[]).map(shot=>{
             const xy=(cell:number)=>[150+100*(cell%3),150+100*Math.floor(cell/3)];
@@ -307,7 +307,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       <div className="tf-console-controls">
       <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
         <h3 className="thunder-sr-only">{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
-        {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} data-active={special?.cardId===id} className="tf-special-unit tf-drag-source" {...dragHandlers(id,special?.cardId===id?special:{cardId:id})}>{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</button></div>;})}</div>:null}
+        {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} data-active={special?.cardId===id} data-faction={view?.faction??"Singularity"} className="tf-special-unit tf-drag-source" {...dragHandlers(id,special?.cardId===id?special:{cardId:id})}>{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}><span>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</span><small>{view?.rank===1?"Alpha "+view.faction:(en?"Singularity":"Singularité")}</small></button></div>;})}</div>:null}
         
         {special&&!selection?<div className="tf-special-instruction"><p>{choosingSource?(en?"Choose the source pile.":"Choisissez la pile source."):special.from!==undefined?(en?"Choose the destination for pile ":"Choisissez la destination de la pile ")+(special.from+1):en?"Choose the pile to extract.":"Choisissez la pile à extraire."}</p><button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>{en?"Cancel special action":"Annuler l’action spéciale"}</button></div>:null}
       </section>
@@ -321,7 +321,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         
         {targetChoice?<div className="tf-target-choices"><p data-i18n-ignore>{en?"Choose an action":"Choisissez une action"}</p>{ambiguousActions.map((action,index)=><button type="button" className="secondary-action" key={index} disabled={busy} onClick={()=>choose(action)}>{actionLabel(action)}</button>)}<button type="button" className="back-link" onClick={cancelSelection}>{en?"Cancel":"Annuler"}</button></div>:null}
         {legal.length ? fallbackActions.map((action, index) =>
-          <button type="button" className="secondary-action" key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:actionLabel(action)}</button>
+          <button type="button" className={action.type==="draw-card"?"secondary-action tf-draw-command":"secondary-action"} key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-card"?<><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 8 9-5 9 5-9 5zM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" strokeWidth="1.6"/></svg><span data-i18n-ignore>{en?"Draw a card":"Piocher une carte"}</span><span className="tf-draw-chevron" aria-hidden="true">›</span></>:action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:actionLabel(action)}</button>
         ) : <p>Aucune action disponible.</p>}
       </div> : null}
       </div>

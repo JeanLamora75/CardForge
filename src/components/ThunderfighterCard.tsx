@@ -7,12 +7,12 @@ export function ThunderAlliance({alliance}:{alliance:ThunderCardView["alliance"]
  return <svg className="tf-alliance" viewBox="0 0 100 100" aria-hidden="true" fill="currentColor">{alliance==="phoenix"?<path d="M50 5 59 35 50 86 41 35Z M39 34 0 12 12 41 39 54Z M61 34 100 12 88 41 61 54Z M39 60 12 46 27 72 45 84Z M61 60 88 46 73 72 55 84Z"/>:<path d="M38 4H62L50 22Z M5 20 50 47 95 20V37L50 65 5 37Z M5 48 50 75 95 48V65L50 93 5 65Z"/>}</svg>;
 }
 export function ThunderCardFace({card}:{card:ThunderCardView}){
- return <><Ship card={card}/><span className="tf-card-corner"><strong>{card.compact}</strong><ThunderAlliance alliance={card.alliance}/></span>{(card.figure||card.special)?<span className="tf-card-bottom">{card.defeated?"✓":card.figure?<>{card.resistance}{card.armor>0?<small> ◇</small>:null}</>:card.rank===1?"↧":"↔"}</span>:null}</>;
+ return <><Ship card={card}/><span className="tf-card-corner"><strong>{card.compact}</strong><ThunderAlliance alliance={card.alliance}/></span>{card.figure&&!card.defeated?<span className="tf-attack-factions" aria-hidden="true">{card.attackFactions.map(faction=><i key={faction} data-faction={faction}/>)}</span>:null}{(card.figure||card.special)?<span className="tf-card-bottom">{card.defeated?"✓":card.figure?<>{card.resistance}{card.armor>0?<small> ◇</small>:null}</>:card.rank===1?"↧":"↔"}</span>:null}</>;
 }
 function Ship({card}:{card:ThunderCardView}){return <img className="tf-ship" src={thunderArt[card.id]} alt="" aria-hidden="true" draggable={false}/>;}
 export function ThunderTacticalCard({card,locale,onInspect}:{card:ThunderCardView;locale:Locale;onInspect:()=>void}){
  const en=locale==="en";
- return <button type="button" className="thunder-card tf-tactical" data-i18n-ignore data-card-id={card.id} data-figure={card.figure||undefined} data-defeated={card.defeated||undefined} data-suit={card.suit??"joker"} onClick={onInspect} aria-haspopup="dialog" aria-label={card.label+", "+(card.defeated?(en?"neutralized":"neutralisé"):card.figure?(en?"resistance ":"résistance ")+card.resistance:card.role)+", "+(en?"view card":"voir la carte")}>
+ return <button type="button" className="thunder-card tf-tactical" data-i18n-ignore data-card-id={card.id} data-figure={card.figure||undefined} data-defeated={card.defeated||undefined} data-suit={card.suit??"joker"} onClick={onInspect} aria-haspopup="dialog" aria-label={card.label+", "+(card.defeated?(en?"neutralized":"neutralisé"):card.figure?(en?"resistance ":"résistance ")+card.resistance:card.role)+(card.figure&&!card.defeated?", "+card.rule:"")+", "+(en?"view card":"voir la carte")}>
  <ThunderCardFace card={card}/>
  </button>;
 }

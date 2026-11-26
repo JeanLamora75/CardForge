@@ -1188,3 +1188,40 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .thunder-board .tf-detail-art .tf-card-bottom{top:auto;left:auto;}
 .thunder-board .tf-tactical[data-defeated=true]{border-style:dashed;}
 .thunder-board .tf-detail-art[data-defeated=true] .tf-ship{filter:grayscale(.9) brightness(.65);}
+
+/* Compact metallic framing; all decoration stays inside the existing cells. */
+.thunder-board :is(.tf-tactical,.tf-detail-art,.tf-drop-preview){border-width:2px;border-radius:7px;box-shadow:inset 0 0 0 1px #ffffff35,inset 0 0 8px var(--tf-faction);}
+.thunder-board :is(.tf-tactical,.tf-detail-art,.tf-drop-preview)::after{content:"";position:absolute;inset:1px;border:1px solid #ffffff35;border-radius:4px;pointer-events:none;z-index:1;}
+.thunder-board :is(.tf-tactical,.tf-detail-art,.tf-drop-preview) .tf-card-corner{top:0;left:0;right:0;}
+.thunder-board .tf-card-corner strong{padding:3px 10px 4px 4px;clip-path:polygon(0 0,100% 0,75% 100%,0 100%);border-radius:0;background:linear-gradient(145deg,color-mix(in srgb,var(--tf-faction) 64%,#07101d),#07101de8);font-size:clamp(.85rem,2.9vw,1.4rem);}
+.thunder-board .tf-alliance{border-radius:0 0 0 5px;padding:2px;background:#07101ddd;box-sizing:border-box;}
+.thunder-board .tf-card-bottom{padding:2px 3px;background:linear-gradient(145deg,#07101de8,color-mix(in srgb,var(--tf-faction) 45%,#07101d));border-radius:4px 0 0 0;font-size:clamp(.78rem,2.6vw,1.15rem);}
+.thunder-board .thunder-battlefield .thunder-pile>strong{font-size:clamp(.65rem,2vw,.9rem);z-index:3;}
+.thunder-board .tf-attack-factions{position:absolute;bottom:3px;left:3px;right:32px;display:flex;gap:2px;z-index:2;pointer-events:none;}
+.thunder-board .tf-attack-factions i{height:4px;flex:1;min-width:2px;border-radius:1px;box-shadow:0 0 2px #000;background:var(--tf-accent);}
+.thunder-board [data-faction=Nova]{--tf-accent:#ff793b;}
+.thunder-board [data-faction=Vector]{--tf-accent:#f6cf41;}
+.thunder-board [data-faction=Aegis]{--tf-accent:#42baff;}
+.thunder-board [data-faction=Solaris]{--tf-accent:#72db51;}
+.thunder-board [data-faction=Singularity]{--tf-accent:#b66be9;}
+.thunder-board .tf-detail-art .tf-attack-factions{right:55px;bottom:5px;}
+.thunder-board .tf-detail-art .tf-attack-factions i{height:7px;}
+.thunder-board .thunder-battlefield{background:radial-gradient(ellipse at 25% 75%,#59416b28,transparent 58%),radial-gradient(ellipse at 75% 20%,#18547b35,transparent 60%),radial-gradient(circle at 12% 28%,#c8e5ff66 0 1px,transparent 1.5px),radial-gradient(circle at 66% 70%,#c8e5ff44 0 1px,transparent 1.5px),#09151f;background-size:auto,auto,83px 107px,139px 97px,auto;border-color:#7897a9;box-shadow:inset 0 0 0 1px #223c50,inset 0 0 30px #030b14,0 0 10px #729fb42b;}
+.thunder-board .thunder-battlefield :is(.thunder-slot,.thunder-pile):not([data-target-state]):not([data-armor-target=true]){background:linear-gradient(145deg,#12344b38,#08162466);border-color:#5e9bb34a;}
+.thunder-board .tf-special-unit{border-color:color-mix(in srgb,var(--tf-accent) 55%,#476578);background:linear-gradient(110deg,color-mix(in srgb,var(--tf-accent) 13%,#101e2d),#101e2d);}
+.thunder-board .tf-special-unit .tf-special-use{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;line-height:1.1;}
+.thunder-board .tf-special-use small{font-size:.65rem;color:#c5d5e4;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+.thunder-board .tf-special-unit[data-active=true]{border-color:var(--tf-accent);box-shadow:inset 0 0 8px var(--tf-accent);}
+.thunder-board .thunder-actions .tf-draw-command{display:flex;align-items:center;gap:9px;color:#ffe1b3;border-color:#cfa36e;background:linear-gradient(110deg,#1a4059,#142738);box-shadow:inset 0 1px #ffffff20;}
+.thunder-board .tf-draw-command svg{width:23px;height:23px;flex:none;}
+.thunder-board .tf-draw-chevron{margin-left:auto;font-size:1.6rem;line-height:1;}
+.thunder-board .tf-tactical:focus-visible{outline:2px solid white;outline-offset:-3px;}
+.thunder-board [data-target-state=selected] .tf-tactical{box-shadow:inset 0 0 12px #ffcf7d;}
+.thunder-board .tf-battle-effect[data-action=extract]{box-shadow:inset 0 0 40px #76dfff;}
+.thunder-board .tf-battle-effect[data-action=reassign]{box-shadow:inset 0 0 40px #c36cff;animation:tf-rift-pulse 480ms ease-out both;}
+@keyframes tf-rift-pulse{0%{opacity:0;filter:blur(5px)}35%{opacity:1;filter:blur(0)}100%{opacity:0;filter:blur(3px)}}
+@keyframes tf-card-arrive{from{opacity:.55;filter:brightness(1.4)}to{opacity:1;filter:brightness(1)}}
+.thunder-board .tf-current-card .tf-tactical{animation:tf-card-arrive 240ms ease-out;}
+.thunder-board .tf-tactical[data-defeated=true] .tf-ship{transition:filter 300ms ease-out;}
+:root[data-motion=off] .thunder-board :is(.tf-current-card .tf-tactical,.tf-battle-effect){animation:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .thunder-board :is(.tf-current-card .tf-tactical,.tf-battle-effect){animation:none;}}

@@ -20,11 +20,12 @@ export function thunderCardView(state:ThunderfighterState,id:string,locale:Local
  const en=locale==="en",joker="kind" in card,rank=joker?null:card.rank;
  const suit=joker?null:card.suit,figure=rank!==null&&rank>=11, special=joker||rank===1;
  const faction=suit?factions[suit]:null;
+ const attackFactions=figure?Object.values(factions).filter(candidate=>rank===11||rank===12&&candidate[1]===faction?.[1]||rank===13&&candidate[0]===faction?.[0]).map(candidate=>candidate[0]):[];
  const defeated=figure&&(state.defeatedFigures??[]).includes(id);
  const armor=figure?(state.armorCards??[]).filter(a=>a.figureId===id).reduce((sum,a)=>{const c=cards.get(a.cardId);return sum+(c&&"rank" in c?c.rank:10)},0):0;
  const label=thunderCardLabel(id,locale);
  const role=figure?(en?"Enemy":"Adversaire"):special?(en?"Special action":"Action spéciale"):(en?"Fighter":"Chasseur");
  const rule=rank===11?(en?"All factions contribute to the attack.":"Toutes les factions contribuent au tir."):rank===12?(en?"Only cards of the same alliance contribute.":"Seules les cartes de la même alliance contribuent.") :rank===13?(en?"Only cards of the same faction contribute.":"Seules les cartes de la même faction contribuent.") :joker?(en?"Move the top card of a pile to a legal destination.":"Déplacez la carte supérieure d’une pile vers une destination autorisée.") :rank===1?(en?"Return an entire pile to the bottom of the deck.":"Replacez une pile entière sous la pioche.") : (en?"Place on a pile of equal or lower value.":"Posez sur une pile de valeur égale ou inférieure.");
- return {id,rank,suit,faction:faction?.[0]??null,alliance:faction?.[1]??null,label,role,rule,figure,special,defeated,armor,resistance:figure?rank!+armor:null,value:special?null:rank,compact:joker?"S":rank===1?"α":rank===11?"L":rank===12?"C":rank===13?"A":String(rank)};
+ return {id,rank,suit,faction:faction?.[0]??null,alliance:faction?.[1]??null,label,role,rule,attackFactions,figure,special,defeated,armor,resistance:figure?rank!+armor:null,value:special?null:rank,compact:joker?"S":rank===1?"α":rank===11?"L":rank===12?"C":rank===13?"A":String(rank)};
 }
 export type ThunderCardView=NonNullable<ReturnType<typeof thunderCardView>>;

@@ -407,10 +407,13 @@ async function journey(locale,mobile){
         const id=await card.getAttribute('data-card-id');
         assert.ok(await card.locator('img.tf-ship').evaluate(img=>img.complete&&img.naturalWidth>0));
         const artwork=await card.locator('img.tf-ship').getAttribute('src');
+        assert.match(artwork,/art\/thunderfighter\/ships\/.*\.webp$/);
+        assert.equal(await card.locator('.tf-alliance').count(),1);
         await interact(page,card,mobile);
         const detail=page.locator('.tf-card-detail[open]');await detail.waitFor();
         assert.equal(await detail.getAttribute('data-card-id'),id);
         assert.equal(await detail.locator('img.tf-ship').getAttribute('src'),artwork);
+        assert.equal(await detail.locator('.tf-alliance').count(),1);
         assert.equal(await detail.getByRole('button',{name:locale==='fr'?'Fermer la carte':'Close card'}).count(),1);
         assert.deepEqual(await readSaved(page,game.id),before,'inspection must not write');
         if(mobile)await detail.getByRole('button').click();else await page.keyboard.press('Escape');
@@ -509,7 +512,7 @@ async function journey(locale,mobile){
       }
       let after=await waitSavedChanged(page,game.id,before);
       if(game.id==='gridcannon'){
-        const draw=page.locator('.thunder-actions button').filter({hasText:/^Piocher une carte$|^Draw a card$/});
+        const draw=page.locator('.thunder-actions button').filter({hasText:/Piocher une carte|Draw a card/});
         if(await draw.count()===1){
           const bounds=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return [r.x,r.y,r.width,r.height];});
           const drawBounds=await bounds();
