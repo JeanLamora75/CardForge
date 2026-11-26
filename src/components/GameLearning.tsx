@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { PlayableLearningGame, LearningChoice, LearningPreferences } from "../application/learning.ts";
 import { readLearningPreferences, saveLearningPreferences } from "../application/learning.ts";
-import GrimDelveBoard from "./GrimDelveBoard.tsx";
+import GrimDelveBoard, { type GrimHelpStatus } from "./GrimDelveBoard.tsx";
 import ThunderfighterBoard from "./ThunderfighterBoard.tsx";
 import MidnightSyndicateBoard from "./MidnightSyndicateBoard.tsx";
 import MidnightSyndicateRulebook from "./MidnightSyndicateRulebook.tsx";
@@ -49,6 +49,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
   const [showRules, setShowRules] = useState(false);
   const [tutorialRun, setTutorialRun] = useState(0);
   const [saveWarning, setSaveWarning] = useState(false);
+  const [grimHelpStatus,setGrimHelpStatus]=useState<GrimHelpStatus>({placements:0,triggers:0,returns:0});
   const name = names[gameId];
   const immersiveBoard=gameId==="gridcannon"||gameId==="clear-the-dungeon";
   const helpDialog=useRef<HTMLDialogElement>(null);
@@ -76,6 +77,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         </button>
         <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
       </div>
+      {gameId==="clear-the-dungeon" && hintsEnabled ? <section className="gd-help-actions" data-i18n-ignore><h3>{language==="fr"?"Aide sur les actions autorisées":"Help on allowed actions"}</h3><p>{language==="fr"?`Poses : ${grimHelpStatus.placements} · Déclenchements : ${grimHelpStatus.triggers} · Reprises : ${grimHelpStatus.returns}`:`Placements: ${grimHelpStatus.placements} · Attacks: ${grimHelpStatus.triggers} · Take-backs: ${grimHelpStatus.returns}`}</p><p>{language==="fr"?"Deux cartes de puissance doivent atteindre la résistance du monstre. Une troisième carte de son enseigne déclenche l’attaque. Les Jokers valent 10 et remplacent une enseigne.":"Two power cards must reach the monster’s resistance. A third card matching its suit triggers the attack. Jokers are worth 10 and can match any suit."}</p></section>:null}
       {showRules ? <Rulebook gameId={gameId} language={language} /> : null}
 </>;
   return <section className="game-learning" aria-label={`Apprendre ou jouer à ${name}`}>
@@ -90,10 +92,10 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
       {immersiveBoard?<dialog ref={helpDialog} className={gameId==="clear-the-dungeon"?"tf-help-dialog tf-game-help gd-help-dialog":"tf-help-dialog tf-game-help"} aria-label={language==="en"?"Help and rules":"Aide et règles"} onClose={()=>{setShowRules(false);onCloseThunderHelp?.();}} onCancel={event=>{event.preventDefault();event.stopPropagation();closeHelp();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();closeHelp();}}}><header className="tf-help-header" data-i18n-ignore><button type="button" className="tf-dialog-close" onClick={closeHelp}>{language==="en"?"Resume game":"Reprendre la partie"}</button></header><div className="tf-help-content">{controls}<p data-i18n-ignore>{gameId==="clear-the-dungeon"?(language==="en"?"Select a card, then a highlighted monster. Only legal actions are available.":"Sélectionnez une carte, puis un monstre en surbrillance. Seules les actions légales sont proposées."):(language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup.")}</p></div></dialog>:controls}
       {mode === "learn" && !immersiveBoard ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
       {mode === "learn" ? <div key={tutorialRun} className={gameId==="gridcannon"?"tf-training-wrap":undefined}>
-        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
+        {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial language={language} onHelpStatus={setGrimHelpStatus} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
           gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} onExitTutorial={()=>choose("play")} />}
       </div> : gameId === "clear-the-dungeon" ?
-        <GrimDelveBoard hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
+        <GrimDelveBoard language={language} onHelpStatus={setGrimHelpStatus} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
         <MidnightSyndicateBoard hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} /> : <ThunderfighterBoard language={language} hintsEnabled={false} />}
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}

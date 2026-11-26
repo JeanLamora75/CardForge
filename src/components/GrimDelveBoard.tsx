@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { Locale } from "../i18n/language.ts";
 import { makeDeckWithJokers } from "../core/cards.ts";
 import { grimDelveEngine, GRIM_DELVE_GAME_ID, GRIM_DELVE_RULES_VERSION, type GrimDelveAction, type GrimDelveState } from "../games/clear-the-dungeon/engine.ts";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
@@ -11,6 +12,7 @@ import GameResultPanel from "./GameResultPanel.tsx";
 import { playGameplayEffect } from "../application/audio.ts";
 import { translateUiText } from "../i18n/surface.ts";
 
+export type GrimHelpStatus = { placements:number; triggers:number; returns:number };
 type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
 const cards = new Map(makeDeckWithJokers().map(card => [card.id, card]));
 const factions = { hearts: "Cendres", diamonds: "Cristal", clubs: "Ronces", spades: "Ombres" } as const;
@@ -43,9 +45,9 @@ function Card({ id, selected = false, onClick, disabled = false, target = false 
   return <button type="button" className="grim-card" data-monster={monster || undefined} data-faction={card && "suit" in card ? card.suit : "joker"} data-target={target || undefined}
     aria-pressed={onClick ? selected : undefined} aria-label={cardLabel(id)}
     onClick={onClick} disabled={disabled || !onClick}>
-    <span className="gd-card-value" aria-hidden="true">{valueOf(id)}</span><span className="grim-card-crest" aria-hidden="true">{figure}</span>
-    <strong>{cardLabel(id)}</strong>
-    <small>{monster ? "Résistance" : "Puissance"} : {card && "rank" in card ? card.rank : 10}</small>
+    <span className="gd-card-value" aria-hidden="true">{valueOf(id)}</span><span className="gd-card-suit" aria-hidden="true">{card && "suit" in card ? symbols[card.suit] : "★"}</span><span className="grim-card-crest" aria-hidden="true">{figure}</span>
+    <strong>{card && "rank" in card ? (monster ? `${card.rank===11?"Valet":card.rank===12?"Dame":"Roi"} · ${factions[card.suit]}` : factions[card.suit]) : "Joker"}</strong>
+    <small className="gd-sr-only">{monster ? "Résistance" : "Puissance"} : {valueOf(id)}</small>
     
   </button>;
 }
@@ -53,7 +55,7 @@ const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
   ("monsterId" in a ? a.monsterId : undefined) === ("monsterId" in b ? b.monsterId : undefined);
 
-export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void }) {
+export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, onReplayTutorial, language="fr", onHelpStatus }: { tutorial?: boolean; hintsEnabled?: boolean; onReplayTutorial?: () => void; language?:Locale; onHelpStatus?:(status:GrimHelpStatus)=>void }) {
   const session = useRef<Session | null>(null);
   const [state, setState] = useState<GrimDelveState | null>(null);
   const [legal, setLegal] = useState<readonly GrimDelveAction[]>([]);
@@ -137,7 +139,20 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
     } catch (error) { setNotice(storageRecoveryMessage(error, "write")); }
     finally { setBusy(false); }
   }
+  useEffect(()=>{
+    onHelpStatus?.({placements:legal.filter(a=>a.type==="place-power").length,triggers:legal.filter(a=>a.type==="trigger-attack").length,returns:legal.filter(a=>a.type==="take-back").length});
+  },[legal,onHelpStatus]);
+  const temporaryNotice= /^(Partie locale restaurée|Nouvelle partie enregistrée|Nouvelle expédition enregistrée|Action enregistrée|Coup d’entraînement|Exercice guidé)/.test(notice);
+  useEffect(()=>{
+    if(!temporaryNotice)return;
+    const timer=window.setTimeout(()=>setNotice(current=>current===notice?"":current),2400);
+    return ()=>window.clearTimeout(timer);
+  },[notice,temporaryNotice]);
   const actions = selected ? legal.filter(action => "cardId" in action && action.cardId === selected) : [];
+  const instruction = state?.outcome!=="in-progress" ? "" : !hintsEnabled ? "" : selected
+    ? (actions.some(a=>"monsterId" in a)? "Sélectionnez un monstre en surbrillance.":"Choisissez une action autorisée.")
+    : state.hand.length ? "Sélectionnez une carte, puis un monstre." : "Terminez la main pour continuer.";
+  const showNotice=notice || instruction;
   return <section className="grim-board" aria-labelledby="grim-heading">
     <h2 id="grim-heading" className="gd-sr-only">Grim Delve · Plateau de jeu</h2>
     <p className="gd-sr-only">Dark Fantasy · Classic 1.1.0. Les seules commandes proposées sont celles autorisées par le moteur. Les cartes posées restent provisoires jusqu'au déclenchement d'une attaque.</p>
@@ -151,11 +166,6 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
         "Observez les résistances des monstres, choisissez une carte de la main, puis essayez une pose provisoire légale. La défausse crée un dégât irréversible."}</p>
       <p>Objectif : préparer une attaque de deux puissances suffisantes, puis la déclencher avec l'enseigne du monstre. Sept dégâts entraînent une défaite.</p>
     </section> : null}
-    {hintsEnabled && state ? <details className="learning-context gd-context">
-      <summary>Aide sur les actions autorisées ({legal.length})</summary>
-      <p>Le moteur propose {legal.filter(a => a.type === "place-power").length} pose(s), {legal.filter(a => a.type === "trigger-attack").length} déclenchement(s) et {legal.filter(a => a.type === "take-back").length} reprise(s). Sélectionnez une carte pour voir exactement où agir.</p>
-      <p>Une attaque exige deux cartes de puissance atteignant la résistance, puis une troisième carte de l'enseigne du monstre. Les Jokers valent 10 et remplacent une enseigne.</p>
-    </details> : null}
     {!state ? <button type="button" className="primary-action" disabled={busy} onClick={() => void start()}>Commencer une partie</button> : <>
       <div className="grim-counters" aria-label="Progression">
         <div className="gd-counter gd-damage"><small>Dégâts</small><div className="gd-hearts" aria-hidden="true">{Array.from({length:7},(_,i)=><img key={i} src={art("hud",i<state.damages.length?"heart-filled":"heart-empty")} alt=""/>)}</div><strong>{state.damages.length} / 7</strong></div>
@@ -172,26 +182,26 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
           const target = actions.find(a => "monsterId" in a && a.monsterId === monster);
           const power = attack?.powers.reduce((sum,p)=>sum+valueOf(p.cardId),0) ?? 0;
           return <div className="grim-column" key={index}>
-            <h4>Colonne {index + 1}</h4>
+            <h4 className="gd-sr-only">Colonne {index + 1}</h4>
             {monster ? <div className="gd-monster-stack" data-hidden={column.length-1}><Card id={monster} target={!!target} onClick={target ? ()=>void dispatch(target) : undefined} disabled={busy}/></div> : <span className="gd-empty">Colonne libérée</span>}
             <div className="gd-attack-slots">
             {attack?.powers.map(power => <div key={power.cardId} className="grim-placed">
               <Card id={power.cardId} onClick={() => setSelected(power.cardId)} disabled={busy} selected={selected === power.cardId} />
-              <small>{power.handNumber === state.handNumber ? "Reprise possible selon le moteur" : "Pose antérieure"}</small>
+              <small className="gd-sr-only">{power.handNumber === state.handNumber ? "Reprise possible selon le moteur" : "Pose antérieure"}</small>
             </div>)}
             {monster ? Array.from({length:2-(attack?.powers.length??0)},(_,i)=><span className="gd-empty-slot" key={i} aria-label="Emplacement de puissance libre">+</span>) : null}
             </div>
             {monster ? <small className="gd-power-total">{power} / {valueOf(monster)}</small> : null}
-            {column.length > 1 ? <small>{column.length - 1} monstre(s) masqué(s)</small> : null}
+            {column.length > 1 ? <small className="gd-hidden-count"><span className="gd-hidden-cards" aria-hidden="true">{Array.from({length:column.length-1},(_,i)=><i key={i}/>)}</span><span>{column.length-1} <span className="gd-hidden-word">{language==="fr"?"masqué(s)":"hidden"}</span></span><span className="gd-sr-only">{language==="fr"?" monstre(s)":" monster(s)"}</span></small> : <small className="gd-hidden-count" aria-hidden="true"> </small>}
           </div>;
         })}
       </div>
-      <p role="status" aria-live="polite" className="grim-notice">{notice}</p>
-      <h3 className="gd-banner">Cartes en main</h3>
+      <p role="status" aria-live="polite" className={`grim-notice gd-play-notice${showNotice?"":" gd-no-notice"}`}>{showNotice}</p>
+      <h3 className="gd-banner gd-hand-banner">Votre main</h3>
       <div className="grim-hand">{state.hand.length ? state.hand.map(id =>
         <Card key={id} id={id} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
       ) : <p>La main est vide.</p>}</div>
-      {selected ? <div className="grim-actions" aria-label="Actions légales pour la carte sélectionnée">
+      {selected ? <div className="grim-actions gd-selection-actions" aria-label="Actions légales pour la carte sélectionnée">
         <h3>{cardLabel(selected)}</h3>
         {actions.length ? actions.map((action, index) => <button key={index} type="button" className="secondary-action"
           disabled={busy} onClick={() => void dispatch(action)}>
@@ -200,8 +210,8 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
         <button type="button" className="back-link" onClick={() => setSelected(null)}>Annuler la sélection</button>
       </div> : null}
       {state.outcome === "in-progress" ? <div className="grim-actions gd-footer">
-        {legal.some(action => action.type === "discard-remaining") ? <button type="button" className="secondary-action" disabled={busy}
-          onClick={() => void dispatch({ type: "discard-remaining" })}>Défausser toute la main · dégâts irréversibles</button> : null}
+        {<button type="button" className="secondary-action" disabled={busy || !legal.some(action=>action.type==="discard-remaining")}
+          onClick={() => void dispatch({ type: "discard-remaining" })}>Défausser la main</button>}
         <button type="button" className="primary-action" disabled={busy || !legal.some(action => action.type === "end-hand")}
           onClick={() => void dispatch({ type: "end-hand" })}>Terminer la main</button>
       </div> : null}

@@ -41,3 +41,6 @@ console.log(`PWA bundle verified: ${paths.length} offline assets, manifest and i
 
 const thunderCards=paths.filter(p=>/^\.\/art\/thunderfighter\/(ships|officers|special)\/.*\.webp$/.test(p));
 assert.equal(new Set(thunderCards).size,54,"all ThunderFighter cards must be precached");
+
+const grimUiPaths=["./art/boards/grim-delve.webp","./art/logos/grim-delve/board.webp","./art/frames/grim-delve/panel-wide.webp","./art/hud/grim-delve/heart-filled.webp","./art/hud/grim-delve/heart-empty.webp","./art/hud/grim-delve/deck.webp","./art/hud/grim-delve/skull.webp","./art/banners/grim-delve/title-wide.webp","./art/banners/grim-delve/title-small.webp","./art/banners/grim-delve/parchment.webp","./art/icons/grim-delve/back.webp","./art/icons/grim-delve/help.webp","./art/icons/grim-delve/settings.webp","./art/buttons/grim-delve/primary.webp","./art/buttons/grim-delve/danger.webp"];
+for(const path of grimUiPaths)assert.ok(paths.includes(path),"missing Grim Delve UI artwork: "+path);
