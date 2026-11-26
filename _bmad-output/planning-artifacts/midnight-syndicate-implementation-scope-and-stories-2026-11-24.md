@@ -328,3 +328,51 @@ Les détails de conformité **LTL-R01/R02/R03** sont des vérifications de sourc
 - Textes FR/EN dynamiques, affichage mobile portrait et paysage sans scroll global, fonctionnement hors ligne et contrôles accessibles ; conserver les actions de fin de partie existantes.
 - Les textes narratifs définitifs des onze autres variantes et le visuel générique d'impasse restent à produire. Aucune illustration ni implémentation n'est déclarée terminée par cette décision documentaire.
 - Traçabilité : [CAR-49](https://lmn24.atlassian.net/browse/CAR-49) (résultat), [CAR-50](https://lmn24.atlassian.net/browse/CAR-50) (impasse), [CAR-52](https://lmn24.atlassian.net/browse/CAR-52) (clôture), [CAR-53](https://lmn24.atlassian.net/browse/CAR-53) (UX), [CAR-54](https://lmn24.atlassian.net/browse/CAR-54) (FR/EN), [CAR-55](https://lmn24.atlassian.net/browse/CAR-55) (qualification). Aucun ticket Jira modifié à cette étape.
+
+## 10. Décision artistique validée — les 36 lieux (26 novembre 2026)
+
+**Sally — décision du porteur validée.** Six lots de six lieux uniques, quartiers exclusivement narratifs.
+
+| Référence | Quartier | Lieu | Valeur |
+| --- | --- | --- | ---: |
+| MS-L01 | Affaires | La Banque centrale | 2 |
+| MS-L02 | Affaires | La Bourse | 3 |
+| MS-L03 | Affaires | Le Grand Hôtel | 4 |
+| MS-L04 | Affaires | Le Siège du journal | 5 |
+| MS-L05 | Affaires | La Compagnie d'assurances | 6 |
+| MS-L06 | Affaires | La Tour des affaires | 7 |
+| MS-L07 | Plaisirs | Le Casino | 8 |
+| MS-L08 | Plaisirs | Le Speakeasy | 9 |
+| MS-L09 | Plaisirs | Le Cabaret | 10 |
+| MS-L10 | Plaisirs | Le Club de jazz | 2 |
+| MS-L11 | Plaisirs | Le Cinéma | 3 |
+| MS-L12 | Plaisirs | Le Champ de courses | 4 |
+| MS-L13 | Portuaire | Les Docks | 5 |
+| MS-L14 | Portuaire | L'Entrepôt maritime | 6 |
+| MS-L15 | Portuaire | Le Chantier naval | 7 |
+| MS-L16 | Portuaire | La Capitainerie | 8 |
+| MS-L17 | Portuaire | Le Phare | 9 |
+| MS-L18 | Portuaire | Le Marché aux poissons | 10 |
+| MS-L19 | Industriel | L'Aciérie | 2 |
+| MS-L20 | Industriel | Le Garage automobile | 3 |
+| MS-L21 | Industriel | Le Dépôt ferroviaire | 4 |
+| MS-L22 | Industriel | La Centrale électrique | 5 |
+| MS-L23 | Industriel | L'Imprimerie | 6 |
+| MS-L24 | Industriel | La Distillerie | 7 |
+| MS-L25 | Populaire | La Vieille Ville | 8 |
+| MS-L26 | Populaire | Le Marché couvert | 9 |
+| MS-L27 | Populaire | Le Prêteur sur gages | 10 |
+| MS-L28 | Populaire | Le Barbier | 2 |
+| MS-L29 | Populaire | La Pension de famille | 3 |
+| MS-L30 | Populaire | La Gare centrale | 4 |
+| MS-L31 | Institutionnel | L'Hôtel de ville | 5 |
+| MS-L32 | Institutionnel | Le Commissariat | 6 |
+| MS-L33 | Institutionnel | Le Palais de justice | 7 |
+| MS-L34 | Institutionnel | La Cathédrale | 8 |
+| MS-L35 | Institutionnel | L'Hôpital | 9 |
+| MS-L36 | Institutionnel | La Bibliothèque municipale | 10 |
+
+- Quatre cartes de chaque valeur 2 à 10 ; conserver les 36 identifiants physiques numériques et leur rang, sans pouvoir de quartier ou d'enseigne. Association stable aux identifiants techniques à définir à l'intégration.
+- Gabarit bleu nuit et or, valeur et nom dynamiques FR/EN, réutilisation de l'illustration dans le parcours défilant ; aucune identité révélée pour les cartes cachées.
+- Exigence de livraison impérative pour tous les lots : illustrations indépendantes carrées 850 × 850 px, PNG RGB, sans cadre, titre fonctionnel, valeur ni symbole incrusté ; ambiance film noir années 1930, lisibilité mobile. Noms ASCII minuscules kebab-case `ms-lNN-nom.png` dans `public/assets/cards/midnight-syndicate/`. ZIP à racine du dépôt, fragment de manifeste (path, width, height, mode, sha256), vérification du décodage, des empreintes et des collisions. Ne pas livrer une planche seule ; ne pas déclarer un lot exploitable sans contrôle réel. WebP générés par le script officiel, aucun uv.
+- Référence : [standard graphique](../../docs/graphic-assets-standard.md), CAR-53/54/55. Aucun changement des règles ni ticket Jira modifié.
