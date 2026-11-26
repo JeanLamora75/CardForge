@@ -272,3 +272,23 @@ Les détails de conformité **LTL-R01/R02/R03** sont des vérifications de sourc
 **Vérifications effectuées :** requête Jira `project = CAR AND parent = CAR-44` renvoyant exactement **12 Stories**, toutes de type Story et dont `parent.key = CAR-44` ; chaque description contient ses critères d'acceptation, dépendances, impacts et références BMAD. **17 liens de dépendance « Blocks »** créés au total entre Stories et avec le blocage **CAR-43 → CAR-56**, et vérifiés dans les liens des tickets, notamment CAR-45, CAR-52 et CAR-56.
 
 **Important :** aucune Story n'est terminée par sa seule création et aucune diffusion publique n'est autorisée. Les autres tickets MVP n'ont pas été modifiés (sauf le lien de dépendance sortant de CAR-43 vers CAR-56). Les scripts BMAD `uv` et les tests de code n'ont pas été exécutés dans cette opération documentaire et Jira.
+
+## 8. Décision artistique validée — les quatre preuves (26 novembre 2026)
+
+**Responsable UX : Sally — décision du porteur validée.** Les quatre As de Midnight Syndicate sont représentés par les quatre pièces d'enquête suivantes, dans l'univers film noir / Art déco des années 1930. Cette décision remplace toute proposition graphique antérieure concernant les preuves.
+
+| Référence UX | Preuve validée | Intention visuelle |
+| --- | --- | --- |
+| MS-P01 | Photo compromettante de versement de pot-de-vin | Photographie d'époque montrant une remise d'argent compromettante. |
+| MS-P02 | Boîte d'allumettes d'un hôtel de luxe avec un numéro de téléphone griffonné | Boîte raffinée d'époque, enseigne d'hôtel fictive et numéro manuscrit fictif. |
+| MS-P03 | Télégramme codé avec son carnet de décodage | Télégramme et carnet associés, constituant ensemble une seule preuve et une seule carte. |
+| MS-P04 | Ticket de consigne de gare | Ticket de consigne ferroviaire d'époque, reconnaissable et distinct des autres objets. |
+
+### Contraintes fonctionnelles et techniques
+
+- Une preuve correspond à un As physique distinct ; quatre preuves au total, collectables dans n'importe quel ordre. Aucun pouvoir spécifique ni condition supplémentaire.
+- Chaque preuve collectée vaut un point dans le butin. La victoire exige toujours les quatre As collectés puis une arrivée sur le Joker visible par l'action Explorer.
+- Conserver les identifiants internes des As, le paquet de 53 cartes, les règles, les probabilités, la sauvegarde et le score. La correspondance précise entre MS-P01 à MS-P04 et les quatre identifiants d'As reste à définir lors de l'intégration ; elle n'a aucun effet mécanique.
+- Direction UX proposée : gabarit vert émeraude et or, objets immédiatement reconnaissables à taille mobile, compteur Preuves X/4 et indication des preuves collectées. Ne jamais divulguer l'identité d'une carte cachée ; dos commun.
+- Fournir à Amelia des illustrations indépendantes, selon [le référentiel graphique](../../docs/graphic-assets-standard.md) : PNG maîtres, noms ASCII minuscules en kebab-case, manifeste et empreintes SHA-256. Aucun texte fonctionnel ni valeur de jeu figés dans les illustrations ; les inscriptions diégétiques fictives sur les objets sont permises.
+- Traçabilité : MS-09 / [CAR-53](https://lmn24.atlassian.net/browse/CAR-53), MS-10 / [CAR-54](https://lmn24.atlassian.net/browse/CAR-54). Cette décision documentaire ne vaut ni production des illustrations ni validation de l'intégration.
