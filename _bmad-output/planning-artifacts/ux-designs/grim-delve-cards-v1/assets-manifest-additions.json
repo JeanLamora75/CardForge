@@ -1,0 +1,170 @@
+[
+  {
+    "path": "public/assets/cards/grim-delve/hearts-1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "6ea5fd706eeb4a178e17350cb10543817f79f04509b227a6f91578d60b2da73c"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/hearts-11.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "653ac0763cd7cd168bbdab8eeb349f2c37e8991f1871c34f4c132e214e31ad32"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/hearts-12.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "0e4bc0f63506ad931eec773e408a7f79653790d8e57e406737ba99abbc58187d"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/hearts-13.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "da18153f1cd029f1ef31bbf428a5ef9dfe1c1d6de9baf8bad92b192bb705a2d3"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/diamonds-1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "5c6b5dbffeb0e7e77a2b45cc03d9b4c813cff7e252195eee23da13b124000570"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/diamonds-11.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "56000dd2ac84858b61471319c04d077cc83121283f75940fdc30ca7085e5357e"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/diamonds-12.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "f35ee24ebe7c7cd185caec2660248a79880a7a13142f18bafc0c2280ab1d7378"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/diamonds-13.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "39435e88157ab44e43803f04d0545abc04bba16a6d3738ef2498f30d85561108"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/clubs-1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "93c70754bd8e12a7dd7d1612b65846884d569eaf047a3772ca42c52082b53152"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/clubs-11.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "def6f23f1f5b7d5ea2cfc7f70758e3e10a59388881f8d8b4aea997bd620d5988"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/clubs-12.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "b5de59d04112303e0889560cdbbcf42c73872cb3b349b465f3271f50f4e44ab3"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/clubs-13.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "eba2c96e267057d24e22bf4b6402c81146554b540e96f8e46b04986bd8b4feaf"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/spades-1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "938d2b97eb7da5b1646cb1d1bc7443112d50b489ffd001a71fc34ad6950a23be"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/spades-11.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "794e3ba7213422023d07a24d865d9f345d56ffec93673a66f76627a65dc11a21"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/spades-12.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "2a7cfdafc7a7d387ab22f83db49cee6ea5a08f7cfa4d8b52f33d571e64378b19"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/spades-13.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "8edd1e32d46cba9ceb702542b4963d22e653dc14abb7c551fd6b6026bb5d46ae"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/joker-1.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "85911a2ad79ede16c71cecc7d415eae6cbfa2380c5102e47f17fcb76c7b2b12f"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/joker-2.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "136deff10247b6d2a3706ca7445f5695a08e74ac87aedca8862273d736b80286"
+  },
+  {
+    "path": "public/assets/cards/grim-delve/back.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "c6c46168bc761a2743f2d78b6add3cac0b10031d1e020a021975997a361d103b"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/card-hearts.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "82c7d48bab91acbaa068d0e8b0b7698237a4edce648877c46137e7d41bf3a972"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/card-diamonds.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "927efb57d3ec68f544bed792b96ecb8b25ef28e53a9465f093d07bf7300ea747"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/card-clubs.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "6781bd4e8330e500935dd70396232c80ad9c41bc6de6438ac9685d34477842f0"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/card-spades.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "66b509717e4af7e676e12e35694e1910707470b34e1095d233d96305bdf2b470"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/card-joker.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "35a85ec47c79f54be789d340d101900241e4ea01d7e81531ea35eb780b5bec0b"
+  }
+]
