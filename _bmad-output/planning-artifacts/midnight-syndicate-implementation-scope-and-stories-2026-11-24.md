@@ -292,3 +292,39 @@ Les détails de conformité **LTL-R01/R02/R03** sont des vérifications de sourc
 - Direction UX proposée : gabarit vert émeraude et or, objets immédiatement reconnaissables à taille mobile, compteur Preuves X/4 et indication des preuves collectées. Ne jamais divulguer l'identité d'une carte cachée ; dos commun.
 - Fournir à Amelia des illustrations indépendantes, selon [le référentiel graphique](../../docs/graphic-assets-standard.md) : PNG maîtres, noms ASCII minuscules en kebab-case, manifeste et empreintes SHA-256. Aucun texte fonctionnel ni valeur de jeu figés dans les illustrations ; les inscriptions diégétiques fictives sur les objets sont permises.
 - Traçabilité : MS-09 / [CAR-53](https://lmn24.atlassian.net/browse/CAR-53), MS-10 / [CAR-54](https://lmn24.atlassian.net/browse/CAR-54). Cette décision documentaire ne vaut ni production des illustrations ni validation de l'intégration.
+
+## 9. Décision artistique validée — les douze menaces et les écrans de défaite (26 novembre 2026)
+
+**Responsable UX : Sally — décision du porteur validée.** Les douze figures (quatre Valets, quatre Dames, quatre Rois) deviennent douze menaces distinctes. Les regroupements ci-dessous sont exclusivement narratifs, sans incidence sur les règles.
+
+| Référence | Catégorie narrative | Menace validée | Illustration / contexte |
+| --- | --- | --- | --- |
+| MS-M01 | Rencontres dangereuses | Le Parrain | Dirigeant du syndicat dans son luxueux bureau ; couverture compromise. |
+| MS-M02 | Rencontres dangereuses | La Veuve Noire | Mystérieuse femme fatale attirant l'enquêteur dans un piège. |
+| MS-M03 | Rencontres dangereuses | Le Tueur à gages | Homme de main ayant retrouvé la trace de l'enquêteur. |
+| MS-M04 | Rencontres dangereuses | La Balance | Informateur révélant l'identité de l'enquêteur au syndicat. |
+| MS-M05 | Guets-apens | L'Embuscade | Ruelle sombre dont les issues sont bloquées par le syndicat. |
+| MS-M06 | Guets-apens | La Voiture piégée | Véhicule abandonné dissimulant un danger mortel. |
+| MS-M07 | Guets-apens | Le Tireur de l'ombre | Silhouette menaçante surveillant la rue depuis les hauteurs. |
+| MS-M08 | Guets-apens | Le Guet-apens des docks | Entrepôt clandestin où les contrebandiers attendent l'enquêteur. |
+| MS-M09 | Autorités corrompues | Le Commissaire corrompu | Responsable de la police travaillant secrètement pour le syndicat. |
+| MS-M10 | Autorités corrompues | Le Barrage de police | Contrôle organisé pour intercepter l'enquêteur. |
+| MS-M11 | Autorités corrompues | Le Juge véreux | Magistrat à la solde du syndicat faisant disparaître preuves et témoins. |
+| MS-M12 | Autorités corrompues | L'Interrogatoire clandestin | Salle secrète où l'enquêteur capturé est conduit. |
+
+### Identité graphique et invariants
+
+- Gabarit commun bordeaux et or, symbole de danger commun, illustration dominante et nom dynamique traduisible FR/EN ; ni rang J/Q/K ni enseigne traditionnelle affichés sur ces cartes.
+- Douze identifiants physiques distincts conservés dans le moteur ; correspondance exacte entre MS-M01 à MS-M12 et les figures techniques à définir à l'intégration, sans effet mécanique.
+- Toutes les menaces sont équivalentes : défaite immédiate uniquement en arrivant sur une menace déjà visible via Explorer. Observer une menace, la dépasser, l'inspecter ou arriver sur elle encore cachée ne déclenche pas en soi une défaite. Les règles d'impasse existantes restent applicables.
+- Aucun combat, pouvoir, niveau de danger ou changement de probabilité ajouté. Dos commun et aucune divulgation des cartes cachées.
+- Illustrations indépendantes, sans texte fonctionnel figé, conformément au [référentiel graphique CardForge](../../docs/graphic-assets-standard.md).
+
+### Écrans de défaite immersifs — décision validée
+
+- En cas de défaite provoquée par une menace, réutiliser son illustration, afficher le titre de fin de mission, le nom de la menace réellement responsable et un court texte narratif spécifique à celle-ci. Les douze variantes partagent un composant et une direction artistique film noir / Art déco.
+- Exemple validant le principe : **MISSION COMPROMISE — L'Embuscade**. « Les hommes du syndicat vous attendaient. Cette ruelle sera votre dernière destination. »
+- Pour Amelia : conserver le résultat mécanique et les statistiques existants ; adapter uniquement la présentation et, si nécessaire, transporter la cause réelle de défaite jusqu'à l'interface sans révéler de données cachées. En cas d'impasse sans menace responsable identifiée, prévoir un écran générique cohérent plutôt que d'attribuer arbitrairement la défaite à une carte.
+- Textes FR/EN dynamiques, affichage mobile portrait et paysage sans scroll global, fonctionnement hors ligne et contrôles accessibles ; conserver les actions de fin de partie existantes.
+- Les textes narratifs définitifs des onze autres variantes et le visuel générique d'impasse restent à produire. Aucune illustration ni implémentation n'est déclarée terminée par cette décision documentaire.
+- Traçabilité : [CAR-49](https://lmn24.atlassian.net/browse/CAR-49) (résultat), [CAR-50](https://lmn24.atlassian.net/browse/CAR-50) (impasse), [CAR-52](https://lmn24.atlassian.net/browse/CAR-52) (clôture), [CAR-53](https://lmn24.atlassian.net/browse/CAR-53) (UX), [CAR-54](https://lmn24.atlassian.net/browse/CAR-54) (FR/EN), [CAR-55](https://lmn24.atlassian.net/browse/CAR-55) (qualification). Aucun ticket Jira modifié à cette étape.
