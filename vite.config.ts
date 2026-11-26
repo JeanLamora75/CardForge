@@ -15,7 +15,7 @@ function offlineBuild(): Plugin {
       }));
       const art = readdirSync("public/art", {recursive:true,encoding:"utf8"}).filter(p=>p.endsWith(".webp")).map(p=>"art/"+p.replaceAll("\\","/"));
       for(const path of art) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
-      const originals = readdirSync("public/assets", {recursive:true,encoding:"utf8"}).filter(p=>p.endsWith(".png")).map(p=>"assets/"+p.replaceAll("\\","/")).filter(p=>/^assets\/(worlds|worlds-landscape|logos|covers|buttons|effects)\//.test(p));
+      const originals = readdirSync("public/assets", {recursive:true,encoding:"utf8"}).filter(p=>p.endsWith(".png")).map(p=>"assets/"+p.replaceAll("\\","/")).filter(p=>/^assets\/(worlds|worlds-landscape|logos|covers|buttons|effects|banners|boards|hud|icons|frames|ornaments|cards)\//.test(p));
       for(const path of originals) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
       const fontLicences = readdirSync("public/licenses/fonts").filter(p=>p.endsWith(".txt")).map(p=>"licenses/fonts/"+p);
       for(const path of fontLicences) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});

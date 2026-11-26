@@ -320,5 +320,243 @@
     "height": 1086,
     "mode": "RGB",
     "sha256": "3a013b69b8cc9188832eb229430e1a590a0b702df292478b7b2fc2e8ae707584"
+  },
+  {
+    "path": "public/assets/logos/grim-delve/board.png",
+    "width": 2116,
+    "height": 732,
+    "mode": "RGBA",
+    "sha256": "0ab336328a6a2a08ea52232bc0f478794900be27c46c8aded9a9ce08ca42aad2"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/panel-segmented.png",
+    "width": 1428,
+    "height": 255,
+    "mode": "RGBA",
+    "sha256": "f27bb5acce754d2b973e6f4b681b5e3047fa30b58a807ef2da0fc56616ef60d3"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/divider-1.png",
+    "width": 36,
+    "height": 226,
+    "mode": "RGBA",
+    "sha256": "d577af25ec21a7501c196229dcf9fc87585153ad825718467f8192ae7aa5e3c8"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/divider-2.png",
+    "width": 43,
+    "height": 226,
+    "mode": "RGBA",
+    "sha256": "c5f9e01c6f92290d3f59dc18904e7827bb50b20ce49c3660ded556bdd5b4b253"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/divider-3.png",
+    "width": 35,
+    "height": 232,
+    "mode": "RGBA",
+    "sha256": "6737a2c367083011574f20736fb9ef2410794f524df2cbe4ef38264a302c6818"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/heart-filled.png",
+    "width": 192,
+    "height": 173,
+    "mode": "RGBA",
+    "sha256": "b1b2772312e6d96b6ac8986b710836ac94b3d6037b530f8eebfe2b5f66248e0b"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/heart-empty.png",
+    "width": 192,
+    "height": 171,
+    "mode": "RGBA",
+    "sha256": "0e64151cc6c82b1c6cc99b41adefc3c63526486c34ceeb603a4f8e5b4807affe"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/deck.png",
+    "width": 240,
+    "height": 228,
+    "mode": "RGBA",
+    "sha256": "967532eba912663876985ed5c80399b53f1db5bb5000975001365222cc2baf0b"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/skull.png",
+    "width": 179,
+    "height": 212,
+    "mode": "RGBA",
+    "sha256": "14a09f4e7c165e8dc80a6d75b982ba6c50f388838f8280cc959e392a796eae7a"
+  },
+  {
+    "path": "public/assets/hud/grim-delve/counter-frame.png",
+    "width": 315,
+    "height": 189,
+    "mode": "RGBA",
+    "sha256": "3c6920f319f0634c72155a659d2573586bd019f425a214aadcd7894ca185b60c"
+  },
+  {
+    "path": "public/assets/banners/grim-delve/title-wide.png",
+    "width": 1395,
+    "height": 190,
+    "mode": "RGBA",
+    "sha256": "e8446f64916cbfaa588c20dd66fdb05c48a090c23f4a334888b1211c84ce6c13"
+  },
+  {
+    "path": "public/assets/banners/grim-delve/title-small.png",
+    "width": 1286,
+    "height": 150,
+    "mode": "RGBA",
+    "sha256": "d8dfa36992d0b3fa32dd639c5a363d406bb5e290349deaa8603b9deae073e0c2"
+  },
+  {
+    "path": "public/assets/banners/grim-delve/parchment.png",
+    "width": 1404,
+    "height": 199,
+    "mode": "RGBA",
+    "sha256": "03f4ac0e59bd024d157a82cd7bb6ef4a17d13bd6d19dcba9757695f1d1013ae9"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/divider.png",
+    "width": 1278,
+    "height": 124,
+    "mode": "RGBA",
+    "sha256": "3063b8d86d7a23ece0fc48b933775d98a9b1525c722edc82a08150f6b061f243"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/ruby-small.png",
+    "width": 611,
+    "height": 139,
+    "mode": "RGBA",
+    "sha256": "650a867d13d67a707ad56cb34b75f5da6e7567d6f276923d19aeb42fd9027552"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/primary.png",
+    "width": 1331,
+    "height": 249,
+    "mode": "RGBA",
+    "sha256": "8be4cac3d820028af7c38f40a3f556c000af2da12966caa18e8e4ee78ddbcee2"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/danger.png",
+    "width": 1333,
+    "height": 249,
+    "mode": "RGBA",
+    "sha256": "410f0e6f12636b30278c3bb934f2222cc9bd9456df8f4420df7ad358a8f375e0"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/secondary.png",
+    "width": 846,
+    "height": 191,
+    "mode": "RGBA",
+    "sha256": "233282657f2c562bb656be3c7d278ea5f983c1609985095b51389c07a2482e20"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/compact-left.png",
+    "width": 558,
+    "height": 155,
+    "mode": "RGBA",
+    "sha256": "61107a0e442aac5af805470a3aec48f20804a0db43550ddf8aa3086e61be5f09"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/compact-right.png",
+    "width": 559,
+    "height": 155,
+    "mode": "RGBA",
+    "sha256": "cba61efaa74af579b872cb5a3e0bec4fdedb9ca761345caf5aa6a400c7e47e1e"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/disabled.png",
+    "width": 620,
+    "height": 172,
+    "mode": "RGBA",
+    "sha256": "2c4b7a521fd7839ba0ba147b8b28128e3a867f17c02d7a6c5cc7b6d96a632606"
+  },
+  {
+    "path": "public/assets/buttons/grim-delve/primary-muted.png",
+    "width": 768,
+    "height": 172,
+    "mode": "RGBA",
+    "sha256": "ad21f4aefb69bdb1854ec6597d2b73495fc40e46fb1524b8279250a124e00cc9"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/back.png",
+    "width": 429,
+    "height": 439,
+    "mode": "RGBA",
+    "sha256": "ef7579d9b2eac0fceb69af370ee04866b3570a2113ae3b311ecc1c47bf42681b"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/help.png",
+    "width": 429,
+    "height": 440,
+    "mode": "RGBA",
+    "sha256": "d0a93dcbf0204465b355eeb85cc00b47d45da321c58a068503f4dda03c0afcf2"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/settings.png",
+    "width": 427,
+    "height": 439,
+    "mode": "RGBA",
+    "sha256": "a12e2daa80354941b0a3214f20d4a96da12a06c7f4b726e671342bd03e2fe791"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/back-active.png",
+    "width": 433,
+    "height": 442,
+    "mode": "RGBA",
+    "sha256": "a3e050de911f92f39bdff14a6fe8273b23be93a94e1b00d97bc42487de95a4e5"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/help-active.png",
+    "width": 435,
+    "height": 436,
+    "mode": "RGBA",
+    "sha256": "06134eb204d831552d318a752af3343a7bfd51afabb45d65e5e616073c2ad48a"
+  },
+  {
+    "path": "public/assets/icons/grim-delve/info.png",
+    "width": 319,
+    "height": 325,
+    "mode": "RGBA",
+    "sha256": "6db41b608faee6b34981703cdc34da01dba27829acdb736255623d483b25b2b0"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/panel-wide.png",
+    "width": 1411,
+    "height": 458,
+    "mode": "RGBA",
+    "sha256": "96c7298b7f3c2d56b95537a6c26df8a60ef13121309e5bc574a6da3d5eb60399"
+  },
+  {
+    "path": "public/assets/frames/grim-delve/panel-compact.png",
+    "width": 639,
+    "height": 213,
+    "mode": "RGBA",
+    "sha256": "38ff1393d505e412a54e2729d9a5d9cfab88046d62a89105c0bfa05e3267280e"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/corner-left.png",
+    "width": 265,
+    "height": 228,
+    "mode": "RGBA",
+    "sha256": "c233494b9cc5181d7c6e84ac6ff92197d9ebc65be204e97e10fd71b6d8ab41dc"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/corner-right.png",
+    "width": 257,
+    "height": 226,
+    "mode": "RGBA",
+    "sha256": "69c50228a7b9ae6b5c19cd5bf46bd0ad9ce66c77ad88a1a00b63cfeabef44364"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/glow.png",
+    "width": 1268,
+    "height": 125,
+    "mode": "RGBA",
+    "sha256": "a87c4f8df9507715b2d04e81b701b90e375419abde7666cde012aff7e1a5843d"
+  },
+  {
+    "path": "public/assets/ornaments/grim-delve/ruby-large.png",
+    "width": 605,
+    "height": 217,
+    "mode": "RGBA",
+    "sha256": "79a6f146351aa91cbdca1e2e3c78d041717d5aaf1b9e4ee97bce829e736b786a"
   }
 ]

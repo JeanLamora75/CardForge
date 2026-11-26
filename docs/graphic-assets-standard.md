@@ -42,3 +42,6 @@ Comparer chaque chemin cible à GitHub avant copie ; ne jamais écraser un fichi
 - https://github.com/JeanLamora75/CardForge/blob/main/vite.config.ts
 - https://github.com/JeanLamora75/CardForge/blob/main/_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/assets-manifest.json
 - https://github.com/JeanLamora75/CardForge/blob/main/src/components/ImmersiveMenu.tsx
+
+## Intégration du lot Grim Delve V2
+Les 34 entrées du fragment sont intégrées au manifeste historique (80 entrées statiques). Le fond de plateau est ajouté à la liste effective par le script après vérification de son empreinte Git SHA-1 et lecture de ses métadonnées réelles ; son SHA-256 est calculé sur les octets locaux. Cela évite de déclarer une empreinte non vérifiée via le connecteur. Les fonds de plateau sont optimisés à 1600 px maximum. Le précache couvre les catégories du référentiel, y compris les PNG utilisés directement. Les WebP restent des produits de compilation ignorés par Git, sauf exceptions historiques. La validation CI reste requise.
