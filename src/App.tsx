@@ -98,20 +98,22 @@ function GameDetail({
   const go = (view: GameSection) => onNavigate({ page: "game", gameId: game.id, section: view });
   const subPage = section !== "detail";
   const thunderCommand = game.id === "gridcannon" && section === "board";
+  const grimCommand = game.id === "clear-the-dungeon" && section === "board";
+  const immersiveCommand = thunderCommand || grimCommand;
 
   if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
-    <section className={`detail ${game.accent}${thunderCommand?" thunder-command-page":""}`} aria-labelledby="game-title">
-      {thunderCommand?<header className="tf-command-header" data-i18n-ignore><button type="button" className="back-link tf-header-back" aria-label={language==="en"?"Back to Thunderfighter":"Retour à Thunderfighter"} onClick={onBack}>←</button><h1 id="game-title" ref={titleRef} tabIndex={-1}><WorldLogo slug="thunderfighter" title="Thunderfighter"/></h1><button type="button" className="tf-help-toggle" aria-label={language==="en"?"Help":"Aide"} aria-expanded={thunderHelp} onClick={()=>setThunderHelp(v=>!v)}>?</button><button type="button" className="settings-button" aria-label={language==="en"?"Settings":"Paramètres"} onClick={onSettings}>⚙</button></header>:<div className="detail-navigation">
+    <section className={`detail ${game.accent}${thunderCommand?" thunder-command-page":grimCommand?" grim-command-page":""}`} aria-labelledby="game-title">
+      {grimCommand?<header className="gd-command-header" data-i18n-ignore><button type="button" className="gd-nav gd-back" aria-label={language==="en"?"Back to Grim Delve":"Retour à Grim Delve"} onClick={onBack}>←</button><h1 id="game-title" ref={titleRef} tabIndex={-1}><img src={import.meta.env.BASE_URL+"art/logos/grim-delve/board.webp"} alt="Grim Delve"/></h1><button type="button" className="gd-nav gd-help" aria-label={language==="en"?"Help":"Aide"} aria-expanded={thunderHelp} onClick={()=>setThunderHelp(v=>!v)}>?</button><button type="button" className="gd-nav gd-settings" aria-label={language==="en"?"Settings":"Paramètres"} onClick={onSettings}>⚙</button></header>:thunderCommand?<header className="tf-command-header" data-i18n-ignore><button type="button" className="back-link tf-header-back" aria-label={language==="en"?"Back to Thunderfighter":"Retour à Thunderfighter"} onClick={onBack}>←</button><h1 id="game-title" ref={titleRef} tabIndex={-1}><WorldLogo slug="thunderfighter" title="Thunderfighter"/></h1><button type="button" className="tf-help-toggle" aria-label={language==="en"?"Help":"Aide"} aria-expanded={thunderHelp} onClick={()=>setThunderHelp(v=>!v)}>?</button><button type="button" className="settings-button" aria-label={language==="en"?"Settings":"Paramètres"} onClick={onSettings}>⚙</button></header>:<div className="detail-navigation">
         <button className="back-link" type="button" onClick={onBack}>
           <span aria-hidden="true">←</span> {subPage ? `Retour à ${game.title}` : "Retour au catalogue"}
         </button>
-        {!thunderCommand?<span className="status" data-status={game.status}>{statusLabel(game)}</span>:null}
+        {!immersiveCommand?<span className="status" data-status={game.status}>{statusLabel(game)}</span>:null}
       </div>}
       {(
         <div className={section === "board" ? "board-page" : "context-page"}>
-          {!thunderCommand?<span className="eyebrow">{game.title}</span>:null}
-          {!thunderCommand?<h1 id="game-title" ref={titleRef} tabIndex={-1}>
+          {!immersiveCommand?<span className="eyebrow">{game.title}</span>:null}
+          {!immersiveCommand?<h1 id="game-title" ref={titleRef} tabIndex={-1}>
             {thunderCommand ? "Thunderfighter" : section === "rules" ? "Règles et mécanismes" : section === "board" ? "Plateau interactif" : "Statistiques locales"}
           </h1>:null}
           {section === "board" && game.id === "regicide" ? <RegicideLearning language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} /> : section === "board" && (game.id === "clear-the-dungeon" || game.id === "gridcannon" || game.id === "loot-the-loop" || game.id === "card-capture") ? <GameLearning key={game.id} gameId={game.id} language={language} hintsEnabled={hintsEnabled} onHintsChange={onHintsChange} initialLearn={learn} thunderHelp={thunderHelp} onCloseThunderHelp={()=>setThunderHelp(false)} /> : section === "rules" ? (
@@ -228,12 +230,13 @@ export default function App() {
   const immersive=route.page==="game" && route.section==="detail";
   const settingsSurface=route.page==="settings"||route.page==="about";
   const thunderSurface=route.page==="game"&&route.gameId==="gridcannon"&&route.section==="board";
+  const grimSurface=route.page==="game"&&route.gameId==="clear-the-dungeon"&&route.section==="board";
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
-    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":thunderSurface?"thunder-command-surface":""}`}>
+    <main ref={surfaceRef} className={`shell ${immersive?"forge-full":route.page==="catalog"?"forge-home":settingsSurface?"forge-settings-surface":thunderSurface?"thunder-command-surface":grimSurface?"grim-command-surface":""}`}>
       {route.page==="catalog"||settingsSurface?<WorldBackdrop slug="cardforge"/>:null}
-      {!immersive&&!thunderSurface?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
+      {!immersive&&!thunderSurface&&!grimSurface?<header className={route.page==="catalog"?"topbar forge-gallery-header":settingsSurface?"topbar forge-settings-header":"topbar"}>
         <button ref={brandRef} className="brand" type="button" onClick={() => navigate(HOME)}
           aria-label="CardForge, retour au catalogue">
           {route.page==="catalog"||settingsSurface?<WorldLogo slug="cardforge" title="CardForge"/>:<><span className="brand-icon" aria-hidden="true">♠</span> CardForge</>}

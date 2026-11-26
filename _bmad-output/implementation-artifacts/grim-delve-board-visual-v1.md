@@ -1,0 +1,3 @@
+# Grim Delve — refonte du plateau, étape 1
+
+Maquette Sally validée en conversation : décor de donjon, en-tête compact, HUD, quatre colonnes, emplacements de puissance, main et commandes. Les illustrations de cartes sont exclues volontairement ; les faces provisoires CSS affichent les valeurs et factions réelles. Les actions directes sur les monstres sont dérivées uniquement des actions légales du moteur ; la liste existante demeure disponible. Sauvegardes, règles, confirmation des défausses et tutoriel conservés. Le menu d’aide est repris de Thunderfighter. CSS isolé au plateau Grim Delve. Vérification visuelle, compilation, FR/EN, tactile et offline à réaliser avant validation.

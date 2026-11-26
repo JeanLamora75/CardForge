@@ -1,0 +1,48 @@
+/* Grim Delve — plateau V1, ressources graphiques communes. */
+.shell.grim-command-surface{max-width:none;width:100%;min-height:100dvh;box-sizing:border-box;padding:4px max(6px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));background:linear-gradient(#100b08a0,#100b0870),url("/art/boards/grim-delve.webp") center/cover fixed #160e09;color:#f3dfb8}
+.grim-command-page{max-width:760px;margin:auto;padding:0}
+.grim-command-page .board-page,.grim-command-page .game-learning{margin:0;padding:0;max-width:none}
+.gd-command-header{display:grid;grid-template-columns:44px minmax(0,1fr) 44px 44px;gap:5px;align-items:center}
+.gd-command-header h1{margin:0;text-align:center;line-height:0}
+.gd-command-header h1 img{width:100%;max-width:310px;height:clamp(58px,12vw,105px);object-fit:contain}
+.gd-command-header .gd-nav{min-width:44px;min-height:44px;padding:0;border:0;background:transparent center/contain no-repeat;color:transparent;cursor:pointer}
+.gd-back{background-image:url("/art/icons/grim-delve/back.webp")!important}.gd-help{background-image:url("/art/icons/grim-delve/help.webp")!important}.gd-settings{background-image:url("/art/icons/grim-delve/settings.webp")!important}
+.gd-command-header button:focus-visible,.grim-board button:focus-visible{outline:3px solid #ffe4a0;outline-offset:2px}
+.gd-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.grim-command-page .grim-board{padding:0 0 12px;font-family:Georgia,serif}
+.grim-command-page .grim-counters{display:grid;grid-template-columns:1.4fr 1fr 1.2fr .75fr;gap:3px;padding:8px 6px;margin:3px 0;background:#21150fdd url("/art/hud/grim-delve/panel-segmented.webp") center/100% 100% no-repeat;border:1px solid #8f683e;border-radius:8px}
+.gd-counter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;text-align:center;color:#ffe9bf}
+.gd-counter small{font-size:clamp(.58rem,2vw,.85rem);line-height:1.05}.gd-counter strong{font-size:clamp(.8rem,3vw,1.3rem)}.gd-counter-icon{width:22px;height:22px;object-fit:contain}.gd-hearts{display:flex;gap:1px;width:100%;justify-content:center}.gd-hearts img{width:13%;max-width:21px;object-fit:contain}
+.grim-command-page .gd-banner{margin:7px 0;padding:8px 10px;text-align:center;font:700 clamp(.65rem,2.8vw,1rem)/1.1 Cinzel,Georgia,serif;background:url("/art/banners/grim-delve/title-wide.webp") center/100% 100% no-repeat;color:#ffe4ae;text-shadow:0 2px 3px #000}
+.grim-command-page .grim-columns{grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(3px,1vw,10px)}
+.grim-command-page .grim-column{padding:3px;gap:4px;align-items:stretch;border:1px solid #78563688;border-radius:6px;background:#120c09b0;text-align:center}
+.grim-command-page .grim-column h4{font-size:clamp(.58rem,2vw,.85rem);font-weight:normal;color:#e2c493}
+.grim-command-page .grim-card{position:relative;aspect-ratio:3/4;min-height:0;width:100%;padding:4px 2px;gap:2px;border:1px solid #bc9155;border-radius:6px;background:radial-gradient(ellipse at center,#67422a,#1c100d 80%);box-shadow:inset 0 0 0 2px #120a08,0 2px 5px #0009;color:#fff1d1}
+.grim-command-page .grim-card[data-monster=true]{min-height:0;border-color:#e1bc79}
+.grim-command-page .grim-card[data-faction=diamonds]{background:radial-gradient(ellipse,#275d83,#101a27 80%)}
+.grim-command-page .grim-card[data-faction=clubs]{background:radial-gradient(ellipse,#435c27,#121c0c 80%)}
+.grim-command-page .grim-card[data-faction=spades]{background:radial-gradient(ellipse,#594366,#1a1021 80%)}
+.grim-command-page .grim-card[data-faction=hearts]{background:radial-gradient(ellipse,#8a3b23,#250e08 80%)}
+.grim-command-page .grim-card strong{font-size:clamp(.53rem,1.8vw,.85rem);line-height:1.1}
+.grim-command-page .grim-card small{font-size:clamp(.48rem,1.6vw,.7rem);line-height:1.1}
+.grim-command-page .grim-card-crest{font-size:clamp(1rem,5vw,2.7rem);color:#e3ba70;margin-top:12px}
+.gd-card-value{position:absolute;top:4px;left:5px;font-weight:bold;font-size:clamp(.75rem,3vw,1.25rem)}
+.grim-command-page .grim-card[data-target=true]{outline:2px solid #f5cf75;box-shadow:0 0 12px #f3b84099;cursor:pointer}
+.grim-command-page .grim-card[aria-pressed=true]{outline:2px solid #ffe8a2;transform:translateY(-3px)}
+.gd-monster-stack{position:relative;isolation:isolate;margin-top:4px}
+.gd-monster-stack[data-hidden="1"]::before,.gd-monster-stack[data-hidden="2"]::before{content:"";position:absolute;inset:-3px 3px 3px;border:1px solid #927044;border-radius:5px;background:#2a1b11;z-index:-1}
+.gd-attack-slots{display:grid;grid-template-columns:1fr 1fr;gap:2px;min-height:clamp(38px,12vw,95px)}
+.gd-empty-slot,.gd-empty{display:grid;place-items:center;min-width:0;border:1px dashed #9b784d;border-radius:4px;color:#a58a5d;background:#100a07aa;font-size:.8rem}
+.grim-command-page .grim-placed{padding:0;border:0;min-width:0}.grim-command-page .grim-placed .grim-card{aspect-ratio:2/3}.grim-command-page .grim-placed .grim-card-crest{font-size:1rem;margin-top:6px}.grim-command-page .grim-placed .grim-card strong,.grim-command-page .grim-placed .grim-card small{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.grim-command-page .grim-placed>small{display:block;font-size:clamp(.45rem,1.3vw,.65rem);line-height:1.05}
+.grim-command-page .grim-column>small{font-size:clamp(.5rem,1.7vw,.75rem);line-height:1.15;color:#e4cfa7}.gd-power-total{font-weight:bold}
+.grim-command-page .grim-notice{margin:7px 0;padding:8px 10px;border:1px solid #8c6a3e;border-radius:4px;background:#21150ded url("/art/banners/grim-delve/parchment.webp") center/100% 100% no-repeat;font-size:clamp(.68rem,2.4vw,.9rem);line-height:1.2;text-align:center;color:#fff1d2;text-shadow:0 1px 3px #000,0 1px 3px #000}
+.grim-command-page .grim-hand{grid-template-columns:repeat(3,minmax(0,118px));justify-content:center;gap:8px;padding:3px 0}
+.grim-command-page .grim-actions{margin:6px 0;padding:6px;gap:5px;border-color:#89633b;background:#1b100ccc;flex-direction:row}
+.grim-command-page .grim-actions h3{font-size:.85rem}.grim-command-page .grim-actions button{min-height:44px;font-size:.75rem;flex:1 1 120px}
+.grim-command-page .gd-footer{position:sticky;bottom:0;z-index:4;display:grid;grid-template-columns:1fr 1fr;padding:5px;background:#1a100cf5;border:0}
+.grim-command-page .gd-footer button{min-width:0;color:#fff1d1;border:0;border-radius:5px;background:#50341b url("/art/buttons/grim-delve/primary.webp") center/100% 100% no-repeat;font:700 clamp(.68rem,2.5vw,.95rem)/1.15 Georgia,serif;text-shadow:0 1px 3px #000;padding:10px 8px}
+.grim-command-page .gd-footer button.secondary-action{background-image:url("/art/buttons/grim-delve/danger.webp")}.grim-command-page .gd-footer button:disabled{opacity:.5;cursor:not-allowed}
+.grim-command-page .gd-context,.grim-command-page .gd-tutorial{margin:5px 0;padding:6px;font-size:.75rem;background:#1d130de8}
+.gd-help-dialog{background:#21150e;color:#f3dfb8;border-color:#a67b47}
+@media(min-width:600px){.grim-command-page .grim-columns{max-width:640px;margin:auto}.grim-command-page .grim-card{max-height:165px}.grim-command-page .grim-hand .grim-card{max-height:155px}.grim-command-page .gd-attack-slots{min-height:55px}.grim-command-page .grim-placed .grim-card{max-height:75px}}
+@media(prefers-reduced-motion:reduce){.grim-board *{transition:none!important;animation:none!important}}
