@@ -1147,3 +1147,24 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 .tf-ending-dialog footer{padding:6px;flex:none;border-top:1px solid #647984;}
 @media(orientation:landscape) and (max-height:500px){.tf-ending-main{min-height:calc(100dvh - 20px);padding-bottom:0;gap:3px;max-width:680px;}.tf-ending .world-logo{height:44px;width:200px;}.tf-ending-emblem{height:35px;width:70px;}.tf-ending-banner{padding:3px 10px;}.tf-ending.game-final-screen h2{font-size:1.5rem;}.tf-ending .tf-ending-actions{grid-template-columns:1fr 1fr;}.tf-ending-metrics svg{display:none;}.tf-ending-metrics>div{padding:2px;}.tf-ending-details-link{min-height:36px;}.tf-ending-subtitle{margin:0;}}
 @media(max-height:650px) and (orientation:portrait){.tf-ending .world-logo{height:75px;}.tf-ending-emblem{height:46px;}.tf-ending-main{gap:4px;}.tf-ending-banner{padding:5px 12px;}}
+
+/* Finishing details: continuous bevels and balanced mission report. */
+.tf-ending.game-final-screen{position:relative;isolation:isolate;font-family:Rajdhani,Arial,sans-serif;}
+.tf-ending-main{z-index:1;box-sizing:border-box;min-height:0;}
+.tf-ending-banner{box-sizing:border-box;padding:5px 12px;background:linear-gradient(180deg,var(--end-accent),#46545d 5%,#14232e 12%,#101923 88%,#46545d 95%,var(--end-accent));}
+.tf-ending-emblem{filter:drop-shadow(0 2px 1px #000) drop-shadow(0 0 6px color-mix(in srgb,var(--end-accent) 35%,transparent));}
+.tf-ending-metrics>div{position:relative;isolation:isolate;border:0;background:linear-gradient(135deg,#d6c6af,var(--end-accent) 25%,#566c79 55%,var(--end-accent));}
+.tf-ending-metrics>div::before{content:"";position:absolute;inset:1px;z-index:-1;clip-path:inherit;background:linear-gradient(145deg,#354b59,#101e2b 28%,#111e2b 85%,#354b59);}
+.tf-ending-details-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;}
+.tf-ending-dialog-content .tf-report-metrics{grid-template-columns:repeat(3,minmax(0,1fr));}
+.tf-ending-dialog-content .tf-report-metrics dt{overflow-wrap:anywhere;font-size:clamp(.68rem,2.6vw,.85rem);}
+.tf-ending-dialog-content .tf-report-rate{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;text-align:left;padding:6px 10px;}
+.tf-report-rate meter{grid-column:1/-1;width:100%;height:12px;accent-color:#e8b77c;}
+.tf-report-extra{font-size:.8rem;margin:0 0 6px;text-align:center;}
+.tf-ending-dialog-content h3{margin:8px 0;}
+.tf-ending-ambience{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
+.tf-ending-ambience i{position:absolute;bottom:12%;width:3px;height:3px;border-radius:50%;background:var(--end-accent);box-shadow:0 0 6px var(--end-accent);opacity:0;animation:tf-ending-drift 6s linear infinite;}
+@keyframes tf-ending-drift{0%{transform:translate(0,0);opacity:0}25%{opacity:.45}75%{opacity:.25}100%{transform:translate(28px,-55dvh);opacity:0}}
+:root[data-motion=off] .tf-ending-ambience{display:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-ending-ambience{display:none;}}
+@media(orientation:landscape) and (max-height:500px){.tf-ending-banner{padding:2px 10px;}.tf-ending-main{gap:3px;}.tf-ending .world-logo{height:44px;}}
