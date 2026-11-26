@@ -6,4 +6,6 @@ dist/
 *.log
 .DS_Store
 
-/public/art/
+/public/art/*
+!/public/art/thunderfighter/
+!/public/art/thunderfighter/**
