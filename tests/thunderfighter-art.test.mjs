@@ -1,2 +1,9 @@
-import test from "node:test";import assert from "node:assert/strict";import {readFileSync,readdirSync} from "node:fs";import {makeDeckWithJokers} from "../src/core/cards.ts";
-test("54 physical cards have fixed local SVG artwork and imports",()=>{const ids=makeDeckWithJokers().map(c=>c.id);const dir=new URL("../src/assets/thunderfighter/",import.meta.url);assert.deepEqual(readdirSync(dir).sort(),ids.map(id=>id+".svg").sort());const manifest=readFileSync(new URL("../src/application/thunderfighter-art.ts",import.meta.url),"utf8");for(const id of ids){const svg=readFileSync(new URL(id+".svg",dir),"utf8");assert.match(svg,/<svg\b/);assert.doesNotMatch(svg,/<script|<image|href=|url\(https?:/i);assert.ok(manifest.includes(id+".svg?url"));}});
+import test from "node:test";import assert from "node:assert/strict";import {readFileSync} from "node:fs";import {makeDeckWithJokers} from "../src/core/cards.ts";import sharp from "sharp";
+test("54 physical cards have distinct decodable local WebP artwork",async()=>{
+ const factions={hearts:"nova",diamonds:"vector",clubs:"solaris",spades:"aegis"};
+ const source=readFileSync(new URL("../src/application/thunderfighter-art.ts",import.meta.url),"utf8");
+ const paths=makeDeckWithJokers().map(c=>"kind" in c?"special/singularity/0"+c.id.slice(-1)+".webp":c.rank===1?"special/"+factions[c.suit]+"/alpha.webp":c.rank>=11?"officers/"+factions[c.suit]+"/"+["lieutenant","commander","admiral"][c.rank-11]+".webp":"ships/"+factions[c.suit]+"/"+String(c.rank).padStart(2,"0")+".webp");
+ assert.equal(new Set(paths).size,54);
+ assert.match(source,/import\.meta\.env\.BASE_URL/);assert.match(source,/art\/thunderfighter\//);
+ for(const p of paths){const buffer=readFileSync(new URL("../public/art/thunderfighter/"+p,import.meta.url));const m=await sharp(buffer).metadata();assert.equal(m.format,"webp",p);assert.ok(m.width>0&&m.height>0,p);await sharp(buffer).resize(16,16).raw().toBuffer();}
+});

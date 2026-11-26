@@ -15,25 +15,18 @@ import { replayFinishedGame } from "../application/game-results.ts";
 import ThunderfighterEnding from "./ThunderfighterEnding.tsx";
 import { playGameplayEffect } from "../application/audio.ts";
 import type {Locale} from "../i18n/language.ts";
-import {thunderCardView} from "../application/thunderfighter-card-view.ts";
-import {ThunderTacticalCard,ThunderCardDetail} from "./ThunderfighterCard.tsx";
+import {thunderCardView,thunderCardLabel} from "../application/thunderfighter-card-view.ts";
+import {ThunderTacticalCard,ThunderCardDetail,ThunderCardFace} from "./ThunderfighterCard.tsx";
 import {contextualThunderTarget,contextualThunderActions,specialThunderActions,isThunderActionLegal,type BoardTarget,type SpecialSelection} from "../application/thunderfighter-targets.ts";
 
 type Session = Pick<PersistentGameSession<ThunderfighterState, ThunderfighterAction>, "getState" | "getLegalActions" | "dispatch">;
 const inventory = new Map(makeDeckWithJokers().map(card => [card.id, card]));
-const suits = { hearts: ["♥", "Cœur"], diamonds: ["♦", "Carreau"], clubs: ["♣", "Trèfle"], spades: ["♠", "Pique"] } as const;
 const options = { gameId: THUNDERFIGHTER_GAME_ID, rulesVersion: THUNDERFIGHTER_RULES_VERSION, formatVersion: 1 };
 function valueOf(id: string): number {
   const card = inventory.get(id);
   return card && "rank" in card ? card.rank : 10;
 }
-function labelOf(id: string): string {
-  const card = inventory.get(id);
-  if (!card) return id;
-  if ("kind" in card) return `Joker ${id.slice(-1)} · Réaffectation`;
-  const rank = ({ 1: "As", 11: "Valet", 12: "Dame", 13: "Roi" } as Record<number, string>)[card.rank] ?? String(card.rank);
-  return `${rank} de ${suits[card.suit][1]} (${suits[card.suit][0]})`;
-}
+function labelOf(id: string): string { return thunderCardLabel(id); }
 function actionLabel(action: ThunderfighterAction): string {
   switch (action.type) {
     case "place-figure": return `Positionner en secteur ${action.slot + 1}`;
@@ -255,7 +248,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   }
   function dragHandlers(id:string,context:SpecialSelection|null){return {onPointerDown:(e:ReactPointerEvent<HTMLElement>)=>startDrag(e,id,context),onPointerMove:moveDrag,onPointerUp:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e),onPointerCancel:(e:ReactPointerEvent<HTMLElement>)=>finishDrag(e,true),onLostPointerCapture:(e:ReactPointerEvent<HTMLElement>)=>{if(drag.current?.capture===e.target)finishDrag(e,true);},onClickCapture:(e:ReactMouseEvent<HTMLElement>)=>{if(suppressClick.current&&e.detail!==0){suppressClick.current=false;e.preventDefault();e.stopPropagation();}}};}
   const previewId=selection?.type==="place-number"||selection?.type==="assign-armor"?state?.pendingNumeric:selection?.type==="place-figure"?state?.pendingFigures[0]:selection?.type==="reassign"?state?.grid[selection.from]?.at(-1):null;
-  function renderPreview(kind:BoardTarget["kind"],index:number){if(!state||!previewId||selectedTarget?.kind!==kind||selectedTarget.index!==index||selection?.type==="assign-armor")return null;const view=thunderCardView(state,previewId,language);return view?<span className="tf-drop-preview" data-preview-id={view.id} aria-hidden="true"><img src={thunderArt[view.id]} alt=""/><span className="tf-card-corner"><strong>{view.compact}</strong><span>{view.symbol}</span></span>{view.figure?<span className="tf-card-bottom">{view.resistance}</span>:null}</span>:null;}
+  function renderPreview(kind:BoardTarget["kind"],index:number){if(!state||!previewId||selectedTarget?.kind!==kind||selectedTarget.index!==index||selection?.type==="assign-armor")return null;const view=thunderCardView(state,previewId,language);return view?<span className="tf-drop-preview" data-preview-id={view.id} data-suit={view.suit??"joker"} aria-hidden="true"><ThunderCardFace card={view}/></span>:null;}
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const armorRequired=legal.length>0&&legal.every(a=>a.type==="assign-armor");
   const instruction=armorRequired?(en?"Armor required · select the indicated enemy.":"Armure obligatoire · sélectionnez l’adversaire indiqué."):state?.pendingFigures.length?(en?"Choose an indicated sector.":"Choisissez un secteur indiqué."):en?"Drag or select a highlighted destination.":"Glissez ou sélectionnez une destination.";
@@ -308,8 +301,8 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       <div className="thunder-action-zone" data-console-phase={selection?"confirm":special?"special":state.phase==="searching"?"search":state.pendingNumeric||state.pendingFigures.length?"place":"draw"}>
 {tutorial?<div className="tf-training-guide" data-i18n-ignore><strong>{en?"Training · no save":"Entraînement · sans sauvegarde"}</strong></div>:null}
-<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<div className="tf-action-copy"><p className="thunder-pending">Figure à positionner : <strong>{labelOf(state.pendingFigures[0])}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
-      {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<div className="tf-action-copy"><p className="thunder-pending">Carte piochée : <strong>{labelOf(state.pendingNumeric)}</strong>.</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
+<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<div className="tf-action-copy"><p className="thunder-pending">Figure à positionner : <strong>{thunderCardLabel(state.pendingFigures[0],language)}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<div className="tf-action-copy"><p className="thunder-pending">Carte piochée : <strong>{thunderCardLabel(state.pendingNumeric,language)}</strong>.</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
 </div>
       <div className="tf-console-controls">
       <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>

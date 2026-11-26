@@ -38,3 +38,6 @@ assert.equal(manifest.start_url, "./");
 assert.ok(manifest.icons.some(icon => icon.sizes === "192x192" && icon.type === "image/png"));
 assert.ok(manifest.icons.some(icon => icon.sizes === "512x512" && icon.type === "image/png"));
 console.log(`PWA bundle verified: ${paths.length} offline assets, manifest and installable icons`);
+
+const thunderCards=paths.filter(p=>/^\.\/art\/thunderfighter\/(ships|officers|special)\/.*\.webp$/.test(p));
+assert.equal(new Set(thunderCards).size,54,"all ThunderFighter cards must be precached");
