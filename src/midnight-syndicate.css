@@ -25,12 +25,12 @@
 .ms-route-stop.ms-current,.ms-route-stop.ms-destination{outline:1px solid #ffc76a;outline-offset:-1px;border-radius:4px}
 .ms-route-stop small{grid-column:2;font-size:.6rem;color:#ffe6b5;text-align:center;line-height:1.1}
 .ms-command-page .ms-exploration,.ms-command-page .ms-controls{min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;padding:4px;background:#081b2040;border-radius:5px}
-.ms-command-page .ms-controls{display:grid;grid-template-rows:24px auto 24px auto;align-content:start}
+.ms-command-page .ms-controls{display:grid;grid-template-rows:none;grid-auto-rows:auto;align-content:start}
 .ms-command-page .ms-immersive h3{position:relative;isolation:isolate;display:grid;place-items:center;min-height:24px;margin:0;padding:2px 6px;text-align:center;font-size:clamp(.72rem,2.4vw,1rem);line-height:1.1;color:#ffdc95}
 .ms-heading-skin,.ms-button-skin{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;pointer-events:none}
 .ms-immersive .ms-top,.ms-immersive .ms-notes{display:flex;justify-content:center;align-items:center;gap:5px;min-height:0;min-width:0}
 .ms-top{flex:1 1 0;container-type:size}
-.ms-command-page .ms-notes{height:clamp(52px,13dvh,115px);flex:none;background:transparent;border-radius:0}
+.ms-command-page .ms-notes{height:clamp(65px,16dvh,145px);flex:none;background:transparent;border-radius:0}
 .ms-immersive .ms-card{position:relative;display:block;padding:0;margin:0;min-height:0;min-width:0;border:0;border-radius:0;background:transparent;aspect-ratio:392/552;overflow:hidden;flex:none;container-type:inline-size;text-align:center;box-sizing:border-box}
 .ms-command-page .ms-top .ms-card{width:min(calc((100cqw - 5px)/2),calc(100cqh * 392 / 552));height:auto;max-height:100%}
 .ms-command-page .ms-notes .ms-card{height:calc(100% - 6px);width:auto;max-width:30%;aspect-ratio:392/552}
@@ -68,7 +68,7 @@
 .ms-top[data-moved=true] .ms-card{animation:ms-arrival 220ms ease-out both}
 @keyframes ms-arrival{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.ms-top[data-moved=true] .ms-card{animation:none}}
-@media(orientation:landscape){.ms-command-page .ms-header{height:44px}.ms-command-page .ms-live-layout{grid-template-columns:minmax(72px,19%) minmax(0,1fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr)}.ms-route{grid-row:1}.ms-command-page .ms-controls{grid-template-rows:20px auto 20px auto}.ms-command-page .ms-notes{height:clamp(45px,15dvh,115px)}.ms-immersive .ms-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-command-page .ms-immersive h3{min-height:20px}.ms-hint{font-size:.62rem}}
+@media(orientation:landscape){.ms-command-page .ms-header{height:44px}.ms-command-page .ms-live-layout{grid-template-columns:minmax(72px,19%) minmax(0,1fr) minmax(0,1.2fr);grid-template-rows:minmax(0,1fr)}.ms-route{grid-row:1}.ms-command-page .ms-controls{grid-template-rows:none;grid-auto-rows:auto}.ms-command-page .ms-notes{height:clamp(52px,19dvh,135px)}.ms-immersive .ms-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.ms-command-page .ms-immersive h3{min-height:20px}.ms-hint{font-size:.62rem}}
 
 /* Terminal scene */
 .ms-board[data-phase=finished] .ms-status,.ms-command-page:has(.ms-board[data-phase=finished]) .ms-header{display:none}
@@ -97,3 +97,9 @@
 .ms-drag-ghost .ms-card{width:100%;height:100%;max-width:none}
 .ms-drag-return{transition:left 160ms ease-out,top 160ms ease-out;opacity:.65}
 @media(prefers-reduced-motion:reduce){.ms-drag-return{transition:none}}
+
+.ms-transfer-indicator{position:absolute;z-index:2;right:3px;top:3px;width:18px;height:18px;display:grid;place-items:center;background:#10272c;color:#ffe2a5;border:1px solid #c5a05b;border-radius:50%;font-size:14px;line-height:1;pointer-events:none}
+.ms-note-help{margin:0;color:#ffe5b4;font-size:.65rem;line-height:1.1;text-align:center}
+.ms-actions>.ms-hint{grid-column:1/-1}
+.ms-command-page .ms-actions button{min-height:48px}
+@media(orientation:landscape) and (max-height:430px){.ms-note-help{font-size:.6rem}.ms-command-page .ms-actions button{min-height:44px}}

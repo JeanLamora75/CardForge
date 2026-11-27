@@ -604,6 +604,18 @@ async function journey(locale,mobile){
         assert.equal(returned.state.notes.length,fixture.state.notes.length);
         assert.equal(returned.state.deck[0].id,'hearts-2');
         assert.equal(await page.locator('.ms-confirm-overlay').count(),0);
+        assert.equal(await page.locator('.ms-actions [data-action="mark-path"],.ms-actions [data-action="return-to-path"]').count(),0);
+        await writeMsSave(fixture);
+        const keyboardCard=page.locator('.ms-top .ms-draggable').first();
+        assert.equal(await keyboardCard.getAttribute('aria-keyshortcuts'),'Shift+Enter');
+        await keyboardCard.focus();await page.keyboard.press('Shift+Enter');
+        const keyboardMarked=await waitSavedChanged(page,game.id,fixture);
+        assert.equal(keyboardMarked.state.notes.at(-1).id,'hearts-2');
+        await page.waitForTimeout(320);
+        await page.locator('.ms-notes .ms-draggable').first().focus();await page.keyboard.press('Shift+Enter');
+        const keyboardReturned=await waitSavedChanged(page,game.id,keyboardMarked);
+        assert.equal(keyboardReturned.state.deck[0].id,'hearts-2');
+        assert.equal(keyboardReturned.state.notes.length,fixture.state.notes.length);
         await writeMsSave(after);
         if(msViewport)await page.setViewportSize(msViewport);
         await page.locator('.ms-header .settings-button').click();
