@@ -1,0 +1,23 @@
+[
+  {
+    "path": "public/assets/banners/grim-delve/end-defeat-damage.png",
+    "width": 941,
+    "height": 338,
+    "mode": "RGB",
+    "sha256": "7af4f0b854c62a482258571b721b04631bdc6d2f3bbd7f972a4b0618ee05e060"
+  },
+  {
+    "path": "public/assets/banners/grim-delve/end-defeat-exhaustion.png",
+    "width": 941,
+    "height": 338,
+    "mode": "RGB",
+    "sha256": "dc06a9a6dfc554efbfcb89cdcdcae5b610a5d18b193c355ac0032d1ebef19fb7"
+  },
+  {
+    "path": "public/assets/banners/grim-delve/end-victory.png",
+    "width": 941,
+    "height": 338,
+    "mode": "RGB",
+    "sha256": "99c9c4cc61f6db326884f42613dc32db81cb16434b65e49978fd9e739961092f"
+  }
+]
