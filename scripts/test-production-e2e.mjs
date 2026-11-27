@@ -423,6 +423,23 @@ async function journey(locale,mobile){
       }
       if(game.id==='loot-the-loop'){
         assert.equal(await page.locator('.ms-top .ms-hidden').count(),2);
+         assert.equal(await page.locator('.ms-header').count(),1);
+         assert.equal(await page.locator('.topbar').count(),0);
+         const originalViewport=page.viewportSize();
+         for(const viewport of [{width:390,height:844},{width:844,height:390}]){
+           await page.setViewportSize(viewport);
+           assert.ok(await page.evaluate(()=>{
+             const route=document.querySelector('.ms-route');
+             const controls=[...document.querySelectorAll('.ms-actions button,.ms-footer button,.ms-header button')];
+             return document.documentElement.scrollHeight<=innerHeight+2&&document.documentElement.scrollWidth<=innerWidth+2&&route.scrollHeight>route.clientHeight&&controls.every(n=>{const r=n.getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight+1&&r.left>=0&&r.right<=innerWidth+1&&r.height>=44;});
+           }), 'Midnight Syndicate: viewport fits and only route scrolls '+JSON.stringify(viewport));
+           await page.locator('.ms-top img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
+           assert.equal(await page.locator('.ms-hidden .ms-card-art').count(),0);
+           await page.locator('.ms-route').evaluate(n=>n.scrollTop=n.scrollHeight);
+           assert.ok(await page.locator('.ms-route').evaluate(n=>n.scrollTop>0));
+           await page.locator('.ms-route').evaluate(n=>n.scrollTop=0);
+         }
+         if(originalViewport)await page.setViewportSize(originalViewport);
         await interact(page,page.locator(game.actions).first(),mobile);
         assert.deepEqual(await readSaved(page,game.id),before);
         await interact(page,page.locator('.ms-confirm button.secondary-action'),mobile);
@@ -539,7 +556,7 @@ async function journey(locale,mobile){
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
         await page.locator('.ms-board').getByText(/Partie reprise · sauvegarde locale|Game resumed · local save/).waitFor();
         assert.deepEqual(await readSaved(page,game.id),after,'Midnight Syndicate resume must preserve the committed action');
-        await page.locator('.topbar .settings-button, .tf-command-header .settings-button').click();
+        await page.locator('.ms-header .settings-button').click();
         await page.locator('[data-settings-category="language"]').click();
         await select.selectOption(locale==='fr'?'en':'fr');
         assert.equal(await page.locator('html').getAttribute('lang'),locale==='fr'?'en':'fr');
