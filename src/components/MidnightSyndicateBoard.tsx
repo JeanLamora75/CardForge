@@ -1,4 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { visibleMidnightArt } from "../application/midnight-card-art.ts";
+import type { Locale } from "../i18n/language.ts";
+import "./../midnight-syndicate.css";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import type { PersistentGameSession } from "../application/persistent-game-session.ts";
 import type { NewGameChoice } from "../application/new-game-choice.ts";
@@ -8,18 +11,16 @@ import { startMidnightSyndicate, resumeMidnightSyndicate, getMidnightSyndicateNe
 import GameResultPanel from "./GameResultPanel";
 type Session = Pick<PersistentGameSession<MidnightSyndicateState, MidnightSyndicateAction>, 'getState' | 'dispatch'>;
 const setup = () => ({seed:crypto.getRandomValues(new Uint32Array(1))[0]});
-function cardLabel(card: PublicLoopCard) {
-  if (!card.faceUp) return "Carte cachée";
-  if (card.id === "joker-1") return "Joker";
-  const [suit,rank] = card.id.split("-");
-  const ranks: Record<string,string> = {"1":"As","11":"Valet","12":"Dame","13":"Roi"};
-  const suits: Record<string,string> = {hearts:"♥",diamonds:"♦",clubs:"♣",spades:"♠"};
-  return (ranks[rank] ?? rank) + " " + (suits[suit] ?? "");
+const art=(category:string,name:string)=>import.meta.env.BASE_URL+"art/"+category+"/midnight-syndicate/"+name+".webp";
+function cardLabel(card:PublicLoopCard,language:Locale="fr") {
+  const item=visibleMidnightArt(card);
+  return item ? item[language] : language==="en"?"Hidden card":"Carte cachée";
 }
-function Card({card}:{card:PublicLoopCard}) {
-  return <div className={"ms-card "+(card.faceUp?"ms-visible":"ms-hidden")} aria-label={cardLabel(card)}>
-    <small>#{card.position+1}</small><strong>{card.faceUp?cardLabel(card):"◆"}</strong>
-    <span>{card.faceUp?"Visible":"Cachée"}</span>
+function Card({card,language,compact=false}:{card:PublicLoopCard;language:Locale;compact?:boolean}) {
+  const item=visibleMidnightArt(card);
+  return <div className={"ms-card "+(item?"ms-visible":"ms-hidden")+(compact?" ms-mini":"")} aria-label={cardLabel(card,language)} data-i18n-ignore>
+    <img className="ms-card-frame" src={art("cards",item?"front-"+item.frame:"back")} alt="" draggable={false}/>
+    {item?<><strong className="ms-card-value">{item.value}</strong><img className="ms-card-art" src={art("cards",item.file)} alt="" draggable={false}/><span className="ms-card-name">{item[language]}</span></>:null}
   </div>;
 }
 function actionLabel(action:MidnightSyndicateAction) {
@@ -30,7 +31,7 @@ function actionLabel(action:MidnightSyndicateAction) {
     case "return-to-path": return "Restituer la note "+(action.noteIndex+1);
   }
 }
-export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true,onReplayTutorial}:{tutorial?:boolean;hintsEnabled?:boolean;onReplayTutorial?:()=>void}) {
+export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true,onReplayTutorial,language="fr"}:{tutorial?:boolean;hintsEnabled?:boolean;onReplayTutorial?:()=>void;language?:Locale}) {
   const session = useRef<Session|null>(null);
   const lock = useRef(false);
   const [state,setState] = useState<Readonly<MidnightSyndicateState>|null>(null);
@@ -43,6 +44,9 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const confirmation = useRef<HTMLButtonElement>(null);
   const actionsHeading = useRef<HTMLHeadingElement>(null);
   const mounted = useRef(false);
+  const [inspection,setInspection]=useState<"route"|"loot"|null>(null);
+  const dialog=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{const d=dialog.current;if(inspection&&d&&!d.open)d.showModal();else if(!inspection&&d?.open)d.close();},[inspection]);
   useEffect(()=>{
     let cancelled=false;
     mounted.current=true;
@@ -102,48 +106,49 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   }
   const view=state?inspectMidnightSyndicate(state):null;
   const summary=state?makeMidnightSyndicateSummary(state):null;
-  return <section className="ms-board" aria-label="Plateau Midnight Syndicate" aria-busy={busy}>
-    <p className="ms-kicker">MIDNIGHT SYNDICATE · 1930</p>
-    <p role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</p>
+  const tr=(fr:string,en:string)=>language==="en"?en:fr;
+  const destination=selected?.type==="explore"&&view?.deck.length?selected.distance%view.deck.length:-1;
+  return <section className="ms-board ms-immersive" aria-label="Plateau Midnight Syndicate" aria-busy={busy}
+    style={{"--ms-portrait":"url("+art("boards","portrait")+")","--ms-landscape":"url("+art("boards","landscape")+")"} as CSSProperties}>
+    <div className="ms-status" role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</div>
     {error?<p role="alert" className="ms-error">{error}</p>:null}
-    {!state&&!tutorial?<button className="primary-action" disabled={busy||blocked} onClick={()=>void start()}>Commencer une partie</button>:null}
-    {view?<><div className="ms-counters">
-      <span>As : {view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length} / 4</span>
-      <span>Butin : {view.loot.length}</span><span>Parcours : {view.deck.length}</span>
-      <span>Notes : {view.notes.length} / 3</span>
+    {!state&&!tutorial?<button className="primary-action ms-start" disabled={busy||blocked} onClick={()=>void start()}>Commencer une partie</button>:null}
+    {view?<><div className="ms-counters" data-i18n-ignore>
+      {[[tr("Preuves","Evidence"),view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length+"/4","aces"],[tr("Butin","Loot"),view.loot.length,"loot"],[tr("Parcours","Route"),view.deck.length,"route"],[tr("Notes","Notes"),view.notes.length+"/3","notes"]].map(([label,value,icon])=><div key={icon} className="ms-counter"><img src={art("hud","counter-"+icon)} alt=""/><span>{label}<b>{value}</b></span></div>)}
     </div>
-    {summary?<GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/>:null}
-    <h3>Position actuelle</h3>
-    <div className="ms-top">{view.deck.slice(0,2).map(card=><Card key={card.position} card={card}/>)}</div>
-    {view.outcome==="in-progress"?<>
-      {hintsEnabled?<details open={tutorial}><summary>Aide contextuelle</summary><p>{view.actions.some(a=>a.type==="look-around")?"Observez pour révéler les deux premières cartes.":view.actions.some(a=>a.type==="explore")?"Choisissez une distance visible, puis inspectez la destination avant de confirmer.":"Essayez de restituer une note pour retrouver un chemin."}</p><p>Une figure visible à l’arrivée est un piège. Les notes permettent de préparer un autre chemin.</p></details>:null}
-      <h3 ref={actionsHeading} tabIndex={-1}>Actions autorisées</h3>
-      <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
-        key={actionLabel(action)} disabled={busy||!!replacement}
-        aria-pressed={JSON.stringify(selected)===JSON.stringify(action)}
-        onClick={()=>setSelected(action)}>{actionLabel(action)}</button>)}</div>
-      {selected?<div className="ms-confirm" role="group" aria-label="Confirmation du coup">
-        <p>{actionLabel(selected)}</p>
-        {selected.type==="explore"&&view.deck.length>0?<p>Destination : {cardLabel(view.deck[selected.distance%view.deck.length])}</p>:null}
-        <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void apply()}>Confirmer</button>
-        <button className="secondary-action" disabled={busy} onClick={()=>{setSelected(null);actionsHeading.current?.focus();}}>Annuler</button>
-      </div>:null}
-      {!tutorial?<button className="secondary-action" disabled={busy||!!selected||!!replacement} onClick={()=>void chooseReplacement()}>Nouvelle partie</button>:null}
-    </>:null}
-    {replacement?<div className="ms-confirm" role="group" aria-label="Confirmation de nouvelle partie">
-      <p>{view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
-      <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void replace()}>Confirmer</button>
-      <button className="secondary-action" disabled={busy} onClick={()=>setReplacement(null)}>Annuler</button>
-    </div>:null}
-    <h3>Notes de parcours</h3>
-    <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]}/>:<div key={i} className="ms-card ms-empty">Note {i+1}<small>Libre</small></div>)}</div>
-    <details><summary>Inspecter le parcours ({view.deck.length} cartes)</summary>
-      <p>Les cartes cachées restent secrètes. Cette consultation ne consomme aucun tour.</p>
-      <div className="ms-inspection">{view.deck.map(card=><Card key={card.position} card={card}/>)}</div>
-    </details>
-    <details><summary>Consulter le butin ({view.loot.length} cartes)</summary>
-      <div className="ms-inspection">{view.loot.map(card=><Card key={card.position} card={card}/>)}</div>
-    </details></>:null}
-    <p className="help-note">{tutorial?"Cet entraînement ne modifie aucune sauvegarde ni statistique.":"Le retour au catalogue conserve la partie enregistrée."}</p>
+    {summary?<GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/>:<div className="ms-live-layout">
+      <aside className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
+        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><Card card={card} language={language} compact/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
+      </aside>
+      <section className="ms-exploration">
+        <h3 data-i18n-ignore>{tr("Exploration","Exploration")}</h3>
+        <div className="ms-top">{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
+        {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
+      </section>
+      <section className="ms-controls">
+        <h3 data-i18n-ignore>{tr("Notes d’enquête","Investigation notes")}</h3>
+        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
+        <h3 ref={actionsHeading} tabIndex={-1}>Actions autorisées</h3>
+        <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
+          key={actionLabel(action)} disabled={busy||!!replacement||!!selected}
+          aria-pressed={JSON.stringify(selected)===JSON.stringify(action)}
+          onClick={()=>setSelected(action)}>{actionLabel(action)}</button>)}</div>
+      </section>
+    </div>}
+    <footer className="ms-footer" data-i18n-ignore>
+      <button type="button" onClick={()=>setInspection("route")}>{tr("Voir le parcours","View route")} ({view.deck.length})</button>
+      <button type="button" onClick={()=>setInspection("loot")}>{tr("Voir le butin","View loot")} ({view.loot.length})</button>
+      {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>void chooseReplacement()}>{tr("Nouvelle partie","New game")}</button>:null}
+    </footer>
+    {selected||replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label={selected?"Confirmation du coup":"Confirmation de nouvelle partie"}>
+      <p>{selected?actionLabel(selected):view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
+      {destination>=0?<p data-i18n-ignore>{tr("Destination","Destination")} : {cardLabel(view.deck[destination],language)}</p>:null}
+      <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void (selected?apply():replace())}>Confirmer</button>
+      <button className="secondary-action" disabled={busy} onClick={()=>{setSelected(null);setReplacement(null);actionsHeading.current?.focus();}}>Annuler</button>
+    </div></div>:null}
+    <dialog ref={dialog} className="ms-inspect-dialog" onClose={()=>setInspection(null)} onCancel={()=>setInspection(null)} aria-label={inspection==="loot"?tr("Butin","Loot"):tr("Parcours","Route")}>
+      <button type="button" onClick={()=>setInspection(null)} data-i18n-ignore>{tr("Fermer","Close")}</button>
+      <div className="ms-inspection">{(inspection==="loot"?view.loot:view.deck).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
+    </dialog></>:null}
   </section>;
 }
