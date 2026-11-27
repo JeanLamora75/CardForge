@@ -1,0 +1,44 @@
+/* Midnight Syndicate: one viewport, independent route and inspection dialogs. */
+.shell.ms-command-surface{box-sizing:border-box;width:100%;max-width:none;height:100dvh;min-height:0;padding:4px max(5px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left));display:flex;flex-direction:column;overflow:hidden;background:#07191d;color:#f8e3b6}
+.ms-command-page{width:100%;max-width:1100px;flex:1;min-height:0;display:flex;flex-direction:column;margin:0 auto;padding:0;overflow:hidden}
+.ms-command-page .ms-header{display:grid;grid-template-columns:44px minmax(0,1fr) 44px 44px;align-items:center;gap:4px;flex:none;height:48px}
+.ms-header h1{margin:0;height:100%;min-height:0;text-align:center}.ms-header h1 img{height:100%;max-width:100%;object-fit:contain}
+.ms-header button,.ms-immersive button{color:#ffe4ad;background:linear-gradient(#183c40,#071c20);border:1px solid #bd9954;border-radius:6px;min-height:44px;padding:4px 6px;font:inherit;font-weight:700}
+.ms-command-page :is(.board-page,.game-learning,.ms-training-wrap){display:flex;flex-direction:column;flex:1;min-height:0;width:100%;max-width:none;margin:0;padding:0}
+.ms-command-page .learning-intro{overflow:auto}
+.ms-board.ms-immersive{position:relative;display:flex;flex-direction:column;flex:1;min-height:0;gap:4px;border:1px solid #b38a48;border-radius:8px;padding:5px;overflow:hidden;background:#0b2128 var(--ms-portrait) center/cover no-repeat;font-family:Georgia,serif}
+.ms-immersive .ms-status{font-size:.72rem;min-height:1em;line-height:1.1;text-align:center;color:#ffe7b3;flex:none}
+.ms-immersive .ms-error{position:absolute;top:16px;left:4px;right:4px;z-index:4;background:#421b1b;padding:6px;margin:0}
+.ms-immersive .ms-counters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;flex:none}
+.ms-counter{position:relative;min-width:0;height:38px;display:flex;align-items:center;justify-content:center;background:#0c2529;border:1px solid #b18c4d;border-radius:4px}
+.ms-counter img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.ms-counter span{position:relative;background:#10292cdd;color:#ffe5af;font-size:clamp(.61rem,2.4vw,.9rem);padding:1px 3px;border:0;text-align:center;line-height:1.05}
+.ms-counter b{display:block;font-size:1.15em}
+.ms-live-layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(64px,25%) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:5px}
+.ms-route{grid-row:1/-1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:4px;background:#07191de0;border:1px solid #9b7943;border-radius:6px}
+.ms-route-stop{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:10px;padding:3px;border:1px solid #816b45;border-radius:5px;background:#10282b}
+.ms-route-stop.ms-current{outline:2px solid #ffc76a;outline-offset:-2px}.ms-route-stop.ms-destination{outline:2px dashed #ffdc87;outline-offset:-2px}
+.ms-route-stop small{font-size:.65rem;color:#ffe6b5;text-align:center}
+.ms-exploration,.ms-controls{display:flex;flex-direction:column;align-items:stretch;min-height:0;min-width:0;gap:4px;background:#081b20ad;border:1px solid #9b7943;border-radius:6px;padding:4px}
+.ms-immersive h3{margin:0;text-align:center;font-size:clamp(.72rem,2.7vw,1.1rem);line-height:1.15;color:#ffdc95}
+.ms-immersive .ms-top,.ms-immersive .ms-notes{display:flex;justify-content:center;align-items:center;gap:4px;min-height:0;flex:1}
+.ms-immersive .ms-card{position:relative;display:block;padding:0;gap:0;min-height:0;border:0;border-radius:0;background:transparent;aspect-ratio:392/552;height:100%;max-width:48%;overflow:hidden;flex:none;container-type:inline-size}
+.ms-immersive .ms-notes .ms-card{max-width:32%}
+.ms-card-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.ms-card-art{position:absolute;left:9%;top:24%;width:82%;height:54%;object-fit:cover;border-radius:3px}
+.ms-immersive .ms-card-value{position:absolute;top:5%;left:9%;right:9%;font-size:clamp(.75rem,18cqw,2rem);color:#ffdf96;text-shadow:0 1px 3px #000;text-align:center;line-height:1}
+.ms-immersive .ms-card-name{position:absolute;bottom:5%;left:8%;right:8%;color:#ffe6b4;text-shadow:0 1px 3px #000;background:#08191bd9;font-size:clamp(.48rem,10cqw,1rem);line-height:1.05;overflow-wrap:normal}
+.ms-route .ms-card{width:100%;height:auto;max-width:88px}
+.ms-hint{font-size:.72rem;line-height:1.15;text-align:center;margin:0;color:#ffe5b4}
+.ms-immersive .ms-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px;flex:none}
+.ms-immersive .ms-actions button{width:100%;min-height:44px;font-size:clamp(.67rem,2.6vw,.9rem);line-height:1.1;margin:0}
+.ms-footer{display:flex;gap:3px;flex:none}.ms-footer button{flex:1;min-width:0;font-size:clamp(.65rem,2.5vw,.9rem);line-height:1.1}
+.ms-start{align-self:center;margin:auto}
+.ms-confirm-overlay{position:absolute;inset:0;z-index:5;display:grid;place-items:center;background:#000a;padding:12px}
+.ms-immersive .ms-confirm{max-width:100%;background:#10272c;color:#ffe5b4;justify-content:center}
+.ms-inspect-dialog{width:min(92vw,720px);max-height:88dvh;overflow:auto;background:#0d2429;color:#ffe5b4;border:1px solid #bd9954;padding:12px;border-radius:8px}
+.ms-inspect-dialog::backdrop{background:#000b}.ms-inspect-dialog .ms-inspection{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-top:8px}
+.ms-inspect-dialog .ms-card{width:100%;max-width:none;height:auto}
+.ms-command-page .ms-immersive :is(button,aside):focus-visible{outline:3px solid #ffe4a0;outline-offset:-3px}
+@media (orientation:landscape){.ms-board.ms-immersive{background-image:var(--ms-landscape)}.ms-live-layout{grid-template-columns:minmax(80px,20%) minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:minmax(0,1fr)}.ms-route{grid-row:1}.ms-counter{height:32px}.ms-command-page .ms-header{height:44px}.ms-immersive .ms-actions button{font-size:.72rem}.ms-immersive h3{font-size:.85rem}}
+@media (max-height:430px) and (orientation:landscape){.ms-immersive .ms-status{font-size:.65rem}.ms-immersive .ms-hint{display:none}.ms-immersive .ms-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-immersive .ms-actions button{font-size:.65rem}.ms-footer button{min-height:44px}}
