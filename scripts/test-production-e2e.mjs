@@ -436,7 +436,7 @@ async function journey(locale,mobile){
            await page.locator('.ms-top img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
            assert.equal(await page.locator('.ms-hidden .ms-card-art').count(),0);
            await page.locator('.ms-header img,.ms-counter img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
-           assert.ok(await page.locator('.ms-board').evaluate(n=>getComputedStyle(n).backgroundImage.includes('midnight-syndicate')));
+           await page.locator('.ms-board-picture img,.ms-panel-skin,.ms-heading-skin,.ms-button-skin,.ms-action-icon,.ms-route-link').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));if(imgs.some(i=>!i.naturalWidth))throw Error('Missing board artwork');});
            assert.ok(await page.locator('.ms-counter span').first().evaluate(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)'));
            await page.screenshot({path:'ux-screenshots/ms-'+locale+'-'+(mobile?'touch':'desktop')+'-'+viewport.width+'-hidden.png'});
            await page.locator('.ms-route').evaluate(n=>n.scrollTop=n.scrollHeight);

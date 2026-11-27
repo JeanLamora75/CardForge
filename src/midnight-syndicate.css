@@ -84,3 +84,29 @@
 @media(max-height:430px) and (orientation:landscape){.ms-command-page .ms-immersive h3{padding:2px;font-size:.72rem}.ms-command-page .ms-notes{padding:2px 8%}.ms-command-page .ms-exploration,.ms-command-page .ms-controls{padding:4px}.ms-command-page .ms-actions button{padding:3px 5px}.ms-command-page .ms-header{height:44px}}
 
 .ms-immersive .ms-inspection{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(76px,1fr))}.ms-immersive .ms-confirm{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px;border:1px solid #bd9954;border-radius:8px}.ms-immersive .ms-confirm p{flex-basis:100%;margin:0}.ms-immersive button:disabled{opacity:.65;cursor:default}.ms-immersive button:focus-visible{outline:3px solid #ffe4a0}.ms-immersive .ms-card{text-align:center}.ms-immersive .ms-card-frame{pointer-events:none}
+
+/* V3: artwork is decoded as ordinary images, not inherited CSS URLs. */
+.shell.ms-command-surface{position:fixed;inset:0;height:100dvh;padding:4px;box-sizing:border-box}
+.shell.ms-command-surface .ms-command-page,.ms-command-page :is(.board-page,.game-learning,.ms-training-wrap){height:0;flex:1 1 0;min-height:0}
+.ms-command-page .ms-board.ms-immersive{height:0;flex:1 1 0;isolation:isolate;background:#10272c;position:relative}
+.ms-board-picture{position:absolute;inset:0;z-index:-2;pointer-events:none}.ms-board-picture img{width:100%;height:100%;object-fit:cover}
+.ms-command-page .ms-live-layout{flex:1 1 0;grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+.ms-command-page .ms-exploration,.ms-command-page .ms-controls,.ms-command-page .ms-notes,.ms-command-page .ms-immersive h3{position:relative;isolation:isolate;background:#07191d40}
+.ms-panel-skin,.ms-heading-skin,.ms-button-skin{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
+.ms-command-page .ms-controls{display:grid;grid-template-rows:24px minmax(68px,1fr) 24px 141px;gap:3px}
+.ms-command-page .ms-actions{align-content:start;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:44px}
+.ms-command-page .ms-notes{padding:3px 5%;min-height:68px}
+.ms-command-page .ms-notes .ms-card{height:min(100%,105px);width:auto;aspect-ratio:392/552;max-width:30%}
+.ms-command-page .ms-actions button,.ms-command-page .ms-footer button,.ms-ending-actions :is(button,a){position:relative;isolation:isolate;background:#173337;border:1px solid #bd9954;display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;color:#ffe5b4;text-align:center;text-decoration:none;font-size:.76rem}
+.ms-action-icon{width:22px;height:22px;object-fit:contain;flex:none}
+.ms-command-page .ms-actions button:active,.ms-command-page .ms-footer button:active{filter:brightness(1.25)}
+.ms-command-page .ms-route-stop::before{display:none}.ms-route-link{position:absolute;left:4px;top:50%;height:100%;width:12px;object-fit:fill;z-index:-1}.ms-route-stop:last-child .ms-route-link{display:none}
+.ms-header button img{transform:scale(1.3)}
+.ms-board[data-phase=finished] .ms-status,.ms-command-page:has(.ms-board[data-phase=finished]) .ms-header{display:none}
+.ms-board[data-phase=finished] .ms-ending{display:flex;flex-direction:column;justify-content:flex-end;position:relative;isolation:isolate;gap:8px;padding:12px;overflow:hidden}
+.ms-ending-scene{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.ms-ending .ms-ending-story{position:relative;inset:auto;background:#07191ddb;padding:12px;border:1px solid #bd9954;border-radius:6px}
+.ms-ending-story h2{margin:4px 0;font-size:clamp(1.2rem,4vw,2rem)}
+.ms-mission-report{background:#0c2428ec;border:1px solid #bd9954;padding:8px;text-align:center;border-radius:6px}.ms-mission-report>div{display:flex;justify-content:space-around;gap:5px;flex-wrap:wrap;font-size:.85rem}.ms-mission-report p{margin:4px}
+.ms-ending-actions{display:grid;grid-template-columns:1fr 1fr;gap:4px}.ms-ending-actions a{grid-column:1/-1}
+@media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-rows:minmax(0,1fr)}.ms-command-page .ms-controls{grid-template-rows:20px minmax(54px,1fr) 20px 93px}.ms-command-page .ms-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-command-page .ms-notes{min-height:54px}.ms-board[data-phase=finished] .ms-ending{padding:6px;gap:4px}.ms-ending .ms-ending-story{padding:5px}.ms-ending-actions{grid-template-columns:repeat(3,1fr)}.ms-ending-actions a{grid-column:auto}}
