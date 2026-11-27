@@ -435,6 +435,9 @@ async function journey(locale,mobile){
            }), 'Midnight Syndicate: viewport fits and only route scrolls '+JSON.stringify(viewport));
            await page.locator('.ms-top img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
            assert.equal(await page.locator('.ms-hidden .ms-card-art').count(),0);
+           assert.equal(await page.locator('.ms-notes .ms-card').count(),3);
+           assert.ok(await page.locator('.ms-notes .ms-card').evaluateAll(cards=>cards.every(c=>{const r=c.getBoundingClientRect();return r.width>=20&&r.height>=35&&r.bottom<=innerHeight;})), 'All three notes must retain visible dimensions');
+           assert.ok(await page.evaluate(()=>{const nodes=['.ms-top','.ms-notes','.ms-actions','.ms-footer'].map(s=>document.querySelector(s).getBoundingClientRect());return nodes.every((a,i)=>nodes.slice(i+1).every(b=>a.right<=b.left+1||b.right<=a.left+1||a.bottom<=b.top+1||b.bottom<=a.top+1));}), 'Board regions must not overlap');
            await page.locator('.ms-header img,.ms-counter img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
            await page.locator('.ms-board-picture img,.ms-panel-skin,.ms-heading-skin,.ms-button-skin,.ms-action-icon,.ms-route-link').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));if(imgs.some(i=>!i.naturalWidth))throw Error('Missing board artwork');});
            assert.ok(await page.locator('.ms-counter span').first().evaluate(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)'));

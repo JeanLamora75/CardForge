@@ -141,16 +141,16 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       <nav className="ms-ending-actions"><button type="button" disabled={busy} onClick={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/><span>{tr("Rejouer","Play again")}</span></button>{!tutorial?<button type="button" onClick={()=>setInspection("stats")}><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Statistiques","Statistics")}</span></button>:null}<a href="#"><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Retour au catalogue","Back to catalogue")}</span></a></nav>
     </div>:<div className="ms-live-layout">
       <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
-        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-link" src={art("effects","route-link-vertical")} alt=""/><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
+        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
       </aside>
-      <section className="ms-exploration"><img className="ms-panel-skin" src={art("frames","content-panel")} alt=""/>
+      <section className="ms-exploration">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","exploration")} alt=""/><span>{tr("Exploration","Exploration")}</span></h3>
         <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard}/>)}</div>
         {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
       </section>
-      <section className="ms-controls"><img className="ms-panel-skin" src={art("frames","content-panel")} alt=""/>
+      <section className="ms-controls">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","notes-heading")} alt=""/><span>{tr("Notes d’enquête","Investigation notes")}</span></h3>
-        <div className="ms-notes"><img className="ms-panel-skin" src={art("frames","notes-folder")} alt=""/>{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
+        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
         <h3 ref={actionsHeading} tabIndex={-1}><img className="ms-heading-skin" src={art("banners","movement")} alt=""/><span>Actions autorisées</span></h3>
         <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
           key={actionLabel(action)} disabled={busy||!!replacement||!!selected}
@@ -159,8 +159,8 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       </section>
     </div>}
     {!summary?<footer className="ms-footer" data-i18n-ignore>
-      <button type="button" onClick={()=>setInspection("route")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","route")} alt=""/>{tr("Voir le parcours","View route")} ({view.deck.length})</button>
-      <button type="button" onClick={()=>setInspection("loot")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","loot")} alt=""/>{tr("Voir le butin","View loot")} ({view.loot.length})</button>
+      <button type="button" onClick={()=>setInspection("route")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","route")} alt=""/>{tr("Parcours","Route")} ({view.deck.length})</button>
+      <button type="button" onClick={()=>setInspection("loot")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","loot")} alt=""/>{tr("Butin","Loot")} ({view.loot.length})</button>
       {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>setInspection("menu")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","menu")} alt=""/>{tr("Menu","Menu")}</button>:null}
     </footer>:null}
     {selected||replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label={selected?"Confirmation du coup":"Confirmation de nouvelle partie"}>
