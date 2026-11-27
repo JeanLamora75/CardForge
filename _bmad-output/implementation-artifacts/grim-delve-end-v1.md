@@ -1,0 +1,3 @@
+# Grim Delve — GD-END-01 à 12
+
+Trois scènes reçues et fusionnées au manifeste. Écran indépendant du plateau actif, rapport compact sans HUD redondant, score officiel seulement en victoire, statistiques lues en dialogue, dernier plateau en lecture seule sans révélation des monstres masqués, FR/EN, animation CSS réduite selon préférence. Réutilisation des boutons, bandeaux, icônes ; cadre CSS reconstruit. Tests unitaires de présentation et empreintes, assertions PWA ajoutés. Recette navigateur, tests de transitions réelles et CI non confirmés. Aucun changement moteur, stockage ou comptabilisation. Aucun uv.

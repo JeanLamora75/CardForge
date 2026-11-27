@@ -243,3 +243,36 @@
 .grim-command-page .grim-card[data-triggerable=true]:not([data-target=true]){outline:2px solid #f2d18a;box-shadow:0 0 9px #e5ba5577}
 .gd-attack-progress[data-ready=true] .gd-power-track{box-shadow:0 0 5px #e5ba5577}
 .gd-attack-progress[data-triggerable=true] .gd-power-track{border-color:#ffe7a4;box-shadow:0 0 7px #e5ba55aa}
+
+.gd-ending{font-family:Georgia,serif;color:#ffe4b0;max-width:680px;margin:auto;text-align:center;display:grid;gap:3px}
+.gd-end-scene{position:relative;overflow:hidden;border-radius:7px;aspect-ratio:941/338;max-height:29dvh;background:#130d0b}
+.gd-end-scene img{width:100%;height:100%;object-fit:contain;display:block}
+.gd-end-scene::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 60%,#f7ae4733,transparent 65%);animation:gd-end-glow 1.2s ease-out both}
+.gd-ending[data-ending=defeat-exhaustion] .gd-end-scene::after{background:#080e2444}
+@keyframes gd-end-glow{from{opacity:0}to{opacity:1}}
+.gd-end-report{padding:8px 12px 12px;border:2px solid #9f7541;border-radius:12px;background:linear-gradient(#100b09ed,#1d1410f7);box-shadow:inset 0 0 0 2px #342314,0 4px 12px #0009;display:grid;gap:7px}
+.gd-ending p,.gd-ending h2{margin:0}
+.gd-end-eyebrow{background:url("/art/banners/grim-delve/title-wide.webp") center/100% 100% no-repeat;padding:7px;font-weight:bold;text-transform:uppercase;letter-spacing:.08em;font-size:.78rem}
+.gd-ending h2{font-size:clamp(1rem,4.1vw,1.55rem);line-height:1.12;color:#ffe6ba}
+.gd-end-explanation{font-size:clamp(.73rem,2.8vw,1rem);line-height:1.2}
+.gd-end-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.gd-end-metrics>div{border:1px solid #a37b42;border-radius:6px;background:#160f0c;display:grid;justify-items:center;align-content:center;gap:2px;padding:5px 2px}
+.gd-end-metrics img{width:22px;height:22px;object-fit:contain}
+.gd-end-metrics span{font-size:clamp(.59rem,2vw,.8rem);line-height:1.1}
+.gd-end-metrics strong{font-size:clamp(1rem,4vw,1.55rem)}
+.gd-end-score{display:flex;justify-content:center;align-items:center;gap:10px;background:url("/art/banners/grim-delve/title-small.webp") center/100% 100% no-repeat;padding:6px;font-size:.85rem}.gd-end-score strong{font-size:1.4rem}
+.gd-end-parchment{background:url("/art/banners/grim-delve/parchment.webp") center/100% 100% no-repeat;padding:9px 15px;color:#2d160a;font-size:clamp(.7rem,2.8vw,1rem);font-weight:bold}
+.gd-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.gd-end-actions button,.gd-end-actions a{box-sizing:border-box;min-height:44px;display:grid;place-items:center;text-align:center;padding:5px;color:#ffe7ba;background:#2e2016 url("/art/buttons/grim-delve/secondary.webp") center/100% 100% no-repeat;border:0;text-decoration:none;font:700 clamp(.72rem,2.7vw,1rem)/1.1 Georgia,serif}
+.gd-end-actions .gd-end-primary{grid-column:1/-1;background-image:url("/art/buttons/grim-delve/primary.webp");color:#fff1ce;text-shadow:0 1px 3px #000}
+.gd-end-actions .gd-end-last{grid-column:1/-1;background:none;text-decoration:underline}
+.gd-end-dialog{width:min(94vw,650px)}
+.gd-end-stats>div{display:flex;justify-content:space-between;gap:12px;padding:8px;border-bottom:1px solid #76552f}.gd-end-stats dd{margin:0;font-weight:bold}
+.gd-last-columns{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:12px}
+.gd-last-card{position:relative;aspect-ratio:2/3;min-width:0;background:#20150e;border-radius:4px;overflow:hidden}
+.gd-last-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.gd-last-card span{position:absolute;bottom:0;left:0;right:0;font-size:.65rem;background:#100b09df;color:#ffe6ba}
+.gd-last-powers,.gd-last-hidden{display:flex;gap:2px}.gd-last-powers>*{width:50%}.gd-last-hidden img{width:16px;height:24px;object-fit:contain}
+.gd-last-hand{display:flex;justify-content:center;gap:5px}.gd-last-hand>*{width:25%}
+@media(prefers-reduced-motion:reduce){.gd-end-scene::after{animation:none}}
+:root[data-motion=off] .gd-end-scene::after{animation:none}

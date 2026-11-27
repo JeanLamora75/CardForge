@@ -7,8 +7,8 @@ import { startPersistentGame, type PersistentGameSession } from "../application/
 import { resumeRegisteredGame } from "../application/registered-save-migrations.ts";
 import { storageRecoveryMessage } from "../application/storage-recovery-messages.ts";
 import { createTutorialSession } from "../application/learning.ts";
-import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
-import GameResultPanel from "./GameResultPanel.tsx";
+import { replayFinishedGame } from "../application/game-results.ts";
+import GrimDelveResult from "./GrimDelveResult.tsx";
 import GrimDelveCard from "./GrimDelveCard.tsx";
 import GrimDelveInspection from "./GrimDelveInspection.tsx";
 import { grimCardView, grimCardBack } from "../application/grim-delve-art.ts";
@@ -172,6 +172,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
   const showNotice=(active&&temporaryNotice?instruction:notice)||instruction;
   const contextual=actions.filter(action=>action.type==="discard"||action.type==="take-back");
   const contextAction=contextual[0];
+  if(state&&(state.outcome==="win"||state.outcome==="loss"))return <GrimDelveResult state={state} language={language} tutorial={tutorial} busy={busy} onReplay={()=>void replay()}/>;
   return <section className="grim-board" data-compact={!!state&&state.outcome==="in-progress"&&!tutorial} aria-labelledby="grim-heading">
     <h2 id="grim-heading" className="gd-sr-only">Grim Delve · Plateau de jeu</h2>
     <p className="gd-sr-only">Dark Fantasy · Classic 1.1.0. Les seules commandes proposées sont celles autorisées par le moteur. Les cartes posées restent provisoires jusqu'au déclenchement d'une attaque.</p>
@@ -192,7 +193,6 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
         <div className="gd-counter"><small>Monstres vaincus</small><img className="gd-counter-icon" src={art("hud","skull")} alt=""/><strong>{state.defeated.length} / 12</strong></div>
         <div className="gd-counter"><small>Main</small><strong>n° {state.handNumber}</strong></div>
       </div>
-      {state.outcome !== "in-progress" ? <GameResultPanel summary={makeGrimDelveSummary(state)!} tutorial={tutorial} onReplay={() => void replay()} disabled={busy} /> : null}
       <h3 className="gd-banner">Monstres et attaques en préparation</h3>
       <div className="grim-columns">
         {state.columns.map((column, index) => {
