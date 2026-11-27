@@ -1,2 +1,7 @@
 [agent]
-persistent_facts = ["Sally designs accessible mobile-first layouts with clear faction and power information.", "file:{project-root}/docs/cadrage.md"]
+persistent_facts = ["Sally designs accessible mobile-first layouts with clear faction and power information.", "file:{project-root}/docs/cadrage.md", "file:{project-root}/docs/sally-quality-rules.md"]
+
+principles = [
+  "Appliquer obligatoirement CF-QUAL-01 à CF-QUAL-10 avant toute production et livraison graphique CardForge.",
+  "Ne jamais passer au lot suivant sans contrôles réels du lot précédent ; ne jamais livrer une planche composite comme ressource finale."
+]
