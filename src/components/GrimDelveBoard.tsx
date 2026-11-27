@@ -32,12 +32,12 @@ const actionName: Record<GrimDelveAction["type"], string> = {
   "move-power": "Déplacer la carte",
   "trigger-attack": "Déclencher l'attaque",
 };
-function Card({id,language,selected=false,onClick,disabled=false,target=false,ready=false,triggerable=false,onInspect,onDrag}:{
- id:string;language:Locale;selected?:boolean;onClick?:()=>void;disabled?:boolean;target?:boolean;ready?:boolean;triggerable?:boolean;onInspect:()=>void;onDrag?:(phase:"start"|"move"|"end"|"cancel",x:number,y:number)=>void;
+function Card({id,language,selected=false,onClick,disabled=false,target=false,ready=false,triggerable=false,playable=false,onInspect,onDrag}:{
+ id:string;language:Locale;selected?:boolean;onClick?:()=>void;disabled?:boolean;target?:boolean;ready?:boolean;triggerable?:boolean;playable?:boolean;onInspect:()=>void;onDrag?:(phase:"start"|"move"|"end"|"cancel",x:number,y:number)=>void;
 }){
  const view=grimCardView(id,language);
  const url=(path:string)=>import.meta.env.BASE_URL+"art/"+path;
- return <GrimDelveCard {...view} illustration={url(view.illustration)} frame={url(view.frame)} emblem={view.emblem?url(view.emblem):undefined} selected={selected} target={target} ready={ready} triggerable={triggerable} onDrag={onDrag} onInspect={onInspect} inspectLabel={language==="fr"?"Inspecter : "+view.title:"Inspect: "+view.title} onClick={onClick} disabled={disabled}/>;
+ return <GrimDelveCard {...view} illustration={url(view.illustration)} frame={url(view.frame)} emblem={view.emblem?url(view.emblem):undefined} selected={selected} target={target} ready={ready} triggerable={triggerable} playable={playable} onDrag={onDrag} onInspect={onInspect} inspectLabel={language==="fr"?"Inspecter : appui long, clic droit ou touche I":"Inspect: long press, right click or I key"} onClick={onClick} disabled={disabled}/>;
 }
 const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
@@ -159,10 +159,17 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
     const action=grimDropAction(legal,id,zone?.dataset.gdDrop??"",zone?.dataset.monsterId);
     if(action)request(action);else setNotice(language==="fr"?"Dépôt interdit : carte conservée.":"Invalid drop: card kept.");
   }
-  const instruction = state?.outcome!=="in-progress" ? "" : !hintsEnabled ? "" : selected
-    ? (actions.some(a=>"monsterId" in a)? (language==="fr"?"Choisissez une cible en surbrillance.":"Choose a highlighted target.") : actions.some(a=>a.type==="discard")?(language==="fr"?"Aucune attaque possible : défaussez ou annulez.":"No attack possible: discard or cancel."): (language==="fr"?"Reprenez la carte si autorisé, ou annulez.":"Take back the card if allowed, or cancel."))
-    : state.hand.length ? "Sélectionnez une carte, puis un monstre." : "Terminez la main pour continuer.";
-  const showNotice=notice || instruction;
+  const instruction = state?.outcome!=="in-progress"||!hintsEnabled ? "" : active
+    ? (()=>{const fr=language==="fr";const types=new Set(actions.map(a=>a.type));const choices:string[]=[];
+      if(types.has("trigger-attack"))choices.push(fr?"Attaquer":"Attack");
+      if(types.has("place-power"))choices.push(fr?"Poser":"Place");
+      if(types.has("move-power"))choices.push(fr?"Déplacer":"Move");
+      if(types.has("take-back"))choices.push(fr?"Reprendre":"Take back");
+      if(choices.length)return choices.join(" · ")+(types.has("discard")?(fr?" · ou défausser":" · or discard"):"");
+      return types.has("discard")?(fr?"Aucune attaque : défausser ou annuler.":"No attack: discard or cancel."):(fr?"Aucune manipulation autorisée.":"No legal move.");
+    })()
+    : state.hand.length ? (language==="fr"?"Glissez ou sélectionnez une carte.":"Drag or select a card.") : (language==="fr"?"Terminez la main pour continuer.":"End the hand to continue.");
+  const showNotice=(active&&temporaryNotice?instruction:notice)||instruction;
   const contextual=actions.filter(action=>action.type==="discard"||action.type==="take-back");
   const contextAction=contextual[0];
   return <section className="grim-board" data-compact={!!state&&state.outcome==="in-progress"&&!tutorial} aria-labelledby="grim-heading">
@@ -206,7 +213,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
             </div>)}
             {monster ? Array.from({length:2-(attack?.powers.length??0)},(_,i)=><button type="button" className="gd-empty-slot" key={i} disabled={busy||!slotTarget} aria-label={language==="fr"?"Emplacement de puissance libre":"Free power slot"} onClick={()=>{if(slotTarget)request(slotTarget);}}><span aria-hidden="true">✧</span></button>) : null}
             </div>
-            {progress ? <div className="gd-attack-progress" data-ready={progress.ready}>
+            {progress ? <div className="gd-attack-progress" data-ready={progress.ready} data-triggerable={triggerable}>
               <div className="gd-power-track" role="progressbar" aria-label={language==="fr"?"Puissance en préparation":"Prepared power"} aria-valuemin={0} aria-valuemax={progress.resistance} aria-valuenow={Math.min(progress.power,progress.resistance)} aria-valuetext={`${progress.power} / ${progress.resistance}${progress.ready?(language==="fr"?" · résistance atteinte":" · resistance reached"):""}`}>
                 <span style={{width:`${progress.percent}%`}}/>
               </div><small className="gd-power-total">{progress.ready?<span className="gd-ready-mark" title={language==="fr"?"Puissance suffisante":"Sufficient power"} aria-label={language==="fr"?"Puissance suffisante":"Sufficient power"}>✓ </span>:null}{progress.power} / {progress.resistance}</small>
@@ -218,7 +225,7 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
       <p role="status" aria-live="polite" className={`grim-notice gd-play-notice${showNotice?"":" gd-no-notice"}`}>{showNotice}</p>
       <h3 className="gd-banner gd-hand-banner">Votre main</h3>
       <div className="grim-hand" data-gd-drop="hand" data-valid={canReturn}>{state.hand.length ? state.hand.map(id =>
-        <Card language={language} key={id} id={id} onDrag={(p,x,y)=>gesture(id,p,x,y)} onInspect={()=>setInspected(id)} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
+        <Card language={language} key={id} id={id} playable={legal.some(a=>"cardId" in a&&a.cardId===id&&(a.type==="place-power"||a.type==="trigger-attack"))} onDrag={(p,x,y)=>gesture(id,p,x,y)} onInspect={()=>setInspected(id)} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
       ) : <p>La main est vide.</p>}</div>
       {state.outcome === "in-progress" ? <div className="grim-actions gd-footer" data-contextual={!!selected}>
         {selected ? <>

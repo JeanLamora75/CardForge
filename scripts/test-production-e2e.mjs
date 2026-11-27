@@ -643,14 +643,22 @@ async function journey(locale,mobile){
     }
     if(gdViewport)await page.setViewportSize(gdViewport);
 
-    await interact(page,gd.locator('.gd-monster-stack .gd-inspect-button').first(),mobile);
+    assert.equal(await gd.locator('.gd-inspect-button').count(),0,'no visible inspection controls');
+    const inspectCard=gd.locator('.gd-monster-stack .grim-card').first();
+    await inspectCard.focus();
+    await page.keyboard.press('i');
     await gd.locator('dialog[open]').waitFor();
     assert.equal(await gd.locator('dialog .gd-inspection-art img').count(),2);
     assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
     await interact(page,gd.locator('dialog header button'),mobile);
     await gd.locator('dialog').waitFor({state:'detached'});
     assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
-    assert.equal(await gd.locator('.gd-hidden-cards .gd-inspect-button').count(),0);
+    assert.equal(await gd.locator('.gd-hidden-cards button').count(),0);
+    await inspectCard.click({button:'right',force:true});
+    await gd.locator('dialog[open]').waitFor();
+    await page.keyboard.press('Escape');
+    await gd.locator('dialog').waitFor({state:'detached'});
+    assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
     assert.equal(await gd.locator('.grim-hand').evaluate(node=>getComputedStyle(node).justifyContent),'center');
     assert.ok(await gd.locator('.grim-card .gd-card-art img').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
     // Skydeck normal play: persistence and exact offline resume.

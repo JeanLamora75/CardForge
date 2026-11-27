@@ -1,0 +1,3 @@
+# Grim Delve — Finitions GD-UX-67 à 74
+
+Suppression des loupes DOM, inspection par appui long, clic droit et I / Maj+F10. Fronton : marges internes et typographie resserrées. Illustrations : zone légèrement descendue et object-fit contain, sans modification des PNG. Titres : deux lignes et taille adaptée. Halo uniquement pour les cartes permettant une pose ou un déclenchement (la défausse seule ne compte pas). Mini-cartes : contraste renforcé et ratio conservé. Puissance suffisante : lueur discrète ; éclair réservé aux attaques déclenchables. Parchemin : actions réelles disponibles selon le moteur. Tests E2E adaptés aux raccourcis d’inspection. Recette et CI non confirmées. Aucun uv, aucun changement moteur ou sauvegarde.

@@ -220,3 +220,26 @@
 
 .grim-card[data-draggable=true]{touch-action:none;cursor:grab;user-select:none}
 .gd-drag-ghost{position:fixed;z-index:9999;pointer-events:none;width:60px;aspect-ratio:2/3;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 8px #000);opacity:.9}.gd-drag-ghost img{width:100%;height:100%;object-fit:cover;border-radius:5px}.gd-attack-slots[data-valid=true] .gd-empty-slot:not(:disabled),.grim-hand[data-valid=true]{outline:2px dashed #a6d47e;outline-offset:1px}.gd-discard-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gd-discard-actions button{min-height:44px}.gd-empty-slot:disabled{opacity:1;cursor:default}
+
+/* Keep artwork unobstructed; the inspection shortcut lives on the card itself. */
+.grim-command-page .grim-board .grim-counters,.grim-command-page .grim-board[data-compact=true] .grim-counters{box-sizing:border-box;padding:10px clamp(10px,3vw,22px) 10px;align-items:center;gap:2px}
+.grim-command-page .grim-counters .gd-counter{min-height:0;gap:2px;padding:0 3px}
+.grim-command-page .grim-counters .gd-counter small{font-size:clamp(.56rem,1.7vw,.74rem);line-height:1.1}
+.grim-command-page .grim-counters .gd-counter strong{font-size:clamp(.8rem,2.6vw,1.12rem);line-height:1.05}
+.grim-command-page .grim-counters .gd-counter-icon{width:16px;height:16px}
+.grim-command-page .grim-counters .gd-hearts img{max-width:18px;max-height:18px}
+.grim-command-page .grim-card .gd-card-art img{object-fit:contain;object-position:center top;transform:none}
+.grim-command-page .grim-card[data-monster=true] .gd-card-art{inset:7% 3% 0}
+.grim-command-page .grim-hand .gd-card-art{inset:5% 2% 0}
+.grim-command-page .grim-card .gd-card-data{padding:0;background:linear-gradient(#08060455,transparent 23%,transparent 72%,#080604e0)}
+.grim-command-page .grim-card .gd-card-data strong{position:absolute;bottom:5%;left:5%;right:5%;height:2.25em;display:grid;place-content:center;text-align:center;padding:0;line-height:1.08;font-size:clamp(.6rem,1.85vw,.83rem);overflow-wrap:normal}
+.grim-command-page .grim-card[data-long-title=true] .gd-card-data strong{font-size:clamp(.54rem,1.65vw,.74rem)}
+.grim-command-page .grim-hand .grim-card[data-playable=true]:not([aria-pressed=true]){outline:1px solid #c0b179;box-shadow:0 0 6px #d9c88a66}
+.grim-command-page .grim-placed .gd-card-art{inset:3% 2% 0}
+.grim-command-page .grim-placed .gd-card-art img{object-fit:contain;object-position:center}
+.grim-command-page .grim-placed .gd-card-data strong{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.grim-command-page .grim-placed .gd-card-value{font-size:.85rem;font-weight:900;background:#100c0b;border-color:#e0bb78;left:2px;top:2px}
+.grim-command-page .grim-card[data-ready=true]:not([data-target=true]){outline:1px solid #d9b76c;box-shadow:0 0 7px #e5ba5544}
+.grim-command-page .grim-card[data-triggerable=true]:not([data-target=true]){outline:2px solid #f2d18a;box-shadow:0 0 9px #e5ba5577}
+.gd-attack-progress[data-ready=true] .gd-power-track{box-shadow:0 0 5px #e5ba5577}
+.gd-attack-progress[data-triggerable=true] .gd-power-track{border-color:#ffe7a4;box-shadow:0 0 7px #e5ba55aa}

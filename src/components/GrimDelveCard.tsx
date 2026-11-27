@@ -2,10 +2,10 @@ import {useEffect,useRef} from "react";
 import type {PointerEvent} from "react";
 export interface GrimDelveCardProps {
  label:string;title:string;value:number;faction:string;symbol:string;monster:boolean;
- selected?:boolean;target?:boolean;ready?:boolean;triggerable?:boolean;onDrag?:(phase:"start"|"move"|"end"|"cancel",x:number,y:number)=>void;disabled?:boolean;onClick?:()=>void;
+ selected?:boolean;target?:boolean;ready?:boolean;triggerable?:boolean;playable?:boolean;onDrag?:(phase:"start"|"move"|"end"|"cancel",x:number,y:number)=>void;disabled?:boolean;onClick?:()=>void;
  illustration:string;frame:string;emblem?:string;onInspect:()=>void;inspectLabel:string;
 }
-export default function GrimDelveCard({label,title,value,faction,symbol,monster,selected=false,target=false,ready=false,triggerable=false,onDrag,disabled=false,onClick,illustration,frame,emblem,onInspect,inspectLabel}:GrimDelveCardProps){
+export default function GrimDelveCard({label,title,value,faction,symbol,monster,selected=false,target=false,ready=false,triggerable=false,playable=false,onDrag,disabled=false,onClick,illustration,frame,emblem,onInspect,inspectLabel}:GrimDelveCardProps){
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const origin=useRef<{x:number;y:number}|null>(null);
  const consumed=useRef(false);
@@ -15,7 +15,7 @@ export default function GrimDelveCard({label,title,value,faction,symbol,monster,
  function down(e:PointerEvent<HTMLButtonElement>){
    cancel();consumed.current=false;dragging.current=false;
    if(!e.isPrimary||e.button!==0)return;
-   if(onDrag&&!disabled){origin.current={x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId);}
+   if((onDrag&&!disabled)||e.pointerType==="touch"){origin.current={x:e.clientX,y:e.clientY};e.currentTarget.setPointerCapture(e.pointerId);}
    if(e.pointerType==="touch")timer.current=setTimeout(()=>{consumed.current=true;cancel();onInspect();},550);
  }
  function move(e:PointerEvent<HTMLButtonElement>){
@@ -31,16 +31,16 @@ export default function GrimDelveCard({label,title,value,faction,symbol,monster,
    cancel();if(dragging.current){dragging.current=false;onDrag?.("cancel",e.clientX,e.clientY);}
  }
  return <div className="gd-card-shell">
- <button type="button" className="grim-card" data-i18n-ignore data-draggable={!!onDrag&&!disabled} data-monster={monster||undefined} data-faction={faction} data-target={target||undefined} data-ready={ready||undefined}
- aria-pressed={onClick?selected:undefined} aria-label={label} aria-disabled={disabled||!onClick}
+ <button type="button" className="grim-card" data-i18n-ignore data-draggable={!!onDrag&&!disabled} data-monster={monster||undefined} data-faction={faction} data-target={target||undefined} data-ready={ready||undefined} data-triggerable={triggerable||undefined} data-playable={playable||undefined} data-long-title={title.length>17||undefined}
+ aria-pressed={onClick?selected:undefined} aria-label={label} aria-keyshortcuts="I Shift+F10" title={inspectLabel} aria-disabled={disabled||!onClick}
  onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={abort} onLostPointerCapture={abort} onPointerLeave={()=>{if(!dragging.current&&!onDrag)cancel();}}
- onContextMenu={e=>{if(consumed.current)e.preventDefault();}}
+ onContextMenu={e=>{e.preventDefault();cancel();if(!consumed.current){consumed.current=true;onInspect();}}}
+ onKeyDown={e=>{if(e.key.toLowerCase()==="i"||(e.shiftKey&&e.key==="F10")){e.preventDefault();onInspect();}}}
  onClick={e=>{if(consumed.current&&e.detail!==0){consumed.current=false;return;}if(!disabled&&onClick)onClick();}}>
  <span className="gd-card-art" aria-hidden="true"><img src={illustration} alt="" draggable={false}/></span>
  <span className="gd-card-frame" aria-hidden="true"><img src={frame} alt="" draggable={false}/></span>
  <span className="gd-card-data"><span className="gd-card-value" aria-hidden="true">{value}</span><span className="gd-card-suit" aria-hidden="true">{emblem?<img src={emblem} alt="" draggable={false}/>:<span>{symbol}</span>}</span><strong>{title}</strong></span>
- {selected||target||ready||triggerable?<span className="gd-state-mark" aria-hidden="true">{selected?"✓":target?"◎":triggerable?"⚡":"✓"}</span>:null}
+ {selected||target||triggerable?<span className="gd-state-mark" aria-hidden="true">{selected?"✓":target?"◎":triggerable?"⚡":"✓"}</span>:null}
  </button>
- <button type="button" data-i18n-ignore className="gd-inspect-button" aria-label={inspectLabel} title={inspectLabel} onClick={onInspect}>⌕</button>
  </div>;
 }
