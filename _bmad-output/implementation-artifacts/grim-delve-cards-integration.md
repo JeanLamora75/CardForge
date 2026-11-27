@@ -1,0 +1,3 @@
+# Grim Delve — Intégration des cartes V1 et V2
+
+64 entrées ajoutées au manifeste principal (267 entrées statiques). Correspondance par ID physique, 54 illustrations, cinq cadres, quatre emblèmes et dos neutre. Libellés FR/EN explicites, valeurs et enseignes conservées. Les cartes masquées ne reçoivent que le dos universel. Aucun changement moteur ou sauvegarde. Tests unitaires de correspondance et empreintes, assertions PWA ajoutés. Les WebP sont générés par le build Sharp existant. Recette visuelle et exécution CI non confirmées. Adaptation BMAD : skill agent et config lus, workflow bmad-build exige uv et arrêt si indisponible ; implémentation directe autorisée par les contraintes du projet, sans prétendre avoir exécuté le workflow officiel.

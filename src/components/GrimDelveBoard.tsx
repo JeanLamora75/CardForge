@@ -10,6 +10,7 @@ import { createTutorialSession } from "../application/learning.ts";
 import { makeGrimDelveSummary, replayFinishedGame } from "../application/game-results.ts";
 import GameResultPanel from "./GameResultPanel.tsx";
 import GrimDelveCard from "./GrimDelveCard.tsx";
+import { grimCardView, grimCardBack } from "../application/grim-delve-art.ts";
 import { grimAttackProgress } from "../application/grim-delve-card-view.ts";
 import { playGameplayEffect } from "../application/audio.ts";
 import { translateUiText } from "../i18n/surface.ts";
@@ -17,8 +18,6 @@ import { translateUiText } from "../i18n/surface.ts";
 export type GrimHelpStatus = { placements:number; triggers:number; returns:number };
 type Session = Pick<PersistentGameSession<GrimDelveState, GrimDelveAction>, "getState" | "getLegalActions" | "dispatch">;
 const cards = new Map(makeDeckWithJokers().map(card => [card.id, card]));
-const factions = { hearts: "Cendres", diamonds: "Cristal", clubs: "Ronces", spades: "Ombres" } as const;
-const symbols = { hearts: "♥", diamonds: "♦", clubs: "♣", spades: "♠" } as const;
 const art = (category:string,name:string) => import.meta.env.BASE_URL+`art/${category}/grim-delve/${name}.webp`;
 const valueOf = (id:string) => { const c=cards.get(id); return c && "rank" in c ? c.rank : 10; };
 const options = { gameId: GRIM_DELVE_GAME_ID, rulesVersion: GRIM_DELVE_RULES_VERSION, formatVersion: 1 };
@@ -31,25 +30,13 @@ const actionName: Record<GrimDelveAction["type"], string> = {
   "move-power": "Déplacer la carte",
   "trigger-attack": "Déclencher l'attaque",
 };
-function cardLabel(id: string) {
-  const card = cards.get(id);
-  if (!card) return id;
-  if ("kind" in card) return "Joker · puissance 10 · enseigne libre";
-  const title = card.rank === 11 ? "Valet" : card.rank === 12 ? "Dame" : card.rank === 13 ? "Roi" : String(card.rank);
-  return `${title} · ${factions[card.suit]} (${symbols[card.suit]})`;
-}
-function Card({ id, selected = false, onClick, disabled = false, target = false }: {
-  id: string; selected?: boolean; onClick?: () => void; disabled?: boolean; target?: boolean;
-}) {
-  const card=cards.get(id);
-  const numbered=card && "rank" in card ? card : undefined;
-  const monster=!!numbered && numbered.rank>=11;
-  const rank=numbered?.rank;
-  const title=numbered ? (monster ? `${rank===11?"Valet":rank===12?"Dame":"Roi"} · ${factions[numbered.suit]}` : factions[numbered.suit]) : "Joker";
-  return <GrimDelveCard label={cardLabel(id)} title={title} value={valueOf(id)}
-    faction={numbered?.suit??"joker"} symbol={numbered?symbols[numbered.suit]:"★"}
-    crest={monster?(rank===11?"♜":rank===12?"♛":"♚"):"✧"} monster={monster}
-    selected={selected} target={target} onClick={onClick} disabled={disabled}/>;
+function cardLabel(id:string,language:Locale){return grimCardView(id,language).label;}
+function Card({id,language,selected=false,onClick,disabled=false,target=false}:{
+ id:string;language:Locale;selected?:boolean;onClick?:()=>void;disabled?:boolean;target?:boolean;
+}){
+ const view=grimCardView(id,language);
+ const url=(path:string)=>import.meta.env.BASE_URL+"art/"+path;
+ return <GrimDelveCard {...view} illustration={url(view.illustration)} frame={url(view.frame)} emblem={view.emblem?url(view.emblem):undefined} selected={selected} target={target} onClick={onClick} disabled={disabled}/>;
 }
 const sameAction = (a: GrimDelveAction, b: GrimDelveAction) =>
   a.type === b.type && ("cardId" in a ? a.cardId : undefined) === ("cardId" in b ? b.cardId : undefined) &&
@@ -184,10 +171,10 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
           const progress = monster ? grimAttackProgress(powers,valueOf(monster)) : null;
           return <div className="grim-column" key={index}>
             <h4 className="gd-sr-only">Colonne {index + 1}</h4>
-            {monster ? <div className="gd-monster-stack" data-hidden={column.length-1}><Card id={monster} target={!!target} onClick={target ? ()=>void dispatch(target) : undefined} disabled={busy}/></div> : <span className="gd-empty">Colonne libérée</span>}
+            {monster ? <div className="gd-monster-stack" data-hidden={column.length-1}><Card language={language} id={monster} target={!!target} onClick={target ? ()=>void dispatch(target) : undefined} disabled={busy}/></div> : <span className="gd-empty">Colonne libérée</span>}
             <div className="gd-attack-slots">
             {attack?.powers.map(power => <div key={power.cardId} className="grim-placed">
-              <Card id={power.cardId} onClick={() => setSelected(power.cardId)} disabled={busy} selected={selected === power.cardId} />
+              <Card language={language} id={power.cardId} onClick={() => setSelected(power.cardId)} disabled={busy} selected={selected === power.cardId} />
               <small className="gd-sr-only">{power.handNumber === state.handNumber ? "Reprise possible selon le moteur" : "Pose antérieure"}</small>
             </div>)}
             {monster ? Array.from({length:2-(attack?.powers.length??0)},(_,i)=><span className="gd-empty-slot" key={i} aria-label="Emplacement de puissance libre"><span aria-hidden="true">✧</span></span>) : null}
@@ -197,20 +184,20 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
                 <span style={{width:`${progress.percent}%`}}/>
               </div><small className="gd-power-total">{progress.power} / {progress.resistance}</small>
             </div>:null}
-            {column.length > 1 ? <small className="gd-hidden-count"><span className="gd-hidden-cards" aria-hidden="true">{Array.from({length:column.length-1},(_,i)=><i key={i}/>)}</span><span>{column.length-1} <span className="gd-hidden-word">{language==="fr"?"masqué(s)":"hidden"}</span></span><span className="gd-sr-only">{language==="fr"?" monstre(s)":" monster(s)"}</span></small> : <small className="gd-hidden-count" aria-hidden="true"> </small>}
+            {column.length > 1 ? <small className="gd-hidden-count"><span className="gd-hidden-cards" aria-hidden="true">{Array.from({length:column.length-1},(_,i)=><img key={i} src={import.meta.env.BASE_URL+"art/"+grimCardBack} alt=""/>)}</span><span>{column.length-1} <span className="gd-hidden-word">{language==="fr"?"masqué(s)":"hidden"}</span></span><span className="gd-sr-only">{language==="fr"?" monstre(s)":" monster(s)"}</span></small> : <small className="gd-hidden-count" aria-hidden="true"> </small>}
           </div>;
         })}
       </div>
       <p role="status" aria-live="polite" className={`grim-notice gd-play-notice${showNotice?"":" gd-no-notice"}`}>{showNotice}</p>
       <h3 className="gd-banner gd-hand-banner">Votre main</h3>
       <div className="grim-hand">{state.hand.length ? state.hand.map(id =>
-        <Card key={id} id={id} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
+        <Card language={language} key={id} id={id} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
       ) : <p>La main est vide.</p>}</div>
       {selected ? <div className="grim-actions gd-selection-actions" aria-label="Actions légales pour la carte sélectionnée">
-        <h3>{cardLabel(selected)}</h3>
+        <h3>{cardLabel(selected,language)}</h3>
         {actions.length ? actions.map((action, index) => <button key={index} type="button" className="secondary-action"
           disabled={busy} onClick={() => void dispatch(action)}>
-          {actionName[action.type]}{"monsterId" in action ? ` → ${cardLabel(action.monsterId)}` : ""}
+          {actionName[action.type]}{"monsterId" in action ? ` → ${cardLabel(action.monsterId,language)}` : ""}
         </button>) : <p>Aucune action autorisée pour cette carte actuellement.</p>}
         <button type="button" className="back-link" onClick={() => setSelected(null)}>Annuler la sélection</button>
       </div> : null}

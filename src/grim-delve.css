@@ -133,3 +133,18 @@
 .grim-command-page .gd-footer{margin-top:5px}
 @media(max-width:380px){.gd-command-header h1{width:calc(100% - 174px)}.grim-command-page .grim-counters{padding:10px 8px}.gd-counter{padding-inline:2px}}
 @media(max-height:650px){.grim-command-page{--gd-monster-height:clamp(84px,19dvh,116px);--gd-hand-height:clamp(80px,18dvh,108px)}.grim-command-page .grim-counters{padding-block:8px}.gd-counter{min-height:42px}}
+
+/* Art, frame and live labels remain separate. */
+.grim-command-page .gd-card-frame{border:0;box-shadow:none}
+.gd-card-frame img{display:block;width:100%;height:100%;object-fit:fill}
+.grim-command-page .grim-card[data-target=true] .gd-card-frame{box-shadow:none}
+.grim-command-page .gd-card-data{padding:5px 5px 9%;background:linear-gradient(#080604b8,transparent 24%,transparent 64%,#080604db)}
+.grim-command-page .gd-card-data strong{font-size:clamp(.59rem,1.9vw,.84rem);line-height:1.1;color:#fff4d6;text-shadow:0 1px 3px #000,0 0 4px #000;overflow-wrap:anywhere}
+.grim-command-page .gd-card-value{top:7%;left:9%;color:#fff4d6;text-shadow:0 1px 3px #000,0 0 5px #000}
+.grim-command-page .gd-card-suit{top:5%;right:8%;display:flex;align-items:center;gap:2px;text-shadow:0 1px 3px #000}
+.gd-card-suit img{width:clamp(12px,3vw,22px);height:auto;object-fit:contain}
+.gd-hidden-cards img{display:block;width:12px;height:18px;object-fit:contain;border-radius:2px}
+.grim-command-page .grim-card:disabled{opacity:1}
+.grim-command-page .grim-placed .gd-card-suit img{display:none}
+.grim-command-page .grim-placed .gd-card-data{padding:0}
+.grim-command-page .grim-placed .gd-card-art img{object-fit:cover;object-position:center}
