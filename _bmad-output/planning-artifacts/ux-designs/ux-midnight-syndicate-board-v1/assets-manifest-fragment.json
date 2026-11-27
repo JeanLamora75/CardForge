@@ -1,0 +1,492 @@
+[
+  {
+    "path": "public/assets/banners/midnight-syndicate/compact.png",
+    "width": 227,
+    "height": 85,
+    "mode": "RGBA",
+    "sha256": "dcfc17920666feb48c5b6c4ef8e1d47d5dbe42044f060037318dce243392ff80"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/exploration.png",
+    "width": 566,
+    "height": 168,
+    "mode": "RGBA",
+    "sha256": "7a2bbb5ac6ac68670a0f6a0d8a2fc068dc07f9f7f3d4afeca638736906917d6b"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/movement.png",
+    "width": 393,
+    "height": 78,
+    "mode": "RGBA",
+    "sha256": "126fa98d01897d45726bb0b84effeed7d8b30219f76c201269f520e25a8ba558"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/notes-heading.png",
+    "width": 356,
+    "height": 79,
+    "mode": "RGBA",
+    "sha256": "404bc8bd943b43ceb5525f24e9d1fbd7ca8deb0bdb2fadcb1dc18dca29ce6e1a"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/section-heading.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "5c75b56ee2e1dbe42175b9d4bc3d7adf78cf6c2f75b26c060044bdd4cc540d3e"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/landscape.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "117cc367f1accc637b0eb2c052c7f2e3d1394abbae2b47cabaab830af0523101"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/portrait.png",
+    "width": 941,
+    "height": 1672,
+    "mode": "RGB",
+    "sha256": "eb38ee03eb0f4107e050fc4e22375cae156a9e5f4f45c3e51f6dc3ebed1a8941"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/icon.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "fc00523e00e4e3f4b75d7cf5a0de44bfc07d80c22f796ef0add64c7e300aa5df"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/primary.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "3bf2d7e12ac98b5075ea0f621eaacaa5e1f2a936540d21dd3461b88f1fbd7243"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/secondary.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "d12a25b308d0254f5064c20a956287542cac47b260f858714e15885d2bf1d09b"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/utility.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "a4b849b975a16f666a810d653104e85bbbb1493caa8a08dd6ad177019570e79c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/back.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "ec1cd7415a62bc0ce1a7473a6608834ef8083420d74ee6782be90d54ab0a2c1f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-blue.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "bcad93f77930ab3fda877b0ba2514f8d6f50d76ab74bcc95a950fbae3463d609"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-burgundy.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "77b8a8089de73fb54685b1ef863e912fe8336814952662e4488797b45d642c45"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-green.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "0da977f8a7bd6beca1a24cb16b06f5f2a3f0d1924ac10190d4984a7e02ca924f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-neutral.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "320d24ec496bb5bc9f22795ff6eade3f6a8c5329c922d93d9ac77ab583668d43"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-line-tile.png",
+    "width": 74,
+    "height": 31,
+    "mode": "RGBA",
+    "sha256": "228877bc5bad179c8fa83e111fcd6b72e5bb45cc1ed02442369798535a610ab7"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-link-horizontal.png",
+    "width": 289,
+    "height": 81,
+    "mode": "RGBA",
+    "sha256": "eccebcd711c727c8bf4862c3dc12210290c06a0cf552ce7a60d706828bbf7789"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-link-vertical.png",
+    "width": 76,
+    "height": 200,
+    "mode": "RGBA",
+    "sha256": "9554bf92004721868232eb3bca28dc58307ec4ceecabd80871618b67ec9dc6d3"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-current.png",
+    "width": 119,
+    "height": 116,
+    "mode": "RGBA",
+    "sha256": "1f2c7c0105e8eb45d9676f7c88334d8c1db9976da26f4713cdd46d378890cd8e"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-destination.png",
+    "width": 107,
+    "height": 113,
+    "mode": "RGBA",
+    "sha256": "72e2590ea2eb936150fc67cb20e0c71d32824ea9990aa8280f1fd8ea1033bcc8"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-neutral.png",
+    "width": 99,
+    "height": 99,
+    "mode": "RGBA",
+    "sha256": "3ed7d858ceca0d061ef13db638c74e9eda5af4c88919b20d9de7680240a67d41"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/content-panel.png",
+    "width": 1122,
+    "height": 1402,
+    "mode": "RGBA",
+    "sha256": "6b89d7f9cc76b6244908292f00c05a8a7c05c77440848080d9d776d359738554"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/location-panel.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGBA",
+    "sha256": "b29c6e5d06062284a51c8c7986be5a16f9bf9cf567dd9f2bb5e00436c4d872cb"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/note-slot-empty.png",
+    "width": 206,
+    "height": 263,
+    "mode": "RGBA",
+    "sha256": "06b22a38191adfc4a4fcf456ac81600fb7414d66ec68d77f92029a161fc063f9"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/notes-folder.png",
+    "width": 2075,
+    "height": 702,
+    "mode": "RGBA",
+    "sha256": "20fab9e3df7900226505507897ef6c31d248a8565450e01bff6e6ea04b308c79"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label-danger.png",
+    "width": 304,
+    "height": 181,
+    "mode": "RGBA",
+    "sha256": "f3cd4a0874b144682efb2a5a2f657f4cbb5a7c915b4468d3788439c3a25edea5"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label-muted.png",
+    "width": 310,
+    "height": 180,
+    "mode": "RGBA",
+    "sha256": "1e5cd175d4146b597ba1d00f00e2e9750581df1c1fc8fa9f3a57d7932c6262c1"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label.png",
+    "width": 315,
+    "height": 182,
+    "mode": "RGBA",
+    "sha256": "2676749c11173047380638be7a25986fc31bc2afb037bf413a5dad14d199f1e8"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-location-hidden.png",
+    "width": 676,
+    "height": 1016,
+    "mode": "RGBA",
+    "sha256": "cbfe116ead78ccd37653876dd237f1a463ce6e5203651347cb42e3544e3e5c8a"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-location-window.png",
+    "width": 274,
+    "height": 350,
+    "mode": "RGBA",
+    "sha256": "8494d92ad1aa6b08c80a66e3e613122004509155128991003cb478a767489c62"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-aces.png",
+    "width": 378,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "7349f8f4458c14262c7f793cef754e79517dc7bd94b0866fa9903cae01085ec7"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-blank.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "341f9e9b1e0804495d114c229400a5864b237343949ec85c463fe152c8429c71"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-loot.png",
+    "width": 383,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "c1fdf9fbef74b24cf750852240f1afd6b73c5f2f7bfdcd7bd4e8d9e698e314b7"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-notes.png",
+    "width": 383,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "8d19324d1fddfca506fabde969669a2b86abe2344f0c142ad0d1a2619bde41ce"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-route.png",
+    "width": 380,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "cdbe90194ec3ce8378d7b2e9eae269766ac813e00299bcc7a28ed8c41d0002da"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/back.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "aed0e78e2059e42912fe31aa2847336ef465cab9f323f46c463926d43c166893"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/cancel.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d1b74e0b99f636b287e00dcd6b88d8bfc8cb143154d311695254573218c9f9d3"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/club.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "53679cf34112d7e1d0d6b4dc036e8f57902c55a391691a7e19c2c37accde9559"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/confirm.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "02049401b4f6749ccbe057d68f945ab5208d4fb31c2efa80eb74b10beeff3ce1"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/diamond.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "b2b1d877fbd92f8c555a1a1dad9cb9ade09c8f139d37f022de078ade3453fd57"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/down.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "76ae439922b07d94b59bc2d8b2842fe976df9f01bd13f5dfbd2e5880d6736c27"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/explore.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a6f4b29a526c4b240ce6474fd73332a4e0376764ffde2034eec40e8c84bd9040"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/forward.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d4d93884d1a199c51189b311b7f0515a46cf19f60f4f3f8e48133c892219d3dd"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/heart.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a7036c5c5c1cd78c6ddaa45b777731c0ee0915f36c1365490bc16f82df05cd84"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/help.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "2dbaebe63858456921c7a0392347e22e362827ccd7ca7e77a413e86044d41111"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/hidden.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9c1e02c392aa6a2c30e7fd26c9607983bab78fb3e78cc9d079d222d41eba91fb"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/home.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "eb44fe50962f7ec2506e6587e728453ab58ea28225bf91ce0f2948bb5a88eb48"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/info.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "852a07e413dfbc98b3154c49595fb53d029d1154c32de2968381d7597fbaef7d"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/inspect.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d00ea1184c1c1956c294bab112730d935b70e4121f52161638e67aee459da215"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/loop.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "43020d2fbd2457dc8b23bf2f28c7150ff347f30348e8938f477e7aa6dabce5cc"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/loot.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a00a7f98bfc4894d0f738be651b9f6df5aea87c93baab693cf1c9c19df12fa78"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/mark.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "10076a97bdf4f6d31acfb10ecd510dd61a5d59d44883fca9856db86b34b769c1"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/menu.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "56fa4fa7c9e4bff6449343c066b1179e20b1bbc3373b802602659a22af736fe9"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/notes.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9201551f14f81c90700db7bf642c6162a0aedee08afaf9dcecd05e8c707f45ef"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/observe.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "fe477995182d0f8dd65aa1d2e2d3f073f692803290d95ac3cb1dc0a5e5023ce2"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/return-note.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "ba7c26b278d91c24c7151dc27b58d2c9a3eeccde872f988d84f9e509572b59fa"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-player.png",
+    "width": 157,
+    "height": 155,
+    "mode": "RGBA",
+    "sha256": "5ef925ea4c9dd608b8673739651b7e2b33b1768e7a0c2aa91158d3fbdd31596f"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-unknown.png",
+    "width": 144,
+    "height": 145,
+    "mode": "RGBA",
+    "sha256": "b921100590d458825b49e96dcd4bdae2535063ae61761d25062a1772248b802d"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-warning.png",
+    "width": 147,
+    "height": 145,
+    "mode": "RGBA",
+    "sha256": "ffdc0633dd2d36207d00dabfbd5d244920d6f72ae8bded43d256493c1bd53b6b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "77dce21c0b11871e0f4339d3b9fd2e46e67f36f531fbd4a4b118f47b92a3a26b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/settings.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "f6563772faccd26129310f2745ec1299d070dbd2100c4189477e2ae67476489b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/spade.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "e04293f45f94c0defb7c309108f1c5dd92a63b390ee9c00c802ac198b761b647"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/up.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "261ffe5257737bff06bca81c96936a64b4c591fa8bf371e3de5853b923ce16cd"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/victory.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "e607b47e448281398a25157e3abfb35d1dc9961f17e158c88dfa29cd1f4e8de0"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/warning.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9c3f1b9182ed53856e7d4ddf2f6ef52af74a0488f9ef0703eabcf61bb8871c49"
+  },
+  {
+    "path": "public/assets/logos/midnight-syndicate/board.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "sha256": "88feb26385555b51844b37c25fe50d83bdd5fbd449803ff6999ad3b092dd93ea"
+  },
+  {
+    "path": "public/assets/logos/midnight-syndicate/sign.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "sha256": "5aceb379d548cb891e22a0f0d99a74680062ebf1f30290715bead52e140a15f3"
+  },
+  {
+    "path": "public/assets/ornaments/midnight-syndicate/corner-top-left.png",
+    "width": 124,
+    "height": 119,
+    "mode": "RGBA",
+    "sha256": "6a52a1f81e8dac41828c3804ab224aaba9a1bfdad49d04df1db0761fefc11046"
+  },
+  {
+    "path": "public/assets/ornaments/midnight-syndicate/corner-top-right.png",
+    "width": 123,
+    "height": 119,
+    "mode": "RGBA",
+    "sha256": "01e0a92d3d148d11ebcc6cf8efce760a42ec26b4673e2bc919d138a6313178a0"
+  }
+]

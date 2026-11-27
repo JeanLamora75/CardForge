@@ -1,0 +1,254 @@
+[
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l01-banque-centrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "f0e4996f9360e40fdb7e8066431f68d8b390f0183a4f466f6ee3db6c0e6130cd"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l02-bourse.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "041b3802ab8517533e9cb3c1fc735c49aae09631806b4604a25dc070b67ebcad"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l03-grand-hotel.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "17be9bf01a0b0bf077e3b3db73474266bee616ab5d84e537536deca8ed22d1ff"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l04-siege-du-journal.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "3f600f95d2e6ba62d07442bfd7cd202be761fbf5edbdf8f27fe46e67bcfff02c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l05-compagnie-assurances.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "630b3cc2c0a3f714fbaeecae4dce31789239cff61279b4857bb3ed176cbf315c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l06-tour-des-affaires.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "50e20915e3bcea7ad8689681ffd9e012b3b44c068703a9abd7e68ca531ec3278"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l07-casino.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "13d06f18425e7ca1752f44e3aef13b93c9d4aacb329855e832d5bd9199280d66"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l08-speakeasy.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0c8554225eed69d73f1c60100fedf6cac0e62a80eeaa9e5bb413ccb506804b77"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l09-cabaret.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "56646adfed9dd50774c44c3ebb3b20e6ffe3d1570f93c7c16ecaa3f5345ad58b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l10-club-de-jazz.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "7030864ab5c8b9c1c7a7af0645a7f734c751bef5312b6730d61b58ca81a8372f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l11-cinema.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "591be63c61f7f46fb9aca51cd049b171c012422f416ba2ee9526a891a1dbdc11"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l12-champ-de-courses.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "17be0ae6f80bc13a19dd50aa9998907cf708074eca3d30d0cf6ddb8f9b9f0418"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l13-docks.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "85fe17e9352dfdfacee86e2ce3213f446446b0d6e21ec5ff3aa0cdcd50908cae"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l14-entrepot-maritime.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "e20e766a4e507497d6ac4954261fb1105d271717a7fd9509e717defeae9418cf"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l15-chantier-naval.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4058c5593caf6afe747b266ce079429fcd8d170d01ca05ee1a4b268c86ad9f9e"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l16-capitainerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c9dcaefcfd98dbd3a0d35fbfa8db1fe90dcd176f8e8435126246c791565f1c69"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l17-phare.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4f2183af91fdd9a18bdab9d7a35cd61962f3cffab09015144ab19eafbd7dba30"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l18-marche-aux-poissons.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4cc5466287c3124d4c71ad948b54e676afb262a57b102a3f8cc26e74f01e0301"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l19-acierie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c0b1166c0d3e7c8e0dae8da0353b64c16c0aecd4270db6336d6f4e7008c89f49"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l20-garage-automobile.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "be4f258ce2c876426f77a1755a12fd9fe2e1670eccb2f4e4a82e90ae4c2690d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l21-depot-ferroviaire.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "f16d9566fd3bd1d26b4739d241c5cbccc0995f767c08a41fb5dfeac1b4937e5f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l22-centrale-electrique.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c5117501737aa63e22eff9921764465c478326dd968181f44e404e0447cd9977"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l23-imprimerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c1057daea97038191801f047f48fcee693006c636c06baf5d322a9c0a1a84b7b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l24-distillerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "6f5b66177a07a9a728cf01b58e8fe4e94634e5d51a472af47099895ae2bb8bcb"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l25-vieille-ville.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "922da904e8fb1196599a1412abb4a7ecd77dea65afccc6ee806bbe9601e326ee"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l26-marche-couvert.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "1dc83bd0e2f29b8d6e51ec39a566102283113d4cbcd123971c42a066ba943b2a"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l27-preteur-sur-gages.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "67c99afa26fe9ee3177598b51699f517f73a6a7bef1d7f353a22aae3b89ea83e"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l28-barbier.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "5db52dac1a6501376f680baf31cd504e4be0bd5cc4ce5d1b9f13a5cbdd915084"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l29-pension-de-famille.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d24f6b3745de04e4d5f60e2fc6ce935066595c020b7f364e6bd39655796889a1"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l30-gare-centrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "bc2043de2495e9a07cac8c0802a593b5765ce5cd04ae048d1c63c137d2d9a7e1"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l31-hotel-de-ville.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0af6956abd66be17c1edccc2294238110cdd8143e1c7c7c0fa325912e8d274fc"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l32-commissariat.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "eeeff2486f17e848d2ce19a8c58873a7753aeb177d3adc4ef8c9e92dd3fd0dd9"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l33-palais-de-justice.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "adaf54ed43b4ed90ba3b7c2f9ab010a9608be44f2c30a2733b3c20b398facbb5"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l34-cathedrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "9d8a52aadeabe2150397217632f6bfc5dc66a0dc47abab55e5987c603daeb6bf"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l35-hopital.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "81930730a040a4e4b236ed6419ca6e35c67fb521eb29ac42a0a2760d31e26146"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l36-bibliotheque-municipale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "49d25fc396b1b6bd38591fc708032190f0fd9be1893767d75eacea30b477a119"
+  }
+]

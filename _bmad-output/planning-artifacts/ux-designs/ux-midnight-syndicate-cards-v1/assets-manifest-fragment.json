@@ -1,0 +1,121 @@
+[
+  {
+    "path": "public/assets/cards/midnight-syndicate/joker-exfiltration.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "614588303eb30b6461a475f3a6e62be792ed84d737f7a0430d48b9d0125e418f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m01-le-parrain.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d28b01c4fd6a6d41605bce06455f3525f03a5b5475f01147e89841c863175479"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m02-la-veuve-noire.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "bf33223afecc7294435b5a3c8a1f8b5dbb993ecc681f89e0a2982c07cc345545"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m03-le-tueur-a-gages.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "a771e3e20c7a33bca587e0c720dcacb9c48f3006a45c070c79d36aa7991b0358"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m04-la-balance.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "e130b5e0596d38bb910b9cd3188c6e4a243656eaae7df6dbf1ab0cf9573762be"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m05-l-embuscade.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4aa8d7ce18b7cdbccf7b4318b7afad807675d78d6ee61aa54234c5ded53717d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m06-la-voiture-piegee.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "6625dc80a75883ca3169931f68cbfa55aa032b44cbbdf8f3ebf2fe6b1c7097ae"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m07-le-tireur-de-l-ombre.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0b16a95dd344d6c62af08aab9456517f3ef1abd9cd8121680e49bfa66cc3dfc5"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m08-le-guet-apens-des-docks.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "675bc0eb80ff9443ee4af7449ab685a1bee67745d25948e574c7b3056d03e20f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m09-le-commissaire-corrompu.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "5fddf88929fc303053d54c5ab2426de762f8a316c976d4116debed2ae4cda8f9"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m10-le-barrage-de-police.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c308bb7639a8a2c22ccaa8e1885f0e9e00ec57f53e74d5a18815103d9b406647"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m11-le-juge-vereux.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "cfbb49593fd406c3f52bd7302f72a181b15930a98141b830f59deccb28de08d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m12-l-interrogatoire-clandestin.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "497bf3d3188ce3eff89a2fe8f0abe91b9a13444c8cc23dba66c880cd658f935f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p01-photo-pot-de-vin.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "3f7eb78ea518d685852509863a86733aaf44f18ad4a816f941ebd6c8b5ddf78b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p02-boite-allumettes.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0b41e9f8a52d27b3c75a9387f8c6645a9fd6b4758c02d1baa1343bcf696dc866"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p03-telegramme-code.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "51629e1d3d2c62cd9981ad5e91bfe6ae3d045ee1c88152814efaf481c54c8153"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p04-ticket-consigne.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d38a184ef3cc111b996f7efaf3ffbcf5450895724509c7861a68f5811028f722"
+  }
+]
