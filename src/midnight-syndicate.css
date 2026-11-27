@@ -87,3 +87,13 @@
 .ms-ending-story p{margin:3px 0}.ms-ending-actions :is(button,a){font-family:inherit}
 @media(orientation:landscape){.ms-board[data-phase=finished] .ms-ending{align-items:flex-end;justify-content:center}.ms-ending-story,.ms-mission-report,.ms-ending-actions{width:min(44%,560px)}.ms-ending-actions{grid-template-columns:1fr 1fr}.ms-ending-actions a{grid-column:1/-1}.ms-ending[data-scene="ms-m12-l-interrogatoire-clandestin"]{align-items:flex-start!important}}
 @media(max-height:430px) and (orientation:landscape){.ms-ending-story p,.ms-mission-report{font-size:.75rem}.ms-ending-story h2{font-size:1rem}.ms-board[data-phase=finished] .ms-ending{gap:4px;padding:5px}.ms-ending-actions{gap:3px}}
+
+/* Direct card manipulation: only legal sources disable native touch scrolling. */
+.ms-immersive .ms-draggable{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.ms-immersive[data-drag] .ms-draggable{cursor:grabbing}
+.ms-immersive[data-drag="mark-path"] .ms-notes .ms-empty,.ms-immersive[data-drag="return-to-path"] .ms-exploration{outline:2px dashed #f5ce82;outline-offset:2px;box-shadow:0 0 12px #f4c76b70}
+.ms-immersive[data-drop-valid=true][data-drag="mark-path"] .ms-notes .ms-empty,.ms-immersive[data-drop-valid=true][data-drag="return-to-path"] .ms-exploration{outline-style:solid;box-shadow:0 0 16px #ffdc99}
+.ms-drag-ghost{position:fixed;z-index:30;pointer-events:none;opacity:.9;filter:drop-shadow(0 5px 8px #0009)}
+.ms-drag-ghost .ms-card{width:100%;height:100%;max-width:none}
+.ms-drag-return{transition:left 160ms ease-out,top 160ms ease-out;opacity:.65}
+@media(prefers-reduced-motion:reduce){.ms-drag-return{transition:none}}

@@ -457,11 +457,8 @@ async function journey(locale,mobile){
          }
          if(originalViewport)await page.setViewportSize(originalViewport);
         await interact(page,page.locator(game.actions).first(),mobile);
-        assert.deepEqual(await readSaved(page,game.id),before);
-        await interact(page,page.locator('.ms-confirm button.secondary-action'),mobile);
-        assert.deepEqual(await readSaved(page,game.id),before);
-        await interact(page,page.locator(game.actions).first(),mobile);
-        await interact(page,page.locator('.ms-confirm button.primary-action'),mobile);
+        await waitSavedChanged(page,game.id,before);
+        assert.equal(await page.locator('.ms-confirm-overlay').count(),0,'ordinary actions must not request confirmation');
       }else if(game.confirm){
         await page.evaluate(()=>localStorage.setItem('cardforge.learning.v1.gridcannon',JSON.stringify({choice:'learn',hintsEnabled:true})));
         await page.reload();await page.locator('.thunder-board.tf-live:not(.tf-training)').waitFor();

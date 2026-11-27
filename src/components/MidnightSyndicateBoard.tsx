@@ -1,7 +1,7 @@
 import { visibleMidnightArt } from "../application/midnight-card-art.ts";
 import type { Locale } from "../i18n/language.ts";
 import "./../midnight-syndicate.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type MouseEvent as ReactMouseEvent } from "react";
 import { createIndexedDbGameStorage } from "../adapters/indexeddb-game-storage.ts";
 import type { PersistentGameSession } from "../application/persistent-game-session.ts";
 import type { NewGameChoice } from "../application/new-game-choice.ts";
@@ -18,10 +18,10 @@ function cardLabel(card:PublicLoopCard,language:Locale="fr") {
   const item=visibleMidnightArt(card);
   return item ? item[language] : language==="en"?"Hidden card":"Carte cachée";
 }
-function Card({card,language,compact=false,onInspect}:{card:PublicLoopCard;language:Locale;compact?:boolean;onInspect?:(card:PublicLoopCard)=>void}) {
+function Card({card,language,compact=false,onInspect,onPointerDown}:{card:PublicLoopCard;language:Locale;compact?:boolean;onInspect?:(card:PublicLoopCard)=>void;onPointerDown?:(event:ReactPointerEvent<HTMLElement>)=>void}) {
   const item=visibleMidnightArt(card);
   const Tag=item&&onInspect?"button":"div";
-  return <Tag className={"ms-card "+(item?"ms-visible":"ms-hidden")+(compact?" ms-mini":"")} aria-label={cardLabel(card,language)} data-i18n-ignore {...(item&&onInspect?{type:"button" as const,onClick:()=>onInspect(card)}:{})}>
+  return <Tag className={"ms-card "+(item?"ms-visible":"ms-hidden")+(compact?" ms-mini":"")+(onPointerDown?" ms-draggable":"")} onPointerDown={onPointerDown} aria-label={cardLabel(card,language)} data-i18n-ignore {...(item&&onInspect?{type:"button" as const,onClick:()=>onInspect(card)}:{})}>
     <img className="ms-card-frame" src={art("cards",item?"front-"+item.frame:"back")} alt="" draggable={false}/>
     {item?<><strong className="ms-card-value">{item.value}</strong><img className="ms-card-art" src={art("cards",item.file)} alt="" draggable={false}/><span className="ms-card-name">{item[language]}</span></>:null}
   </Tag>;
@@ -42,7 +42,13 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const [blocked,setBlocked] = useState(false);
   const [notice,setNotice] = useState("");
   const [error,setError] = useState("");
-  const [selected,setSelected] = useState<MidnightSyndicateAction|null>(null);
+  const [preview,setPreview]=useState<number|null>(null);
+  const gesture=useRef<{pointer:number;card:PublicLoopCard;action:MidnightSyndicateAction;x:number;y:number;width:number;height:number;left:number;top:number;active:boolean}|null>(null);
+  const [drag,setDrag]=useState<{card:PublicLoopCard;action:MidnightSyndicateAction;x:number;y:number;width:number;height:number;returning?:boolean;valid?:boolean}|null>(null);
+  const suppressClick=useRef(false);
+  const lastActionAt=useRef(-Infinity);
+  const returnTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  useEffect(()=>()=>{if(returnTimer.current)clearTimeout(returnTimer.current);},[]);
   const [replacement,setReplacement] = useState<NewGameChoice|null>(null);
   const confirmation = useRef<HTMLButtonElement>(null);
   const actionsHeading = useRef<HTMLHeadingElement>(null);
@@ -73,7 +79,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
     })();
     return ()=>{cancelled=true;mounted.current=false;};
   },[tutorial]);
-  useEffect(()=>{if(selected||replacement)confirmation.current?.focus();},[selected,replacement]);
+  useEffect(()=>{if(replacement)confirmation.current?.focus();},[replacement]);
   async function run(work:()=>Promise<void>) {
     if(lock.current||busy||blocked)return;
     lock.current=true;setBusy(true);setError("");
@@ -83,7 +89,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   }
   function adopt(next:Session) {
     session.current=next;
-    if(mounted.current){setState(next.getState());setSelected(null);setReplacement(null);setNotice("Partie enregistrée");}
+    if(mounted.current){setState(next.getState());setPreview(null);setReplacement(null);setNotice("Partie enregistrée");}
   }
   async function start() {
     await run(async()=>adopt(await startMidnightSyndicate(createIndexedDbGameStorage(),crypto.randomUUID(),setup())));
@@ -91,7 +97,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   async function chooseReplacement() {
     await run(async()=>{
       const choice=await getMidnightSyndicateNewGameChoice(createIndexedDbGameStorage());
-      if(mounted.current){setSelected(null);setReplacement(choice);}
+      if(mounted.current){setPreview(null);setReplacement(choice);}
     });
   }
   async function replace() {
@@ -101,13 +107,15 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       if(next)adopt(next);
     });
   }
-  async function apply() {
-    if(!selected||!session.current)return;
-    const command=selected;
+  async function apply(command:MidnightSyndicateAction) {
+    if(!session.current||lock.current||busy||blocked||replacement||performance.now()-lastActionAt.current<300)return;
+    const legal=inspectMidnightSyndicate(session.current.getState()).actions;
+    if(!legal.some(a=>JSON.stringify(a)===JSON.stringify(command)))return;
+    lastActionAt.current=performance.now();
     await run(async()=>{
       const result=await session.current!.dispatch(command);
       if(!mounted.current)return;
-      setSelected(null);
+      setPreview(null);
       if(!result.accepted){setError("Action refusée : ce coup n’est plus autorisé.");return;}
       setState(session.current!.getState());
       setMovement(n=>n+1);
@@ -123,9 +131,38 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const [statistics,setStatistics]=useState<GameStatistics|null>(null);
   const [statsError,setStatsError]=useState(false);
   useEffect(()=>{if(inspection!=="stats"||tutorial)return;let live=true;setStatsError(false);void createIndexedDbGameStorage().readStatistics("loot-the-loop").then(s=>{if(live)setStatistics(s??null);}).catch(()=>{if(live)setStatsError(true);});return()=>{live=false;};},[inspection,tutorial]);
-  const destination=selected?.type==="explore"&&view?.deck.length?selected.distance%view.deck.length:-1;
+  const destination=preview!==null&&view?.deck.length?preview%view.deck.length:-1;
+  const canMark=!busy&&!blocked&&!replacement&&!!view?.actions.some(a=>a.type==="mark-path");
+  const canReturn=(i:number)=>!busy&&!blocked&&!replacement&&!!view?.actions.some(a=>a.type==="return-to-path"&&a.noteIndex===i);
+  function beginDrag(event:ReactPointerEvent<HTMLElement>,card:PublicLoopCard,action:MidnightSyndicateAction){
+    if(!event.isPrimary||event.button!==0||gesture.current||drag||lock.current||!card.faceUp)return;
+    suppressClick.current=false;
+    const rect=event.currentTarget.getBoundingClientRect();
+    gesture.current={pointer:event.pointerId,card,action,x:event.clientX,y:event.clientY,width:rect.width,height:rect.height,left:rect.left,top:rect.top,active:false};
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function validDrop(action:MidnightSyndicateAction,x:number,y:number){
+    const target=document.elementFromPoint(x,y);
+    return action.type==="mark-path"?!!target?.closest(".ms-notes .ms-empty"):action.type==="return-to-path"&&!!target?.closest(".ms-exploration");
+  }
+  function moveDrag(event:ReactPointerEvent<HTMLElement>){
+    const current=gesture.current;if(!current||current.pointer!==event.pointerId)return;
+    if(!current.active&&Math.hypot(event.clientX-current.x,event.clientY-current.y)<8)return;
+    current.active=true;suppressClick.current=true;
+    setDrag({card:current.card,action:current.action,width:current.width,height:current.height,x:event.clientX-current.width/2,y:event.clientY-current.height/2,valid:validDrop(current.action,event.clientX,event.clientY)});
+  }
+  function endDrag(event:ReactPointerEvent<HTMLElement>,cancel=false){
+    const current=gesture.current;if(!current||current.pointer!==event.pointerId)return;
+    gesture.current=null;
+    if(!current.active){setDrag(null);return;}
+    if(!cancel&&validDrop(current.action,event.clientX,event.clientY)){setDrag(null);void apply(current.action);}
+    else{setDrag({card:current.card,action:current.action,width:current.width,height:current.height,x:current.left,y:current.top,returning:true});returnTimer.current=setTimeout(()=>setDrag(null),180);}
+  }
+  function preventDragClick(event:ReactMouseEvent<HTMLElement>){
+    if(suppressClick.current){suppressClick.current=false;event.preventDefault();event.stopPropagation();}
+  }
   return <section className="ms-board ms-immersive" aria-label="Plateau Midnight Syndicate" aria-busy={busy}
-    data-phase={summary?"finished":"live"}>
+    data-phase={summary?"finished":"live"} data-drag={drag&&!drag.returning?drag.action.type:undefined} data-drop-valid={drag?.valid?"true":undefined} onPointerMove={moveDrag} onPointerUp={endDragEvent=>endDrag(endDragEvent)} onPointerCancel={event=>endDrag(event,true)} onLostPointerCapture={event=>endDrag(event,true)} onClickCapture={preventDragClick}>
     {!summary?<picture className="ms-board-picture" aria-hidden="true"><source media="(orientation: landscape)" srcSet={art("boards","landscape")}/><img src={art("boards","portrait")} alt=""/></picture>:null}
 
     <div className="ms-status" role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</div>
@@ -141,34 +178,34 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       <nav className="ms-ending-actions"><button type="button" disabled={busy} onClick={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/><span>{tr("Rejouer","Play again")}</span></button>{!tutorial?<button type="button" onClick={()=>setInspection("stats")}><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Statistiques","Statistics")}</span></button>:null}<a href="#"><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Retour au catalogue","Back to catalogue")}</span></a></nav>
     </div>:<div className="ms-live-layout">
       <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
-        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
+        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
       </aside>
       <section className="ms-exploration">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","exploration")} alt=""/><span>{tr("Exploration","Exploration")}</span></h3>
-        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard}/>)}</div>
+        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined}/>)}</div>
         {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
       </section>
       <section className="ms-controls">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","notes-heading")} alt=""/><span>{tr("Notes d’enquête","Investigation notes")}</span></h3>
-        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
+        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard} onPointerDown={canReturn(i)?event=>beginDrag(event,view.notes[i],{type:"return-to-path",noteIndex:i}):undefined}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
         <h3 ref={actionsHeading} tabIndex={-1}><img className="ms-heading-skin" src={art("banners","movement")} alt=""/><span>Actions autorisées</span></h3>
         <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
-          key={actionLabel(action)} disabled={busy||!!replacement||!!selected}
-          aria-pressed={JSON.stringify(selected)===JSON.stringify(action)}
-          onClick={()=>setSelected(action)}><img className="ms-button-skin" src={art("buttons",view.actions.length===1?"primary":"secondary")} alt=""/><img className="ms-action-icon" src={art("icons",({"look-around":"observe",explore:"explore","mark-path":"mark","return-to-path":"return-note"})[action.type])} alt=""/><span>{actionLabel(action)}</span></button>)}</div>
+          key={actionLabel(action)} disabled={busy||blocked||!!replacement||!!drag}
+          data-action={action.type} onPointerEnter={()=>setPreview(action.type==="explore"?action.distance:null)} onPointerLeave={()=>setPreview(null)} onFocus={()=>setPreview(action.type==="explore"?action.distance:null)} onBlur={()=>setPreview(null)}
+          onClick={()=>void apply(action)}><img className="ms-button-skin" src={art("buttons",view.actions.length===1?"primary":"secondary")} alt=""/><img className="ms-action-icon" src={art("icons",({"look-around":"observe",explore:"explore","mark-path":"mark","return-to-path":"return-note"})[action.type])} alt=""/><span>{actionLabel(action)}</span></button>)}</div>
       </section>
     </div>}
     {!summary?<nav className="ms-footer" aria-label={tr("Commandes du plateau","Board controls")} data-i18n-ignore>
       <button type="button" onClick={()=>setInspection("route")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","route")} alt=""/>{tr("Parcours","Route")} ({view.deck.length})</button>
       <button type="button" onClick={()=>setInspection("loot")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","loot")} alt=""/>{tr("Butin","Loot")} ({view.loot.length})</button>
-      {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>setInspection("menu")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","menu")} alt=""/>{tr("Menu","Menu")}</button>:null}
+      {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!replacement||!!drag} onClick={()=>setInspection("menu")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","menu")} alt=""/>{tr("Menu","Menu")}</button>:null}
     </nav>:null}
-    {selected||replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label={selected?"Confirmation du coup":"Confirmation de nouvelle partie"}>
-      <p>{selected?actionLabel(selected):view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
-      {destination>=0?<p data-i18n-ignore>{tr("Destination","Destination")} : {cardLabel(view.deck[destination],language)}</p>:null}
-      <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void (selected?apply():replace())}>Confirmer</button>
-      <button className="secondary-action" disabled={busy} onClick={()=>{setSelected(null);setReplacement(null);actionsHeading.current?.focus();}}>Annuler</button>
+    {replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label="Confirmation de nouvelle partie">
+      <p>{view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
+      <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void replace()}>Confirmer</button>
+      <button className="secondary-action" disabled={busy} onClick={()=>{setPreview(null);setReplacement(null);actionsHeading.current?.focus();}}>Annuler</button>
     </div></div>:null}
+    {drag?<div className={"ms-drag-ghost"+(drag.returning?" ms-drag-return":"")} aria-hidden="true" style={{left:drag.x,top:drag.y,width:drag.width,height:drag.height}}><Card card={drag.card} language={language}/></div>:null}
     <dialog ref={dialog} className="ms-inspect-dialog" onClose={()=>setInspection(null)} onCancel={()=>setInspection(null)} aria-label={inspection==="menu"?tr("Menu du jeu","Game menu"):inspection==="loot"?tr("Butin","Loot"):tr("Parcours","Route")}>
       <button type="button" onClick={()=>setInspection(null)} data-i18n-ignore>{tr("Fermer","Close")}</button>
       {inspection==="stats"?<div><h2>{tr("Statistiques","Statistics")}</h2>{statsError?<p role="alert">{tr("Statistiques indisponibles","Statistics unavailable")}</p>:<GameStatisticsPanel statistics={statistics}/>}</div>:inspection==="menu"?<button type="button" disabled={busy} onClick={()=>{setInspection(null);void chooseReplacement();}}>{tr("Nouvelle partie","New game")}</button>:<div className="ms-inspection">{(inspection==="loot"?view.loot:view.deck).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard}/>)}</div>}
