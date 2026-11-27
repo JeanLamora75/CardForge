@@ -46,9 +46,10 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const gesture=useRef<{pointer:number;card:PublicLoopCard;action:MidnightSyndicateAction;x:number;y:number;width:number;height:number;left:number;top:number;active:boolean}|null>(null);
   const [drag,setDrag]=useState<{card:PublicLoopCard;action:MidnightSyndicateAction;x:number;y:number;width:number;height:number;returning?:boolean;valid?:boolean}|null>(null);
   const suppressClick=useRef(false);
+  const clickReset=useRef<ReturnType<typeof setTimeout>|null>(null);
   const lastActionAt=useRef(-Infinity);
   const returnTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
-  useEffect(()=>()=>{if(returnTimer.current)clearTimeout(returnTimer.current);},[]);
+  useEffect(()=>()=>{if(returnTimer.current)clearTimeout(returnTimer.current);if(clickReset.current)clearTimeout(clickReset.current);},[]);
   const [replacement,setReplacement] = useState<NewGameChoice|null>(null);
   const confirmation = useRef<HTMLButtonElement>(null);
   const actionsHeading = useRef<HTMLHeadingElement>(null);
@@ -154,6 +155,8 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   function endDrag(event:ReactPointerEvent<HTMLElement>,cancel=false){
     const current=gesture.current;if(!current||current.pointer!==event.pointerId)return;
     gesture.current=null;
+    if(clickReset.current)clearTimeout(clickReset.current);
+    clickReset.current=setTimeout(()=>{suppressClick.current=false;},0);
     if(!current.active){setDrag(null);return;}
     if(!cancel&&validDrop(current.action,event.clientX,event.clientY)){setDrag(null);void apply(current.action);}
     else{setDrag({card:current.card,action:current.action,width:current.width,height:current.height,x:current.left,y:current.top,returning:true});returnTimer.current=setTimeout(()=>setDrag(null),180);}

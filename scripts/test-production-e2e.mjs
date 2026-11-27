@@ -568,6 +568,44 @@ async function journey(locale,mobile){
         assert.ok(after.state.deck.slice(0,2).every(c=>c.faceUp));
         await page.locator('.ms-board').getByText(/Partie reprise · sauvegarde locale|Game resumed · local save/).waitFor();
         assert.deepEqual(await readSaved(page,game.id),after,'Midnight Syndicate resume must preserve the committed action');
+        // Install a deterministic legal board, exercise real pointer gestures, then restore the original save.
+        const msViewport=page.viewportSize();
+        const fixture={...after,state:{...after.state,deck:[...['hearts-2','clubs-3'].map(id=>({id,faceUp:true})),...after.state.deck.filter(c=>!['hearts-2','clubs-3'].includes(c.id)).map(c=>({...c,faceUp:false}))]}};
+        async function writeMsSave(save){
+          await page.evaluate(async save=>{const db=await new Promise((resolve,reject)=>{const q=indexedDB.open('cardforge',1);q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(save);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}},save);
+          await page.reload();await page.locator('.ms-top .ms-visible').first().waitFor();
+        }
+        async function msDrag(source,target){
+          const a=await source.boundingBox(),b=await target.boundingBox();assert.ok(a&&b);
+          const x=a.x+a.width/2,y=a.y+a.height/2,xx=b.x+b.width/2,yy=b.y+b.height/2;
+          if(mobile){
+            const cdp=await page.context().newCDPSession(page);
+            try{await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+              for(let n=1;n<=8;n++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+(xx-x)*n/8,y:y+(yy-y)*n/8}]});
+              await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+            }finally{await cdp.detach();}
+          }else{await page.mouse.move(x,y);await page.mouse.down();await page.mouse.move(xx,yy,{steps:8});await page.mouse.up();}
+        }
+        await page.setViewportSize({width:390,height:844});
+        await writeMsSave(fixture);
+        await msDrag(page.locator('.ms-top .ms-draggable').first(),page.locator('.ms-header h1'));
+        await page.locator('.ms-drag-ghost').waitFor({state:'detached'});
+        assert.deepEqual(await readSaved(page,game.id),fixture,'invalid drop must preserve saved state');
+        await msDrag(page.locator('.ms-top .ms-draggable').first(),page.locator('.ms-notes .ms-empty').first());
+        const marked=await waitSavedChanged(page,game.id,fixture);
+        assert.equal(marked.state.notes.length,fixture.state.notes.length+1);
+        assert.equal(marked.state.notes.at(-1).id,'hearts-2');
+        assert.equal(await page.locator('.ms-confirm-overlay').count(),0);
+        await page.locator('.ms-notes .ms-draggable').first().waitFor();
+        await page.screenshot({path:'ux-screenshots/ms-direct-'+locale+'-'+(mobile?'touch':'desktop')+'.png'});
+        await page.waitForTimeout(320);
+        await msDrag(page.locator('.ms-notes .ms-draggable').first(),page.locator('.ms-top .ms-card').first());
+        const returned=await waitSavedChanged(page,game.id,marked);
+        assert.equal(returned.state.notes.length,fixture.state.notes.length);
+        assert.equal(returned.state.deck[0].id,'hearts-2');
+        assert.equal(await page.locator('.ms-confirm-overlay').count(),0);
+        await writeMsSave(after);
+        if(msViewport)await page.setViewportSize(msViewport);
         await page.locator('.ms-header .settings-button').click();
         await page.locator('[data-settings-category="language"]').click();
         await select.selectOption(locale==='fr'?'en':'fr');
