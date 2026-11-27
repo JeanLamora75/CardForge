@@ -201,7 +201,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
           </article>;
         })}</div>
         {explorationActions.some(a=>a.type==="look-around")?<div className="ms-actions"><button type="button" data-action="look-around" className="secondary-action" disabled={busy||blocked||!!replacement||!!drag} onClick={()=>void apply({type:"look-around"})}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/>{tr("Observer","Observe")}</button></div>:null}
-        {!explorationActions.length?<p className="ms-hint" data-i18n-ignore>{tr("Utilisez les notes pour poursuivre.","Use the notes to continue.")}</p>:null}
+        {hintsEnabled&&!explorationActions.length?<p className="ms-hint" data-i18n-ignore>{tr("Utilisez les notes pour poursuivre.","Use the notes to continue.")}</p>:null}
       </section>
       <section className="ms-controls">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","notes-heading")} alt=""/><span>{tr("Notes d’enquête","Investigation notes")}</span></h3>
