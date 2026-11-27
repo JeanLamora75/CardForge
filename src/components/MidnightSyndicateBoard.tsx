@@ -17,12 +17,13 @@ function cardLabel(card:PublicLoopCard,language:Locale="fr") {
   const item=visibleMidnightArt(card);
   return item ? item[language] : language==="en"?"Hidden card":"Carte cachée";
 }
-function Card({card,language,compact=false}:{card:PublicLoopCard;language:Locale;compact?:boolean}) {
+function Card({card,language,compact=false,onInspect}:{card:PublicLoopCard;language:Locale;compact?:boolean;onInspect?:(card:PublicLoopCard)=>void}) {
   const item=visibleMidnightArt(card);
-  return <div className={"ms-card "+(item?"ms-visible":"ms-hidden")+(compact?" ms-mini":"")} aria-label={cardLabel(card,language)} data-i18n-ignore>
+  const Tag=item&&onInspect?"button":"div";
+  return <Tag className={"ms-card "+(item?"ms-visible":"ms-hidden")+(compact?" ms-mini":"")} aria-label={cardLabel(card,language)} data-i18n-ignore {...(item&&onInspect?{type:"button" as const,onClick:()=>onInspect(card)}:{})}>
     <img className="ms-card-frame" src={art("cards",item?"front-"+item.frame:"back")} alt="" draggable={false}/>
     {item?<><strong className="ms-card-value">{item.value}</strong><img className="ms-card-art" src={art("cards",item.file)} alt="" draggable={false}/><span className="ms-card-name">{item[language]}</span></>:null}
-  </div>;
+  </Tag>;
 }
 function actionLabel(action:MidnightSyndicateAction) {
   switch(action.type) {
@@ -48,7 +49,11 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const [movement,setMovement]=useState(0);
   const routeRef=useRef<HTMLElement>(null);
   useEffect(()=>{if(movement&&routeRef.current)routeRef.current.scrollTop=0;},[movement]);
-  const [inspection,setInspection]=useState<"route"|"loot"|null>(null);
+  const [inspection,setInspection]=useState<"route"|"loot"|"menu"|null>(null);
+  const [detailCard,setDetailCard]=useState<PublicLoopCard|null>(null);
+  const cardDialog=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{const d=cardDialog.current;if(detailCard&&d&&!d.open)d.showModal();else if(!detailCard&&d?.open)d.close();},[detailCard]);
+  function inspectCard(card:PublicLoopCard){if(card.faceUp)setDetailCard(card);}
   const dialog=useRef<HTMLDialogElement>(null);
   useEffect(()=>{const d=dialog.current;if(inspection&&d&&!d.open)d.showModal();else if(!inspection&&d?.open)d.close();},[inspection]);
   useEffect(()=>{
@@ -115,7 +120,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const ending=summary&&state?midnightEnding(summary.outcome,state.lossCause??null,language):null;
   const destination=selected?.type==="explore"&&view?.deck.length?selected.distance%view.deck.length:-1;
   return <section className="ms-board ms-immersive" aria-label="Plateau Midnight Syndicate" aria-busy={busy}
-    style={{"--ms-portrait":"url("+art("boards","portrait")+")","--ms-landscape":"url("+art("boards","landscape")+")"} as CSSProperties}>
+    style={{"--ms-portrait":"url("+art("boards","portrait")+")","--ms-landscape":"url("+art("boards","landscape")+")","--ms-panel":"url("+art("frames","content-panel")+")","--ms-folder":"url("+art("frames","notes-folder")+")","--ms-heading":"url("+art("banners","section-heading")+")","--ms-primary":"url("+art("buttons","primary")+")","--ms-secondary":"url("+art("buttons","secondary")+")","--ms-line":"url("+art("effects","route-line-tile")+")"} as CSSProperties}>
     <div className="ms-status" role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</div>
     {error?<p role="alert" className="ms-error">{error}</p>:null}
     {!state&&!tutorial?<button className="primary-action ms-start" disabled={busy||blocked} onClick={()=>void start()}>Commencer une partie</button>:null}
@@ -124,16 +129,16 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
     </div>
     {summary&&ending?<div className="ms-ending" data-outcome={summary.outcome}><div className="ms-ending-hero" data-i18n-ignore>{ending.file?<img src={art("cards",ending.file)} alt=""/>:null}<div className="ms-ending-story"><p>{summary.outcome==="win"?tr("MISSION ACCOMPLIE","MISSION ACCOMPLISHED"):tr("MISSION COMPROMISE","MISSION COMPROMISED")}</p><h3>{ending.title}</h3><p>{ending.text}</p></div></div><div className="ms-ending-report"><GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/></div></div>:<div className="ms-live-layout">
       <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
-        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><Card card={card} language={language} compact/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
+        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
       </aside>
       <section className="ms-exploration">
         <h3 data-i18n-ignore>{tr("Exploration","Exploration")}</h3>
-        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
+        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard}/>)}</div>
         {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
       </section>
       <section className="ms-controls">
         <h3 data-i18n-ignore>{tr("Notes d’enquête","Investigation notes")}</h3>
-        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
+        <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
         <h3 ref={actionsHeading} tabIndex={-1}>Actions autorisées</h3>
         <div className="ms-actions">{view.actions.map(action=><button type="button" className="secondary-action"
           key={actionLabel(action)} disabled={busy||!!replacement||!!selected}
@@ -144,7 +149,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
     <footer className="ms-footer" data-i18n-ignore>
       <button type="button" onClick={()=>setInspection("route")}>{tr("Voir le parcours","View route")} ({view.deck.length})</button>
       <button type="button" onClick={()=>setInspection("loot")}>{tr("Voir le butin","View loot")} ({view.loot.length})</button>
-      {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>void chooseReplacement()}>{tr("Nouvelle partie","New game")}</button>:null}
+      {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>setInspection("menu")}>{tr("Menu","Menu")}</button>:null}
     </footer>
     {selected||replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label={selected?"Confirmation du coup":"Confirmation de nouvelle partie"}>
       <p>{selected?actionLabel(selected):view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
@@ -152,9 +157,10 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       <button ref={confirmation} className="primary-action" disabled={busy} onClick={()=>void (selected?apply():replace())}>Confirmer</button>
       <button className="secondary-action" disabled={busy} onClick={()=>{setSelected(null);setReplacement(null);actionsHeading.current?.focus();}}>Annuler</button>
     </div></div>:null}
-    <dialog ref={dialog} className="ms-inspect-dialog" onClose={()=>setInspection(null)} onCancel={()=>setInspection(null)} aria-label={inspection==="loot"?tr("Butin","Loot"):tr("Parcours","Route")}>
+    <dialog ref={dialog} className="ms-inspect-dialog" onClose={()=>setInspection(null)} onCancel={()=>setInspection(null)} aria-label={inspection==="menu"?tr("Menu du jeu","Game menu"):inspection==="loot"?tr("Butin","Loot"):tr("Parcours","Route")}>
       <button type="button" onClick={()=>setInspection(null)} data-i18n-ignore>{tr("Fermer","Close")}</button>
-      <div className="ms-inspection">{(inspection==="loot"?view.loot:view.deck).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
-    </dialog></>:null}
+      {inspection==="menu"?<button type="button" disabled={busy} onClick={()=>{setInspection(null);void chooseReplacement();}}>{tr("Nouvelle partie","New game")}</button>:<div className="ms-inspection">{(inspection==="loot"?view.loot:view.deck).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard}/>)}</div>}
+    </dialog>
+    <dialog ref={cardDialog} className="ms-card-dialog" onClose={()=>setDetailCard(null)} aria-label={detailCard?cardLabel(detailCard,language):tr("Carte","Card")}><button type="button" onClick={()=>setDetailCard(null)} data-i18n-ignore>{tr("Fermer","Close")}</button>{detailCard?<Card card={detailCard} language={language}/>:null}</dialog></>:null}
   </section>;
 }

@@ -44,3 +44,43 @@
 @media (max-height:430px) and (orientation:landscape){.ms-immersive .ms-status{font-size:.65rem}.ms-immersive .ms-hint{display:none}.ms-immersive .ms-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-immersive .ms-actions button{font-size:.65rem}.ms-footer button{min-height:44px}}
 
 .ms-ending{flex:1;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:5px}.ms-ending-hero{position:relative;overflow:hidden;min-height:0;border:1px solid #bd9954;border-radius:6px;background:#10272c}.ms-ending-hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.ms-ending-story{position:absolute;inset:auto 0 0;padding:8px;background:linear-gradient(transparent,#07191df5 24%);color:#ffe5b4;text-align:center}.ms-ending-story p{margin:4px 0;font-size:clamp(.75rem,2.5vw,1rem)}.ms-ending-story h3{font-size:clamp(1rem,4vw,1.8rem)}.ms-ending-report{min-height:0;overflow:auto;overscroll-behavior:contain;background:#081b20e8;border-radius:6px}.ms-ending-report .game-final-screen{margin:0;padding:8px;max-width:none}.ms-ending-report .game-final-actions{position:sticky;bottom:0;background:#10272c;padding:4px}.ms-ending-report .game-final-actions a{min-height:44px;display:inline-flex;align-items:center}.ms-top[data-moved=true] .ms-card{animation:ms-arrival 220ms ease-out both}@keyframes ms-arrival{from{opacity:.65;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}@media(orientation:landscape){.ms-ending{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr)}}@media(prefers-reduced-motion:reduce){.ms-top[data-moved=true] .ms-card{animation:none}}
+
+/* Art direction: keep the actual board visible behind the functional regions. */
+.shell.ms-command-surface,.ms-board.ms-immersive{font-family:"Josefin Sans",Arial,sans-serif}
+.shell.ms-command-surface .ms-command-page{padding:0;max-width:1100px}
+.ms-command-page .ms-header{height:clamp(60px,10dvh,94px);grid-template-columns:44px minmax(0,1fr) 44px 44px}
+.ms-command-page .ms-header button{width:44px;height:44px;background:transparent;border:0;padding:0}
+.ms-header button img{width:100%;height:100%;object-fit:contain}
+.ms-command-page .ms-header h1 img{width:min(100%,320px);height:100%;object-fit:contain}
+.ms-command-page .ms-board.ms-immersive{background:#142426 var(--ms-portrait) center/100% 100% no-repeat;font-family:"Josefin Sans",Arial,sans-serif;gap:3px;padding:5px}
+.ms-command-page .ms-status{font-size:.68rem;text-align:right;padding-right:5px;text-shadow:0 1px 3px #000}
+.ms-command-page .ms-counter{background:transparent;border:0;height:48px}
+.ms-command-page .ms-counter span{background:transparent;border:0;border-radius:0;padding:0 4px 0 30%;font-size:clamp(.62rem,2vw,.88rem);line-height:1.05;text-shadow:0 1px 3px #000;max-width:100%;width:100%}
+.ms-command-page .ms-counter b{font-size:1.3em}
+.ms-command-page .ms-live-layout{grid-template-columns:minmax(65px,23%) minmax(0,1fr);grid-template-rows:minmax(0,1.2fr) minmax(0,1fr);gap:4px}
+.ms-command-page .ms-route{background:#07191d60;scrollbar-color:#a88a50 #122526;scrollbar-width:thin;border:1px solid #9b7943;padding:3px}
+.ms-command-page .ms-route-stop{display:grid;grid-template-columns:15px minmax(0,1fr);gap:2px;background:transparent;border:0;margin:0;padding:3px 2px 10px;isolation:isolate}
+.ms-route-stop:not(:last-child)::before{content:"";position:absolute;left:7px;top:50%;bottom:-50%;width:5px;background:var(--ms-line) center/repeat-y;z-index:-1}
+.ms-route-node{width:15px;height:15px;object-fit:contain;align-self:center}
+.ms-command-page .ms-route-stop small{grid-column:2;font-size:.61rem;text-shadow:0 1px 3px #000}
+.ms-command-page .ms-route .ms-card{max-width:65px;justify-self:center}
+.ms-command-page .ms-exploration,.ms-command-page .ms-controls{background:#081b2040 var(--ms-panel) center/100% 100% no-repeat;border:0;padding:7px;gap:3px}
+.ms-command-page .ms-immersive h3{margin:0;background:var(--ms-heading) center/100% 100% no-repeat;padding:5px 8px;font-size:clamp(.72rem,2.4vw,1.1rem);text-shadow:0 1px 3px #000}
+.ms-command-page .ms-top,.ms-command-page .ms-notes{flex:1 1 0;min-height:0;gap:5px}
+.ms-command-page .ms-top .ms-card{width:auto;height:100%;max-height:100%;max-width:48%}
+.ms-command-page .ms-notes{background:var(--ms-folder) center/100% 100% no-repeat;padding:6px 8%;align-items:center}
+.ms-command-page .ms-notes .ms-card{height:100%;max-height:100%;max-width:32%;width:auto}
+.ms-command-page .ms-immersive .ms-card{border:0;background:transparent;padding:0;min-height:0}
+.ms-command-page .ms-immersive button.ms-card{cursor:zoom-in}
+.ms-command-page .ms-actions button,.ms-command-page .ms-footer button,.ms-command-page .ms-start{background:var(--ms-secondary) center/100% 100% no-repeat;border:0;text-shadow:0 1px 3px #000;padding:6px 10px}
+.ms-command-page .ms-actions button:only-child{grid-column:1/-1;background-image:var(--ms-primary)}
+.ms-command-page .ms-actions button[aria-pressed=true]{outline:2px solid #ffe5a0}
+.ms-command-page .ms-hint{font-size:.68rem;text-shadow:0 1px 3px #000}
+.ms-card-dialog{width:min(90vw,420px);height:min(88dvh,660px);background:#0e2528;color:#ffe5b4;border:1px solid #bd9954;border-radius:8px;padding:10px;overflow:hidden}
+.ms-card-dialog[open]{display:flex;flex-direction:column;align-items:center;gap:8px}
+.ms-card-dialog::backdrop{background:#000c}
+.ms-command-page .ms-card-dialog .ms-card{flex:1;max-width:100%;height:auto;min-height:0;width:min(100%,300px)}
+@media(orientation:landscape){.ms-command-page .ms-board.ms-immersive{background-image:var(--ms-landscape)}.ms-command-page .ms-header{height:48px}.ms-command-page .ms-live-layout{grid-template-columns:minmax(80px,20%) minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:minmax(0,1fr)}.ms-command-page .ms-counter{height:34px}}
+@media(max-height:430px) and (orientation:landscape){.ms-command-page .ms-immersive h3{padding:2px;font-size:.72rem}.ms-command-page .ms-notes{padding:2px 8%}.ms-command-page .ms-exploration,.ms-command-page .ms-controls{padding:4px}.ms-command-page .ms-actions button{padding:3px 5px}.ms-command-page .ms-header{height:44px}}
+
+.ms-immersive .ms-inspection{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(76px,1fr))}.ms-immersive .ms-confirm{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px;border:1px solid #bd9954;border-radius:8px}.ms-immersive .ms-confirm p{flex-basis:100%;margin:0}.ms-immersive button:disabled{opacity:.65;cursor:default}.ms-immersive button:focus-visible{outline:3px solid #ffe4a0}.ms-immersive .ms-card{text-align:center}.ms-immersive .ms-card-frame{pointer-events:none}
