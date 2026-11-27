@@ -578,6 +578,25 @@ async function journey(locale,mobile){
     const gd=page.locator('.grim-board');
     await gd.locator('.gd-monster-stack .grim-card').first().waitFor();
     const gdBefore=await readSaved(page,'clear-the-dungeon');
+    const gdViewport=page.viewportSize();
+    for(const viewport of [{width:590,height:890},{width:390,height:844}]){
+      await page.setViewportSize(viewport);
+      await gd.locator('.grim-hand .grim-card').first().waitFor();
+      const measure=()=>gd.locator('.gd-footer').evaluate(n=>({height:n.getBoundingClientRect().height,bottom:n.getBoundingClientRect().bottom,scroll:document.documentElement.scrollHeight,viewport:innerHeight}));
+      const before=await measure();
+      assert.ok(before.scroll<=before.viewport+2&&before.bottom<=before.viewport+1,JSON.stringify({viewport,before}));
+      await interact(page,gd.locator('.grim-hand .grim-card').first(),mobile);
+      await gd.locator('.gd-footer[data-contextual=true]').waitFor();
+      const after=await measure();
+      assert.ok(after.scroll<=after.viewport+2&&after.bottom<=after.viewport+1,JSON.stringify({viewport,after}));
+      assert.ok(Math.abs(before.height-after.height)<=1,'contextual footer height');
+      await interact(page,gd.locator('.gd-footer button.primary-action'),mobile);
+      assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
+      assert.ok(await gd.locator('.grim-card .gd-card-suit').evaluateAll(nodes=>nodes.every(n=>!/[♥♦♣♠]/u.test(n.textContent??''))));
+      assert.ok(await gd.locator('.grim-card:not([data-faction="joker"]) .gd-card-suit img').count()>0);
+    }
+    if(gdViewport)await page.setViewportSize(gdViewport);
+
     await interact(page,gd.locator('.gd-monster-stack .gd-inspect-button').first(),mobile);
     await gd.locator('dialog[open]').waitFor();
     assert.equal(await gd.locator('dialog .gd-inspection-art img').count(),2);

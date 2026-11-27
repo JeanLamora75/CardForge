@@ -1,0 +1,3 @@
+# Grim Delve — Finitions UX 55–59
+
+Barre contextuelle unique de 48 px : défausse/reprise si autorisée et annulation ; les actions ciblées restent sur les monstres. Compacité portrait à partir de 660 px, sans masquer le défilement de secours. Emblèmes originaux en remplacement des enseignes classiques dans les cartes et l’inspection ; étoile conservée pour les Jokers. Loupe déplacée au-dessus du titre. Tests E2E FR/EN existants étendus aux résolutions 590×890 et 390×844, mesure avant/après sélection, sauvegarde inchangée, emblèmes. Résultats CI et recette non confirmés. Aucun uv ni changement moteur.

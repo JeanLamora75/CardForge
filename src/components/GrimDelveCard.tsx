@@ -5,7 +5,7 @@ export interface GrimDelveCardProps {
  selected?:boolean;target?:boolean;ready?:boolean;disabled?:boolean;onClick?:()=>void;
  illustration:string;frame:string;emblem?:string;onInspect:()=>void;inspectLabel:string;
 }
-export default function GrimDelveCard({label,title,value,faction,symbol,monster,selected=false,target=false,ready=false,disabled=false,onClick,illustration,frame,onInspect,inspectLabel}:GrimDelveCardProps){
+export default function GrimDelveCard({label,title,value,faction,symbol,monster,selected=false,target=false,ready=false,disabled=false,onClick,illustration,frame,emblem,onInspect,inspectLabel}:GrimDelveCardProps){
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const origin=useRef<{x:number;y:number}|null>(null);
  const consumed=useRef(false);
@@ -26,7 +26,7 @@ export default function GrimDelveCard({label,title,value,faction,symbol,monster,
  onClick={e=>{if(consumed.current&&e.detail!==0){consumed.current=false;return;}if(!disabled&&onClick)onClick();}}>
  <span className="gd-card-art" aria-hidden="true"><img src={illustration} alt="" draggable={false}/></span>
  <span className="gd-card-frame" aria-hidden="true"><img src={frame} alt="" draggable={false}/></span>
- <span className="gd-card-data"><span className="gd-card-value" aria-hidden="true">{value}</span><span className="gd-card-suit" aria-hidden="true">{symbol}</span><strong>{title}</strong></span>
+ <span className="gd-card-data"><span className="gd-card-value" aria-hidden="true">{value}</span><span className="gd-card-suit" aria-hidden="true">{emblem?<img src={emblem} alt="" draggable={false}/>:<span>{symbol}</span>}</span><strong>{title}</strong></span>
  {selected||target||ready?<span className="gd-state-mark" aria-hidden="true">{selected?"✓":target?"◎":"⚡"}</span>:null}
  </button>
  <button type="button" data-i18n-ignore className="gd-inspect-button" aria-label={inspectLabel} title={inspectLabel} onClick={onInspect}>⌕</button>

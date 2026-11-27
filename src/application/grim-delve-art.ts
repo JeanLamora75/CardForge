@@ -231,7 +231,7 @@ export function grimCardView(id:string,locale:Locale){
  const monster=!!numbered&&numbered.rank>=11;
  const factionName=numbered?factions[numbered.suit][i]:"Joker";
  const symbol=numbered?symbols[numbered.suit]:"★";
- const label=title+" · "+factionName+" ("+symbol+") · "+(monster?(i?"Resistance":"Résistance"):(i?"Power":"Puissance"))+" : "+value+(numbered?"":i?" · wild suit":" · enseigne libre");
+ const label=title+" · "+factionName+" · "+(monster?(i?"Resistance":"Résistance"):(i?"Power":"Puissance"))+" : "+value+(numbered?"":i?" · wild suit":" · enseigne libre");
  return {title,value,monster,faction,factionName,symbol,label,illustration:"cards/grim-delve/"+id+".webp",frame:"frames/grim-delve/card-"+faction+".webp",emblem:numbered?"icons/grim-delve/faction-"+faction+".webp":undefined};
 }
 export const grimCardBack="cards/grim-delve/back.webp";

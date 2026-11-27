@@ -31,7 +31,6 @@ const actionName: Record<GrimDelveAction["type"], string> = {
   "move-power": "Déplacer la carte",
   "trigger-attack": "Déclencher l'attaque",
 };
-function cardLabel(id:string,language:Locale){return grimCardView(id,language).label;}
 function Card({id,language,selected=false,onClick,disabled=false,target=false,ready=false,onInspect}:{
  id:string;language:Locale;selected?:boolean;onClick?:()=>void;disabled?:boolean;target?:boolean;ready?:boolean;onInspect:()=>void;
 }){
@@ -144,7 +143,9 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
     ? (actions.some(a=>"monsterId" in a)? "Sélectionnez un monstre en surbrillance.":"Choisissez une action autorisée.")
     : state.hand.length ? "Sélectionnez une carte, puis un monstre." : "Terminez la main pour continuer.";
   const showNotice=notice || instruction;
-  return <section className="grim-board" aria-labelledby="grim-heading">
+  const contextual=actions.filter(action=>action.type==="discard"||action.type==="take-back");
+  const contextAction=contextual[0];
+  return <section className="grim-board" data-compact={!!state&&state.outcome==="in-progress"&&!tutorial} aria-labelledby="grim-heading">
     <h2 id="grim-heading" className="gd-sr-only">Grim Delve · Plateau de jeu</h2>
     <p className="gd-sr-only">Dark Fantasy · Classic 1.1.0. Les seules commandes proposées sont celles autorisées par le moteur. Les cartes posées restent provisoires jusqu'au déclenchement d'une attaque.</p>
     
@@ -197,20 +198,17 @@ export default function GrimDelveBoard({ tutorial = false, hintsEnabled = true, 
       <div className="grim-hand">{state.hand.length ? state.hand.map(id =>
         <Card language={language} key={id} id={id} onInspect={()=>setInspected(id)} onClick={() => setSelected(current=>current===id?null:id)} disabled={busy} selected={selected === id} />
       ) : <p>La main est vide.</p>}</div>
-      {selected ? <div className="grim-actions gd-selection-actions" aria-label="Actions légales pour la carte sélectionnée">
-        <h3>{cardLabel(selected,language)}</h3>
-        {actions.length ? actions.map((action, index) => <button key={index} type="button" className="secondary-action"
-          disabled={busy} onClick={() => void dispatch(action)}>
-          {actionName[action.type]}{"monsterId" in action ? ` → ${cardLabel(action.monsterId,language)}` : ""}
-        </button>) : <p>Aucune action autorisée pour cette carte actuellement.</p>}
-        <button type="button" className="back-link" onClick={() => setSelected(null)}>Annuler la sélection</button>
-      </div> : null}
-      {state.outcome === "in-progress" ? <div className="grim-actions gd-footer">
-        {<button type="button" className="secondary-action" disabled={busy || !legal.some(action=>action.type==="discard-remaining")}
-          onClick={() => void dispatch({ type: "discard-remaining" })}>Défausser la main</button>}
-        <button type="button" className="primary-action" disabled={busy || !legal.some(action => action.type === "end-hand")}
-          onClick={() => void dispatch({ type: "end-hand" })}>Terminer la main</button>
-      </div> : null}
+      {state.outcome === "in-progress" ? <div className="grim-actions gd-footer" data-contextual={!!selected}>
+        {selected ? <>
+          <button type="button" className="secondary-action" disabled={busy||!contextAction} onClick={()=>{if(contextAction)void dispatch(contextAction);}}>
+            {contextAction?actionName[contextAction.type]:(language==="fr"?"Aucune action directe":"No direct action")}
+          </button>
+          <button type="button" className="primary-action" onClick={()=>setSelected(null)}>{language==="fr"?"Annuler la sélection":"Cancel selection"}</button>
+        </> : <>
+          <button type="button" className="secondary-action" disabled={busy||!legal.some(action=>action.type==="discard-remaining")} onClick={()=>void dispatch({type:"discard-remaining"})}>Défausser la main</button>
+          <button type="button" className="primary-action" disabled={busy||!legal.some(action=>action.type==="end-hand")} onClick={()=>void dispatch({type:"end-hand"})}>Terminer la main</button>
+        </>}
+      </div>:null}
     </>}
     {inspection?<GrimDelveInspection view={inspection} language={language} onClose={()=>setInspected(null)}/>:null}
   </section>;
