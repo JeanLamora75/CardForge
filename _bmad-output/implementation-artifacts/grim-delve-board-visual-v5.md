@@ -1,0 +1,3 @@
+# Grim Delve — Finitions UX 47–54
+
+Centrage flex de la main, cartouches de valeurs et symboles, emblèmes réservés à l'inspection, inspection modale FR/EN avec appui long tactile et commande dédiée, mini-cartes portrait, indicateur de puissance suffisante, hauteur adaptative et états distincts. L'inspection ne lit que les cartes visibles et ne dispatche aucune action. Choix : bouton loupe indépendant pour clavier/tactile, défilement conservé en cas de manque de hauteur. Tests E2E ajoutés : ouverture/fermeture, sauvegarde inchangée, absence d'inspection des cartes masquées, centrage et chargement des illustrations. Appui long, petits écrans et rendu à vérifier en recette réelle. Aucun uv ; workflow officiel non exécuté. Aucun changement moteur ou sauvegarde.

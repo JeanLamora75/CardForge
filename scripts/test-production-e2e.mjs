@@ -573,6 +573,21 @@ async function journey(locale,mobile){
       await page.getByRole('heading',{name:/Règles et mécanismes|Rules and mechanics/}).waitFor();
       assert.equal(await page.locator('html').getAttribute('lang'),locale);
     }
+    // Grim Delve inspection must not change the saved game or reveal hidden monsters.
+    await page.goto(HOST+'#game/clear-the-dungeon/board');
+    const gd=page.locator('.grim-board');
+    await gd.locator('.gd-monster-stack .grim-card').first().waitFor();
+    const gdBefore=await readSaved(page,'clear-the-dungeon');
+    await interact(page,gd.locator('.gd-monster-stack .gd-inspect-button').first(),mobile);
+    await gd.locator('dialog[open]').waitFor();
+    assert.equal(await gd.locator('dialog .gd-inspection-art img').count(),2);
+    assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
+    await interact(page,gd.locator('dialog header button'),mobile);
+    await gd.locator('dialog').waitFor({state:'detached'});
+    assert.deepEqual(await readSaved(page,'clear-the-dungeon'),gdBefore);
+    assert.equal(await gd.locator('.gd-hidden-cards .gd-inspect-button').count(),0);
+    assert.equal(await gd.locator('.grim-hand').evaluate(node=>getComputedStyle(node).justifyContent),'center');
+    assert.ok(await gd.locator('.grim-card .gd-card-art img').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
     // Skydeck normal play: persistence and exact offline resume.
     await page.goto(HOST+'#game/card-capture/board');
     await page.locator('.learning-intro').waitFor();
