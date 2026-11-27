@@ -113,7 +113,7 @@ async function ready(page){
 }
 const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',actions:'.grim-hand button.grim-card',confirm:false},
  {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.tf-target, .thunder-actions button.secondary-action',confirm:true},
- {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button',confirm:true}];
+ {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button,.ms-decision-action',confirm:true}];
 
 async function stalePreviewRecovery(){
  const context=await browser.newContext();
@@ -446,7 +446,7 @@ async function journey(locale,mobile){
            assert.ok(Math.abs(geometry.gap)<=8&&Math.abs(geometry.routeGap)<=2&&geometry.boardGap<=12,JSON.stringify(geometry));
            assert.ok(geometry.buttonWidths.every(b=>b.skin>=b.button-2&&b.fit==='fill'),JSON.stringify(geometry));
            assert.ok(await page.locator('.ms-notes .ms-card').evaluateAll(cards=>cards.every(c=>{const r=c.getBoundingClientRect();return r.width>=20&&r.height>=35&&r.bottom<=innerHeight;})), 'All three notes must retain visible dimensions');
-           assert.ok(await page.evaluate(()=>{const nodes=['.ms-top','.ms-notes','.ms-actions','.ms-footer'].map(s=>document.querySelector(s).getBoundingClientRect());return nodes.every((a,i)=>nodes.slice(i+1).every(b=>a.right<=b.left+1||b.right<=a.left+1||a.bottom<=b.top+1||b.bottom<=a.top+1));}), 'Board regions must not overlap');
+           assert.ok(await page.evaluate(()=>{const nodes=['.ms-top','.ms-notes','.ms-actions','.ms-footer'].map(s=>document.querySelector(s)).filter(Boolean).map(n=>n.getBoundingClientRect());return nodes.every((a,i)=>nodes.slice(i+1).every(b=>a.right<=b.left+1||b.right<=a.left+1||a.bottom<=b.top+1||b.bottom<=a.top+1));}), 'Board regions must not overlap');
            await page.locator('.ms-header img,.ms-counter img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
            await page.locator('.ms-board-picture img,.ms-panel-skin,.ms-heading-skin,.ms-button-skin,.ms-action-icon,.ms-route-link').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));if(imgs.some(i=>!i.naturalWidth))throw Error('Missing board artwork');});
            assert.ok(await page.locator('.ms-counter span').first().evaluate(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)'));
@@ -588,6 +588,9 @@ async function journey(locale,mobile){
         }
         await page.setViewportSize({width:390,height:844});
         await writeMsSave(fixture);
+        assert.equal(await page.locator('.ms-decision-action').count(),2);
+        assert.deepEqual(await page.locator('.ms-decision-action').evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.distance))),[2,3]);
+        assert.equal(await page.locator('.ms-actions [data-action="look-around"]').count(),0);
         await msDrag(page.locator('.ms-top .ms-draggable').first(),page.locator('.ms-header h1'));
         await page.locator('.ms-drag-ghost').waitFor({state:'detached'});
         assert.deepEqual(await readSaved(page,game.id),fixture,'invalid drop must preserve saved state');

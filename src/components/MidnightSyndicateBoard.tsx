@@ -1,3 +1,4 @@
+import { visibleMidnightNarrative } from "../application/midnight-narratives.ts";
 import { visibleMidnightArt } from "../application/midnight-card-art.ts";
 import type { Locale } from "../i18n/language.ts";
 import "./../midnight-syndicate.css";
@@ -26,14 +27,6 @@ function Card({card,language,compact=false,onInspect,onPointerDown,onTransfer,tr
     {onTransfer?<span className="ms-transfer-indicator" aria-hidden="true">↕</span>:null}
     {item?<><strong className="ms-card-value">{item.value}</strong><img className="ms-card-art" src={art("cards",item.file)} alt="" draggable={false}/><span className="ms-card-name">{item[language]}</span></>:null}
   </Tag>;
-}
-function actionLabel(action:MidnightSyndicateAction) {
-  switch(action.type) {
-    case "look-around": return "Observer";
-    case "explore": return "Explorer · "+action.distance+" cartes";
-    case "mark-path": return "Marquer le chemin";
-    case "return-to-path": return "Restituer la note "+(action.noteIndex+1);
-  }
 }
 export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true,onReplayTutorial,language="fr"}:{tutorial?:boolean;hintsEnabled?:boolean;onReplayTutorial?:()=>void;language?:Locale}) {
   const session = useRef<Session|null>(null);
@@ -135,6 +128,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   useEffect(()=>{if(inspection!=="stats"||tutorial)return;let live=true;setStatsError(false);void createIndexedDbGameStorage().readStatistics("loot-the-loop").then(s=>{if(live)setStatistics(s??null);}).catch(()=>{if(live)setStatsError(true);});return()=>{live=false;};},[inspection,tutorial]);
   const destination=preview!==null&&view?.deck.length?preview%view.deck.length:-1;
   const canMark=!busy&&!blocked&&!replacement&&!!view?.actions.some(a=>a.type==="mark-path");
+  useEffect(()=>{if(destination>=0){const target=routeRef.current?.querySelector(".ms-destination");if(target&&routeRef.current){const route=routeRef.current;const a=target.getBoundingClientRect(),z=route.getBoundingClientRect();if(a.bottom>z.bottom||a.top<z.top)route.scrollTop+=a.top-z.top;}}},[destination]);
   const explorationActions=view?.actions.filter(a=>a.type==="look-around"||a.type==="explore")??[];
   const markLabel=tr("Marquer le chemin (Maj+Entrée)","Mark path (Shift+Enter)");
   const returnLabel=tr("Restituer la note (Maj+Entrée)","Return note (Shift+Enter)");
@@ -185,22 +179,32 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       <nav className="ms-ending-actions"><button type="button" disabled={busy} onClick={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/><span>{tr("Rejouer","Play again")}</span></button>{!tutorial?<button type="button" onClick={()=>setInspection("stats")}><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Statistiques","Statistics")}</span></button>:null}<a href="#"><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Retour au catalogue","Back to catalogue")}</span></a></nav>
     </div>:<div className="ms-live-layout">
       <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
-        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined} onTransfer={card.position===0&&canMark?()=>void apply({type:"mark-path"}):undefined} transferLabel={card.position===0&&canMark?markLabel:undefined}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
+        {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")+(destination>=0&&card.position<destination?" ms-traversed":"")}><img className="ms-route-node" src={art("effects",card.position===0?"route-node-current":card.position===destination?"route-node-destination":"route-node-neutral")} alt=""/><Card card={card} language={language} compact onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined} onTransfer={card.position===0&&canMark?()=>void apply({type:"mark-path"}):undefined} transferLabel={card.position===0&&canMark?markLabel:undefined}/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
       </aside>
       <section className="ms-exploration">
-        <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","exploration")} alt=""/><span>{tr("Exploration","Exploration")}</span></h3>
-        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language} onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined} onTransfer={card.position===0&&canMark?()=>void apply({type:"mark-path"}):undefined} transferLabel={card.position===0&&canMark?markLabel:undefined}/>)}</div>
-        {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):canMark?tr("Glissez la première carte vers une note libre.","Drag the first card to an empty note."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
+        <h3 ref={actionsHeading} tabIndex={-1} data-i18n-ignore><img className="ms-heading-skin" src={art("banners","exploration")} alt=""/><span>{tr("Exploration","Exploration")}</span></h3>
+        <div className="ms-top ms-decisions" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=>{
+          const item=visibleMidnightArt(card);
+          const distance=typeof item?.value==="number"?item.value:null;
+          const action=explorationActions.find(a=>a.type==="explore"&&a.distance===distance);
+          const kind=item?.frame??"hidden";
+          const effect=kind==="green"?tr("À récupérer en arrivant ici par exploration.","Collect by landing here during exploration."):kind==="burgundy"?tr("Atterrir ici entraîne la défaite.","Landing here ends the mission."):kind==="neutral"?tr("Atteindre ce lieu avec les quatre preuves pour gagner.","Land here with all four proofs to win."):kind==="blue"?tr("La valeur indique la distance à parcourir.","The value is the travel distance."):tr("Identité et valeur inconnues.","Unknown identity and value.");
+          return <article key={card.position} className="ms-decision" data-kind={kind} data-i18n-ignore>
+            <p className="ms-decision-position">{card.position===0?tr("Position actuelle","Current position"):tr("Piste suivante","Next lead")}</p>
+            <Card card={card} language={language} onInspect={inspectCard} onPointerDown={card.position===0&&canMark?event=>beginDrag(event,card,{type:"mark-path"}):undefined} onTransfer={card.position===0&&canMark?()=>void apply({type:"mark-path"}):undefined} transferLabel={card.position===0&&canMark?markLabel:undefined}/>
+            <div className="ms-decision-copy"><strong>{kind==="green"?tr("Preuve repérée","Evidence spotted"):kind==="burgundy"?tr("Menace visible","Visible threat"):kind==="neutral"?tr("Exfiltration","Extraction"):kind==="blue"?tr("Piste exploitable","Available lead"):tr("Lieu inconnu","Unknown location")}</strong>
+              {item?<p className="ms-narrative">{visibleMidnightNarrative(card,language)}</p>:null}<p>{effect}</p></div>
+            {action&&distance!==null?<button type="button" className="ms-decision-action" data-action="explore" data-distance={distance} disabled={busy||blocked||!!replacement||!!drag} onPointerEnter={()=>setPreview(distance)} onPointerLeave={()=>setPreview(null)} onFocus={()=>setPreview(distance)} onBlur={()=>setPreview(null)} onClick={()=>void apply(action)}>{tr("Avancer de ","Advance ")}{distance}{tr(" cartes"," cards")}</button>:null}
+          </article>;
+        })}</div>
+        {explorationActions.some(a=>a.type==="look-around")?<div className="ms-actions"><button type="button" data-action="look-around" className="secondary-action" disabled={busy||blocked||!!replacement||!!drag} onClick={()=>void apply({type:"look-around"})}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/>{tr("Observer","Observe")}</button></div>:null}
+        {hintsEnabled&&canMark?<p className="ms-hint" data-i18n-ignore>{tr("Glissez la première carte vers une note libre.","Drag the first card to an empty note.")}</p>:null}
+        {!explorationActions.length?<p className="ms-hint" data-i18n-ignore>{tr("Utilisez les notes pour poursuivre.","Use the notes to continue.")}</p>:null}
       </section>
       <section className="ms-controls">
         <h3 data-i18n-ignore><img className="ms-heading-skin" src={art("banners","notes-heading")} alt=""/><span>{tr("Notes d’enquête","Investigation notes")}</span></h3>
         <div className="ms-notes">{Array.from({length:3},(_,i)=>view.notes[i]?<Card key={i} card={view.notes[i]} language={language} onInspect={inspectCard} onPointerDown={canReturn(i)?event=>beginDrag(event,view.notes[i],{type:"return-to-path",noteIndex:i}):undefined} onTransfer={canReturn(i)?()=>void apply({type:"return-to-path",noteIndex:i}):undefined} transferLabel={canReturn(i)?returnLabel:undefined}/>:<div key={i} className="ms-card ms-empty" aria-label={tr("Note libre","Empty note")}><img className="ms-card-frame" src={art("frames","note-slot-empty")} alt=""/></div>)}</div>
         {hintsEnabled&&view.notes.length>0?<p className="ms-note-help" data-i18n-ignore>{tr("Glissez une note vers l’exploration · clavier : Maj+Entrée","Drag a note to exploration · keyboard: Shift+Enter")}</p>:null}
-        <h3 ref={actionsHeading} tabIndex={-1}><img className="ms-heading-skin" src={art("banners","movement")} alt=""/><span>{tr("Observation et exploration","Observation and exploration")}</span></h3>
-        <div className="ms-actions">{explorationActions.map(action=><button type="button" className="secondary-action"
-          key={actionLabel(action)} disabled={busy||blocked||!!replacement||!!drag}
-          data-action={action.type} onPointerEnter={()=>setPreview(action.type==="explore"?action.distance:null)} onPointerLeave={()=>setPreview(null)} onFocus={()=>setPreview(action.type==="explore"?action.distance:null)} onBlur={()=>setPreview(null)}
-          onClick={()=>void apply(action)}><img className="ms-button-skin" src={art("buttons",explorationActions.length===1?"primary":"secondary")} alt=""/><img className="ms-action-icon" src={art("icons",({"look-around":"observe",explore:"explore","mark-path":"mark","return-to-path":"return-note"})[action.type])} alt=""/><span>{actionLabel(action)}</span></button>)}{!explorationActions.length?<p className="ms-hint" data-i18n-ignore>{tr("Utilisez les notes pour poursuivre.","Use the notes to continue.")}</p>:null}</div>
       </section>
     </div>}
     {!summary?<nav className="ms-footer" aria-label={tr("Commandes du plateau","Board controls")} data-i18n-ignore>

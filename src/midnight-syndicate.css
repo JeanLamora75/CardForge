@@ -103,3 +103,17 @@
 .ms-actions>.ms-hint{grid-column:1/-1}
 .ms-command-page .ms-actions button{min-height:48px}
 @media(orientation:landscape) and (max-height:430px){.ms-note-help{font-size:.6rem}.ms-command-page .ms-actions button{min-height:44px}}
+
+/* Decision cards: card identity, narrative and movement share a column. */
+.ms-command-page .ms-decisions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:6px;container-type:normal;min-height:0}
+.ms-decision{min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:1px solid #a98b50;border-radius:6px;background:#10272ce8;color:#ffe5b4;text-align:center}
+.ms-decision[data-kind=green]{background:#18362ce8}.ms-decision[data-kind=burgundy]{background:#45252be8}.ms-decision[data-kind=hidden]{background:#291e20e8}
+.ms-decision-position{font-size:clamp(.59rem,1.8vw,.78rem);line-height:1.1;margin:0;flex:none}
+.ms-command-page .ms-decisions .ms-card{width:min(100%,120px);height:auto;max-height:none;aspect-ratio:392/552;flex:0 1 auto;min-height:36px}
+.ms-decision-copy{font-size:clamp(.64rem,1.8vw,.83rem);line-height:1.15;min-height:0;flex:1;overflow:auto;width:100%;scrollbar-width:thin}
+.ms-decision-copy p{margin:3px 0}.ms-decision-copy strong{display:block;color:#ffda92}.ms-narrative{font-style:italic}
+.ms-decision-action{width:100%;min-height:44px;flex:none;border:1px solid #d7b371;border-radius:5px;background:linear-gradient(#234b45,#102b2b);color:#ffe3ad;font:inherit;font-size:clamp(.68rem,2vw,.95rem);font-weight:700;padding:3px;line-height:1.05}
+.ms-route-stop.ms-traversed{background:#b7954433}.ms-route-stop.ms-destination{background:#b7954455;outline:2px solid #ffda92}
+.ms-command-page .ms-controls{grid-template-rows:auto auto auto;align-content:center}
+@media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-columns:minmax(72px,16%) minmax(0,1fr) minmax(0,26%)}.ms-command-page .ms-decisions .ms-card{width:min(100%,76px)}.ms-command-page .ms-notes{height:clamp(45px,18dvh,120px)}}
+@media(orientation:portrait) and (max-height:720px){.ms-command-page .ms-decisions .ms-card{width:min(100%,78px)}.ms-command-page .ms-notes{height:clamp(48px,12dvh,88px)}}
