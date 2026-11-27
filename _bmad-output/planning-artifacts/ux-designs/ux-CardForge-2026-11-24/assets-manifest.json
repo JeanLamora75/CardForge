@@ -558,5 +558,866 @@
     "height": 217,
     "mode": "RGBA",
     "sha256": "79a6f146351aa91cbdca1e2e3c78d041717d5aaf1b9e4ee97bce829e736b786a"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/compact.png",
+    "width": 227,
+    "height": 85,
+    "mode": "RGBA",
+    "sha256": "dcfc17920666feb48c5b6c4ef8e1d47d5dbe42044f060037318dce243392ff80"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/exploration.png",
+    "width": 566,
+    "height": 168,
+    "mode": "RGBA",
+    "sha256": "7a2bbb5ac6ac68670a0f6a0d8a2fc068dc07f9f7f3d4afeca638736906917d6b"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/movement.png",
+    "width": 393,
+    "height": 78,
+    "mode": "RGBA",
+    "sha256": "126fa98d01897d45726bb0b84effeed7d8b30219f76c201269f520e25a8ba558"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/notes-heading.png",
+    "width": 356,
+    "height": 79,
+    "mode": "RGBA",
+    "sha256": "404bc8bd943b43ceb5525f24e9d1fbd7ca8deb0bdb2fadcb1dc18dca29ce6e1a"
+  },
+  {
+    "path": "public/assets/banners/midnight-syndicate/section-heading.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "5c75b56ee2e1dbe42175b9d4bc3d7adf78cf6c2f75b26c060044bdd4cc540d3e"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/landscape.png",
+    "width": 1672,
+    "height": 941,
+    "mode": "RGB",
+    "sha256": "117cc367f1accc637b0eb2c052c7f2e3d1394abbae2b47cabaab830af0523101"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/portrait.png",
+    "width": 941,
+    "height": 1672,
+    "mode": "RGB",
+    "sha256": "eb38ee03eb0f4107e050fc4e22375cae156a9e5f4f45c3e51f6dc3ebed1a8941"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/icon.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "fc00523e00e4e3f4b75d7cf5a0de44bfc07d80c22f796ef0add64c7e300aa5df"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/primary.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "3bf2d7e12ac98b5075ea0f621eaacaa5e1f2a936540d21dd3461b88f1fbd7243"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/secondary.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "d12a25b308d0254f5064c20a956287542cac47b260f858714e15885d2bf1d09b"
+  },
+  {
+    "path": "public/assets/buttons/midnight-syndicate/utility.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "a4b849b975a16f666a810d653104e85bbbb1493caa8a08dd6ad177019570e79c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/back.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "ec1cd7415a62bc0ce1a7473a6608834ef8083420d74ee6782be90d54ab0a2c1f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-blue.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "bcad93f77930ab3fda877b0ba2514f8d6f50d76ab74bcc95a950fbae3463d609"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-burgundy.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "77b8a8089de73fb54685b1ef863e912fe8336814952662e4488797b45d642c45"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-green.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "0da977f8a7bd6beca1a24cb16b06f5f2a3f0d1924ac10190d4984a7e02ca924f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/front-neutral.png",
+    "width": 392,
+    "height": 552,
+    "mode": "RGBA",
+    "sha256": "320d24ec496bb5bc9f22795ff6eade3f6a8c5329c922d93d9ac77ab583668d43"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-line-tile.png",
+    "width": 74,
+    "height": 31,
+    "mode": "RGBA",
+    "sha256": "228877bc5bad179c8fa83e111fcd6b72e5bb45cc1ed02442369798535a610ab7"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-link-horizontal.png",
+    "width": 289,
+    "height": 81,
+    "mode": "RGBA",
+    "sha256": "eccebcd711c727c8bf4862c3dc12210290c06a0cf552ce7a60d706828bbf7789"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-link-vertical.png",
+    "width": 76,
+    "height": 200,
+    "mode": "RGBA",
+    "sha256": "9554bf92004721868232eb3bca28dc58307ec4ceecabd80871618b67ec9dc6d3"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-current.png",
+    "width": 119,
+    "height": 116,
+    "mode": "RGBA",
+    "sha256": "1f2c7c0105e8eb45d9676f7c88334d8c1db9976da26f4713cdd46d378890cd8e"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-destination.png",
+    "width": 107,
+    "height": 113,
+    "mode": "RGBA",
+    "sha256": "72e2590ea2eb936150fc67cb20e0c71d32824ea9990aa8280f1fd8ea1033bcc8"
+  },
+  {
+    "path": "public/assets/effects/midnight-syndicate/route-node-neutral.png",
+    "width": 99,
+    "height": 99,
+    "mode": "RGBA",
+    "sha256": "3ed7d858ceca0d061ef13db638c74e9eda5af4c88919b20d9de7680240a67d41"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/content-panel.png",
+    "width": 1122,
+    "height": 1402,
+    "mode": "RGBA",
+    "sha256": "6b89d7f9cc76b6244908292f00c05a8a7c05c77440848080d9d776d359738554"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/location-panel.png",
+    "width": 1086,
+    "height": 1448,
+    "mode": "RGBA",
+    "sha256": "b29c6e5d06062284a51c8c7986be5a16f9bf9cf567dd9f2bb5e00436c4d872cb"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/note-slot-empty.png",
+    "width": 206,
+    "height": 263,
+    "mode": "RGBA",
+    "sha256": "06b22a38191adfc4a4fcf456ac81600fb7414d66ec68d77f92029a161fc063f9"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/notes-folder.png",
+    "width": 2075,
+    "height": 702,
+    "mode": "RGBA",
+    "sha256": "20fab9e3df7900226505507897ef6c31d248a8565450e01bff6e6ea04b308c79"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label-danger.png",
+    "width": 304,
+    "height": 181,
+    "mode": "RGBA",
+    "sha256": "f3cd4a0874b144682efb2a5a2f657f4cbb5a7c915b4468d3788439c3a25edea5"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label-muted.png",
+    "width": 310,
+    "height": 180,
+    "mode": "RGBA",
+    "sha256": "1e5cd175d4146b597ba1d00f00e2e9750581df1c1fc8fa9f3a57d7932c6262c1"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-label.png",
+    "width": 315,
+    "height": 182,
+    "mode": "RGBA",
+    "sha256": "2676749c11173047380638be7a25986fc31bc2afb037bf413a5dad14d199f1e8"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-location-hidden.png",
+    "width": 676,
+    "height": 1016,
+    "mode": "RGBA",
+    "sha256": "cbfe116ead78ccd37653876dd237f1a463ce6e5203651347cb42e3544e3e5c8a"
+  },
+  {
+    "path": "public/assets/frames/midnight-syndicate/route-location-window.png",
+    "width": 274,
+    "height": 350,
+    "mode": "RGBA",
+    "sha256": "8494d92ad1aa6b08c80a66e3e613122004509155128991003cb478a767489c62"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-aces.png",
+    "width": 378,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "7349f8f4458c14262c7f793cef754e79517dc7bd94b0866fa9903cae01085ec7"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-blank.png",
+    "width": 2172,
+    "height": 724,
+    "mode": "RGBA",
+    "sha256": "341f9e9b1e0804495d114c229400a5864b237343949ec85c463fe152c8429c71"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-loot.png",
+    "width": 383,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "c1fdf9fbef74b24cf750852240f1afd6b73c5f2f7bfdcd7bd4e8d9e698e314b7"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-notes.png",
+    "width": 383,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "8d19324d1fddfca506fabde969669a2b86abe2344f0c142ad0d1a2619bde41ce"
+  },
+  {
+    "path": "public/assets/hud/midnight-syndicate/counter-route.png",
+    "width": 380,
+    "height": 134,
+    "mode": "RGBA",
+    "sha256": "cdbe90194ec3ce8378d7b2e9eae269766ac813e00299bcc7a28ed8c41d0002da"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/back.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "aed0e78e2059e42912fe31aa2847336ef465cab9f323f46c463926d43c166893"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/cancel.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d1b74e0b99f636b287e00dcd6b88d8bfc8cb143154d311695254573218c9f9d3"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/club.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "53679cf34112d7e1d0d6b4dc036e8f57902c55a391691a7e19c2c37accde9559"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/confirm.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "02049401b4f6749ccbe057d68f945ab5208d4fb31c2efa80eb74b10beeff3ce1"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/diamond.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "b2b1d877fbd92f8c555a1a1dad9cb9ade09c8f139d37f022de078ade3453fd57"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/down.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "76ae439922b07d94b59bc2d8b2842fe976df9f01bd13f5dfbd2e5880d6736c27"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/explore.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a6f4b29a526c4b240ce6474fd73332a4e0376764ffde2034eec40e8c84bd9040"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/forward.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d4d93884d1a199c51189b311b7f0515a46cf19f60f4f3f8e48133c892219d3dd"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/heart.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a7036c5c5c1cd78c6ddaa45b777731c0ee0915f36c1365490bc16f82df05cd84"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/help.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "2dbaebe63858456921c7a0392347e22e362827ccd7ca7e77a413e86044d41111"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/hidden.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9c1e02c392aa6a2c30e7fd26c9607983bab78fb3e78cc9d079d222d41eba91fb"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/home.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "eb44fe50962f7ec2506e6587e728453ab58ea28225bf91ce0f2948bb5a88eb48"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/info.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "852a07e413dfbc98b3154c49595fb53d029d1154c32de2968381d7597fbaef7d"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/inspect.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "d00ea1184c1c1956c294bab112730d935b70e4121f52161638e67aee459da215"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/loop.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "43020d2fbd2457dc8b23bf2f28c7150ff347f30348e8938f477e7aa6dabce5cc"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/loot.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "a00a7f98bfc4894d0f738be651b9f6df5aea87c93baab693cf1c9c19df12fa78"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/mark.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "10076a97bdf4f6d31acfb10ecd510dd61a5d59d44883fca9856db86b34b769c1"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/menu.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "56fa4fa7c9e4bff6449343c066b1179e20b1bbc3373b802602659a22af736fe9"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/notes.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9201551f14f81c90700db7bf642c6162a0aedee08afaf9dcecd05e8c707f45ef"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/observe.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "fe477995182d0f8dd65aa1d2e2d3f073f692803290d95ac3cb1dc0a5e5023ce2"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/return-note.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "ba7c26b278d91c24c7151dc27b58d2c9a3eeccde872f988d84f9e509572b59fa"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-player.png",
+    "width": 157,
+    "height": 155,
+    "mode": "RGBA",
+    "sha256": "5ef925ea4c9dd608b8673739651b7e2b33b1768e7a0c2aa91158d3fbdd31596f"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-unknown.png",
+    "width": 144,
+    "height": 145,
+    "mode": "RGBA",
+    "sha256": "b921100590d458825b49e96dcd4bdae2535063ae61761d25062a1772248b802d"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route-warning.png",
+    "width": 147,
+    "height": 145,
+    "mode": "RGBA",
+    "sha256": "ffdc0633dd2d36207d00dabfbd5d244920d6f72ae8bded43d256493c1bd53b6b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/route.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "77dce21c0b11871e0f4339d3b9fd2e46e67f36f531fbd4a4b118f47b92a3a26b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/settings.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "f6563772faccd26129310f2745ec1299d070dbd2100c4189477e2ae67476489b"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/spade.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "e04293f45f94c0defb7c309108f1c5dd92a63b390ee9c00c802ac198b761b647"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/up.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "261ffe5257737bff06bca81c96936a64b4c591fa8bf371e3de5853b923ce16cd"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/victory.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "e607b47e448281398a25157e3abfb35d1dc9961f17e158c88dfa29cd1f4e8de0"
+  },
+  {
+    "path": "public/assets/icons/midnight-syndicate/warning.png",
+    "width": 288,
+    "height": 288,
+    "mode": "RGBA",
+    "sha256": "9c3f1b9182ed53856e7d4ddf2f6ef52af74a0488f9ef0703eabcf61bb8871c49"
+  },
+  {
+    "path": "public/assets/logos/midnight-syndicate/board.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "sha256": "88feb26385555b51844b37c25fe50d83bdd5fbd449803ff6999ad3b092dd93ea"
+  },
+  {
+    "path": "public/assets/logos/midnight-syndicate/sign.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGBA",
+    "sha256": "5aceb379d548cb891e22a0f0d99a74680062ebf1f30290715bead52e140a15f3"
+  },
+  {
+    "path": "public/assets/ornaments/midnight-syndicate/corner-top-left.png",
+    "width": 124,
+    "height": 119,
+    "mode": "RGBA",
+    "sha256": "6a52a1f81e8dac41828c3804ab224aaba9a1bfdad49d04df1db0761fefc11046"
+  },
+  {
+    "path": "public/assets/ornaments/midnight-syndicate/corner-top-right.png",
+    "width": 123,
+    "height": 119,
+    "mode": "RGBA",
+    "sha256": "01e0a92d3d148d11ebcc6cf8efce760a42ec26b4673e2bc919d138a6313178a0"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/joker-exfiltration.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "614588303eb30b6461a475f3a6e62be792ed84d737f7a0430d48b9d0125e418f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m01-le-parrain.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d28b01c4fd6a6d41605bce06455f3525f03a5b5475f01147e89841c863175479"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m02-la-veuve-noire.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "bf33223afecc7294435b5a3c8a1f8b5dbb993ecc681f89e0a2982c07cc345545"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m03-le-tueur-a-gages.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "a771e3e20c7a33bca587e0c720dcacb9c48f3006a45c070c79d36aa7991b0358"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m04-la-balance.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "e130b5e0596d38bb910b9cd3188c6e4a243656eaae7df6dbf1ab0cf9573762be"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m05-l-embuscade.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4aa8d7ce18b7cdbccf7b4318b7afad807675d78d6ee61aa54234c5ded53717d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m06-la-voiture-piegee.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "6625dc80a75883ca3169931f68cbfa55aa032b44cbbdf8f3ebf2fe6b1c7097ae"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m07-le-tireur-de-l-ombre.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0b16a95dd344d6c62af08aab9456517f3ef1abd9cd8121680e49bfa66cc3dfc5"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m08-le-guet-apens-des-docks.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "675bc0eb80ff9443ee4af7449ab685a1bee67745d25948e574c7b3056d03e20f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m09-le-commissaire-corrompu.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "5fddf88929fc303053d54c5ab2426de762f8a316c976d4116debed2ae4cda8f9"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m10-le-barrage-de-police.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c308bb7639a8a2c22ccaa8e1885f0e9e00ec57f53e74d5a18815103d9b406647"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m11-le-juge-vereux.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "cfbb49593fd406c3f52bd7302f72a181b15930a98141b830f59deccb28de08d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-m12-l-interrogatoire-clandestin.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "497bf3d3188ce3eff89a2fe8f0abe91b9a13444c8cc23dba66c880cd658f935f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p01-photo-pot-de-vin.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "3f7eb78ea518d685852509863a86733aaf44f18ad4a816f941ebd6c8b5ddf78b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p02-boite-allumettes.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0b41e9f8a52d27b3c75a9387f8c6645a9fd6b4758c02d1baa1343bcf696dc866"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p03-telegramme-code.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "51629e1d3d2c62cd9981ad5e91bfe6ae3d045ee1c88152814efaf481c54c8153"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-p04-ticket-consigne.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d38a184ef3cc111b996f7efaf3ffbcf5450895724509c7861a68f5811028f722"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l01-banque-centrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "f0e4996f9360e40fdb7e8066431f68d8b390f0183a4f466f6ee3db6c0e6130cd"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l02-bourse.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "041b3802ab8517533e9cb3c1fc735c49aae09631806b4604a25dc070b67ebcad"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l03-grand-hotel.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "17be9bf01a0b0bf077e3b3db73474266bee616ab5d84e537536deca8ed22d1ff"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l04-siege-du-journal.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "3f600f95d2e6ba62d07442bfd7cd202be761fbf5edbdf8f27fe46e67bcfff02c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l05-compagnie-assurances.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "630b3cc2c0a3f714fbaeecae4dce31789239cff61279b4857bb3ed176cbf315c"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l06-tour-des-affaires.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "50e20915e3bcea7ad8689681ffd9e012b3b44c068703a9abd7e68ca531ec3278"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l07-casino.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "13d06f18425e7ca1752f44e3aef13b93c9d4aacb329855e832d5bd9199280d66"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l08-speakeasy.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0c8554225eed69d73f1c60100fedf6cac0e62a80eeaa9e5bb413ccb506804b77"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l09-cabaret.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "56646adfed9dd50774c44c3ebb3b20e6ffe3d1570f93c7c16ecaa3f5345ad58b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l10-club-de-jazz.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "7030864ab5c8b9c1c7a7af0645a7f734c751bef5312b6730d61b58ca81a8372f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l11-cinema.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "591be63c61f7f46fb9aca51cd049b171c012422f416ba2ee9526a891a1dbdc11"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l12-champ-de-courses.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "17be0ae6f80bc13a19dd50aa9998907cf708074eca3d30d0cf6ddb8f9b9f0418"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l13-docks.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "85fe17e9352dfdfacee86e2ce3213f446446b0d6e21ec5ff3aa0cdcd50908cae"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l14-entrepot-maritime.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "e20e766a4e507497d6ac4954261fb1105d271717a7fd9509e717defeae9418cf"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l15-chantier-naval.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4058c5593caf6afe747b266ce079429fcd8d170d01ca05ee1a4b268c86ad9f9e"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l16-capitainerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c9dcaefcfd98dbd3a0d35fbfa8db1fe90dcd176f8e8435126246c791565f1c69"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l17-phare.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4f2183af91fdd9a18bdab9d7a35cd61962f3cffab09015144ab19eafbd7dba30"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l18-marche-aux-poissons.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "4cc5466287c3124d4c71ad948b54e676afb262a57b102a3f8cc26e74f01e0301"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l19-acierie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c0b1166c0d3e7c8e0dae8da0353b64c16c0aecd4270db6336d6f4e7008c89f49"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l20-garage-automobile.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "be4f258ce2c876426f77a1755a12fd9fe2e1670eccb2f4e4a82e90ae4c2690d7"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l21-depot-ferroviaire.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "f16d9566fd3bd1d26b4739d241c5cbccc0995f767c08a41fb5dfeac1b4937e5f"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l22-centrale-electrique.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c5117501737aa63e22eff9921764465c478326dd968181f44e404e0447cd9977"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l23-imprimerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "c1057daea97038191801f047f48fcee693006c636c06baf5d322a9c0a1a84b7b"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l24-distillerie.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "6f5b66177a07a9a728cf01b58e8fe4e94634e5d51a472af47099895ae2bb8bcb"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l25-vieille-ville.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "922da904e8fb1196599a1412abb4a7ecd77dea65afccc6ee806bbe9601e326ee"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l26-marche-couvert.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "1dc83bd0e2f29b8d6e51ec39a566102283113d4cbcd123971c42a066ba943b2a"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l27-preteur-sur-gages.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "67c99afa26fe9ee3177598b51699f517f73a6a7bef1d7f353a22aae3b89ea83e"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l28-barbier.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "5db52dac1a6501376f680baf31cd504e4be0bd5cc4ce5d1b9f13a5cbdd915084"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l29-pension-de-famille.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "d24f6b3745de04e4d5f60e2fc6ce935066595c020b7f364e6bd39655796889a1"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l30-gare-centrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "bc2043de2495e9a07cac8c0802a593b5765ce5cd04ae048d1c63c137d2d9a7e1"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l31-hotel-de-ville.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "0af6956abd66be17c1edccc2294238110cdd8143e1c7c7c0fa325912e8d274fc"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l32-commissariat.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "eeeff2486f17e848d2ce19a8c58873a7753aeb177d3adc4ef8c9e92dd3fd0dd9"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l33-palais-de-justice.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "adaf54ed43b4ed90ba3b7c2f9ab010a9608be44f2c30a2733b3c20b398facbb5"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l34-cathedrale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "9d8a52aadeabe2150397217632f6bfc5dc66a0dc47abab55e5987c603daeb6bf"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l35-hopital.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "81930730a040a4e4b236ed6419ca6e35c67fb521eb29ac42a0a2760d31e26146"
+  },
+  {
+    "path": "public/assets/cards/midnight-syndicate/ms-l36-bibliotheque-municipale.png",
+    "width": 850,
+    "height": 850,
+    "mode": "RGB",
+    "sha256": "49d25fc396b1b6bd38591fc708032190f0fd9be1893767d75eacea30b477a119"
   }
 ]
