@@ -1,17 +1,30 @@
-import { spawn } from "node:child_process";
+import { spawn, fork } from "node:child_process";
 import { createServer } from "node:http";
 import { createServer as createSocket } from "node:net";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
-import { dependencyFingerprint, dependenciesReady, nextStartupState } from "./startup-state.mjs";
+import { dependencyFingerprint, dependenciesReady, nextStartupState, artProgress } from "./startup-state.mjs";
+import { buildInputFingerprint, reusableBuild, rememberBuild, invalidateBuild } from "./build-cache.mjs";
 import { openFreshPreview } from "./open-fresh-preview.mjs";
 
 const host="127.0.0.1",port=4173,url="http://127.0.0.1:4173/";
 const root=process.cwd(),profileRoot=join(process.env.LOCALAPPDATA||process.env.TEMP||root,"CardForge-Preview");
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 let status={stage:"start",progress:0,error:false},splashServer,browserProcess,buildProcess,server,browser,context,terminal,stopping=false;
-const step=(stage,progress)=>{status=nextStartupState(status,stage,progress);console.log("[CardForge] "+stage+" "+status.progress+"%");};
+const started=performance.now();let stageStarted=started;
+const step=(stage,progress)=>{const now=performance.now();console.log("[CardForge] "+status.stage+" : "+((now-stageStarted)/1000).toFixed(2)+" s");stageStarted=now;status=nextStartupState(status,stage,progress);console.log("[CardForge] "+stage+" "+status.progress+"%");};
+function optimize(){return new Promise((resolve,reject)=>{
+ const child=fork("scripts/optimize-art.mjs",[],{stdio:["ignore","inherit","inherit","ipc"]});
+ buildProcess=child;
+ child.on("message",message=>{
+  if(message?.type!=="art-progress"||status.stage!=="art")return;
+  const {done,total,converted,reused}=message;
+  try{const progress=artProgress(done,total);if(progress<status.progress)return;status={...nextStartupState(status,"art",progress),done,total,converted,reused};}catch(error){console.warn(error.message);}
+ });
+ child.once("error",reject);
+ child.once("exit",code=>{buildProcess=undefined;code===0?resolve():reject(Error("Optimisation : code "+code));});
+});}
 const listen=(s,p)=>new Promise((resolve,reject)=>{s.once("error",reject);s.listen(p,host,()=>resolve(s.address().port));});
 const close=s=>new Promise(resolve=>s.close(resolve));
 async function freePort(){const s=createSocket();const p=await listen(s,0);await close(s);return p;}
@@ -55,9 +68,18 @@ try{
  const splash=context.pages().find(p=>p.url()===splashUrl);
  if(!splash)throw Error("Écran de démarrage introuvable.");
  browser.on("disconnected",()=>void stop());
- step("art");await run(process.execPath,["scripts/optimize-art.mjs"]);
- step("build");await run(process.execPath,["node_modules/typescript/bin/tsc","-b"]);await run(process.execPath,["node_modules/vite/bin/vite.js","build"]);
+ step("art");await optimize();
+ step("build");
+ const input=await buildInputFingerprint(root);
+ let reusedBuild=await reusableBuild(root,input);
+ if(reusedBuild){console.log("Compilation inchangée : réutilisation du build vérifié.");status={...status,reusedBuild:true};}
+ else{
+  await invalidateBuild(root);
+  await run(process.execPath,["node_modules/typescript/bin/tsc","-b"]);
+  await run(process.execPath,["node_modules/vite/bin/vite.js","build"]);
+ }
  step("verify");await run(process.execPath,["scripts/verify-pwa-build.mjs"]);
+ if(!reusedBuild&&await buildInputFingerprint(root)===input)await rememberBuild(root,input);
  server=spawn(process.execPath,["node_modules/vite/bin/vite.js","preview","--host",host,"--port",String(port),"--strictPort"],{stdio:"inherit"});
  server.on("error",error=>console.error(error));
  await waitHttp(url);
@@ -76,6 +98,7 @@ try{
  await openFreshPreview(context,page,url,version);
  await page.locator("#cf-startup").waitFor({state:"detached",timeout:15000});
  step("ready");
+ console.log("Démarrage total : "+((performance.now()-started)/1000).toFixed(2)+" s");
  await splash.waitForFunction(()=>document.getElementById("cf-progress")?.value===100,{},{timeout:5000});
  await page.bringToFront();await splash.close();
  splashServer.closeAllConnections();splashServer.close();

@@ -9,3 +9,5 @@ dist/
 /public/art/*
 !/public/art/thunderfighter/
 !/public/art/thunderfighter/**
+
+/.cardforge-cache/

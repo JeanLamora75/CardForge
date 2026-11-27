@@ -15,16 +15,28 @@ export async function openFreshPreview(context,page,url,version){
   await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});
   await cdp.send('Network.setBypassServiceWorker',{bypass:true});
   // Remove obsolete registrations before the first online load; keep IndexedDB and preferences.
-  await page.goto(url,{waitUntil:'load',timeout:30000});
-  await page.evaluate(async()=>{for(const registration of await navigator.serviceWorker.getRegistrations())if(registration.scope===new URL('./',document.baseURI).href&&!registration.active?.scriptURL.endsWith('/sw.js'))await registration.unregister();});
-
-
-  await page.goto(url,{waitUntil:'load',timeout:30000});
+  // A neutral same-origin document prevents the app from registering a new worker
+  // while an obsolete registration is being removed.
+  const cleanupUrl=new URL("?cardforge-preview-cleanup=1",url).href;
+  const neutral=route=>route.fulfill({contentType:"text/html",body:"<!doctype html><title>CardForge</title>"});
+  await page.route(cleanupUrl,neutral);
+  try{
+   await page.goto(cleanupUrl,{waitUntil:"load",timeout:30000});
+   await page.evaluate(async()=>{
+    for(const registration of await navigator.serviceWorker.getRegistrations()){
+     const worker=registration.installing||registration.waiting||registration.active;
+     if(registration.scope===new URL("./",document.baseURI).href&&!worker?.scriptURL.endsWith("/sw.js"))await registration.unregister();
+    }
+   });
+   await page.goto("about:blank");
+  }finally{await page.unroute(cleanupUrl,neutral);}
+  await page.goto(url,{waitUntil:"load",timeout:30000});
   await waitForSurface();
   await page.locator('.forge-cover img').evaluateAll(imgs=>Promise.all(imgs.map(i=>i.decode())));
   await page.evaluate(async()=>{
-   const registration=await navigator.serviceWorker.register(new URL('sw.js',document.baseURI),{scope:'./',updateViaCache:'none'});
-   await registration.update();
+   await navigator.serviceWorker.register(new URL("sw.js",document.baseURI),{scope:"./",updateViaCache:"none"});
+   // Registration already initiates the update; the version-specific probe below
+   // remains the acceptance gate, not a redundant update() on a racing registration.
   });
   await page.waitForFunction(async expected=>{
    const controller=navigator.serviceWorker.controller;

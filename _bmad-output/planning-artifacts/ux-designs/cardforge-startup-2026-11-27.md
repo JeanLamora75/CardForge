@@ -20,3 +20,14 @@ Validation utilisateur : 27 novembre 2026. Sally — UX.
 | CF-LOAD-15 | Habillage réutilisable pour Web/PWA et future application mobile. |
 
 Optimisations validées : installation seulement si empreinte dépendances différente ou fichiers manquants ; conversion des illustrations seulement si source, paramètres ou sortie diffèrent. Contrôle des empreintes originales et build/PWA conservés.
+
+## Optimisations complémentaires validées
+| ID | Critère |
+|---|---|
+| CF-LOAD-16 | Progression 20–64 % calculée selon le nombre réellement terminé ; 65 % au passage compilation. |
+| CF-LOAD-17 | Compteur FR/EN des illustrations préparées, y compris celles réutilisées après vérification. |
+| CF-LOAD-18 | Conversions concurrentes bornées selon les CPU disponibles, maximum quatre. |
+| CF-LOAD-19 | Cache persistant dans .cardforge-cache, migration de l'ancien cache si disponible. |
+| CF-LOAD-20 | Réutilisation du build uniquement si empreintes sources, configuration, environnement et sortie correspondent. |
+| CF-LOAD-21 | Durées réelles des étapes et durée totale dans la console. |
+| CF-LOAD-22 | Vérifications SHA des illustrations, bundle PWA et cache navigateur toujours exécutées. |
