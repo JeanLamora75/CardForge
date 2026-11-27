@@ -1,0 +1,9 @@
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import {nextStartupState,startupStages,sha256,cachedArtMatches,dependencyFingerprint,dependenciesReady} from "../scripts/startup-state.mjs";
+import {mkdtempSync,mkdirSync,writeFileSync,rmSync} from "node:fs";
+import {tmpdir} from "node:os";
+import {join} from "node:path";
+test("startup advances only through completed milestones and cannot show premature 100%",()=>{let state={progress:0};for(const stage of Object.keys(startupStages))state=nextStartupState(state,stage);assert.equal(state.progress,100);assert.throws(()=>nextStartupState({progress:90},"cache",100));assert.throws(()=>nextStartupState({progress:90},"deps"));});
+test("art cache verifies both transform fingerprint and actual output",()=>{const output=Buffer.from("webp"),entry={key:"a",output:sha256(output)};assert.equal(cachedArtMatches(entry,"a",output),true);assert.equal(cachedArtMatches(entry,"b",output),false);assert.equal(cachedArtMatches(entry,"a",Buffer.from("corrupt")),false);});
+test("dependency cache invalidates on lock change or missing package",()=>{const root=mkdtempSync(join(tmpdir(),"cf-startup-"));try{writeFileSync(join(root,"package.json"),"{}");writeFileSync(join(root,"package-lock.json"),"{}");mkdirSync(join(root,"node_modules"));const fp=dependencyFingerprint(root);writeFileSync(join(root,"node_modules",".cardforge-install"),fp);assert.equal(dependenciesReady(root,fp),false);for(const name of ["vite","typescript","playwright","sharp","react","react-dom"]){mkdirSync(join(root,"node_modules",name));writeFileSync(join(root,"node_modules",name,"package.json"),"{}");}assert.equal(dependenciesReady(root,fp),true);writeFileSync(join(root,"package-lock.json"),"{ }");assert.equal(dependenciesReady(root,dependencyFingerprint(root)),false);}finally{rmSync(root,{recursive:true,force:true});}});
