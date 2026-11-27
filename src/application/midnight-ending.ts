@@ -27,5 +27,5 @@ export function midnightEnding(outcome:"win"|"loss",threatId:string|null,languag
  if(outcome==="win")return {file:"joker-exfiltration",title:["Exfiltration réussie","Extraction successful"][index],text:["Les quatre preuves sont en sécurité. Votre complice vous attend : quittez la ville.","All four pieces of evidence are safe. Your accomplice is waiting: leave the city."][index]};
  const narrative=item?.frame==="burgundy"?narratives[item.file]:undefined;
  if(item&&narrative)return {file:item.file,title:item[language],text:narrative[index]};
- return {file:null,title:["Mission compromise","Mission compromised"][index],text:["L’enquête est terminée. Aucun chemin sûr n’a été confirmé pour poursuivre.","The investigation is over. No safe continuation has been confirmed."][index]};
+ return {file:null,title:["Mission compromise","Mission compromised"][index],text:["L’enquête est terminée. La mission ne peut plus se poursuivre.","The investigation is over. The mission cannot continue."][index]};
 }

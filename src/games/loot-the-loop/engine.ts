@@ -22,6 +22,8 @@ export interface MidnightSyndicateState {
   notes: LoopCard[];
   /** Collected aces and numeric cards, in collection order. */
   loot: LoopCard[];
+  /** Optional terminal presentation metadata; legacy saves omit it. */
+  lossCause?: string | null;
 }
 export type MidnightSyndicateAction = Readonly<{ type: 'look-around' } | { type: 'explore'; distance: number } | { type: 'mark-path' } | { type: 'return-to-path'; noteIndex: number }>;
 
@@ -46,8 +48,9 @@ function isNumeric(id: string): boolean {
 function validateState(value: unknown): ValidationResult {
   if (!isRecord(value)) return {valid:false,errors:['state must be an object']};
   const errors: string[] = [];
-  const allowed = ['rulesVersion','phase','outcome','deck','notes','loot'];
-  if (Object.keys(value).length !== allowed.length || Object.keys(value).some(key => !allowed.includes(key)))
+  const required = ['rulesVersion','phase','outcome','deck','notes','loot'];
+  const allowed = [...required,'lossCause'];
+  if (required.some(key=>!Object.hasOwn(value,key)) || Object.keys(value).some(key => !allowed.includes(key)))
     errors.push('unexpected state fields');
   if (value.rulesVersion !== MIDNIGHT_SYNDICATE_RULES_VERSION) errors.push('incorrect rules version');
   if (value.phase !== 'exploring' && value.phase !== 'finished') errors.push('invalid phase');
@@ -67,6 +70,7 @@ function validateState(value: unknown): ValidationResult {
     zones.push(cards);
   }
   const [deck,notes,loot] = zones;
+  if (Object.hasOwn(value,'lossCause') && (value.outcome !== 'loss' || (value.lossCause !== null && (typeof value.lossCause !== 'string' || !deck[0]?.faceUp || deck[0].id !== value.lossCause || !makeStandardDeck().some(c=>c.id===value.lossCause && c.rank>=11))))) errors.push('invalid loss cause');
   const ids = [...deck,...notes,...loot].map(card => card.id);
   if (ids.length !== canonical.length || new Set(ids).size !== canonical.length ||
       ids.some(id => !validIds.has(id)))
@@ -200,7 +204,7 @@ function transitionRaw(
       return {accepted:true,state:{...next,deck:deck.slice(1),loot:[...state.loot,destination]}};
     }
     // The remaining canonical cards are J/Q/K. Only landing on a visible one is fatal.
-    return {accepted:true,state:{...next,phase:'finished',outcome:'loss'}};
+    return {accepted:true,state:{...next,phase:'finished',outcome:'loss',lossCause:destination.id}};
   }
   if (!action || action.type !== 'look-around' || Object.keys(action).length !== 1 ||
       !state.deck[0] || state.deck[0].faceUp) {
@@ -218,7 +222,7 @@ function transition(
 ): TransitionResult<MidnightSyndicateState> {
   const result = transitionRaw(state,action);
   if (result.accepted && isProvenMidnightSyndicateDeadEnd(result.state)) {
-    return {accepted:true,state:{...result.state,phase:'finished',outcome:'loss'}};
+    return {accepted:true,state:{...result.state,phase:'finished',outcome:'loss',lossCause:null}};
   }
   return result;
 }

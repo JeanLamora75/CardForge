@@ -9,6 +9,7 @@ import { makeMidnightSyndicateSummary } from "../application/game-results.ts";
 import { inspectMidnightSyndicate, type MidnightSyndicateState, type MidnightSyndicateAction, type PublicLoopCard } from "../games/loot-the-loop/engine.ts";
 import { startMidnightSyndicate, resumeMidnightSyndicate, getMidnightSyndicateNewGameChoice, confirmMidnightSyndicateNewGame, practiceMidnightSyndicate } from "../games/loot-the-loop/persistence.ts";
 import GameResultPanel from "./GameResultPanel";
+import { midnightEnding } from "../application/midnight-ending.ts";
 type Session = Pick<PersistentGameSession<MidnightSyndicateState, MidnightSyndicateAction>, 'getState' | 'dispatch'>;
 const setup = () => ({seed:crypto.getRandomValues(new Uint32Array(1))[0]});
 const art=(category:string,name:string)=>import.meta.env.BASE_URL+"art/"+category+"/midnight-syndicate/"+name+".webp";
@@ -44,6 +45,9 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const confirmation = useRef<HTMLButtonElement>(null);
   const actionsHeading = useRef<HTMLHeadingElement>(null);
   const mounted = useRef(false);
+  const [movement,setMovement]=useState(0);
+  const routeRef=useRef<HTMLElement>(null);
+  useEffect(()=>{if(movement&&routeRef.current)routeRef.current.scrollTop=0;},[movement]);
   const [inspection,setInspection]=useState<"route"|"loot"|null>(null);
   const dialog=useRef<HTMLDialogElement>(null);
   useEffect(()=>{const d=dialog.current;if(inspection&&d&&!d.open)d.showModal();else if(!inspection&&d?.open)d.close();},[inspection]);
@@ -100,6 +104,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
       setSelected(null);
       if(!result.accepted){setError("Action refusée : ce coup n’est plus autorisé.");return;}
       setState(session.current!.getState());
+      setMovement(n=>n+1);
       setNotice(tutorial?"Action d’entraînement":"Action enregistrée");
       actionsHeading.current?.focus();
     });
@@ -107,6 +112,7 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const view=state?inspectMidnightSyndicate(state):null;
   const summary=state?makeMidnightSyndicateSummary(state):null;
   const tr=(fr:string,en:string)=>language==="en"?en:fr;
+  const ending=summary&&state?midnightEnding(summary.outcome,state.lossCause??null,language):null;
   const destination=selected?.type==="explore"&&view?.deck.length?selected.distance%view.deck.length:-1;
   return <section className="ms-board ms-immersive" aria-label="Plateau Midnight Syndicate" aria-busy={busy}
     style={{"--ms-portrait":"url("+art("boards","portrait")+")","--ms-landscape":"url("+art("boards","landscape")+")"} as CSSProperties}>
@@ -116,13 +122,13 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
     {view?<><div className="ms-counters" data-i18n-ignore>
       {[[tr("Preuves","Evidence"),view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length+"/4","aces"],[tr("Butin","Loot"),view.loot.length,"loot"],[tr("Parcours","Route"),view.deck.length,"route"],[tr("Notes","Notes"),view.notes.length+"/3","notes"]].map(([label,value,icon])=><div key={icon} className="ms-counter"><img src={art("hud","counter-"+icon)} alt=""/><span>{label}<b>{value}</b></span></div>)}
     </div>
-    {summary?<GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/>:<div className="ms-live-layout">
-      <aside className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
+    {summary&&ending?<div className="ms-ending" data-outcome={summary.outcome}><div className="ms-ending-hero" data-i18n-ignore>{ending.file?<img src={art("cards",ending.file)} alt=""/>:null}<div className="ms-ending-story"><p>{summary.outcome==="win"?tr("MISSION ACCOMPLIE","MISSION ACCOMPLISHED"):tr("MISSION COMPROMISE","MISSION COMPROMISED")}</p><h3>{ending.title}</h3><p>{ending.text}</p></div></div><div className="ms-ending-report"><GameResultPanel summary={summary} tutorial={tutorial} disabled={busy} onReplay={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}/></div></div>:<div className="ms-live-layout">
+      <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>
         {view.deck.map(card=><div key={card.position} className={"ms-route-stop"+(card.position===0?" ms-current":"")+(card.position===destination?" ms-destination":"")}><Card card={card} language={language} compact/><small data-i18n-ignore>{card.position===0?tr("Position actuelle","Current position"):card.position===destination?tr("Destination","Destination"):"#"+(card.position+1)}</small></div>)}
       </aside>
       <section className="ms-exploration">
         <h3 data-i18n-ignore>{tr("Exploration","Exploration")}</h3>
-        <div className="ms-top">{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
+        <div className="ms-top" key={movement} data-moved={movement>0}>{view.deck.slice(0,2).map(card=><Card key={card.position} card={card} language={language}/>)}</div>
         {hintsEnabled?<p className="ms-hint" data-i18n-ignore>{view.actions.some(a=>a.type==="look-around")?tr("Observez les deux premières cartes.","Observe the first two cards."):tr("Choisissez une action autorisée.","Choose an available action.")}</p>:null}
       </section>
       <section className="ms-controls">
