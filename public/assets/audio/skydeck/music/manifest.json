@@ -1,0 +1,61 @@
+{
+  "game": "skydeck",
+  "lot": 1,
+  "format": "PCM WAV mono 16 bits",
+  "origin": "Compositions originales par synthèse additive, sans échantillons tiers.",
+  "validation": "En-têtes, durée, amplitude et énergie contrôlés numériquement avant publication. Écoute, boucles perceptuelles, intégration PWA et CI non validées. Fréquence gameplay réduite à 12 kHz après échec du transfert à 16 kHz.",
+  "tracks": [
+    {
+      "path": "public/assets/audio/skydeck/music/menu.wav",
+      "duration": 90,
+      "sampleRate": 16000,
+      "bytes": 2880044,
+      "loop": true,
+      "gitBlobSha": "7ef36e79cae6521374be0d706432b3a538adff41",
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -2.05,
+      "rmsDbfs": -12.98,
+      "seamDelta": 0.00577
+    },
+    {
+      "path": "public/assets/audio/skydeck/music/gameplay.wav",
+      "duration": 120,
+      "sampleRate": 12000,
+      "bytes": 2880044,
+      "loop": true,
+      "gitBlobSha": "cd072563d4ea85c798c35ede27a8da0d4b3888b6",
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -2.05,
+      "rmsDbfs": -12.42,
+      "seamDelta": 0.02283
+    },
+    {
+      "path": "public/assets/audio/skydeck/music/victory.wav",
+      "duration": 12,
+      "sampleRate": 16000,
+      "bytes": 384044,
+      "loop": false,
+      "gitBlobSha": "3ccf167c3324b4dabc2b4cfe5d5273aa54dec4a4",
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -2.05,
+      "rmsDbfs": -12.25,
+      "seamDelta": 0
+    },
+    {
+      "path": "public/assets/audio/skydeck/music/defeat.wav",
+      "duration": 12,
+      "sampleRate": 16000,
+      "bytes": 384044,
+      "loop": false,
+      "gitBlobSha": "01f27774460007133e7a14dabc6c1e5d31e1bbf6",
+      "channels": 1,
+      "bitDepth": 16,
+      "peakDbfs": -2.05,
+      "rmsDbfs": -11.67,
+      "seamDelta": 0
+    }
+  ]
+}
