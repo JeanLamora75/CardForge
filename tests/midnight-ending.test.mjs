@@ -1,3 +1,5 @@
+import {readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {midnightSyndicateEngine as engine} from '../src/games/loot-the-loop/engine.ts';
@@ -35,4 +37,16 @@ test('hidden arrivals, deadlocks and legacy terminal saves never falsely identif
  assert.equal(engine.validateState({...dead,lossCause:'spades-13'}).valid,false);
  assert.equal(engine.validateState({...s,lossCause:null}).valid,false);
  assert.equal(midnightEnding('win',null,'en').file,'joker-exfiltration');
+});
+
+test('all 14 terminal scenes have both independent master images in the central manifest',()=>{
+ const manifest=JSON.parse(readFileSync('_bmad-output/planning-artifacts/ux-designs/ux-CardForge-2026-11-24/assets-manifest.json','utf8'));
+ const scenes=['victory','dead-end',...Object.values(midnightCardArt).filter(a=>a.frame==='burgundy').map(a=>a.file)];
+ assert.equal(new Set(scenes).size,14);
+ for(const scene of scenes)for(const orientation of ['portrait','landscape']){
+  const path='public/assets/boards/midnight-syndicate/'+scene+'-'+orientation+'.png';
+  const entry=manifest.find(e=>e.path===path);assert.ok(entry,path);
+  assert.equal(entry.mode,'RGB');assert.equal(entry.width*(orientation==='portrait'?16:9),entry.height*(orientation==='portrait'?9:16));
+  assert.equal(createHash('sha256').update(readFileSync(path)).digest('hex'),entry.sha256);
+ }
 });

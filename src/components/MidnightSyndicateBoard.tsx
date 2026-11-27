@@ -119,13 +119,14 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
   const summary=state?makeMidnightSyndicateSummary(state):null;
   const tr=(fr:string,en:string)=>language==="en"?en:fr;
   const ending=summary&&state?midnightEnding(summary.outcome,state.lossCause??null,language):null;
+  const scene=ending?(summary?.outcome==="win"?"victory":ending.file??"dead-end"):null;
   const [statistics,setStatistics]=useState<GameStatistics|null>(null);
   const [statsError,setStatsError]=useState(false);
   useEffect(()=>{if(inspection!=="stats"||tutorial)return;let live=true;setStatsError(false);void createIndexedDbGameStorage().readStatistics("loot-the-loop").then(s=>{if(live)setStatistics(s??null);}).catch(()=>{if(live)setStatsError(true);});return()=>{live=false;};},[inspection,tutorial]);
   const destination=selected?.type==="explore"&&view?.deck.length?selected.distance%view.deck.length:-1;
   return <section className="ms-board ms-immersive" aria-label="Plateau Midnight Syndicate" aria-busy={busy}
     data-phase={summary?"finished":"live"}>
-    <picture className="ms-board-picture" aria-hidden="true"><source media="(orientation: landscape)" srcSet={art("boards","landscape")}/><img src={art("boards","portrait")} alt=""/></picture>
+    {!summary?<picture className="ms-board-picture" aria-hidden="true"><source media="(orientation: landscape)" srcSet={art("boards","landscape")}/><img src={art("boards","portrait")} alt=""/></picture>:null}
 
     <div className="ms-status" role="status" aria-live="polite">{busy?(tutorial?"Chargement de l’entraînement…":"Chargement ou enregistrement…"):notice}</div>
     {error?<p role="alert" className="ms-error">{error}</p>:null}
@@ -133,10 +134,10 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
     {view?<>{!summary?<div className="ms-counters" data-i18n-ignore>
       {[[tr("Preuves","Evidence"),view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length+"/4","aces"],[tr("Butin","Loot"),view.loot.length,"loot"],[tr("Parcours","Route"),view.deck.length,"route"],[tr("Notes","Notes"),view.notes.length+"/3","notes"]].map(([label,value,icon])=><div key={icon} className="ms-counter"><img src={art("hud","counter-"+icon)} alt=""/><span>{label}<b>{value}</b></span></div>)}
     </div>:null}
-    {summary&&ending?<div className="ms-ending" data-outcome={summary.outcome} data-i18n-ignore>
-      <img className="ms-ending-scene" src={ending.file?art("cards",ending.file):art("boards","portrait")} alt=""/>
+    {summary&&ending?<div className="ms-ending" data-outcome={summary.outcome} data-scene={scene} data-i18n-ignore>
+      <picture className="ms-ending-picture"><source media="(orientation: landscape)" srcSet={art("boards",scene+"-landscape")}/><img className="ms-ending-scene" src={art("boards",scene+"-portrait")} alt=""/></picture>
       <div className="ms-ending-story"><p>{summary.outcome==="win"?tr("MISSION ACCOMPLIE","MISSION ACCOMPLISHED"):tr("MISSION COMPROMISE","MISSION COMPROMISED")}</p>{ending.file?<h2>{ending.title}</h2>:null}<p>{ending.text}</p></div>
-      <div className="ms-mission-report"><h3>{tr("Rapport de mission","Mission report")}</h3><div><span>{tr("Preuves","Evidence")}: {view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")).length}/4</span><span>{tr("Butin","Loot")}: {view.loot.length}</span><span>{tr("Parcours","Route")}: {view.deck.length}</span></div>{summary.outcome==="win"?<p>{tr("Score","Score")}: {summary.score}</p>:null}{tutorial?<p>{tr("Entraînement sans statistiques","Practice without statistics")}</p>:null}</div>
+      <div className="ms-mission-report"><h3>{tr("Rapport de mission","Mission report")}</h3><div><span>{tr("Preuves","Evidence")}: {view.loot.filter(c=>c.faceUp&&c.id.endsWith("-1")&&c.id!=="joker-1").length}/4</span><span>{tr("Butin","Loot")}: {view.loot.length}</span><span>{tr("Parcours","Route")}: {view.deck.length}</span></div>{summary.outcome==="win"?<p>{tr("Score","Score")}: {summary.score}</p>:null}{tutorial?<p>{tr("Entraînement sans statistiques","Practice without statistics")}</p>:null}</div>
       <nav className="ms-ending-actions"><button type="button" disabled={busy} onClick={()=>tutorial?onReplayTutorial?.():void chooseReplacement()}><img className="ms-button-skin" src={art("buttons","primary")} alt=""/><span>{tr("Rejouer","Play again")}</span></button>{!tutorial?<button type="button" onClick={()=>setInspection("stats")}><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Statistiques","Statistics")}</span></button>:null}<a href="#"><img className="ms-button-skin" src={art("buttons","secondary")} alt=""/><span>{tr("Retour au catalogue","Back to catalogue")}</span></a></nav>
     </div>:<div className="ms-live-layout">
       <aside ref={routeRef} className="ms-route" aria-label={tr("Parcours","Route")} tabIndex={0}>

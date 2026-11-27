@@ -110,3 +110,17 @@
 .ms-mission-report{background:#0c2428ec;border:1px solid #bd9954;padding:8px;text-align:center;border-radius:6px}.ms-mission-report>div{display:flex;justify-content:space-around;gap:5px;flex-wrap:wrap;font-size:.85rem}.ms-mission-report p{margin:4px}
 .ms-ending-actions{display:grid;grid-template-columns:1fr 1fr;gap:4px}.ms-ending-actions a{grid-column:1/-1}
 @media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-rows:minmax(0,1fr)}.ms-command-page .ms-controls{grid-template-rows:20px minmax(54px,1fr) 20px 93px}.ms-command-page .ms-actions{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-command-page .ms-notes{min-height:54px}.ms-board[data-phase=finished] .ms-ending{padding:6px;gap:4px}.ms-ending .ms-ending-story{padding:5px}.ms-ending-actions{grid-template-columns:repeat(3,1fr)}.ms-ending-actions a{grid-column:auto}}
+
+/* Terminal artwork follows the viewport orientation and preserves the scene's focal area. */
+.ms-ending-picture{position:absolute;inset:0;z-index:-2;pointer-events:none}.ms-ending-picture .ms-ending-scene{z-index:auto;object-position:center top}
+.ms-command-page:has(.ms-board[data-phase=finished]){max-width:none}
+.ms-board[data-phase=finished]{padding:0;border:0;border-radius:0}
+.ms-board[data-phase=finished] .ms-ending{flex:1 1 0;min-height:0;justify-content:flex-end;gap:6px;padding:clamp(6px,2vw,18px)}
+.ms-ending-story,.ms-mission-report,.ms-ending-actions{width:100%;box-sizing:border-box;flex:none}
+.ms-ending-story p{margin:3px 0}.ms-ending-actions :is(button,a){font-family:inherit}
+.ms-command-page .ms-notes .ms-card{height:clamp(42px,9dvh,85px);max-height:100%;width:auto;max-width:30%;aspect-ratio:392/552;flex:none}
+.ms-command-page .ms-live-layout{grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+.ms-command-page .ms-controls{grid-template-rows:24px minmax(0,1fr) 24px 141px}
+.ms-command-page .ms-actions button{min-width:0;line-height:1.05}
+@media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-rows:minmax(0,1fr)}.ms-command-page .ms-controls{grid-template-rows:20px minmax(0,1fr) 20px 93px}.ms-board[data-phase=finished] .ms-ending{align-items:flex-end;justify-content:center}.ms-ending-story,.ms-mission-report,.ms-ending-actions{width:min(44%,560px)}.ms-ending-actions{grid-template-columns:1fr 1fr}.ms-ending-actions a{grid-column:1/-1}.ms-ending[data-scene="ms-m12-l-interrogatoire-clandestin"]{align-items:flex-start!important}}
+@media(max-height:430px) and (orientation:landscape){.ms-ending-story p,.ms-mission-report{font-size:.75rem}.ms-ending-story h2{font-size:1rem}.ms-board[data-phase=finished] .ms-ending{gap:4px;padding:5px}.ms-ending-actions{gap:3px}.ms-command-page .ms-notes .ms-card{height:clamp(30px,13dvh,62px)}}
