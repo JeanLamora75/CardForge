@@ -1,0 +1,21 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {grimDelveEngine} from "../src/games/clear-the-dungeon/engine.ts";
+import {grimDropAction} from "../src/application/grim-delve-interaction.ts";
+test("screenshot reproduction: two tens against human king, elf ace cannot attack but can discard",()=>{
+ const initial=grimDelveEngine.createInitialState({seed:1});
+ const tops=["hearts-13","diamonds-12","hearts-12","clubs-12"];
+ const rest=initial.columns.flat().filter(id=>!tops.includes(id));
+ const columns=tops.map((id,i)=>[id,...rest.slice(i*2,i*2+2)]);
+ const hand=["diamonds-1"], powers=[{cardId:"joker-1",handNumber:1},{cardId:"hearts-10",handNumber:1}];
+ const state={...initial,columns,visibleMonsters:tops,hand,drawPile:[...initial.hand,...initial.drawPile].filter(id=>!["diamonds-1","joker-1","hearts-10"].includes(id)),attacks:[{monsterId:tops[0],powers}]};
+ assert.equal(grimDelveEngine.validateState(state).valid,true);
+ const legal=grimDelveEngine.getLegalActions(state);
+ assert.equal(grimDropAction(legal,hand[0],"monster",tops[0]),undefined);
+ assert.equal(grimDropAction(legal,hand[0],"slot",tops[1]),undefined);
+ const take=grimDropAction(legal,"joker-1","hand");assert.equal(take?.type,"take-back");
+ const move=grimDropAction(legal,"joker-1","slot",tops[1]);assert.equal(move?.type,"move-power");
+ const discarded=grimDelveEngine.transition(state,{type:"discard",cardId:hand[0]});
+ assert.equal(discarded.accepted,true);assert.deepEqual(discarded.state.hand,[]);assert.deepEqual(discarded.state.damages,hand);
+ assert.ok(grimDelveEngine.getLegalActions(discarded.state).some(a=>a.type==="end-hand"));
+});
