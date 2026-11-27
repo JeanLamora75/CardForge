@@ -158,11 +158,11 @@ export default function MidnightSyndicateBoard({tutorial=false,hintsEnabled=true
           onClick={()=>setSelected(action)}><img className="ms-button-skin" src={art("buttons",view.actions.length===1?"primary":"secondary")} alt=""/><img className="ms-action-icon" src={art("icons",({"look-around":"observe",explore:"explore","mark-path":"mark","return-to-path":"return-note"})[action.type])} alt=""/><span>{actionLabel(action)}</span></button>)}</div>
       </section>
     </div>}
-    {!summary?<footer className="ms-footer" data-i18n-ignore>
+    {!summary?<nav className="ms-footer" aria-label={tr("Commandes du plateau","Board controls")} data-i18n-ignore>
       <button type="button" onClick={()=>setInspection("route")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","route")} alt=""/>{tr("Parcours","Route")} ({view.deck.length})</button>
       <button type="button" onClick={()=>setInspection("loot")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","loot")} alt=""/>{tr("Butin","Loot")} ({view.loot.length})</button>
       {!tutorial&&view.outcome==="in-progress"?<button type="button" disabled={busy||!!selected||!!replacement} onClick={()=>setInspection("menu")}><img className="ms-button-skin" src={art("buttons","utility")} alt=""/><img className="ms-action-icon" src={art("icons","menu")} alt=""/>{tr("Menu","Menu")}</button>:null}
-    </footer>:null}
+    </nav>:null}
     {selected||replacement?<div className="ms-confirm-overlay"><div className="ms-confirm" role="group" aria-label={selected?"Confirmation du coup":"Confirmation de nouvelle partie"}>
       <p>{selected?actionLabel(selected):view.outcome==="in-progress"?"Abandonner la partie actuelle et recommencer ?":"Commencer une nouvelle partie ?"}</p>
       {destination>=0?<p data-i18n-ignore>{tr("Destination","Destination")} : {cardLabel(view.deck[destination],language)}</p>:null}

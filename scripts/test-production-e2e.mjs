@@ -243,6 +243,7 @@ async function immersiveScreens(){
    await assertPaintedArt(page,".forge-home > .forge-world-bg img",viewport.width>viewport.height?"worlds-landscape":"worlds");
    await assertPaintedArt(page,".forge-home > .forge-effect","effects");
    if(viewport.width===390||viewport.width===844) { const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});await page.screenshot({path:"ux-screenshots/cardforge-"+viewport.width+"-"+locale+".png"}); }
+   await page.locator(".forge-tile-scene").evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
    assert.ok(await page.locator(".forge-tile-scene").evaluateAll(imgs=>imgs.every(i=>i.complete&&i.naturalWidth>0)));
    for(const id of ["gridcannon","clear-the-dungeon","loot-the-loop","card-capture","regicide"]){
     await page.goto(HOST+"#game/"+id);await page.locator(".forge-menu").waitFor();
@@ -436,6 +437,14 @@ async function journey(locale,mobile){
            await page.locator('.ms-top img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});
            assert.equal(await page.locator('.ms-hidden .ms-card-art').count(),0);
            assert.equal(await page.locator('.ms-notes .ms-card').count(),3);
+           const geometry=await page.evaluate(()=>{
+             const box=s=>document.querySelector(s).getBoundingClientRect();
+             const footer=document.querySelector('.ms-footer'),f=box('.ms-footer'),live=box('.ms-live-layout'),route=box('.ms-route'),board=box('.ms-board'),style=getComputedStyle(footer);
+             return {footerHeight:f.height,paddingTop:parseFloat(style.paddingTop),paddingBottom:parseFloat(style.paddingBottom),gap:f.top-live.bottom,routeGap:live.bottom-route.bottom,boardGap:board.bottom-f.bottom,buttonWidths:[...footer.querySelectorAll('button')].map(b=>({button:b.getBoundingClientRect().width,skin:b.querySelector('.ms-button-skin').getBoundingClientRect().width,fit:getComputedStyle(b.querySelector('.ms-button-skin')).objectFit}))};
+           });
+           assert.ok(geometry.footerHeight<=60&&geometry.paddingTop===0&&geometry.paddingBottom===0,JSON.stringify(geometry));
+           assert.ok(Math.abs(geometry.gap)<=8&&Math.abs(geometry.routeGap)<=2&&geometry.boardGap<=12,JSON.stringify(geometry));
+           assert.ok(geometry.buttonWidths.every(b=>b.skin>=b.button-2&&b.fit==='fill'),JSON.stringify(geometry));
            assert.ok(await page.locator('.ms-notes .ms-card').evaluateAll(cards=>cards.every(c=>{const r=c.getBoundingClientRect();return r.width>=20&&r.height>=35&&r.bottom<=innerHeight;})), 'All three notes must retain visible dimensions');
            assert.ok(await page.evaluate(()=>{const nodes=['.ms-top','.ms-notes','.ms-actions','.ms-footer'].map(s=>document.querySelector(s).getBoundingClientRect());return nodes.every((a,i)=>nodes.slice(i+1).every(b=>a.right<=b.left+1||b.right<=a.left+1||a.bottom<=b.top+1||b.bottom<=a.top+1));}), 'Board regions must not overlap');
            await page.locator('.ms-header img,.ms-counter img').evaluateAll(async imgs=>{await Promise.all(imgs.map(i=>i.decode()));});

@@ -4,12 +4,12 @@
 .ms-command-page .learning-intro{overflow:auto}
 .ms-command-page .ms-header{display:grid;grid-template-columns:44px minmax(0,1fr) 44px 44px;align-items:center;gap:4px;flex:none;height:clamp(52px,10dvh,92px)}
 .ms-header h1{margin:0;height:100%;min-height:0;text-align:center}
-.ms-header h1 img{width:min(100%,360px);height:100%;object-fit:contain;transform:scale(1.12)}
+.ms-header h1 img{width:min(100%,360px);height:100%;object-fit:contain;transform:scale(1.22)}
 .ms-command-page .ms-header button{width:44px;height:44px;background:transparent;border:0;padding:0}
 .ms-header button img{width:100%;height:100%;object-fit:contain}
 .ms-command-page .ms-board.ms-immersive{position:relative;isolation:isolate;display:flex;flex-direction:column;flex:1 1 0;height:0;min-height:0;gap:4px;padding:6px;overflow:hidden;background:#10272c;font-family:inherit;border:0}
 .ms-board-picture{position:absolute;inset:0;z-index:-2;pointer-events:none}
-.ms-board-picture img{width:100%;height:100%;object-fit:cover;opacity:.72}
+.ms-board-picture img{width:100%;height:100%;object-fit:cover;opacity:.30}
 .ms-immersive .ms-status{font-size:.65rem;line-height:1;text-align:right;color:#ffe7b3;flex:none;text-shadow:0 1px 3px #000;margin:0}
 .ms-immersive .ms-error{position:absolute;top:16px;left:4px;right:4px;z-index:4;background:#421b1b;padding:6px;margin:0}
 .ms-immersive .ms-counters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;flex:none}
@@ -17,20 +17,20 @@
 .ms-counter img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .ms-command-page .ms-counter span{position:relative;background:transparent;border:0;color:#ffe5af;font-size:clamp(.58rem,2vw,.85rem);padding:0 3px 0 28%;width:100%;text-align:center;line-height:1.05;text-shadow:0 1px 3px #000}
 .ms-counter b{display:block;font-size:1.3em}
-.ms-command-page .ms-live-layout{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(62px,23%) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:5px}
-.ms-route{grid-row:1/-1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a88a50 #122526;padding:3px;background:#07191dbb;border-radius:5px}
+.ms-command-page .ms-live-layout{flex:1 1 0;min-height:0;display:grid;grid-template-columns:minmax(62px,23%) minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:6px;align-items:stretch}
+.ms-route{grid-row:1/-1;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#a88a50 #122526;padding:3px;background:#07191d88;border-radius:5px}
 .ms-route-stop{position:relative;display:grid;grid-template-columns:12px minmax(0,1fr);align-items:center;gap:2px;padding:3px 2px 8px;isolation:isolate}
 .ms-route-stop:not(:last-child)::before{content:"";position:absolute;left:7px;top:50%;height:100%;width:1px;background:#a78a50;z-index:-1}
 .ms-route-node{width:12px;height:12px;object-fit:contain}
 .ms-route-stop.ms-current,.ms-route-stop.ms-destination{outline:1px solid #ffc76a;outline-offset:-1px;border-radius:4px}
 .ms-route-stop small{grid-column:2;font-size:.6rem;color:#ffe6b5;text-align:center;line-height:1.1}
-.ms-command-page .ms-exploration,.ms-command-page .ms-controls{min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;padding:4px;background:#081b20bc;border-radius:5px}
+.ms-command-page .ms-exploration,.ms-command-page .ms-controls{min-height:0;min-width:0;display:flex;flex-direction:column;gap:4px;padding:4px;background:#081b2040;border-radius:5px}
 .ms-command-page .ms-controls{display:grid;grid-template-rows:24px auto 24px auto;align-content:start}
 .ms-command-page .ms-immersive h3{position:relative;isolation:isolate;display:grid;place-items:center;min-height:24px;margin:0;padding:2px 6px;text-align:center;font-size:clamp(.72rem,2.4vw,1rem);line-height:1.1;color:#ffdc95}
 .ms-heading-skin,.ms-button-skin{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:-1;pointer-events:none}
 .ms-immersive .ms-top,.ms-immersive .ms-notes{display:flex;justify-content:center;align-items:center;gap:5px;min-height:0;min-width:0}
 .ms-top{flex:1 1 0;container-type:size}
-.ms-command-page .ms-notes{height:clamp(56px,13dvh,115px);flex:none;background:#493b2955;border-radius:4px}
+.ms-command-page .ms-notes{height:clamp(52px,13dvh,115px);flex:none;background:transparent;border-radius:0}
 .ms-immersive .ms-card{position:relative;display:block;padding:0;margin:0;min-height:0;min-width:0;border:0;border-radius:0;background:transparent;aspect-ratio:392/552;overflow:hidden;flex:none;container-type:inline-size;text-align:center;box-sizing:border-box}
 .ms-command-page .ms-top .ms-card{width:min(calc((100cqw - 5px)/2),calc(100cqh * 392 / 552));height:auto;max-height:100%}
 .ms-command-page .ms-notes .ms-card{height:calc(100% - 6px);width:auto;max-width:30%;aspect-ratio:392/552}
@@ -38,13 +38,17 @@
 .ms-card-art{position:absolute;left:9%;top:24%;width:82%;height:54%;object-fit:cover;border-radius:3px}
 .ms-card-value{position:absolute;top:5%;left:9%;right:9%;font-size:clamp(.65rem,18cqw,2rem);color:#ffdf96;text-shadow:0 1px 3px #000;text-align:center;line-height:1}
 .ms-card-name{position:absolute;bottom:5%;left:8%;right:8%;color:#ffe6b4;background:#08191bd9;font-size:clamp(.45rem,10cqw,1rem);line-height:1.05}
-.ms-route .ms-card{width:100%;height:auto;max-width:74px;justify-self:center}
+.ms-route .ms-card{width:100%;height:auto;max-width:88px;justify-self:center}
 .ms-hint{flex:none;font-size:.68rem;line-height:1.15;text-align:center;margin:0;color:#ffe5b4;padding:2px;background:#081b20aa}
-.ms-immersive .ms-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:44px;gap:3px;align-content:start;min-width:0}
+.ms-immersive .ms-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:48px;gap:3px;align-content:start;min-width:0}
 .ms-command-page .ms-actions button,.ms-command-page .ms-footer button,.ms-ending-actions :is(button,a){position:relative;isolation:isolate;background:transparent;border:0;display:flex;align-items:center;justify-content:center;gap:3px;min-height:44px;min-width:0;color:#ffe5b4;font:inherit;font-size:clamp(.63rem,2vw,.88rem);font-weight:700;line-height:1.05;text-align:center;text-decoration:none;margin:0;padding:5px}
 .ms-actions button:only-child{grid-column:1/-1}
+.ms-command-page .ms-button-skin{object-fit:fill}
+.ms-command-page .ms-heading-skin{object-fit:fill;max-width:100%;height:100%}
+.ms-command-page .ms-actions button,.ms-command-page .ms-footer button{font-size:clamp(.72rem,2.4vw,1rem);padding:6px 10px}
+.ms-command-page .ms-actions button[aria-pressed=true]{outline:2px solid #ffe4a0;outline-offset:-2px}
 .ms-action-icon{width:clamp(12px,3vw,22px);height:22px;object-fit:contain;flex:none}
-.ms-footer{display:flex;gap:3px;flex:none}.ms-footer button{flex:1}
+.ms-command-page .ms-footer{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:5px;flex:none;padding:0;margin:0;line-height:1;min-height:48px}.ms-command-page .ms-footer button{width:100%;min-height:48px}
 .ms-immersive button:disabled{opacity:.65;cursor:default}
 .ms-immersive button:active{filter:brightness(1.2)}
 .ms-immersive :is(button,aside,a):focus-visible{outline:3px solid #ffe4a0;outline-offset:-3px}
