@@ -272,3 +272,107 @@ Les détails de conformité **LTL-R01/R02/R03** sont des vérifications de sourc
 **Vérifications effectuées :** requête Jira `project = CAR AND parent = CAR-44` renvoyant exactement **12 Stories**, toutes de type Story et dont `parent.key = CAR-44` ; chaque description contient ses critères d'acceptation, dépendances, impacts et références BMAD. **17 liens de dépendance « Blocks »** créés au total entre Stories et avec le blocage **CAR-43 → CAR-56**, et vérifiés dans les liens des tickets, notamment CAR-45, CAR-52 et CAR-56.
 
 **Important :** aucune Story n'est terminée par sa seule création et aucune diffusion publique n'est autorisée. Les autres tickets MVP n'ont pas été modifiés (sauf le lien de dépendance sortant de CAR-43 vers CAR-56). Les scripts BMAD `uv` et les tests de code n'ont pas été exécutés dans cette opération documentaire et Jira.
+
+## 8. Décision artistique validée — les quatre preuves (26 novembre 2026)
+
+**Responsable UX : Sally — décision du porteur validée.** Les quatre As de Midnight Syndicate sont représentés par les quatre pièces d'enquête suivantes, dans l'univers film noir / Art déco des années 1930. Cette décision remplace toute proposition graphique antérieure concernant les preuves.
+
+| Référence UX | Preuve validée | Intention visuelle |
+| --- | --- | --- |
+| MS-P01 | Photo compromettante de versement de pot-de-vin | Photographie d'époque montrant une remise d'argent compromettante. |
+| MS-P02 | Boîte d'allumettes d'un hôtel de luxe avec un numéro de téléphone griffonné | Boîte raffinée d'époque, enseigne d'hôtel fictive et numéro manuscrit fictif. |
+| MS-P03 | Télégramme codé avec son carnet de décodage | Télégramme et carnet associés, constituant ensemble une seule preuve et une seule carte. |
+| MS-P04 | Ticket de consigne de gare | Ticket de consigne ferroviaire d'époque, reconnaissable et distinct des autres objets. |
+
+### Contraintes fonctionnelles et techniques
+
+- Une preuve correspond à un As physique distinct ; quatre preuves au total, collectables dans n'importe quel ordre. Aucun pouvoir spécifique ni condition supplémentaire.
+- Chaque preuve collectée vaut un point dans le butin. La victoire exige toujours les quatre As collectés puis une arrivée sur le Joker visible par l'action Explorer.
+- Conserver les identifiants internes des As, le paquet de 53 cartes, les règles, les probabilités, la sauvegarde et le score. La correspondance précise entre MS-P01 à MS-P04 et les quatre identifiants d'As reste à définir lors de l'intégration ; elle n'a aucun effet mécanique.
+- Direction UX proposée : gabarit vert émeraude et or, objets immédiatement reconnaissables à taille mobile, compteur Preuves X/4 et indication des preuves collectées. Ne jamais divulguer l'identité d'une carte cachée ; dos commun.
+- Fournir à Amelia des illustrations indépendantes, selon [le référentiel graphique](../../docs/graphic-assets-standard.md) : PNG maîtres, noms ASCII minuscules en kebab-case, manifeste et empreintes SHA-256. Aucun texte fonctionnel ni valeur de jeu figés dans les illustrations ; les inscriptions diégétiques fictives sur les objets sont permises.
+- Traçabilité : MS-09 / [CAR-53](https://lmn24.atlassian.net/browse/CAR-53), MS-10 / [CAR-54](https://lmn24.atlassian.net/browse/CAR-54). Cette décision documentaire ne vaut ni production des illustrations ni validation de l'intégration.
+
+## 9. Décision artistique validée — les douze menaces et les écrans de défaite (26 novembre 2026)
+
+**Responsable UX : Sally — décision du porteur validée.** Les douze figures (quatre Valets, quatre Dames, quatre Rois) deviennent douze menaces distinctes. Les regroupements ci-dessous sont exclusivement narratifs, sans incidence sur les règles.
+
+| Référence | Catégorie narrative | Menace validée | Illustration / contexte |
+| --- | --- | --- | --- |
+| MS-M01 | Rencontres dangereuses | Le Parrain | Dirigeant du syndicat dans son luxueux bureau ; couverture compromise. |
+| MS-M02 | Rencontres dangereuses | La Veuve Noire | Mystérieuse femme fatale attirant l'enquêteur dans un piège. |
+| MS-M03 | Rencontres dangereuses | Le Tueur à gages | Homme de main ayant retrouvé la trace de l'enquêteur. |
+| MS-M04 | Rencontres dangereuses | La Balance | Informateur révélant l'identité de l'enquêteur au syndicat. |
+| MS-M05 | Guets-apens | L'Embuscade | Ruelle sombre dont les issues sont bloquées par le syndicat. |
+| MS-M06 | Guets-apens | La Voiture piégée | Véhicule abandonné dissimulant un danger mortel. |
+| MS-M07 | Guets-apens | Le Tireur de l'ombre | Silhouette menaçante surveillant la rue depuis les hauteurs. |
+| MS-M08 | Guets-apens | Le Guet-apens des docks | Entrepôt clandestin où les contrebandiers attendent l'enquêteur. |
+| MS-M09 | Autorités corrompues | Le Commissaire corrompu | Responsable de la police travaillant secrètement pour le syndicat. |
+| MS-M10 | Autorités corrompues | Le Barrage de police | Contrôle organisé pour intercepter l'enquêteur. |
+| MS-M11 | Autorités corrompues | Le Juge véreux | Magistrat à la solde du syndicat faisant disparaître preuves et témoins. |
+| MS-M12 | Autorités corrompues | L'Interrogatoire clandestin | Salle secrète où l'enquêteur capturé est conduit. |
+
+### Identité graphique et invariants
+
+- Gabarit commun bordeaux et or, symbole de danger commun, illustration dominante et nom dynamique traduisible FR/EN ; ni rang J/Q/K ni enseigne traditionnelle affichés sur ces cartes.
+- Douze identifiants physiques distincts conservés dans le moteur ; correspondance exacte entre MS-M01 à MS-M12 et les figures techniques à définir à l'intégration, sans effet mécanique.
+- Toutes les menaces sont équivalentes : défaite immédiate uniquement en arrivant sur une menace déjà visible via Explorer. Observer une menace, la dépasser, l'inspecter ou arriver sur elle encore cachée ne déclenche pas en soi une défaite. Les règles d'impasse existantes restent applicables.
+- Aucun combat, pouvoir, niveau de danger ou changement de probabilité ajouté. Dos commun et aucune divulgation des cartes cachées.
+- Illustrations indépendantes, sans texte fonctionnel figé, conformément au [référentiel graphique CardForge](../../docs/graphic-assets-standard.md).
+
+### Écrans de défaite immersifs — décision validée
+
+- En cas de défaite provoquée par une menace, réutiliser son illustration, afficher le titre de fin de mission, le nom de la menace réellement responsable et un court texte narratif spécifique à celle-ci. Les douze variantes partagent un composant et une direction artistique film noir / Art déco.
+- Exemple validant le principe : **MISSION COMPROMISE — L'Embuscade**. « Les hommes du syndicat vous attendaient. Cette ruelle sera votre dernière destination. »
+- Pour Amelia : conserver le résultat mécanique et les statistiques existants ; adapter uniquement la présentation et, si nécessaire, transporter la cause réelle de défaite jusqu'à l'interface sans révéler de données cachées. En cas d'impasse sans menace responsable identifiée, prévoir un écran générique cohérent plutôt que d'attribuer arbitrairement la défaite à une carte.
+- Textes FR/EN dynamiques, affichage mobile portrait et paysage sans scroll global, fonctionnement hors ligne et contrôles accessibles ; conserver les actions de fin de partie existantes.
+- Les textes narratifs définitifs des onze autres variantes et le visuel générique d'impasse restent à produire. Aucune illustration ni implémentation n'est déclarée terminée par cette décision documentaire.
+- Traçabilité : [CAR-49](https://lmn24.atlassian.net/browse/CAR-49) (résultat), [CAR-50](https://lmn24.atlassian.net/browse/CAR-50) (impasse), [CAR-52](https://lmn24.atlassian.net/browse/CAR-52) (clôture), [CAR-53](https://lmn24.atlassian.net/browse/CAR-53) (UX), [CAR-54](https://lmn24.atlassian.net/browse/CAR-54) (FR/EN), [CAR-55](https://lmn24.atlassian.net/browse/CAR-55) (qualification). Aucun ticket Jira modifié à cette étape.
+
+## 10. Décision artistique validée — les 36 lieux (26 novembre 2026)
+
+**Sally — décision du porteur validée.** Six lots de six lieux uniques, quartiers exclusivement narratifs.
+
+| Référence | Quartier | Lieu | Valeur |
+| --- | --- | --- | ---: |
+| MS-L01 | Affaires | La Banque centrale | 2 |
+| MS-L02 | Affaires | La Bourse | 3 |
+| MS-L03 | Affaires | Le Grand Hôtel | 4 |
+| MS-L04 | Affaires | Le Siège du journal | 5 |
+| MS-L05 | Affaires | La Compagnie d'assurances | 6 |
+| MS-L06 | Affaires | La Tour des affaires | 7 |
+| MS-L07 | Plaisirs | Le Casino | 8 |
+| MS-L08 | Plaisirs | Le Speakeasy | 9 |
+| MS-L09 | Plaisirs | Le Cabaret | 10 |
+| MS-L10 | Plaisirs | Le Club de jazz | 2 |
+| MS-L11 | Plaisirs | Le Cinéma | 3 |
+| MS-L12 | Plaisirs | Le Champ de courses | 4 |
+| MS-L13 | Portuaire | Les Docks | 5 |
+| MS-L14 | Portuaire | L'Entrepôt maritime | 6 |
+| MS-L15 | Portuaire | Le Chantier naval | 7 |
+| MS-L16 | Portuaire | La Capitainerie | 8 |
+| MS-L17 | Portuaire | Le Phare | 9 |
+| MS-L18 | Portuaire | Le Marché aux poissons | 10 |
+| MS-L19 | Industriel | L'Aciérie | 2 |
+| MS-L20 | Industriel | Le Garage automobile | 3 |
+| MS-L21 | Industriel | Le Dépôt ferroviaire | 4 |
+| MS-L22 | Industriel | La Centrale électrique | 5 |
+| MS-L23 | Industriel | L'Imprimerie | 6 |
+| MS-L24 | Industriel | La Distillerie | 7 |
+| MS-L25 | Populaire | La Vieille Ville | 8 |
+| MS-L26 | Populaire | Le Marché couvert | 9 |
+| MS-L27 | Populaire | Le Prêteur sur gages | 10 |
+| MS-L28 | Populaire | Le Barbier | 2 |
+| MS-L29 | Populaire | La Pension de famille | 3 |
+| MS-L30 | Populaire | La Gare centrale | 4 |
+| MS-L31 | Institutionnel | L'Hôtel de ville | 5 |
+| MS-L32 | Institutionnel | Le Commissariat | 6 |
+| MS-L33 | Institutionnel | Le Palais de justice | 7 |
+| MS-L34 | Institutionnel | La Cathédrale | 8 |
+| MS-L35 | Institutionnel | L'Hôpital | 9 |
+| MS-L36 | Institutionnel | La Bibliothèque municipale | 10 |
+
+- Quatre cartes de chaque valeur 2 à 10 ; conserver les 36 identifiants physiques numériques et leur rang, sans pouvoir de quartier ou d'enseigne. Association stable aux identifiants techniques à définir à l'intégration.
+- Gabarit bleu nuit et or, valeur et nom dynamiques FR/EN, réutilisation de l'illustration dans le parcours défilant ; aucune identité révélée pour les cartes cachées.
+- Exigence de livraison impérative pour tous les lots : illustrations indépendantes carrées 850 × 850 px, PNG RGB, sans cadre, titre fonctionnel, valeur ni symbole incrusté ; ambiance film noir années 1930, lisibilité mobile. Noms ASCII minuscules kebab-case `ms-lNN-nom.png` dans `public/assets/cards/midnight-syndicate/`. ZIP à racine du dépôt, fragment de manifeste (path, width, height, mode, sha256), vérification du décodage, des empreintes et des collisions. Ne pas livrer une planche seule ; ne pas déclarer un lot exploitable sans contrôle réel. WebP générés par le script officiel, aucun uv.
+- Référence : [standard graphique](../../docs/graphic-assets-standard.md), CAR-53/54/55. Aucun changement des règles ni ticket Jira modifié.
