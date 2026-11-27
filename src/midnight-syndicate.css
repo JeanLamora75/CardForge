@@ -104,16 +104,22 @@
 .ms-command-page .ms-actions button{min-height:48px}
 @media(orientation:landscape) and (max-height:430px){.ms-note-help{font-size:.6rem}.ms-command-page .ms-actions button{min-height:44px}}
 
-/* Decision cards: card identity, narrative and movement share a column. */
+/* Autonomous decision panels; text always has intrinsic height, artwork absorbs remaining space. */
 .ms-command-page .ms-decisions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:6px;container-type:normal;min-height:0}
-.ms-decision{min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px;border:1px solid #a98b50;border-radius:6px;background:#10272ce8;color:#ffe5b4;text-align:center}
-.ms-decision[data-kind=green]{background:#18362ce8}.ms-decision[data-kind=burgundy]{background:#45252be8}.ms-decision[data-kind=hidden]{background:#291e20e8}
-.ms-decision-position{font-size:clamp(.59rem,1.8vw,.78rem);line-height:1.1;margin:0;flex:none}
-.ms-command-page .ms-decisions .ms-card{width:min(100%,120px);height:auto;max-height:none;aspect-ratio:392/552;flex:0 1 auto;min-height:36px}
-.ms-decision-copy{font-size:clamp(.64rem,1.8vw,.83rem);line-height:1.15;min-height:0;flex:1;overflow:auto;width:100%;scrollbar-width:thin}
-.ms-decision-copy p{margin:3px 0}.ms-decision-copy strong{display:block;color:#ffda92}.ms-narrative{font-style:italic}
-.ms-decision-action{width:100%;min-height:44px;flex:none;border:1px solid #d7b371;border-radius:5px;background:linear-gradient(#234b45,#102b2b);color:#ffe3ad;font:inherit;font-size:clamp(.68rem,2vw,.95rem);font-weight:700;padding:3px;line-height:1.05}
+.ms-decision{min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto minmax(44px,auto);gap:4px;padding:5px;border:1px solid #a98b50;border-radius:6px;background:#10272ce8;color:#ffe5b4;text-align:center}
+.ms-decision[data-kind=green]{background:#18362ce8;border-color:#9ca56a}.ms-decision[data-kind=burgundy]{background:#45252be8;border-color:#bc795e}.ms-decision[data-kind=neutral]{background:#373026}.ms-decision[data-kind=hidden]{background:#291e20e8}
+.ms-decision-position{font-size:clamp(.65rem,1.8vw,.85rem);line-height:1.15;margin:0}
+.ms-command-page .ms-decision-identity{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr);justify-items:center;gap:4px;min-height:0;min-width:0;width:100%;padding:0;margin:0;background:transparent;border:0;color:inherit;box-sizing:border-box}
+.ms-decision-medallion{display:grid;place-items:center;width:clamp(30px,5dvh,52px);aspect-ratio:1;border:2px solid #d6af69;border-radius:50%;background:#102329;color:#ffda92;font-size:clamp(1.1rem,3dvh,1.9rem);line-height:1}
+.ms-decision-art{display:block;width:100%;height:100%;min-height:0;object-fit:contain;border-radius:3px;pointer-events:none}
+.ms-decision-copy{font-size:clamp(.72rem,2vw,.9rem);line-height:1.15;min-width:0;width:100%;overflow:visible;overflow-wrap:anywhere}
+.ms-decision-copy strong{display:block;color:#ffda92}.ms-decision-copy p{margin:3px 0 0}.ms-narrative{font-style:italic}
+.ms-command-page .ms-decision-action,.ms-decision-effect{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;width:100%;box-sizing:border-box;padding:4px;color:#ffe3ad;font:inherit;font-size:clamp(.72rem,2vw,.95rem);font-weight:700;line-height:1.1;text-align:center;overflow-wrap:anywhere}
+.ms-command-page .ms-decision-action{background:transparent;border:0}.ms-decision-effect{border:1px solid #b99a60;border-radius:4px;background:#07191d70;font-size:clamp(.68rem,1.8vw,.82rem)}
+.ms-decision-effect span{font-weight:400}.ms-decision-effect strong:empty{display:none}
 .ms-route-stop.ms-traversed{background:#b7954433}.ms-route-stop.ms-destination{background:#b7954455;outline:2px solid #ffda92}
-.ms-command-page .ms-controls{grid-template-rows:auto auto auto;align-content:center}
-@media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-columns:minmax(72px,16%) minmax(0,1fr) minmax(0,26%)}.ms-command-page .ms-decisions .ms-card{width:min(100%,76px)}.ms-command-page .ms-notes{height:clamp(45px,18dvh,120px)}}
-@media(orientation:portrait) and (max-height:720px){.ms-command-page .ms-decisions .ms-card{width:min(100%,78px)}.ms-command-page .ms-notes{height:clamp(48px,12dvh,88px)}}
+.ms-command-page .ms-controls{grid-template-rows:auto auto;align-content:center}
+.ms-inspect-narrative{flex:none;text-align:center;font-size:.9rem;margin:0;line-height:1.2}
+@media(orientation:landscape){.ms-command-page .ms-live-layout{grid-template-columns:minmax(72px,16%) minmax(0,1fr) minmax(0,26%)}.ms-command-page .ms-notes{height:clamp(45px,18dvh,120px)}}
+@media(orientation:landscape) and (max-height:430px){.ms-decision{gap:2px;padding:3px}.ms-decision-medallion{width:28px;font-size:1rem}.ms-decision-copy{font-size:.72rem}.ms-decision-effect{font-size:.68rem}}
+@media(orientation:portrait) and (max-height:720px){.ms-command-page .ms-notes{height:clamp(48px,12dvh,88px)}}

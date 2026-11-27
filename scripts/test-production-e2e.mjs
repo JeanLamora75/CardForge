@@ -588,6 +588,13 @@ async function journey(locale,mobile){
         }
         await page.setViewportSize({width:390,height:844});
         await writeMsSave(fixture);
+        for(const viewport of [{width:390,height:844},{width:844,height:390},{width:360,height:640}]){
+          await page.setViewportSize(viewport);
+          assert.equal(await page.locator('.ms-top .ms-card-frame').count(),0);
+          assert.ok(await page.locator('.ms-decision-copy,.ms-decision-effect,.ms-decision-action').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect(),p=n.closest('.ms-decision').getBoundingClientRect();return n.scrollHeight<=n.clientHeight+1&&n.scrollWidth<=n.clientWidth+1&&r.bottom<=p.bottom+1&&getComputedStyle(n).overflowY!=='auto';})), 'decision text must fit without scrolling '+JSON.stringify(viewport));
+          await page.screenshot({path:'ux-screenshots/ms-decision-'+locale+'-'+(mobile?'touch':'desktop')+'-'+viewport.width+'.png'});
+        }
+        await page.setViewportSize({width:390,height:844});
         assert.equal(await page.locator('.ms-decision-action').count(),2);
         assert.deepEqual(await page.locator('.ms-decision-action').evaluateAll(nodes=>nodes.map(n=>Number(n.dataset.distance))),[2,3]);
         assert.equal(await page.locator('.ms-actions [data-action="look-around"]').count(),0);
@@ -602,7 +609,7 @@ async function journey(locale,mobile){
         await page.locator('.ms-notes .ms-draggable').first().waitFor();
         await page.screenshot({path:'ux-screenshots/ms-direct-'+locale+'-'+(mobile?'touch':'desktop')+'.png'});
         await page.waitForTimeout(320);
-        await msDrag(page.locator('.ms-notes .ms-draggable').first(),page.locator('.ms-top .ms-card').first());
+        await msDrag(page.locator('.ms-notes .ms-draggable').first(),page.locator('.ms-top .ms-decision-identity').first());
         const returned=await waitSavedChanged(page,game.id,marked);
         assert.equal(returned.state.notes.length,fixture.state.notes.length);
         assert.equal(returned.state.deck[0].id,'hearts-2');
