@@ -1,0 +1,198 @@
+[
+  {
+    "path": "public/assets/boards/midnight-syndicate/dead-end-portrait.png",
+    "width": 810,
+    "height": 1440,
+    "mode": "RGB",
+    "sha256": "2e304c8933a2e34bf9ca54d07a0dfa9be8cbde63a4d7a0bcd292959418cd6e6b"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/dead-end-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "e4c8c5c9ec63e41e747aea5063381462b5cf496f15b814d3af6968ca8f54cd95"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/victory-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "3734ef606bd184ca388e739f3c08f118ee4c80b717f0ae98ccb01dc3a002ff9a"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/victory-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "510aae782c9ac62802cd6c04b773673235398e8a65903e13774ddd9371791738"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m01-le-parrain-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "6334ea0a3e785576d9ceaab99b7cf30e0b9a3b2076bc58f4b4aefcaa1bd7794b"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m01-le-parrain-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "163d2ce5dc46f56230ebc75c52f2a850df744c9d70f8f6c11cf6ee47b8937030"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m02-la-veuve-noire-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "c40848296f1bc66c3b5f4e1fa3da5d8ae1e999ba75316921051f3b4b847bd7c5"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m02-la-veuve-noire-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "42ded000a9af798ea6e945b8e03c92c1bf855664be9754088ace17b31a7f1850"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m03-le-tueur-a-gages-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "ff0627cfa0054e0455d70a36b75fde89bf98c6e274ab0b5914f00c7e92f6e20b"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m03-le-tueur-a-gages-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "43144ceb44e582743ac223a0811197b7080b1756b6ce8129bcf174a9ce59e74e"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m04-la-balance-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "6f65b18a38ac5116ba338068842ec3f985e782bb6ab41026018624d7cb02fc66"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m04-la-balance-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "1a77ee30e0bc65f113fbe9d0a246ee8d0a9a7b95d409b3d235b4e6eab7d19e3b"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m05-l-embuscade-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "45fe3bcf6a1bba65b30f35ec5fa34b2f1f521868ac64db0a058221e8378ec0c1"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m05-l-embuscade-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "be133e62c48a4a0bbcb1444931ea2b91c681a97360e9b1c4cfc01a4c1edadddc"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m06-la-voiture-piegee-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "1f7fb1fa0419f4ddb5cb56e41b4e6bd55679e3bf4aea87a13fd736438eba2204"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m06-la-voiture-piegee-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "e5700069d9d6fa78dc87f612a53cc211dd714d2bb140cd85e95e3bf819828112"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m07-le-tireur-de-l-ombre-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "7c93853a463f39472f61542f8bbac7794b73fd3fd61fe93dfd32120cf90e7a59"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m07-le-tireur-de-l-ombre-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "7d259caebc906eb8004d75485b74c5eb4a8f7906ad9b20b34db3d8b9e63350ce"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m08-le-guet-apens-des-docks-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "e787df3c4d739bce9a02aefa00b921c86863f3c2bf00950017f51e7e6f00df6a"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m08-le-guet-apens-des-docks-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "4e0ed3898bfd0d90815a8bc2c3ee3a39c50090652e6a504a923a60864c35beba"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m09-le-commissaire-corrompu-portrait.png",
+    "width": 810,
+    "height": 1440,
+    "mode": "RGB",
+    "sha256": "40d805357690e5cd0571e49f181b19d2d15b11d53099e5236e02fb8ac172cfa1"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m09-le-commissaire-corrompu-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "212c56275dde9ff4b0e2611926482e3e9d0011d7fc6397da5f7a1417cb32729d"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m10-le-barrage-de-police-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "4a541636375ae6d264ce4b837204ac302f140d29bfd76cf9e6c0c6909da107fc"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m10-le-barrage-de-police-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "8f3749c197c822e65e36c3f5ab7756e392406313fe804d6abd6aeec0dba19b71"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m11-le-juge-vereux-portrait.png",
+    "width": 864,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "c14d1a3330ffdb29c4a8179e7f33d862107770aa402b419c88d4a92179fe8381"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m11-le-juge-vereux-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "01eb820a4d461bf058461296138161dfb0459ed4ca2375bf02b3051aa9ea343e"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m12-l-interrogatoire-clandestin-portrait.png",
+    "width": 900,
+    "height": 1600,
+    "mode": "RGB",
+    "sha256": "17144256d3450c98d0e9444fb0e7a756301f515a265bf5f3a0c7c62e3679fdc0"
+  },
+  {
+    "path": "public/assets/boards/midnight-syndicate/ms-m12-l-interrogatoire-clandestin-landscape.png",
+    "width": 1600,
+    "height": 900,
+    "mode": "RGB",
+    "sha256": "68f2fd6986f288b82dcf960ec830075a25f107c7810e72fe94a15ee8d96d17ee"
+  }
+]
