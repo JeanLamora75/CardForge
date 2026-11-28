@@ -954,6 +954,13 @@ async function journey(locale,mobile){
         await offline.reload();
         await sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}).waitFor();
         assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
+        await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Rejouer':'Replay',exact:true}),mobile);
+        await offline.locator('.sd-live').waitFor();
+        assert.equal(await offline.locator('.sd-end-dialog,.sd-confirm').count(),0,'terminal replay needs no extra confirmation');
+        const replayed=await readSaved(offline,'card-capture');
+        assert.notEqual(replayed.sessionId,fixture.sessionId);
+        assert.equal(replayed.state.outcome,'in-progress');
+
       }
       await offline.goto(HOST+'#game/card-capture/rules');
       await offline.getByRole('heading',{name:locale==='fr'?'Règles de Skydeck':'Skydeck rules'}).waitFor();
