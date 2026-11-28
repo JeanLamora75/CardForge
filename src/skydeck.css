@@ -96,8 +96,8 @@
 .sd-command-header button .sd-back-icon{width:65%;height:65%;transform:rotate(180deg)}
 .sd-board .sd-counts .sd-counter{isolation:isolate;position:relative;overflow:hidden;background:#172832;border:1px solid #c5a66b;border-radius:7px;min-height:40px;padding:4px}
 .sd-board .sd-counts .sd-counter .sd-counter-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1}
-.sd-board .sd-counts .sd-counter small{color:#fff5dc;background:#10202de8;border-radius:3px;padding:0 3px;line-height:1.15}
-.sd-board .sd-counts .sd-counter strong{color:#ffe7ab;background:#10202de8;border-radius:3px;padding:0 3px;line-height:1.15}
+.sd-board .sd-counts .sd-counter small{color:#fff5dc;background:transparent;border-radius:0;padding:0 3px;line-height:1.15;text-shadow:0 1px 2px #150b03,0 -1px 1px #150b03}
+.sd-board .sd-counts .sd-counter strong{color:#ffe9b4;background:transparent;border-radius:0;padding:0 3px;line-height:1.15;text-shadow:0 1px 2px #150b03,0 -1px 1px #150b03}
 .sd-board .sd-card.sd-empty{position:relative;isolation:isolate;display:grid;place-items:center;background:#172832;border:1px solid #b99a65;padding:0}
 .sd-board .sd-slot-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
 .sd-board .sd-slot-label{position:relative;z-index:1;text-align:center;background:#10202dcc;border-radius:4px;padding:2px 4px}
@@ -176,3 +176,13 @@ html[data-motion=off] .sd-board *,html[data-motion=off] .sd-board{animation:none
 .sd-board .sd-tactical{text-align:center;color:#cce8a5;font-weight:bold;font-size:.75rem}
 .sd-live .sd-menu-toggle{display:flex;min-width:120px}
 @media(max-width:420px){.sd-board .sd-action-icon{width:12px;height:12px}.sd-board .sd-actions button{font-size:.64rem}}
+
+/* Compact HUD information without changing the card rows. */
+.sd-board .sd-resumed{position:absolute;z-index:10;top:52px;right:8px;max-width:calc(100% - 16px);padding:4px 9px;margin:0;border:1px solid #b99a65;border-radius:5px;background:#172832f5;color:#ffe9b4;font-size:.72rem;line-height:1.2;pointer-events:none;text-shadow:none}
+.sd-board .sd-console .sd-hint{font-size:.75rem;line-height:1.2;text-align:center;margin:2px 0;color:#fff0d2}
+.sd-board .sd-tactical{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:2px 7px;min-height:18px;padding:2px 4px;border:1px solid #907849;border-radius:5px;background:#172e2b;color:#cce8a5;font-size:.72rem;line-height:1.15}
+.sd-board .sd-tactical img{width:14px;height:14px;object-fit:contain}
+.sd-board .sd-tactical strong{font-size:1em}
+.sd-board .sd-tactical-enemy{color:#f5bd9b}
+.sd-board .sd-tactical-result{color:#d1e8aa}
+@media(max-width:420px){.sd-board .sd-tactical{gap:2px 4px;font-size:.65rem}.sd-board .sd-console .sd-hint{font-size:.68rem}}

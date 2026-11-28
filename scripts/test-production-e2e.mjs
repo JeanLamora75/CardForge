@@ -713,6 +713,7 @@ async function journey(locale,mobile){
     assert.equal(await sd.locator('.sd-preview span').evaluate(n=>getComputedStyle(n).backgroundColor),'rgba(0, 0, 0, 0)');
     const assertSkyPhaseFits=async()=>{const r=await sd.evaluate(n=>({bottom:n.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight}));assert.ok(r.bottom<=r.height+2&&r.scroll<=r.height+2,JSON.stringify(r));};
     await assertSkyPhaseFits();
+    assert.ok(await sd.locator('.sd-counter strong,.sd-counter small').evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)')),'counter text must be integrated without background');
     for(let phase=0;phase<3;phase++){
       const previous=await sd.locator('.sd-round').textContent();
       await interact(page,sd.locator('.sd-preview'),mobile);
@@ -751,6 +752,7 @@ async function journey(locale,mobile){
       await page.setViewportSize(viewport);
       const layout=await sd.evaluate(node=>{const consoleRect=node.querySelector('.sd-console').getBoundingClientRect();const cards=[...node.querySelectorAll('.sd-card')].map(c=>{const r=c.getBoundingClientRect();return {w:r.width,h:r.height,top:r.top,bottom:r.bottom,left:r.left,right:r.right}});return {bottom:consoleRect.bottom,scroll:document.documentElement.scrollHeight,width:innerWidth,height:innerHeight,cards};});
       assert.ok(layout.bottom<=layout.height+2&&layout.scroll<=layout.height+2,JSON.stringify({viewport,layout}));
+      assert.ok(await sd.locator('.sd-hint,.sd-tactical').count()<=1,'tactical guidance replaces the hint');
       assert.ok(layout.cards.every(c=>c.w>0&&c.h>0&&Math.abs(c.w/c.h-2/3)<.05&&c.left>=-1&&c.right<=layout.width+1&&c.bottom<=layout.height+1),JSON.stringify({viewport,layout}));
       const powers=await sd.locator('.sd-face .sd-power').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect(),f=n.closest('.sd-face').getBoundingClientRect(),s=getComputedStyle(n);const range=document.createRange();range.selectNodeContents(n);const t=range.getBoundingClientRect();return {value:n.textContent,transparent:s.backgroundColor==='rgba(0, 0, 0, 0)',border:s.borderTopWidth,font:s.fontFamily,color:s.color,inside:t.left>=r.left-1&&t.right<=r.right+1&&t.top>=r.top-1&&t.bottom<=r.bottom+1,upperLeft:r.left>=f.left&&r.right<=f.left+f.width*.4&&r.top>=f.top&&r.bottom<=f.top+f.height*.3};}));
       assert.ok(powers.length>0&&powers.every(p=>/^(?:[2-9]|1[0-4]|★)$/.test(p.value)&&p.transparent&&p.border==='0px'&&p.font.includes('Alegreya SC')&&p.color==='rgb(255, 233, 180)'&&p.inside&&p.upperLeft),JSON.stringify({viewport,powers}));

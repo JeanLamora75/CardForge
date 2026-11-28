@@ -36,3 +36,7 @@ Sélection et cible différenciées, boutons de combat illustrés, choix unique 
 
 ## SD-CARD-01 à 18 — puissance intégrée
 Valeur seule, sans fond ni bordure, police Alegreya SC, ivoire doré et ombre légère. Taille relative à la carte, variante deux chiffres et Joker. Emblèmes, noms, libellés accessibles, sélection et moteur inchangés. Position initiale commune estimée à partir de la capture de recette (connecteur ne permet pas de décoder les PNG originaux) : gauche 5 %, haut 5 %, largeur 29 %, hauteur 18 %. Centrage exact sur chacun des cinq blasons à confirmer visuellement. Tests navigateur de géométrie, contraste CSS et texte ajoutés à la matrice existante, qui ne couvre pas exhaustivement les 54 cartes dans chaque résolution. CI à constater. Aucun uv, aucune modification des images.
+
+
+## SD-BOARD-77 à 84 — finition HUD et aide
+Compteurs sans fonds rapportés, relief typographique, consignes FR/EN adaptées à la sélection, bilan de capture légale remplaçant la consigne lorsque disponible. Indicateur de reprise contrasté et superposé, disparition après 3,5 secondes (ou action), sans réserver d’espace. Contrôles E2E de transparence et exclusivité de l’aide ajoutés ; matrice existante conservée. Validation des dimensions et rendu en CI/recette requise. Moteur, sauvegardes et graphismes inchangés. Adaptation manuelle sans uv.
