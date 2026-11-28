@@ -1,10 +1,11 @@
+import {automaticSkydeckAction,skydeckAttackFeedback,skydeckCompatibleTargets,skydeckProtected} from '../application/skydeck-flow.ts';
 import SkydeckEnding from './SkydeckEnding.tsx';
 import { resolveSkydeckCopy, skydeckAttackSummary } from '../application/skydeck-combat-ui.ts';
 import { skydeckMotionPlan } from '../application/skydeck-motion.ts';
 import { motionAllowed } from '../application/shared-settings.ts';
 import { skydeckCardArt } from '../application/skydeck-art.ts';
 import { playSkydeckSound, setSkydeckFinished, skydeckActionSounds } from '../application/skydeck-audio.ts';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import type { Locale } from '../i18n/language.ts';
 import { describeSkydeckCard } from '../games/card-capture/preview.ts';
@@ -30,6 +31,12 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   const [target,setTarget]=useState<number|null>(null);
   const [copy,setCopy]=useState<string|null>(null);
   const [error,setError]=useState(false);
+  const [notice,setNotice]=useState('');
+  const [dragPosition,setDragPosition]=useState<number|null>(null);
+  const drag=useRef<{id:string;x:number;y:number;active:boolean;pointer:number}|null>(null);
+  const suppressClick=useRef(false);
+  useEffect(()=>{if(!notice)return;const t=window.setTimeout(()=>setNotice(''),900);return()=>window.clearTimeout(t);},[notice,view?.round]);
+
   const [menu,setMenu]=useState(false);
   const menuRef=useRef<HTMLDivElement>(null);
   const menuButtonRef=useRef<HTMLButtonElement>(null);
@@ -155,6 +162,9 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       for(const sound of skydeckActionSounds(command,before,after))playSkydeckSound(sound);
       if(after.outcome==='win'||after.outcome==='loss'){setSkydeckFinished(true);playSkydeckSound(after.outcome==='win'?'victory':'defeat','music');}
       setView(after);setResumed(false);reset();heading.current?.focus();
+      if(command.type==='capture-a'||command.type==='capture-b'||command.type==='capture-c')setNotice(command.type);
+      else if(command.type==='advance-enemy')setNotice('round');
+
       if(animate&&root&&after.outcome==='in-progress'){
         requestAnimationFrame(()=>requestAnimationFrame(()=>{
           if(!mounted.current||!root.isConnected){departed.forEach(n=>n.remove());return;}
@@ -172,6 +182,14 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       }
     });
   }
+  const automatic=automaticSkydeckAction(view,tutorial);
+  const autoConfirm=useRef(confirm);autoConfirm.current=confirm;
+  useEffect(()=>{
+    if(!automatic||busy||blocked||error||storageError||menu||restart||abandon)return;
+    const motion=motionAllowed(document.documentElement.dataset.motion==='on'?'on':document.documentElement.dataset.motion==='off'?'off':'system',window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const timer=window.setTimeout(()=>{void autoConfirm.current(automatic);},motion?(notice.startsWith('capture-')?950:570):notice.startsWith('capture-')?900:30);
+    return()=>window.clearTimeout(timer);
+  },[view,busy,blocked,error,storageError,menu,restart,abandon,tutorial,notice]);
   const same=(ids:readonly string[])=>ids.length===selected.length&&ids.every(id=>selected.includes(id));
   const matching=view?.actions.filter(a=>{
     if(view.phase==='discard')return selected.length===0?a.type==='discard-none':a.type==='discard'&&same(a.cardIds);
@@ -182,12 +200,38 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   })??[];
   const {choices:copyChoices,effective:effectiveCopy,chosen}=resolveSkydeckCopy(matching,copy);
   const attack=skydeckAttackSummary(chosen,view?.enemyLine??[]);
+  const feedback=kind==='capture-a'&&!attack?skydeckAttackFeedback(view,selected,target,copy):undefined;
+  const compatible=hintsEnabled?skydeckCompatibleTargets(view,kind,selected):[];
+  const dragStart=(event:ReactPointerEvent<HTMLButtonElement>,id:string)=>{
+    if(busy||automatic||restart||abandon||event.button!==0)return;
+    suppressClick.current=false;drag.current={id,x:event.clientX,y:event.clientY,active:false,pointer:event.pointerId};
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+  const dragMove=(event:ReactPointerEvent<HTMLButtonElement>)=>{
+    const d=drag.current;if(!d||d.pointer!==event.pointerId)return;
+    if(Math.hypot(event.clientX-d.x,event.clientY-d.y)>9)d.active=true;
+    if(d.active){const hit=document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-position]');setDragPosition(hit?Number(hit.dataset.position):null);}
+  };
+  const dragEnd=(event:ReactPointerEvent<HTMLButtonElement>,cancel=false)=>{
+    const d=drag.current;drag.current=null;setDragPosition(null);
+    if(!d?.active)return;
+    suppressClick.current=true;
+    if(cancel||busy||automatic||restart||abandon)return;
+    const hit=document.elementFromPoint(event.clientX,event.clientY);
+    const enemy=hit?.closest<HTMLElement>('[data-position]');
+    if(view?.phase==='capture'&&enemy?.dataset.cardId&&(kind!=='capture-b'||enemy.dataset.position==='1')){
+      setSelected(old=>kind==='capture-b'?[d.id]:old.includes(d.id)?old:[...old,d.id]);setTarget(Number(enemy.dataset.position));setCopy(null);playSkydeckSound('select');
+    }else if(view?.phase==='discard'&&hit?.closest('[data-sd-discard]')){
+      setSelected(old=>old.includes(d.id)?old:[...old,d.id]);playSkydeckSound('select');
+    }
+  };
+
   const cardName=(id:string)=>describeSkydeckCard(id,language).name;
   const actionName=(a:SkydeckAction)=>{
     switch(a.type){
       case 'advance-enemy':return tr('Avancer les ennemis','Advance enemies');
       case 'discard-none':return tr('Conserver la main','Keep hand');
-      case 'discard':return tr('Défausser','Discard')+' '+a.cardIds.length;
+      case 'discard':return tr('Défausser','Discard')+' '+a.cardIds.length+' '+(a.cardIds.length===1?tr('carte','card'):tr('cartes','cards'));
       case 'draw':return tr('Compléter la main','Draw to four');
       case 'capture-a':return tr('A · Capturer','A · Capture');
       case 'capture-b':return tr('B · Laisser capturer','B · Let enemy capture');
@@ -218,27 +262,29 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     {resumed?<p className="sd-resumed" aria-live="polite">{tr('✓ Partie reprise','✓ Game resumed')}</p>:null}
     {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Action non enregistrée. La sauvegarde précédente est conservée.','Action not saved. Previous save preserved.')}</p>:null}
     {!view?<>{busy?<p role="status">{tr("Préparation de la flotte…","Preparing the fleet…")}</p>:!blocked?<button type="button" className="primary-action" onClick={()=>void start()}>{tr("Réessayer","Retry")}</button>:null}</>:<>
+      {notice?<div className="sd-feedback" role="status">{notice==='capture-a'?tr('Navire capturé !','Ship captured!'):notice==='capture-b'?tr('Capture ennemie','Enemy capture'):notice==='capture-c'?tr('Ennemi repoussé !','Enemy pushed back!'):tr('Nouvelle manche','New round')}</div>:null}
       <p className="sd-round" role="status" aria-live="polite">{tr('Manche','Round')} {view.round}</p>
       <div className="sd-phases" aria-label={tr('Phases','Phases')} aria-live="polite">{(['enemy','discard','draw','capture'] as const).map(p=><span key={p} aria-current={view.phase===p?'step':undefined}><img className="sd-phase-art" src={ui('buttons',view.phase===p?'gold':'dark')} alt=""/><img className="sd-phase-icon" src={ui('icons',phaseIcons[p])} alt=""/><span className="sd-phase-label">{phaseLabels[p]}</span></span>)}</div>
-      <div className="sd-counts">{[[tr('Pioche','Player deck'),view.counts.playerDeck,'draw'],[tr('Ennemis','Enemy deck'),view.counts.enemyDeck,'enemy'],[tr('Défausse','Discard'),view.counts.discard,'discard'],[tr('Pertes','Enemy capture'),view.counts.enemyCapture,'capture']].map(([label,n,icon])=><span key={label} className="sd-counter"><img className="sd-counter-art" src={ui("hud","counter-blank")} alt=""/><img src={ui('icons',String(icon))} alt=""/><strong>{n}</strong><small>{label}</small></span>)}</div>
+      <div className="sd-counts">{[[tr('Pioche','Player deck'),view.counts.playerDeck,'draw'],[tr('Ennemis','Enemy deck'),view.counts.enemyDeck,'enemy'],[tr('Défausse','Discard'),view.counts.discard,'discard'],[tr('Pertes','Enemy capture'),view.counts.enemyCapture,'capture']].map(([label,n,icon])=><span key={label} className="sd-counter" data-sd-discard={icon==='discard'?true:undefined}><img className="sd-counter-art" src={ui("hud","counter-blank")} alt=""/><img src={ui('icons',String(icon))} alt=""/><strong>{n}</strong><small>{label}</small></span>)}</div>
       <div className="sd-fleets"><section className="sd-fleet sd-enemy-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Flotte ennemie','Enemy fleet')}</span></h3>
       <div className="sd-line">{positions.map(position=>{
         const id=view.enemyLine[position-1];
         const forcedTarget=view.phase==='capture'&&kind==='capture-b'&&position===1&&!!id;
         const active=view.phase==='capture'&&(kind==='capture-b'?forcedTarget:target===position);
-        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')+(forcedTarget?' sd-forced-target':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+ ' · '+(id?cardName(id):tr('Vide','Empty'))+(forcedTarget?tr(' · Cible imposée',' · Required target'):'')} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
+        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')+(forcedTarget?' sd-forced-target':'')+(compatible.includes(position)?' sd-compatible':'')+(dragPosition===position?' sd-drag-target':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+ ' · '+(id?cardName(id):tr('Vide','Empty'))+(forcedTarget?tr(' · Cible imposée',' · Required target'):'')} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
           {id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></>}
         </button>;
       })}</div>
       </section><section className="sd-fleet sd-player-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Votre flotte','Your fleet')}</span></h3>
-      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className={"sd-card"+(effectiveCopy===id?" sd-copy-source":"")+(copyChoices.length>1&&copyChoices.includes(id)?" sd-copy-choice":"")} aria-label={cardName(id)+(effectiveCopy===id?tr(" · Copié par le Joker"," · Copied by Joker"):"")} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
+      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className={"sd-card"+(effectiveCopy===id?" sd-copy-source":"")+(copyChoices.length>1&&copyChoices.includes(id)?" sd-copy-choice":"")} aria-label={cardName(id)+(effectiveCopy===id?tr(" · Copié par le Joker"," · Copied by Joker"):"")} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||restart||abandon||busy} onPointerDown={event=>dragStart(event,id)} onPointerMove={dragMove} onPointerUp={event=>dragEnd(event)} onPointerCancel={event=>dragEnd(event,true)} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return;}playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
       </section></div><section className="sd-console"><h3 ref={heading} tabIndex={-1}>{tr('Commandement','Command')}</h3>
       {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}><img className="sd-action-art" src={ui('buttons',k==='capture-a'?'green':k==='capture-b'?'red':'blue')} alt=""/><img className="sd-action-icon" src={ui('icons',k==='capture-a'?'capture':k==='capture-b'?'sacrifice':'repel')} alt=""/><span>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Laisser capturer','B · Let enemy capture'):tr('C · Repousser','C · Push back')}</span></button>)}</div>:null}
-      {hintsEnabled&&view.phase==='capture'&&!attack?<p className="sd-hint" aria-live="polite">{kind==='capture-a'?(target===null?tr('Sélectionnez un navire ennemi.','Select an enemy ship.'):selected.length===0?tr('Engagez vos navires de même faction.','Select ships of the matching faction.'):copyChoices.length>1&&!effectiveCopy?tr('Choisissez la copie du Joker.','Choose the Joker copy.'):tr('Ajustez les cartes engagées.','Adjust the selected cards.')):kind==='capture-b'?(selected.length===0?tr('Sacrifiez un navire face à la cible imposée.','Select a ship to sacrifice against the required target.'):tr('Une figure ou un As perdu entraîne la défaite.','Losing a face card or ace causes defeat.')):target===null?tr('Choisissez le navire à repousser.','Choose the ship to push back.'):selected.length<2?tr('Engagez deux cartes à sacrifier.','Select two cards to sacrifice.'):tr('Vérifiez les cartes engagées.','Check the selected cards.')}</p>:null}
+      {hintsEnabled&&view.phase==='discard'&&!automatic?<p className="sd-hint">{tr('Sélectionnez les cartes à défausser, ou conservez votre main.','Select cards to discard, or keep your hand.')}</p>:null}
+      {hintsEnabled&&view.phase==='capture'&&!attack?<p className="sd-hint" aria-live="polite">{kind==='capture-a'?(target===null?tr('Sélectionnez un navire ennemi.','Select an enemy ship.'):selected.length===0?tr('Engagez vos navires de même faction.','Select ships of the matching faction.'):copyChoices.length>1&&!effectiveCopy?tr('Choisissez la copie du Joker.','Choose the Joker copy.'):feedback?.reason==='faction'?tr('Factions incompatibles.','Incompatible factions.'):feedback?.reason==='joker'?tr('Le Joker doit copier un navire engagé.','The Joker must copy a selected ship.'):feedback?.reason==='power'?tr('Attaque','Attack')+' '+feedback.total+' / '+feedback.enemy+' · '+tr('Puissance manquante : ','Missing power: ')+(feedback.enemy!-feedback.total!):tr('Ajustez les cartes engagées.','Adjust the selected cards.')):kind==='capture-b'?(selected.length===0?tr('Sacrifiez un navire face à la cible imposée.','Select a ship to sacrifice against the required target.'):(selected.some(skydeckProtected)||(view.enemyLine[0]&&skydeckProtected(view.enemyLine[0]))?tr('Attention : cette action entraîne la défaite.','Warning: this action causes defeat.'):tr('Les deux navires seront définitivement perdus.','Both ships will be permanently lost.'))):target===null?tr('Choisissez le navire à repousser.','Choose the ship to push back.'):selected.length<2?tr('Engagez deux cartes à sacrifier.','Select two cards to sacrifice.'):(selected.some(skydeckProtected)?tr('Attention : cette action entraîne la défaite.','Warning: this action causes defeat.'):tr('Deux cartes perdues ; ennemi renvoyé sous sa pioche.','Two cards lost; enemy returned to its deck.'))}</p>:null}
       {copyChoices.length>1?<div className="sd-copy-picker" role="group" aria-label={tr('Carte copiée par le Joker','Card copied by Joker')}><span>{tr('Copie du Joker :','Joker copy:')}</span>{copyChoices.map(id=><button key={id} type="button" aria-pressed={effectiveCopy===id} disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound('joker');setCopy(id);}}>{describeSkydeckCard(id,language).power} {describeSkydeckCard(id,language).symbol}</button>)}</div>:null}
       {hintsEnabled&&attack?<div className="sd-tactical" aria-live="polite"><span className="sd-tactical-player">{tr('Attaque','Attack')} <strong>{attack.values.length>1?attack.values.join(' + ')+' = ':''}{attack.total}</strong></span><img src={ui('icons','capture')} alt=""/><span className="sd-tactical-enemy">{tr('Ennemi','Enemy')} <strong>{attack.enemy}</strong></span><span className="sd-tactical-result">{tr('✓ Capture possible','✓ Capture possible')}</span></div>:null}
       {view.blockedReason?<p role="alert">{tr('Cartes personnelles insuffisantes. Règle d’impasse à confirmer ; aucune défaite attribuée.','Not enough personal cards. Deadlock rule pending confirmation; no defeat recorded.')}</p>:null}
-      {!view.blockedReason?<button type="button" className="primary-action sd-preview" disabled={!chosen||restart||abandon||busy||blocked} onClick={()=>{if(chosen)void confirm(chosen);}}><img className="sd-button-art" src={ui('buttons',chosen&&!busy&&!restart&&!abandon&&!blocked?'gold':'neutral')} alt=""/><span>{chosen?actionName(chosen):view.phase==='capture'?tr('Choisir les cartes','Select cards'):phaseLabels[view.phase]}</span></button>:null}
+      {!view.blockedReason?<button type="button" className="primary-action sd-preview" disabled={!chosen||restart||abandon||busy||blocked||!!automatic&&!error&&!storageError} onClick={()=>{if(chosen)void confirm(chosen);}}><img className="sd-button-art" src={ui('buttons',chosen&&!busy&&!restart&&!abandon&&!blocked?'gold':'neutral')} alt=""/><span>{automatic&&!error&&!storageError?(view.phase==='enemy'?tr('Déploiement ennemi…','Enemy deployment…'):view.phase==='draw'?tr('Renforts en approche…','Reinforcements approaching…'):tr('Préparation de la flotte…','Preparing fleet…')):chosen?actionName(chosen):view.phase==='capture'?tr('Choisir les cartes','Select cards'):phaseLabels[view.phase]}</span></button>:null}
       {error?<p role="alert">{tr('Action refusée. L’état précédent est conservé.','Action rejected. Previous state preserved.')}</p>:null}
       {abandon?<div className="sd-confirm"><p>{tr('Abandonner définitivement cette partie ?','Abandon this game permanently?')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void confirm({type:'abandon'})}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setAbandon(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}
 

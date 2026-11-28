@@ -270,3 +270,13 @@ html[data-motion=off] .sd-end-content{animation:none}
 .sd-board .sd-phases>span[aria-current] .sd-phase-icon{filter:brightness(.4)}
 .sd-board .sd-phases>span .sd-phase-label{display:inline;background:none;border:0;padding:0;min-height:0;color:inherit;line-height:1.1}
 @media(max-width:420px){.sd-command-header{grid-template-columns:38px minmax(0,1fr) 38px 38px 38px;gap:3px}.sd-command-header button{width:38px;height:38px}.sd-header-menu .sd-game-options button{width:100%;height:auto}.sd-board .sd-phases>span .sd-phase-icon{width:12px;height:12px}}
+
+.sd-live .sd-console{min-height:136px;display:flex;flex-direction:column;justify-content:center}
+.sd-live .sd-console .sd-preview{margin-top:auto}
+.sd-live .sd-hand button{touch-action:none;user-select:none}
+.sd-board .sd-card.sd-compatible{outline:2px solid #cce8a5;outline-offset:-2px}
+.sd-board .sd-card.sd-drag-target{box-shadow:0 0 0 3px #e2b96b}
+.sd-feedback{position:absolute;top:18%;left:50%;transform:translateX(-50%);z-index:15;background:#172832ed;border:1px solid #cba66b;border-radius:6px;padding:5px 12px;color:#ffe9b4;white-space:nowrap;pointer-events:none;font-weight:bold}
+.sd-command-header>button:first-child,.sd-command-header .sd-menu-toggle{box-shadow:inset 0 0 0 2px #7d5629,inset 0 0 0 4px #d4a860,inset 0 0 0 6px #35281d;background:radial-gradient(#62482d,#241c16)}
+@media(max-height:650px){.sd-live .sd-console{min-height:110px}}
+@media(max-height:450px){.sd-live .sd-console{min-height:94px}.sd-feedback{top:8%}}
