@@ -5,6 +5,7 @@ import { motionAllowed } from '../application/shared-settings.ts';
 import { skydeckCardArt } from '../application/skydeck-art.ts';
 import { playSkydeckSound, setSkydeckFinished, skydeckActionSounds } from '../application/skydeck-audio.ts';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import type { Locale } from '../i18n/language.ts';
 import { describeSkydeckCard } from '../games/card-capture/preview.ts';
 import type { SkydeckAction, SkydeckPublicState } from '../games/card-capture/engine.ts';
@@ -30,6 +31,15 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   const [copy,setCopy]=useState<string|null>(null);
   const [error,setError]=useState(false);
   const [menu,setMenu]=useState(false);
+  const menuRef=useRef<HTMLDivElement>(null);
+  const menuButtonRef=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{
+    if(!menu)return;
+    const outside=(event:PointerEvent)=>{if(!menuRef.current?.contains(event.target as Node))setMenu(false);};
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'){event.preventDefault();setMenu(false);menuButtonRef.current?.focus();}};
+    document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
+    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
+  },[menu]);
   const [restart,setRestart]=useState(false);
   const [abandon,setAbandon]=useState(false);
   const [busy,setBusy]=useState(true);
@@ -193,14 +203,23 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     </span>;
   };
   const phaseLabels={enemy:tr('Ennemis','Enemies'),discard:tr('Défausse','Discard'),draw:tr('Pioche','Draw'),capture:tr('Capture','Capture'),finished:tr('Terminée','Finished')};
+  const menuHost=typeof document==='undefined'?null:document.getElementById('sd-header-options');
+  const headerMenu=menuHost&&view?.outcome==='in-progress'?createPortal(<div className="sd-header-menu" ref={menuRef}>
+    <button ref={menuButtonRef} className="sd-menu-toggle" type="button" aria-label={tr('Options de partie','Game options')} aria-expanded={menu} aria-controls={menu?'sd-game-options':undefined} disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound(menu?'close':'open');setMenu(v=>!v);}}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 6h14M5 12h14M5 18h14"/></svg></button>
+    {menu?<div id="sd-game-options" className="sd-game-options" role="group" aria-label={tr('Options de partie','Game options')}>
+      <button type="button" disabled={busy} onClick={()=>{setMenu(false);void requestRestart();}}><img src={ui('buttons','gold')} alt=""/><span>{tr('Nouvelle partie','New game')}</span></button>
+      {!tutorial?<button type="button" disabled={busy} onClick={()=>{setMenu(false);playSkydeckSound('open');setAbandon(true);}}><img src={ui('buttons','red')} alt=""/><span>{tr('Abandonner','Abandon')}</span></button>:null}
+    </div>:null}
+  </div>,menuHost):null;
   if(view&&view.outcome!=='in-progress')return <SkydeckEnding view={view} language={language} tutorial={tutorial} busy={busy} storageError={storageError} onReplay={()=>void replayFinished()}/>;
   return <section ref={boardRef} className={"sd-board"+(view?.outcome==="in-progress"?" sd-live":"")} style={{'--sd-phase-panel': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/phase-panel.webp")','--sd-counter': 'url("'+import.meta.env.BASE_URL+'art/hud/skydeck/counter-blank.webp")','--sd-section': 'url("'+import.meta.env.BASE_URL+'art/banners/skydeck/section-heading.webp")','--sd-enemy-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/enemy-slot.webp")','--sd-hand-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/hand-slot.webp")','--sd-wood': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/wood-deck.webp")','--sd-dark': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/dark.webp")','--sd-gold': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/gold.webp")','--sd-neutral': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/neutral.webp")','--sd-victory': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/victory-portrait.webp")','--sd-defeat': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/defeat-portrait.webp")'} as CSSProperties} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
+    {headerMenu}
     {tutorial?<p className="sd-training">{tr("Entraînement sans sauvegarde ni statistiques.","Training without saves or statistics.")}</p>:null}
     {resumed?<p className="sd-resumed" aria-live="polite">{tr('✓ Partie reprise','✓ Game resumed')}</p>:null}
     {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Action non enregistrée. La sauvegarde précédente est conservée.','Action not saved. Previous save preserved.')}</p>:null}
     {!view?<>{busy?<p role="status">{tr("Préparation de la flotte…","Preparing the fleet…")}</p>:!blocked?<button type="button" className="primary-action" onClick={()=>void start()}>{tr("Réessayer","Retry")}</button>:null}</>:<>
-      <p className="sd-round" role="status" aria-live="polite">{tr('Manche','Round')} {view.round} · {phaseLabels[view.phase]} · {tr('En cours','In progress')}</p>
-      <div className="sd-phases" aria-label={tr('Phases','Phases')}>{(['enemy','discard','draw','capture'] as const).map(p=><span key={p} aria-current={view.phase===p?'step':undefined}><img src={ui('icons',phaseIcons[p])} alt=""/>{phaseLabels[p]}</span>)}</div>
+      <p className="sd-round" role="status" aria-live="polite">{tr('Manche','Round')} {view.round}</p>
+      <div className="sd-phases" aria-label={tr('Phases','Phases')} aria-live="polite">{(['enemy','discard','draw','capture'] as const).map(p=><span key={p} aria-current={view.phase===p?'step':undefined}><img className="sd-phase-art" src={ui('buttons',view.phase===p?'gold':'dark')} alt=""/><img className="sd-phase-icon" src={ui('icons',phaseIcons[p])} alt=""/><span className="sd-phase-label">{phaseLabels[p]}</span></span>)}</div>
       <div className="sd-counts">{[[tr('Pioche','Player deck'),view.counts.playerDeck,'draw'],[tr('Ennemis','Enemy deck'),view.counts.enemyDeck,'enemy'],[tr('Défausse','Discard'),view.counts.discard,'discard'],[tr('Pertes','Enemy capture'),view.counts.enemyCapture,'capture']].map(([label,n,icon])=><span key={label} className="sd-counter"><img className="sd-counter-art" src={ui("hud","counter-blank")} alt=""/><img src={ui('icons',String(icon))} alt=""/><strong>{n}</strong><small>{label}</small></span>)}</div>
       <div className="sd-fleets"><section className="sd-fleet sd-enemy-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Flotte ennemie','Enemy fleet')}</span></h3>
       <div className="sd-line">{positions.map(position=>{
@@ -208,7 +227,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
         const forcedTarget=view.phase==='capture'&&kind==='capture-b'&&position===1&&!!id;
         const active=view.phase==='capture'&&(kind==='capture-b'?forcedTarget:target===position);
         return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')+(forcedTarget?' sd-forced-target':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+ ' · '+(id?cardName(id):tr('Vide','Empty'))+(forcedTarget?tr(' · Cible imposée',' · Required target'):'')} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
-          {id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/><span className="sd-slot-label">{tr('Libre','Empty')}</span></>}
+          {id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></>}
         </button>;
       })}</div>
       </section><section className="sd-fleet sd-player-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Votre flotte','Your fleet')}</span></h3>
@@ -221,9 +240,6 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       {view.blockedReason?<p role="alert">{tr('Cartes personnelles insuffisantes. Règle d’impasse à confirmer ; aucune défaite attribuée.','Not enough personal cards. Deadlock rule pending confirmation; no defeat recorded.')}</p>:null}
       {!view.blockedReason?<button type="button" className="primary-action sd-preview" disabled={!chosen||restart||abandon||busy||blocked} onClick={()=>{if(chosen)void confirm(chosen);}}><img className="sd-button-art" src={ui('buttons',chosen&&!busy&&!restart&&!abandon&&!blocked?'gold':'neutral')} alt=""/><span>{chosen?actionName(chosen):view.phase==='capture'?tr('Choisir les cartes','Select cards'):phaseLabels[view.phase]}</span></button>:null}
       {error?<p role="alert">{tr('Action refusée. L’état précédent est conservé.','Action rejected. Previous state preserved.')}</p>:null}
-      <button className="sd-menu-toggle secondary-action" type="button" aria-expanded={menu} onClick={()=>setMenu(x=>!x)}><img className="sd-action-art" src={ui('buttons','dark')} alt=""/><span>{tr('Options de partie','Game options')}</span></button>
-      {menu?<div className="sd-game-options"><button className="secondary-action" disabled={restart||abandon||busy} onClick={()=>void requestRestart()}>{tr('Nouvelle partie','New game')}</button>
-      {!tutorial?<button className="secondary-action" disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound('open');setAbandon(true);}}>{tr('Abandonner','Abandon')}</button>:null}</div>:null}
       {abandon?<div className="sd-confirm"><p>{tr('Abandonner définitivement cette partie ?','Abandon this game permanently?')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void confirm({type:'abandon'})}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setAbandon(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}
 
       {restart?<div className="sd-confirm"><p>{tr('Remplacer cette partie ? La partie actuelle sera abandonnée.','Replace this game? The current game will be abandoned.')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void replace()}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setRestart(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}

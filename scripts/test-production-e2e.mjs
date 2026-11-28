@@ -713,11 +713,22 @@ async function journey(locale,mobile){
     assert.equal(await sd.locator('.sd-preview span').evaluate(n=>getComputedStyle(n).backgroundColor),'rgba(0, 0, 0, 0)');
     const assertSkyPhaseFits=async()=>{const r=await sd.evaluate(n=>({bottom:n.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight}));assert.ok(r.bottom<=r.height+2&&r.scroll<=r.height+2,JSON.stringify(r));};
     await assertSkyPhaseFits();
+    assert.equal(await sd.locator('.sd-slot-label,.sd-console .sd-menu-toggle').count(),0);
+    assert.match(await sd.locator('.sd-round').textContent(),locale==='fr'?/^Manche \d+$/:/^Round \d+$/);
+    const topMenu=page.locator('.sd-command-header .sd-menu-toggle');
+    await interact(page,topMenu,mobile);
+    await page.locator('.sd-header-menu .sd-game-options').waitFor();
+    await page.keyboard.press('Escape');
+    await page.locator('.sd-header-menu .sd-game-options').waitFor({state:'hidden'});
+    await interact(page,topMenu,mobile);
+    await interact(page,sd.locator('.sd-round'),mobile);
+    await page.locator('.sd-header-menu .sd-game-options').waitFor({state:'hidden'});
+
     assert.ok(await sd.locator('.sd-counter strong,.sd-counter small').evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)')),'counter text must be integrated without background');
     for(let phase=0;phase<3;phase++){
-      const previous=await sd.locator('.sd-round').textContent();
+      const previous=await sd.locator('.sd-phases [aria-current]').textContent();
       await interact(page,sd.locator('.sd-preview'),mobile);
-      await page.waitForFunction(old=>document.querySelector('.sd-round')?.textContent!==old,previous);
+      await page.waitForFunction(old=>document.querySelector('.sd-phases [aria-current]')?.textContent!==old,previous);
       assert.equal(await sd.locator('.sd-confirm').count(),0,'ordinary actions need no confirmation');
       await assertSkyPhaseFits();
     }
@@ -924,8 +935,8 @@ async function journey(locale,mobile){
       for(const outcome of ['win','loss','abandoned']){
         const fixture=await installSkydeckFixture(offline,saved['card-capture'],outcome);
         if(outcome==='abandoned'){
-          await interact(offline,sd.locator('.sd-menu-toggle'),mobile);
-          await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
+          await interact(offline,offline.locator('.sd-command-header .sd-menu-toggle'),mobile);
+          await interact(offline,offline.locator('.sd-header-menu').getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
         }else{
           if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}),mobile);
           else await interact(offline,sd.locator('[data-position="1"]'),mobile);

@@ -52,3 +52,7 @@ Rejeu immédiat après vérification de la sauvegarde terminale et du résultat 
 
 ## SD-END-36 à 41 — narration et finition
 Option A validée pour la défaite, message narratif en deux phrases, taille responsive et relief, espaces équilibrés, détails plus compacts. Suppression complète de la phrase technique « Une figure ou un As a été perdu. » conformément à la demande explicite, règle inchangée dans le moteur. Victoire et retrait reçoivent des messages narratifs cohérents en FR/EN. Deux lignes visées sur les écrans suffisamment larges ; retour à la ligne permis sur très petits écrans pour éviter de tronquer le texte. Tests E2E de contenu et géométrie ajoutés, validation effective CI et recette requises. Aucun uv ni modification graphique binaire.
+
+
+## SD-BOARD-85 à 106 — HUD et options
+Suppression du texte Libre, rose des vents et libellé accessible conservés. Bandeau limité à la manche ; phase active dorée et phases inactives bois/laiton via ressources existantes. Menu porté dans le bandeau par portail React, ancré, fermeture extérieure/Échap, actions graphiques et confirmations conservées. Console libérée. Tests E2E adaptés au changement de phase et au menu. Animations et sons existants conservés, vérification perceptive et synchronisation effective encore à réaliser en recette (SD-BOARD-91/92). Matrice huit tailles conservée, CI à constater. Aucun uv.
