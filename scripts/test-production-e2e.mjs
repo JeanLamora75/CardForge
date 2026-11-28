@@ -34,7 +34,9 @@ async function thunderScreens(page,label){
    const heroPanel=consoleNode.querySelector('.tf-hero-card').getBoundingClientRect();
    const heroFits=!heroRect||heroRect.bottom<=heroPanel.bottom+1&&heroRect.right<=heroPanel.right+1;
    const z=consoleNode.getBoundingClientRect();
-   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,arsenalRows:rows.size,arsenalColumns:columns.size,heroFits,heroWidth:heroRect?.width??0,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
+   const radio=document.querySelector('.tf-transmission-band');const radioRect=radio.getBoundingClientRect();
+   const radioFits=radioRect.bottom<=z.top+1&&radioRect.top>=0&&radio.scrollHeight<=radio.clientHeight+1;
+   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,radioFits,arsenalRows:rows.size,arsenalColumns:columns.size,heroFits,heroWidth:heroRect?.width??0,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
   });
   const hud=await page.evaluate(()=>{
    const header=document.querySelector('.tf-command-header'),logo=header.querySelector('h1');
@@ -54,7 +56,7 @@ async function thunderScreens(page,label){
   const geometry=[result.left,result.top,result.width,result.height,result.consoleTop,result.consoleHeight];
   if(matrix.has(key))assert.deepEqual(geometry,matrix.get(key),'stable radar and console '+key);else matrix.set(key,geometry);
   console.log('TF V3.1',label,width,height,JSON.stringify(result));
-  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.arsenalRows!==2||result.arsenalColumns!==3||!result.heroFits||(result.heroWidth>0&&result.heroWidth<70)||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
+  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.arsenalRows!==2||result.arsenalColumns!==3||!result.heroFits||!result.radioFits||(result.heroWidth>0&&result.heroWidth<85)||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
  }
  await page.setViewportSize(original);
  assert.deepEqual(failures,[],'Thunderfighter V5 viewport matrix '+label);
@@ -523,14 +525,14 @@ async function journey(locale,mobile){
         assert.ok(await page.locator('.thunder-action-zone').evaluate(n=>getComputedStyle(n).overflowY==='visible'),'console must not clip');
         const original=await geometry();
         assert.equal(await page.locator('[data-equipment-id]').count(),6,'six stable tactical equipment slots');
-        if(before.state.phase==='initial-figures'||before.state.phase==='replacement-offer'){
+        if(before.state.pendingFigures.length||before.state.phase==='replacement-offer'||before.state.pendingNumeric&&direct&&await target.getAttribute('data-target-kind')==='pile'||!direct){
           await interact(page,action,mobile);
-          if(before.state.phase==='replacement-offer'){
+          if(before.state.phase==='replacement-offer'&&direct){
             await page.locator('.thunder-confirm[data-selected=true]').waitFor();
             await interact(page,page.locator('.thunder-confirm button.primary-action'),mobile);
           }else{
             await waitSavedChanged(page,game.id,before);
-            assert.equal(await page.locator('.thunder-confirm[data-selected=true]').count(),0,'initial deployment commits directly');
+            assert.equal(await page.locator('.thunder-confirm[data-selected=true]').count(),0,'routine action commits directly');
           }
         }else{
         if(direct&&await source.count()){
@@ -581,7 +583,7 @@ async function journey(locale,mobile){
       }
       let after=await waitSavedChanged(page,game.id,before);
       if(game.id==='gridcannon'){
-        const draw=page.locator('.thunder-actions button').filter({hasText:/Piocher une carte|Draw a card/});
+        const draw=page.locator('.thunder-actions button').filter({hasText:/Révéler la prochaine carte|Reveal next card/});
         if(await draw.count()===1){
           const bounds=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return [r.x,r.y,r.width,r.height];});
           const drawBounds=await bounds();
@@ -924,6 +926,13 @@ async function journey(locale,mobile){
         await thunderScreens(offline,label+'-'+scenario);
         assert.equal(await tf.locator('[data-equipment-id]').count(),6);
         assert.equal(await tf.locator('[data-equipment-status="ready"]').count(),reserve.length);
+        if(scenario==='search'){
+          assert.equal(await tf.locator('[data-card-id="clubs-2"]').count(),0);
+          await selectAction();const after=await waitSavedChanged(offline,'gridcannon',fixture);
+          assert.deepEqual(after.state.searchBuffer,['clubs-2']);
+          assert.equal(await tf.locator('.thunder-confirm[data-selected=true]').count(),0);
+          continue;
+        }
         await selectAction();await tf.locator('.thunder-confirm[data-selected=true]').waitFor();
         await thunderScreens(offline,label+'-'+scenario+'-confirm');
         assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
