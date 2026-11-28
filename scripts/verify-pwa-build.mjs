@@ -55,3 +55,8 @@ for(const scene of ["defeat-damage","defeat-exhaustion","victory"])assert.ok(pat
 const thunderHudFiles=["tf-bg-space.webp","tf-bottom-console.png","tf-frame-main.png","tf-grid-background.webp","tf-header-bar.png","tf-separator-h.png","tf-counter-alert.png","tf-counter-large.png","tf-counter-small.png","tf-progress-segment-active.png","tf-progress-segment-complete.png","tf-progress-segment-empty.png","tf-radar-overlay.png","tf-slot-deploy-glow.png","tf-slot-deploy.png","tf-slot-empty.png","tf-slot-selected.png","tf-target-reticle.png","tf-mission-card-frame.png","tf-mission-hologram.png","tf-mission-panel.png","tf-action-button-aegis.png","tf-action-button-nova.png","tf-action-button-singularity.png","tf-action-button-vector.png","tf-effect-impact.png","tf-effect-laser.png","tf-effect-shield.png","tf-effect-singularity.png","tf-nav-back.png","tf-nav-help.png","tf-nav-settings.png"];
 assert.equal(new Set(thunderHudFiles).size,32);
 for(const file of thunderHudFiles)assert.ok(paths.includes("./assets/hud/thunderfighter/v2/"+file),"missing offline Thunderfighter cockpit artwork: "+file);
+
+const skyCards=paths.filter(p=>/^\.\/art\/cards\/skydeck\/.*\.webp$/.test(p));
+assert.equal(new Set(skyCards).size,54,"all Skydeck cards must be precached");
+const skyFrames=paths.filter(p=>/^\.\/art\/frames\/skydeck\/card-.*\.webp$/.test(p));
+assert.equal(new Set(skyFrames).size,5,"all Skydeck frames must be precached");

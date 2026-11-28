@@ -1,0 +1,14 @@
+.sd-board {background-size:cover;background-position:center;border-color:#a98a53;color:#fff5df}
+.sd-board .sd-line {max-width:900px;margin-inline:auto;gap:clamp(5px,1.4vw,16px)}
+.sd-board .sd-card {position:relative;display:grid;place-items:center;aspect-ratio:2/3;width:100%;min-height:44px;padding:0;border:1px solid #b99a65;border-radius:9px;background:#172832;color:#fff5df;overflow:hidden}
+.sd-board .sd-card:disabled {opacity:1}
+.sd-board .sd-face {position:relative;display:block;width:100%;height:100%;overflow:hidden}
+.sd-board .sd-illustration,.sd-board .sd-frame {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.sd-board .sd-frame {object-fit:fill}
+.sd-board .sd-power {position:absolute;top:6%;left:6%;background:#101b24eb;border:1px solid #d6b77a;border-radius:5px;padding:2px 4px;color:#fff4db;line-height:1.1;font-size:clamp(.8rem,2.8vw,1.35rem)}
+.sd-board .sd-card small {position:absolute;bottom:5%;left:5%;right:5%;padding:3px 1px;background:#101b24e8;color:#fff4db;font-size:clamp(.55rem,1.6vw,.8rem);line-height:1.1}
+.sd-board .sd-position {position:absolute;top:5%;right:5%;z-index:2;background:#101b24eb;padding:2px 4px;border-radius:4px}
+.sd-board .sd-card[aria-pressed=true]::after {position:absolute;right:5%;bottom:19%;z-index:3;background:#f4d8a3;color:#18232d;border-radius:50%;padding:2px 5px}
+.sd-board .sd-counts span,.sd-board .sd-phases span,.sd-board .sd-confirm {background:#13232de8;border-color:#a98a53}
+.sd-board .sd-phases [aria-current] {border-color:#f4d8a3;background:#5c4428}
+.sd-board h3 {color:#ffe2a2}

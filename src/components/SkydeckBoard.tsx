@@ -1,3 +1,5 @@
+import '../skydeck.css';
+import { skydeckCardArt } from '../application/skydeck-art.ts';
 import { useEffect, useRef, useState } from 'react';
 import type { Locale } from '../i18n/language.ts';
 import { describeSkydeckCard } from '../games/card-capture/preview.ts';
@@ -109,10 +111,14 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   };
   const renderCard=(id:string)=>{
     const c=describeSkydeckCard(id,language);
-    return <><span className="sd-power">{c.power} {c.symbol}</span><span className="sd-art" aria-hidden="true"><svg viewBox="0 0 80 52"><path d="M4 40 Q20 25 38 32 T76 28 M7 46 Q26 35 44 42 T76 38" fill="none" stroke="currentColor" opacity=".35"/><path d="M9 25 L34 17 L42 3 L49 17 L71 25 L49 32 L42 46 L34 32 Z" fill="none" stroke="currentColor" strokeWidth="2"/><path d="M30 25 H53 M42 10 V39" stroke="currentColor"/><circle cx="42" cy="25" r="5" fill="currentColor"/></svg></span><small>{c.faction}</small></>;
+    const art=skydeckCardArt(id);
+    return <span className="sd-face">
+      {art?<><img className="sd-illustration" src={import.meta.env.BASE_URL+art.image} alt="" draggable={false}/><img className="sd-frame" src={import.meta.env.BASE_URL+art.frame} alt="" draggable={false}/></>:null}
+      <span className="sd-power">{c.power} {c.symbol}</span><small>{c.faction}</small>
+    </span>;
   };
   const phaseLabels={enemy:tr('Ennemis','Enemies'),discard:tr('Défausse','Discard'),draw:tr('Pioche','Draw'),capture:tr('Capture','Capture'),finished:tr('Terminée','Finished')};
-  return <section className="sd-board" data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
+  return <section className="sd-board" style={{backgroundImage: `linear-gradient(#10202dcc,#152431e8),url("${import.meta.env.BASE_URL}art/worlds/skydeck.webp")`}} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
     <p className="sd-kicker">SKYDECK · {tr('Corsaires du ciel','Sky corsairs')}</p>
     <p>{tutorial?tr('Entraînement sans sauvegarde ni statistiques.','Training without saves or statistics.'):tr('Préversion interne · sauvegarde locale automatique.','Internal preview · automatic local save.')}</p>
     {resumed?<p className="sd-resumed">{tr('Partie reprise · sauvegarde locale','Game resumed · local save')}</p>:null}

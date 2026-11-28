@@ -1,3 +1,4 @@
+import { skydeckFactions } from '../../application/skydeck-art.ts';
 import { createGameSession } from '../../application/game-session.ts';
 import { inspectSkydeck, skydeckEngine, type SkydeckAction, type SkydeckPublicState } from './engine.ts';
 
@@ -12,11 +13,7 @@ export function createSkydeckPreview(seed:number){
 export function describeSkydeckCard(id:string,locale:'fr'|'en'){
   if(id==='joker-1'||id==='joker-2')return {power:'★',symbol:'✧',faction:locale==='fr'?'Corsaire libre':'Free corsair',name:'Joker '+id.slice(-1)};
   const [suit,rank]=id.split('-');
-  const factions:Record<string,[string,string,string]>={
-    hearts:['♥','Flotte du Soleil','Sun fleet'],diamonds:['♦','Flotte de Cristal','Crystal fleet'],
-    clubs:['♣','Flotte de la Brume','Mist fleet'],spades:['♠','Flotte de la Nuit','Night fleet'],
-  };
-  const [symbol,fr,en]=factions[suit];
+  const {symbol,fr,en}=skydeckFactions[suit as keyof typeof skydeckFactions];
   const power=rank==='1'?'14':rank;
   const faction=locale==='fr'?fr:en;
   return {power,symbol,faction,name:power+' · '+faction+' '+symbol};
