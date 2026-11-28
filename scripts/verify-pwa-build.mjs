@@ -60,3 +60,5 @@ const skyCards=paths.filter(p=>/^\.\/art\/cards\/skydeck\/.*\.webp$/.test(p));
 assert.equal(new Set(skyCards).size,54,"all Skydeck cards must be precached");
 const skyFrames=paths.filter(p=>/^\.\/art\/frames\/skydeck\/card-.*\.webp$/.test(p));
 assert.equal(new Set(skyFrames).size,5,"all Skydeck frames must be precached");
+
+assert.equal(new Set(paths.filter(p=>p.startsWith("./assets/audio/skydeck/")&&p.endsWith(".wav"))).size,25,"all Skydeck audio must be precached");

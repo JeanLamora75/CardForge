@@ -14,12 +14,12 @@ const storage = () => {
 test("shared sound and visual settings default to silent system behavior", () => {
   assert.deepEqual(readSharedSettings(storage()), DEFAULT_SETTINGS);
   assert.deepEqual(readSharedSettings(null), DEFAULT_SETTINGS);
-  assert.deepEqual(normalizeSettings({ music:true, sounds:false, musicVolume:100, soundsVolume:0, animations:"off", hints:false }),
-    { music:true, sounds:false, musicVolume:100, soundsVolume:0, animations:"off", hints:false });
+  assert.deepEqual(normalizeSettings({ music:true, sounds:false, musicVolume:100, soundsVolume:0, ambienceVolume:0, animations:"off", hints:false }),
+    { music:true, sounds:false, musicVolume:100, soundsVolume:0, ambienceVolume:0, animations:"off", hints:false });
 });
 test("four controls persist separately and invalid data never enables unwanted sound", () => {
   const db=storage();
-  const selection={music:true,sounds:false,musicVolume:35,soundsVolume:0,animations:"off",hints:false};
+  const selection={music:true,sounds:false,musicVolume:35,soundsVolume:0,ambienceVolume:0,animations:"off",hints:false};
   assert.equal(saveSharedSettings(db,selection),true);
   assert.deepEqual(readSharedSettings(db),selection);
   assert.equal(db.data.size,1);
@@ -61,4 +61,4 @@ test("settings toggles leave cards, legal actions and both game states unchanged
   }
 });
 
-test("legacy audio preferences migrate and numerical volume wins",()=>{const db=storage();db.data.set(SETTINGS_KEY,JSON.stringify({music:true,sounds:false,animations:"off",hints:false}));assert.deepEqual(readSharedSettings(db),{music:true,sounds:false,musicVolume:100,soundsVolume:0,animations:"off",hints:false});assert.deepEqual(normalizeSettings({music:true,musicVolume:0,sounds:false,soundsVolume:65}),{...DEFAULT_SETTINGS,sounds:true,soundsVolume:65});assert.equal(normalizeSettings({musicVolume:120}).musicVolume,100);assert.equal(normalizeSettings({soundsVolume:-5}).soundsVolume,0);});
+test("legacy audio preferences migrate and numerical volume wins",()=>{const db=storage();db.data.set(SETTINGS_KEY,JSON.stringify({music:true,sounds:false,animations:"off",hints:false}));assert.deepEqual(readSharedSettings(db),{music:true,sounds:false,musicVolume:100,soundsVolume:0,ambienceVolume:0,animations:"off",hints:false});assert.deepEqual(normalizeSettings({music:true,musicVolume:0,sounds:false,soundsVolume:65}),{...DEFAULT_SETTINGS,sounds:true,soundsVolume:65});assert.equal(normalizeSettings({musicVolume:120}).musicVolume,100);assert.equal(normalizeSettings({soundsVolume:-5}).soundsVolume,0);});

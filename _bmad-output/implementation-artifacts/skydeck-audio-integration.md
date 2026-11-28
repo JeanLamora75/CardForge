@@ -1,0 +1,2 @@
+# Intégration audio Skydeck
+25 WAV locaux, routage accueil/partie, quatre boucles d’ambiance, effets sur interactions et actions confirmées, victoire/défaite, arrêt hors jeu et document masqué. Préférences communes persistantes : musique, ambiance, effets, zéro désactive. Préservation du silence par défaut (35/25/70 proposés par Sally non imposés aux utilisateurs). Cache PWA versionné, tests ajoutés. Aucun changement moteur ni sauvegarde. Workflow uv indisponible, adaptation manuelle. Écoute et CI à constater.

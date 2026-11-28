@@ -5,6 +5,8 @@ type WebAudioContext = AudioContext;
 let audio: WebAudioContext | null = null;
 let musicTimer: ReturnType<typeof setInterval> | null = null;
 let sequence = 0;
+let themedMusic=false;
+export function setThemedMusic(value:boolean){themedMusic=value;if(value)stopMusic();else startMusic();}
 let current = { music: 0, sounds: 0 };
 let buses: Record<"music"|"sounds", GainNode> | null = null;
 function syncBuses(){if(!audio||!buses)return;for(const channel of ["music","sounds"] as const){buses[channel].gain.setValueAtTime(current[channel]/100,audio.currentTime);}}
@@ -40,13 +42,13 @@ function stopMusic(): void {
   sequence = 0;
 }
 function startMusic(): void {
-  if (musicTimer || !current.music || (typeof document !== "undefined" && document.hidden)) return;
+  if (themedMusic || musicTimer || !current.music || (typeof document !== "undefined" && document.hidden)) return;
   const ctx = context();
   if (!ctx) return;
   void ctx.resume().then(() => {
-    if (!current.music || musicTimer || (typeof document !== "undefined" && document.hidden)) return;
+    if (themedMusic || !current.music || musicTimer || (typeof document !== "undefined" && document.hidden)) return;
     musicTimer = setInterval(() => {
-      if (!current.music) { stopMusic(); return; }
+      if (themedMusic || !current.music) { stopMusic(); return; }
       const pitch = melody[sequence++ % melody.length];
       if (pitch) note(pitch, 0.38, 0.025, "sine", "music");
     }, 480);

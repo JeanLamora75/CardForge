@@ -2,7 +2,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { readLanguage, saveLanguage, type Locale } from "./i18n/language.ts";
 import { localizeSurface } from "./i18n/surface.ts";
 import { readSharedSettings, saveSharedSettings, type SharedSettings } from "./application/shared-settings.ts";
-import { resumeAudio, suspendAudio, updateAudioPreferences } from "./application/audio.ts";
+import { resumeAudio, suspendAudio, updateAudioPreferences, setThemedMusic } from "./application/audio.ts";
+import { setSkydeckScene, setSkydeckHidden, unlockSkydeckAudio, updateSkydeckAudio, playSkydeckSound } from "./application/skydeck-audio.ts";
 import { canPlay, games, type GameEntry, type GameId } from "./catalog";
 import {
   EMPTY_PROGRESS, readCatalogGameProgress,
@@ -147,16 +148,25 @@ export default function App() {
   const changePreferences = (next: SharedSettings) => {
     setPreferences(next);
     updateAudioPreferences(next);
+    updateSkydeckAudio(next);
     let store: Storage | null = null;
     try { store = window.localStorage; } catch { /* Storage can be blocked. */ }
     setSettingsSaveFailed(!saveSharedSettings(store, next));
   };
   useEffect(() => {
     updateAudioPreferences(preferences);
-    const onVisibility = () => document.hidden ? suspendAudio() : resumeAudio();
+    updateSkydeckAudio(preferences);
+    const onVisibility = () => {setSkydeckHidden(document.hidden);if(document.hidden)suspendAudio();else resumeAudio();};
+    onVisibility();
+    const unlock=()=>unlockSkydeckAudio();
+    window.addEventListener("pointerdown",unlock);
+    window.addEventListener("keydown",unlock);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pointerdown",unlock);
+      window.removeEventListener("keydown",unlock);
+      setSkydeckScene("off");
       suspendAudio();
     };
   }, []);
@@ -181,6 +191,11 @@ export default function App() {
     return surfaceRef.current ? localizeSurface(surfaceRef.current, language) : undefined;
   }, [language]);
   const [route, setRoute] = useState<CatalogRoute>(() => parseCatalogRoute(window.location.hash));
+  useEffect(()=>{
+    const scene=route.page==="game"&&route.gameId==="card-capture"?(route.section==="board"?"gameplay":"menu"):"off";
+    setThemedMusic(scene!=="off");
+    setSkydeckScene(scene);
+  },[route]);
   const { progress, error } = useCatalogProgress();
   const lastTrigger = useRef<HTMLElement | null>(null);
   const lastGalleryControl = useRef<string | null>(null);
@@ -188,6 +203,7 @@ export default function App() {
   const settingsOrigin = useRef<CatalogRoute>(HOME);
 
   const navigate = (next: CatalogRoute) => {
+    if(route.page==="game"&&route.gameId==="card-capture")playSkydeckSound("button");
     const hash = routeHash(next);
     if (window.location.hash === hash || (!hash && !window.location.hash)) {
       setRoute(next);

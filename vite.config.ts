@@ -17,13 +17,15 @@ function offlineBuild(): Plugin {
       for(const path of art) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
       const originals = readdirSync("public/assets", {recursive:true,encoding:"utf8"}).filter(p=>p.endsWith(".png") || (/^hud[\\/]thunderfighter[\\/]v2[\\/]/.test(p) && p.endsWith(".webp"))).map(p=>"assets/"+p.replaceAll("\\","/")).filter(p=>/^assets\/(worlds|worlds-landscape|logos|covers|buttons|effects|banners|boards|hud|icons|frames|ornaments|cards)\//.test(p));
       for(const path of originals) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
+      const audio = readdirSync("public/assets/audio/skydeck",{recursive:true,encoding:"utf8"}).filter(p=>p.endsWith(".wav")).map(p=>"assets/audio/skydeck/"+p.replaceAll("\\","/"));
+      for(const path of audio)files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
       const fontLicences = readdirSync("public/licenses/fonts").filter(p=>p.endsWith(".txt")).map(p=>"licenses/fonts/"+p);
       for(const path of fontLicences) files.push({path,content:createHash("sha256").update(readFileSync("public/"+path)).digest("hex")});
       const startup = ["startup.css"];
       for(const path of startup) files.push({path,content:readFileSync("public/"+path,"utf8")});
       const version = hashBuildFiles(files);
       const assets = Object.keys(bundle).filter(path => path !== "index.html" && !path.endsWith(".map"));
-      const sw = createServiceWorkerScript(version, [...assets,...originals,...art,...fontLicences,...startup]);
+      const sw = createServiceWorkerScript(version, [...assets,...originals,...art,...audio,...fontLicences,...startup]);
       this.emitFile({ type: "asset", fileName: "sw.js", source: sw });
     },
   };
