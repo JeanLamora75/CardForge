@@ -8,3 +8,7 @@ AC1 : quatre positions en ordre 4–1, main, phase, compteurs, sélection, aper�
 
 ## Refonte immersive SD-BOARD-01 à 13
 Fond pleine page et logo existants, navigation par icônes, suppression de l’en-tête générique et du statut sur le plateau, démarrage automatique uniquement sans sauvegarde, aide/tutoriel/règles dans la modale, préférence d’aide dans les paramètres, compteurs laiton, cartes optimisées portrait/paysage. Le moteur et le statut catalogue restent inchangés. Correction du choix discard-none dans l’interface. Tests E2E actualisés pour trois volumes et démarrage automatique. Workflow BMAD adapté sans uv ; CI et recette à constater.
+
+
+## SD-BOARD-20 — correction de rendu
+La face est ancrée directement aux quatre bords du bouton carte, indépendamment du dimensionnement de la grille. Empilement explicite illustration/cadre/valeurs/position/sélection. Test navigateur ajouté : quatre illustrations en main, décodage des deux images par carte, dimensions de la face et des valeurs, ouverture/fermeture de l’aide. Cause CSS probable, à confirmer par CI et recette. Dernière CI b50c647 en échec sur stalePreviewRecovery (ERR_INTERNET_DISCONNECTED), défaut distinct non masqué. Aucun changement moteur ni nouvelle illustration.

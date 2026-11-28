@@ -716,6 +716,20 @@ async function journey(locale,mobile){
     }
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     assert.equal(await sd.locator('.sd-hand button').count(),4);
+    await sd.locator('.sd-hand .sd-illustration').first().waitFor({state:'visible'});
+    assert.equal(await sd.locator('.sd-hand .sd-illustration').count(),4);
+    for(const face of await sd.locator('.sd-face').all()){
+      const dimensions=await face.evaluate(async node=>{
+        const imgs=Array.from(node.querySelectorAll('img'));await Promise.all(imgs.map(img=>img.decode()));
+        const r=node.getBoundingClientRect(),card=node.closest('.sd-card').getBoundingClientRect(),power=node.querySelector('.sd-power').getBoundingClientRect();
+        return {w:r.width,h:r.height,cw:card.width,ch:card.height,pw:power.width,ph:power.height,images:imgs.map(img=>({w:img.naturalWidth,h:img.naturalHeight,paint:img.getBoundingClientRect().height}))};
+      });
+      assert.ok(dimensions.w>0&&dimensions.h>0&&dimensions.h>=dimensions.ch-4&&dimensions.w>=dimensions.cw-4&&dimensions.pw>0&&dimensions.ph>0,JSON.stringify(dimensions));
+      assert.equal(dimensions.images.length,2);assert.ok(dimensions.images.every(img=>img.w>0&&img.h>0&&img.paint>0),JSON.stringify(dimensions));
+    }
+    await page.locator('.sd-command-header').getByRole('button',{name:locale==='fr'?'Aide':'Help',exact:true}).click();
+    await page.locator('dialog[open]').waitFor();
+    await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));

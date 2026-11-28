@@ -36,3 +36,11 @@
 .sd-board .sd-preview{width:100%;margin:5px 0}
 .sd-board .sd-resumed,.sd-board .sd-training{font-size:.8rem;margin:4px 0;color:#ffe2a2}
 @media(orientation:landscape) and (min-width:650px){.sd-board .sd-fleets{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end}.sd-board .sd-line{max-width:520px}.sd-command-header h1 img{height:60px}}
+
+/* The card itself establishes the containing block, independently of its children. */
+.sd-board .sd-card > .sd-face {position:absolute;inset:0;width:auto;height:auto;display:block;isolation:isolate;overflow:hidden}
+.sd-board .sd-face .sd-illustration{z-index:0}
+.sd-board .sd-face .sd-frame{z-index:1}
+.sd-board .sd-face .sd-power,.sd-board .sd-face small{z-index:2}
+.sd-board .sd-card > .sd-position{z-index:4}
+.sd-board .sd-card[aria-pressed=true]::after{z-index:5}
