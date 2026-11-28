@@ -30,3 +30,11 @@ Validation du porteur : 28 novembre 2026. TF-GAME-01 à TF-GAME-22. Statut : sp�
 
 ## Contraintes techniques
 Ne pas modifier le moteur pour des raisons de présentation. Utiliser les actions légales du moteur, la session existante et les sauvegardes atomiques. Préserver la confirmation du remplacement irréversible et les prévisualisations de combat sensibles. Réutiliser CSS/SVG et les ressources existantes. Aucun uv. Publication main autorisée. Ne pas annoncer la livraison complète avant vérification réelle.
+
+## Complément validé — renfort bloqué
+
+- TF-GAME-23 : détecter un renfort numérique sans placement légal ; remplacer l'instruction générique par une alerte tactique FR/EN si un équipement de secours est autorisé.
+- TF-GAME-24 : signaler uniquement les équipements disposant d'actions légales utiles, avec halo respectant les préférences de mouvement ; réutiliser le ciblage légal source/destination du moteur, sans imposer de coup.
+- TF-GAME-25 : préserver l'attribution obligatoire d'armure en l'absence de solution spéciale, les confirmations sensibles et le parcours commun Jouer/Apprendre.
+
+Implémentation publiée : 4432ee97581389f98099ab29acec6ea35c232470 (plateau), 2e858b36cb7d70b8ece149a797464cdb2fa761cb (styles). Recette et CI à vérifier.
