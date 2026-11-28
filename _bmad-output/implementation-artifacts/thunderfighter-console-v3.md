@@ -54,3 +54,23 @@ Inventaire fixe sans révéler les cartes non détenues. Confirmation contextual
 | TF-CONSOLE-40 | Mesurer radar et console avant/après sélection, confirmation, annulation et action sur huit résolutions ; vérifier absence de débordement. |
 
 Conserver règles et ressources existantes. Pas de nouvelle production graphique. Aucun uv. Les confirmations sensibles restent disponibles. Statut : critères validés, recette technique à démontrer.
+
+## V3.2 — Carte principale et arsenal 2 × 3
+Validation du porteur : 28 novembre 2026, TF-CONSOLE-41 à 52.
+
+| ID | Critère |
+|---|---|
+| TF-CONSOLE-41 | Carte en attente prioritaire visuellement. |
+| TF-CONSOLE-42 | Zone verticale dédiée, à côté de l'arsenal. |
+| TF-CONSOLE-43 | Carte carrée agrandie, sans déformation. |
+| TF-CONSOLE-44 | Budget fixe de console, indépendant de la phase. |
+| TF-CONSOLE-45 | Arsenal en deux rangées de trois en portrait. |
+| TF-CONSOLE-46 | Six logements permanents. |
+| TF-CONSOLE-47 | États absent, prêt, verrouillé, consommé, actif préservés. |
+| TF-CONSOLE-48 | Transmission contextuelle associée à la carte. |
+| TF-CONSOLE-49 | Titre arsenal secondaire. |
+| TF-CONSOLE-50 | Illustration principale lisible et dominante. |
+| TF-CONSOLE-51 | Vérifier huit résolutions, absence de scroll et chevauchement. |
+| TF-CONSOLE-52 | Même composant Jouer/Apprendre. |
+
+Disposition retenue : carte à gauche, arsenal à droite, transmission sous les deux blocs et ligne de commande réservée. Adapter la densité aux écrans courts. Réutiliser les composants, conserver le moteur et les sauvegardes. Aucun uv. Validation de rendu à démontrer.
