@@ -1330,3 +1330,45 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 @keyframes tf-recovery-beacon{from{box-shadow:0 0 3px #b779f1;}to{box-shadow:0 0 12px #e1b7ff;}}
 :root[data-motion=off] .thunder-board.tf-live .tf-special-unit[data-recovery=true]{animation:none;}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .thunder-board.tf-live .tf-special-unit[data-recovery=true]{animation:none;}}
+
+/* Hybrid command console: fixed equipment positions and compact contextual transmission. */
+.thunder-board.tf-live .thunder-action-zone{gap:3px;padding:4px 6px 7px;background:linear-gradient(160deg,#1a3648,#081724 28%,#101f2d);border:1px solid #4a8da9;box-shadow:inset 0 0 0 1px #183e53,inset 0 -3px #1d5169;}
+.tf-console-heading,.tf-equipment-heading{display:flex;align-items:center;justify-content:space-between;gap:4px;min-width:0;color:#91d9f4;font-size:clamp(.58rem,1.9vw,.75rem);line-height:1.15;letter-spacing:.04em;}
+.tf-console-heading{border-bottom:1px solid #35637c;padding-bottom:3px;}
+.tf-console-signal{color:#a1dfb5;white-space:nowrap;}
+[data-console-tone=alert] .tf-console-signal,[data-console-tone=alert] .tf-transmission-title{color:#ffc36b;}
+[data-console-tone=special] .tf-transmission-title{color:#dab1ff;}
+.thunder-board.tf-live .tf-current-card .tf-pending-card{min-height:54px;gap:6px;padding:3px 6px;flex-direction:row;}
+.thunder-board.tf-live .tf-current-card .tf-tactical{width:clamp(48px,8dvh,70px);height:clamp(48px,8dvh,70px);flex-basis:clamp(48px,8dvh,70px);}
+.tf-transmission-title,.tf-idle-transmission strong{display:block;color:#8bdfff;font-size:clamp(.58rem,1.8vw,.75rem);letter-spacing:.035em;line-height:1.1;}
+.thunder-board.tf-live .tf-current-card .thunder-pending{padding:1px 0;font-size:clamp(.77rem,2.5vw,1.02rem);}
+.tf-idle-transmission{display:grid;align-content:center;gap:3px;min-height:54px;padding:4px 8px;background:#102638;border:1px solid #345e75;border-radius:5px;color:#d0e5f0;font-size:.74rem;line-height:1.15;}
+.tf-equipment-heading h3{margin:0;font-size:inherit;font-weight:700;}
+.tf-equipment-heading span{color:#b7d1df;white-space:nowrap;letter-spacing:0;}
+.thunder-board.tf-live .tf-special-list{grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;margin-top:3px;}
+.thunder-board.tf-live .tf-special-unit,.thunder-board .tf-equipment-empty{height:58px;box-sizing:border-box;min-width:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;padding:2px;border-radius:5px;}
+.thunder-board.tf-live .tf-special-unit .tf-tactical{flex:0 0 30px;width:100%;height:30px;min-height:0;}
+.thunder-board.tf-live .tf-special-unit .tf-special-use{flex:1;min-height:0;width:100%;padding:0 1px;line-height:1;font-size:clamp(.52rem,1.5vw,.7rem);}
+.thunder-board.tf-live .tf-special-unit .tf-special-use small{font-size:inherit;line-height:1;}
+.thunder-board .tf-equipment-empty{border:1px solid #314a5e;background:#10202c;color:#8aa2b4;line-height:1.05;}
+.tf-equipment-empty strong{font-size:1.1rem;color:#6c8ba0;}
+.tf-equipment-empty small{font-size:clamp(.48rem,1.45vw,.68rem);}
+.tf-equipment-empty span{font-size:.64rem;}
+.tf-equipment-empty[data-equipment-status=spent]{border-style:dashed;color:#b9a18a;}
+.thunder-board.tf-live .tf-special-unit[data-equipment-status=locked]{border:1px dashed #74899a;}
+.tf-decision-heading{color:#91d9f4;font-size:.61rem;letter-spacing:.045em;border-top:1px solid #34556b;padding-top:2px;}
+.tf-decision-hint{color:#d4e5ef;font-size:.72rem;line-height:1.15;margin:0;padding:2px 4px;}
+.thunder-board.tf-live .tf-console-controls{gap:2px;}
+.thunder-board.tf-live .tf-special-instruction p{margin:0;font-size:.72rem;}
+.thunder-board.tf-live .tf-action-status[data-transient=true]{position:static;}
+@media(max-height:700px){
+ .thunder-board.tf-live .tf-current-card .tf-tactical{height:44px;width:44px;flex-basis:44px;}
+ .thunder-board.tf-live .tf-current-card .tf-pending-card,.tf-idle-transmission{min-height:46px;}
+ .thunder-board.tf-live .tf-special-unit,.thunder-board .tf-equipment-empty{height:47px;}
+ .thunder-board.tf-live .tf-special-unit .tf-tactical{height:23px;flex-basis:23px;}
+}
+@media(orientation:landscape) and (max-height:500px){
+ .thunder-board.tf-live .tf-special-list{grid-template-columns:repeat(6,minmax(0,1fr));}
+ .thunder-board.tf-live .thunder-action-zone{gap:2px;padding:3px 4px;}
+ .thunder-board.tf-live .tf-current-card .tf-pending-card{min-height:44px;}
+}
