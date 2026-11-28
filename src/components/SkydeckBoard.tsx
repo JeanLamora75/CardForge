@@ -37,11 +37,15 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     mounted.current=true;
     void(async()=>{
       try{
-        const existing=tutorial?practiceSkydeck({seed:54}):await resumeSkydeck(createIndexedDbGameStorage());
+        const storage=createIndexedDbGameStorage();
+        const existing=tutorial?practiceSkydeck({seed:54}):await resumeSkydeck(storage);
         if(cancelled)return;
-        session.current=existing?skydeckSessionView(existing):null;
-        setView(session.current?.inspect()??null);
+        const next=existing??await startSkydeck(storage,crypto.randomUUID(),setup());
+        if(cancelled)return;
+        session.current=skydeckSessionView(next);
+        setView(session.current.inspect());
         setResumed(!!existing&&!tutorial);
+        if(!existing)playSkydeckSound("shuffle");
       }catch{if(!cancelled){setBlocked(true);setStorageError(true);}}
       finally{if(!cancelled)setBusy(false);}
     })();
@@ -95,7 +99,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   }
   const same=(ids:readonly string[])=>ids.length===selected.length&&ids.every(id=>selected.includes(id));
   const matching=view?.actions.filter(a=>{
-    if(view.phase==='discard')return a.type==='discard'&&same(a.cardIds);
+    if(view.phase==='discard')return selected.length===0?a.type==='discard-none':a.type==='discard'&&same(a.cardIds);
     if(view.phase==='enemy'||view.phase==='draw')return a.type===(view.phase==='enemy'?'advance-enemy':'draw');
     if(kind==='capture-b')return a.type==='capture-b'&&selected.length===1&&a.cardId===selected[0];
     if(a.type!==kind||a.targetPosition!==target||!same(a.cardIds))return false;
@@ -124,17 +128,16 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     </span>;
   };
   const phaseLabels={enemy:tr('Ennemis','Enemies'),discard:tr('Défausse','Discard'),draw:tr('Pioche','Draw'),capture:tr('Capture','Capture'),finished:tr('Terminée','Finished')};
-  return <section className="sd-board" style={{backgroundImage: `linear-gradient(#10202dcc,#152431e8),url("${import.meta.env.BASE_URL}art/worlds/skydeck.webp")`}} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
-    <p className="sd-kicker">SKYDECK · {tr('Corsaires du ciel','Sky corsairs')}</p>
-    <p>{tutorial?tr('Entraînement sans sauvegarde ni statistiques.','Training without saves or statistics.'):tr('Préversion interne · sauvegarde locale automatique.','Internal preview · automatic local save.')}</p>
+  return <section className="sd-board" data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
+    {tutorial?<p className="sd-training">{tr("Entraînement sans sauvegarde ni statistiques.","Training without saves or statistics.")}</p>:null}
     {resumed?<p className="sd-resumed">{tr('Partie reprise · sauvegarde locale','Game resumed · local save')}</p>:null}
     {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Action non enregistrée. La sauvegarde précédente est conservée.','Action not saved. Previous save preserved.')}</p>:null}
-    {!view?<button type="button" className="primary-action" disabled={busy||blocked} onClick={()=>void start()}>{tr('Commencer une partie','Start a game')}</button>:<>
-      <p role="status" aria-live="polite">{tr('Manche','Round')} {view.round} · {phaseLabels[view.phase]} · {view.outcome==='win'?tr('Victoire','Victory'):view.outcome==='loss'?tr('Défaite','Defeat'):view.outcome==='abandoned'?tr('Abandon','Abandoned'):tr('En cours','In progress')}</p>
+    {!view?<>{busy?<p role="status">{tr("Préparation de la flotte…","Preparing the fleet…")}</p>:!blocked?<button type="button" className="primary-action" onClick={()=>void start()}>{tr("Réessayer","Retry")}</button>:null}</>:<>
+      <p className="sd-round" role="status" aria-live="polite">{tr('Manche','Round')} {view.round} · {phaseLabels[view.phase]} · {view.outcome==='win'?tr('Victoire','Victory'):view.outcome==='loss'?tr('Défaite','Defeat'):view.outcome==='abandoned'?tr('Abandon','Abandoned'):tr('En cours','In progress')}</p>
       <div className="sd-phases" aria-label={tr('Phases','Phases')}>{(['enemy','discard','draw','capture'] as const).map(p=><span key={p} aria-current={view.phase===p?'step':undefined}>{phaseLabels[p]}</span>)}</div>
       <div className="sd-counts">{[[tr('Pioche personnelle','Player deck'),view.counts.playerDeck],[tr('Pioche ennemie','Enemy deck'),view.counts.enemyDeck],[tr('Défausse personnelle','Personal discard'),view.counts.discard],[tr('Capture ennemie','Enemy capture'),view.counts.enemyCapture]].map(([label,n])=><span key={label}>{label}: <strong>{n}</strong></span>)}</div>
-      <h3>{tr('Ligne ennemie','Enemy line')}</h3>
-      <p className="sd-direction">{tr('Entrée de la pioche → position 1 à droite','Deck entry → position 1 on the right')}</p>
+      <div className="sd-fleets"><section className="sd-fleet"><h3>{tr('Ligne ennemie','Enemy line')}</h3>
+      <p className="sd-direction">{tr("Entrée à droite → 1","Entry on right → 1")}</p>
       <div className="sd-line">{positions.map(position=>{
         const id=view.enemyLine[position-1];
         const active=kind==='capture-b'?position===1:target===position;
@@ -142,10 +145,10 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
           <span className="sd-position">{position}</span>{id?renderCard(id):<span>{tr('Vide','Empty')}</span>}
         </button>;
       })}</div>
-      <h3>{tr('Votre main','Your hand')}</h3>
+      </section><section className="sd-fleet"><h3>{tr('Votre main','Your hand')}</h3>
       <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} className="sd-card" aria-label={cardName(id)} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||!!pending||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}</div>
       {!view.hand.length?<p>{tr('Main vide','Empty hand')}</p>:null}
-      <h3 ref={heading} tabIndex={-1}>{tr('Actions autorisées','Legal actions')}</h3>
+      </section></div><h3 ref={heading} tabIndex={-1}>{tr('Actions autorisées','Legal actions')}</h3>
       {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={!!pending||restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Laisser capturer','B · Let enemy capture'):tr('C · Repousser','C · Push back')}</button>)}</div>:null}
       {hintsEnabled&&view.phase==='capture'?<p>{kind==='capture-a'?tr('Choisissez une cible et des cartes de même enseigne. Le Joker copie une carte engagée.','Choose a target and matching-suit cards. A Joker copies a selected card.'):kind==='capture-b'?tr('Sacrifiez une carte de main avec la position 1. Une figure ou un As perdu entraîne la défaite.','Sacrifice one hand card with position 1. Losing a face card or ace causes defeat.'):tr('Sacrifiez deux cartes pour renvoyer la cible sous la pioche adverse.','Sacrifice two cards to return the target to the bottom of the enemy deck.')}</p>:null}
       {copyChoices.length>0?<fieldset disabled={!!pending||restart||abandon||busy}><legend>{tr('Carte copiée par le Joker','Card copied by the Joker')}</legend>{copyChoices.map(id=><label key={id}><input type="radio" name="sd-copy" checked={copy===id} onChange={()=>{playSkydeckSound('joker');setCopy(id);}}/>{cardName(id)}</label>)}</fieldset>:null}

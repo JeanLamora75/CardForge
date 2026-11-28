@@ -45,13 +45,13 @@ export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGa
 
 export default function GameLearning({ gameId, language="fr", hintsEnabled, onHintsChange, initialLearn=false, thunderHelp=false, onCloseThunderHelp }: { gameId: PlayableLearningGame; thunderHelp?:boolean; onCloseThunderHelp?:()=>void; language?:Locale; hintsEnabled: boolean; onHintsChange: (enabled: boolean) => void; initialLearn?:boolean }) {
   const [preferences, setPreferences] = useState<LearningPreferences>(() => readLearningPreferences(local(), gameId));
-  const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":gameId==="gridcannon"?"play":readLearningPreferences(local(), gameId).choice);
+  const [mode, setMode] = useState<LearningChoice | null>(() => initialLearn?"learn":gameId==="gridcannon"||gameId==="card-capture"?"play":readLearningPreferences(local(), gameId).choice);
   const [showRules, setShowRules] = useState(false);
   const [tutorialRun, setTutorialRun] = useState(0);
   const [saveWarning, setSaveWarning] = useState(false);
   const [grimHelpStatus,setGrimHelpStatus]=useState<GrimHelpStatus>({placements:0,triggers:0,returns:0});
   const name = names[gameId];
-  const immersiveBoard=gameId==="gridcannon"||gameId==="clear-the-dungeon"||gameId==="loot-the-loop";
+  const immersiveBoard=gameId==="gridcannon"||gameId==="clear-the-dungeon"||gameId==="loot-the-loop"||gameId==="card-capture";
   const helpDialog=useRef<HTMLDialogElement>(null);
   useEffect(()=>{const node=helpDialog.current;if(!immersiveBoard||!node)return;if(thunderHelp&&!node.open)node.showModal();else if(!thunderHelp&&node.open)node.close();},[thunderHelp,gameId,mode,immersiveBoard]);
   function closeHelp(){
@@ -67,7 +67,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
   }
   const controls = <>
 <div className="learning-toolbar" role="group" aria-label="Mode de jeu et aide">
-        {gameId!=="gridcannon"||mode==="learn"?<span className="learning-mode">{mode === "learn" ? "Tutoriel · entraînement sans sauvegarde" : "Partie normale"}</span>:null}
+        {(gameId!=="gridcannon"&&gameId!=="card-capture")||mode==="learn"?<span className="learning-mode">{mode === "learn" ? "Tutoriel · entraînement sans sauvegarde" : "Partie normale"}</span>:null}
         <button className="secondary-action" type="button" onClick={() => {choose(mode === "learn" ? "play" : "learn");if(immersiveBoard)onCloseThunderHelp?.();}}>
           {mode === "learn" ? "Jouer librement" : gameId==="gridcannon"?"Tutoriel":"Relancer le tutoriel"}
         </button>
@@ -75,7 +75,7 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         <button className="secondary-action" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>
           {showRules ? "Masquer les règles" : gameId==="gridcannon"?"Règles":"Consulter les règles"}
         </button>
-        <label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>
+        {gameId!=="card-capture"?<label className="learning-hints"><input type="checkbox" checked={hintsEnabled} onChange={() => onHintsChange(!hintsEnabled)} /> Aide contextuelle</label>:null}
       </div>
       {gameId==="clear-the-dungeon" && hintsEnabled ? <section className="gd-help-actions" data-i18n-ignore><h3>{language==="fr"?"Aide sur les actions autorisées":"Help on allowed actions"}</h3><p>{language==="fr"?`Poses : ${grimHelpStatus.placements} · Déclenchements : ${grimHelpStatus.triggers} · Reprises : ${grimHelpStatus.returns}`:`Placements: ${grimHelpStatus.placements} · Attacks: ${grimHelpStatus.triggers} · Take-backs: ${grimHelpStatus.returns}`}</p><p>{language==="fr"?"Deux cartes de puissance doivent atteindre la résistance du monstre. Une troisième carte de son enseigne déclenche l’attaque. Les Jokers valent 10 et remplacent une enseigne.":"Two power cards must reach the monster’s resistance. A third card matching its suit triggers the attack. Jokers are worth 10 and can match any suit."}</p></section>:null}
       {showRules ? <Rulebook gameId={gameId} language={language} /> : null}

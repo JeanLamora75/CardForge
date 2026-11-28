@@ -206,17 +206,18 @@ async function immersiveScreens(){
    await page.locator("#settings-language").waitFor();
    await page.locator(".settings-top-back").click();
    await page.locator('[data-settings-category="audio"]').click();
-   assert.equal(await page.getByRole("slider").count(),2);
-   const music=page.locator("#musicVolume"),sounds=page.locator("#soundsVolume");
+   assert.equal(await page.getByRole("slider").count(),3);
+   const music=page.locator("#musicVolume"),sounds=page.locator("#soundsVolume"),ambience=page.locator("#ambienceVolume");
+   await ambience.fill("25");assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("cardforge.settings.v1")).ambienceVolume),25);await ambience.fill("0");
    await music.fill("0");await sounds.fill("35");
    assert.equal(await sounds.inputValue(),"35");await page.locator(".audio-preview").click();
    await sounds.fill("0");assert.ok(await page.locator(".audio-preview").isDisabled());
    await sounds.focus();await page.keyboard.press("ArrowRight");assert.equal(await sounds.inputValue(),"1");
    assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem("cardforge.settings.v1")).soundsVolume),1);
    await sounds.fill("0");
-   assert.equal(await page.locator(".volume-muted").count(),2);
+   assert.equal(await page.locator(".volume-muted").count(),3);
    await sounds.fill("35");
-   assert.equal(await page.locator(".volume-muted").count(),1);
+   assert.equal(await page.locator(".volume-muted").count(),2);
    await page.locator(".settings-top-back").click();
    assert.match(await page.locator('[data-settings-category="audio"]').innerText(),/35 %/);
    await page.locator('[data-settings-category="audio"]').click();await page.locator("#soundsVolume").fill("0");await page.locator(".settings-top-back").click();
@@ -698,11 +699,11 @@ async function journey(locale,mobile){
     assert.ok(await gd.locator('.grim-card .gd-card-art img').evaluateAll(nodes=>nodes.every(n=>n.complete&&n.naturalWidth>0)));
     // Skydeck normal play: persistence and exact offline resume.
     await page.goto(HOST+'#game/card-capture/board');
-    await page.locator('.learning-intro').waitFor();
-    await interact(page,page.locator('.learning-intro button.secondary-action').first(),mobile);
     const sd=page.locator('.sd-board');
     await sd.waitFor();
-    await interact(page,sd.getByRole('button',{name:locale==='fr'?'Commencer une partie':'Start a game'}),mobile);
+    assert.equal(await page.locator('.sd-command-header').count(),1);
+    assert.equal(await page.locator('.topbar').count(),0);
+    assert.equal(await page.locator('.learning-intro').count(),0);
     await sd.locator('.sd-line:not(.sd-hand) button[data-position="1"]').waitFor();
     assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
     const initial=await sd.locator('[role=status]').textContent();

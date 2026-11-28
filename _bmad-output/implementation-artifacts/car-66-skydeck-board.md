@@ -4,3 +4,7 @@ AC1 : quatre positions en ordre 4–1, main, phase, compteurs, sélection, aper�
 
 ## Intégration graphique
 54 illustrations et 5 cadres reliés aux identifiants physiques ; correspondance visuelle choisie : cœurs Pirates, carreaux Marine, trèfles Guilde, piques Chevaliers. Fond issu du décor Skydeck existant, pas de nouveau cockpit dédié. Moteur et sauvegarde inchangés. Tests de correspondance et assertions PWA ajoutés ; exécution CI à constater. Adaptation manuelle sans uv ; workflow BMAD build officiel non exécuté.
+
+
+## Refonte immersive SD-BOARD-01 à 13
+Fond pleine page et logo existants, navigation par icônes, suppression de l’en-tête générique et du statut sur le plateau, démarrage automatique uniquement sans sauvegarde, aide/tutoriel/règles dans la modale, préférence d’aide dans les paramètres, compteurs laiton, cartes optimisées portrait/paysage. Le moteur et le statut catalogue restent inchangés. Correction du choix discard-none dans l’interface. Tests E2E actualisés pour trois volumes et démarrage automatique. Workflow BMAD adapté sans uv ; CI et recette à constater.
