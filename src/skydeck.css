@@ -368,3 +368,31 @@ html[data-motion=off] .sd-end-content{animation:none}
 .sd-manual-v2 button:focus-visible{outline:3px solid #a56d27;outline-offset:2px}
 @media(max-height:650px){.sd-manual-v2 .sd-manual-content{padding:14px;gap:4px}.sd-manual-v2 .sd-manual-cards figure{max-width:75px}.sd-manual-v2 .sd-manual-toc button{min-height:34px}.sd-manual-scenes img{max-height:18dvh}}
 @media(max-height:450px){.sd-manual-v2 .sd-manual-content{padding:12px 20px;justify-content:flex-start}.sd-manual-v2 .sd-manual-nav button{min-height:30px}.sd-manual-v2 .sd-manual-logo{height:28px}.sd-manual-v2 .sd-manual-header .sd-manual-back{width:32px;height:32px;font-size:1rem}.sd-manual-v2 .sd-manual-toc{grid-template-columns:1fr 1fr}.sd-manual-v2 .sd-manual-cards figure{max-width:58px}}
+
+/* Keep reading inside the decorative frame aperture. */
+.shell.sd-command-surface:has(>.sd-manual){display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;padding:0}
+.shell.sd-command-surface>.sd-manual{flex:1;height:100dvh;max-height:100dvh;margin:0 auto}
+.sd-manual-dialog .sd-manual{height:0;min-height:0;flex:1}
+.sd-manual-v2{box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-start;gap:4px;padding:4px 5px max(4px,env(safe-area-inset-bottom))}
+.sd-manual-v2 .sd-manual-paper{flex:1;min-height:0;overflow:hidden;container-type:size;position:relative}
+.sd-manual-v2 .sd-manual-safe{position:absolute;inset:10% 7% 9%;display:flex;flex-direction:column;min-height:0;z-index:2}
+.sd-manual-v2 .sd-manual-content{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;justify-content:flex-start;padding:0 2px;gap:clamp(4px,1cqh,8px);scrollbar-width:thin}
+.sd-manual-v2 .sd-manual-content>*{flex-shrink:0}
+.sd-manual-v2 .sd-manual-content h2{font-size:clamp(1.1rem,3.8vw,1.65rem)}
+.sd-manual-v2 .sd-manual-content p{font-size:clamp(.85rem,2.8vw,1.08rem);line-height:1.28}
+.sd-manual-v2 .sd-manual-rule{display:grid;gap:3px}
+.sd-manual-v2 .sd-manual-page-number{flex:none;margin:3px 0 0;text-align:center}
+.sd-manual-v2 .sd-manual-cards figure,.sd-manual-v2 .sd-manual-battle .sd-manual-cards figure{flex:0 1 auto;width:clamp(45px,17cqw,108px);max-width:min(23%,108px)}
+.sd-manual-v2 .sd-manual-battle .sd-manual-cards figure{max-width:100%;width:clamp(42px,14cqw,90px)}
+.sd-manual-v2 .sd-manual-scenes img{max-height:min(20cqh,190px);width:auto;object-fit:contain}
+.sd-manual-v2 .sd-manual-factions{display:grid;gap:6px}
+.sd-manual-v2 .sd-manual-faction{display:flex;align-items:center;gap:8px;border-bottom:1px solid #b99b66;padding-bottom:3px}
+.sd-manual-v2 .sd-manual-faction figure{margin:0;flex:none;width:clamp(44px,13cqw,82px)}
+.sd-manual-v2 .sd-manual-faction>div{flex:1;min-width:0}
+.sd-manual-v2 .sd-manual-tip{display:flex;align-items:flex-start;gap:6px;border-top:1px solid #a98b53;padding:4px 0}
+.sd-manual-v2 .sd-manual-tip>img{width:22px;height:22px;object-fit:contain;filter:brightness(.55)}
+.sd-manual-v2 .sd-manual-toc button img{filter:brightness(.5) sepia(.5)}
+.sd-manual-v2 .sd-manual-toc{align-content:start}
+.sd-manual-v2 footer{flex:none;margin:0;padding:2px 0}
+@media(max-height:650px){.sd-manual-v2 .sd-manual-content{gap:3px}.sd-manual-v2 .sd-manual-faction figure{width:48px}.sd-manual-v2 .sd-manual-content p{font-size:.84rem}.sd-manual-v2 .sd-manual-separator{height:8px}}
+@media(orientation:landscape) and (max-height:500px){.sd-manual-v2 .sd-manual-content{gap:3px}.sd-manual-v2 .sd-manual-factions{grid-template-columns:1fr 1fr}.sd-manual-v2 .sd-manual-toc{grid-template-columns:1fr 1fr}}

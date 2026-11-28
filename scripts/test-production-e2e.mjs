@@ -761,6 +761,7 @@ async function journey(locale,mobile){
     assert.equal(await manual.locator('.sd-manual-toc button').count(),7);
     await manual.locator('.sd-manual-toc button').nth(1).click();
     assert.equal(await manual.locator('.sd-manual-card').count(),2);
+    assert.equal(await manual.locator('.sd-manual-faction').count(),2);
     for(const img of await manual.locator('.sd-manual-card img').all())await img.evaluate(n=>n.decode());
     assert.deepEqual(await readSaved(page,'card-capture'),beforeManual);
     await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
@@ -1011,6 +1012,8 @@ async function journey(locale,mobile){
         for(const img of await book.locator('img').all())await img.evaluate(i=>i.decode());
         assert.match(await book.locator('.sd-manual-page-number').textContent(),new RegExp('Page '+(n+1)+'/20'));
         assert.ok(await book.evaluate(el=>{const r=el.getBoundingClientRect();return r.bottom<=innerHeight+1&&r.right<=innerWidth+1;}),'manual stays in viewport');
+        assert.ok(await book.locator('.sd-manual-safe').evaluate(el=>{const r=el.getBoundingClientRect(),p=el.parentElement.getBoundingClientRect();return r.top>p.top&&r.bottom<p.bottom&&r.left>p.left&&r.right<p.right;}),'reading aperture is inside the frame');
+        assert.ok(await book.locator('.sd-manual-page-number').isVisible(),'pagination remains visible');
         if(n<19)await book.locator('.sd-manual-nav button').last().click();
       }
       // Mobile browser uses real touch events, no desktop-only hover action.

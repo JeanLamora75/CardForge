@@ -76,3 +76,7 @@ Sept chapitres, treize pages FR/EN, sommaire, navigation, carte illustrée via a
 
 ## SD-NAV-01 à 06 — retour au menu
 Hypothèse issue de la capture : sélection native du décor et du logo. Nettoyage explicite au retour Skydeck et au montage de WorldMenu commun ; protection CSS des surfaces décoratives et désactivation du glissement des images de résultat. Navigation hash et ressources inchangées ; transition locale réinitialisée au remontage. E2E des trois issues avec sélection forcée, contrôle du menu et de la sauvegarde ajouté. Reproduction visuelle réelle et CI à confirmer. Aucun uv.
+
+
+## SD-RULES-60 à 84 — finition du manuel
+Zone de lecture indépendante du cadre, pagination fixe, hauteur disponible, cartes bornées, factions présentées individuellement, grades et conseils illustrés, lexique FR/EN harmonisé. Aucun changement des règles. Défilement interne de sécurité conservé dans la zone protégée ; pagination supplémentaire et absence totale de scroll aux huit tailles restent à vérifier et compléter. Tests de géométrie ajoutés, non exécutés localement. Revue Mary/Murat à confirmer, adaptation manuelle sans uv.

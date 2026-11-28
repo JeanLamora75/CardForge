@@ -6,13 +6,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Votre mission",
       "intro": "Les cieux sont en guerre. Amiral, votre escadre doit reprendre le contrôle des routes aériennes.",
-      "body": "Éliminez tous les ennemis déployés et tous ceux de leur pioche. Capturez des unités pour renforcer votre flotte. Aucune figure ni aucun As ne doit rejoindre les captures ennemies, même si cette unité appartient à l’adversaire.",
+      "body": "Éliminez tous les ennemis déployés et tous ceux de leur pioche. Capturez des unités pour renforcer votre flotte. Aucune unité stratégique ne doit rejoindre les captures ennemies, même si cette unité appartient à l’adversaire.",
       "tip": "Anticipez le prochain affrontement plutôt que de rechercher uniquement la puissance maximale."
     },
     "en": {
       "title": "Your mission",
       "intro": "The skies are at war. Admiral, your fleet must regain control of the aerial routes.",
-      "body": "Clear every deployed enemy and every enemy in the deck. Capture units to strengthen your fleet. No face card or ace may enter enemy captures, even if it belongs to the enemy.",
+      "body": "Clear every deployed enemy and every enemy in the deck. Capture units to strengthen your fleet. No strategic unit may enter enemy captures, even if it belongs to the enemy.",
       "tip": "Plan for the next encounter instead of simply maximizing firepower."
     }
   },
@@ -57,13 +57,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Les unités stratégiques",
       "intro": "Les officiers et navires légendaires sont les piliers de votre campagne.",
-      "body": "Lieutenant (Valet) : 11 ; Commandant (Dame) : 12 ; Amiral (Roi) : 13 ; navire légendaire (As) : 14. Capturez-les pour renforcer vos réserves. Si une telle unité entre dans les captures ennemies, la défaite est immédiate.",
+      "body": "Lieutenant : 11 ; Commandant : 12 ; Amiral : 13 ; navire légendaire : 14. Capturez-les pour renforcer vos réserves. Si une telle unité entre dans les captures ennemies, la défaite est immédiate.",
       "tip": "Un rappel vers vos réserves n’est pas une perte définitive."
     },
     "en": {
       "title": "Strategic units",
       "intro": "Officers and legendary ships are the pillars of your campaign.",
-      "body": "Lieutenant (Jack): 11; Commander (Queen): 12; Admiral (King): 13; legendary ship (Ace): 14. Capture them to strengthen your reserves. If any enters enemy captures, defeat is immediate.",
+      "body": "Lieutenant: 11; Commander: 12; Admiral: 13; legendary ship: 14. Capture them to strengthen your reserves. If any enters enemy captures, defeat is immediate.",
       "tip": "A recall to your reserves is not a permanent loss."
     }
   },
@@ -74,13 +74,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Rassemblement des forces",
       "intro": "Votre escadre débute avec des moyens modestes.",
-      "body": "Les renforts personnels réunissent quatre unités de puissance 2, quatre de puissance 3, quatre de puissance 4 et deux corsaires libres : 14 cartes. Les 40 autres unités constituent la pioche adverse. Les deux pioches sont mélangées séparément.",
+      "body": "Les renforts personnels réunissent quatre unités de puissance 2, quatre de puissance 3, quatre de puissance 4 et deux corsaires libres : 14 unités. Les 40 autres unités constituent la pioche adverse. Les deux pioches sont mélangées séparément.",
       "tip": "Votre flotte active commence vide ; les premières unités arrivent durant la phase Renforts."
     },
     "en": {
       "title": "Gathering the forces",
       "intro": "Your fleet begins with modest forces.",
-      "body": "Your reinforcement deck contains four units each of power 2, 3 and 4, plus two free corsairs: 14 cards. The other 40 units form the enemy deck. Both decks are shuffled separately.",
+      "body": "Your reinforcement deck contains four units each of power 2, 3 and 4, plus two free corsairs: 14 units. The other 40 units form the enemy deck. Both decks are shuffled separately.",
       "tip": "Your active fleet starts empty; the first units arrive during Reinforcements."
     }
   },
@@ -91,13 +91,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Premiers contacts",
       "intro": "La vigie signale les premières voiles ennemies.",
-      "body": "Quatre ennemis sont révélés de droite à gauche, position 1 à 4. Les figures et As révélés à cette seule mise en place retournent sous leur pioche. Les cases libérées seront complétées durant le premier déploiement.",
+      "body": "Quatre ennemis sont révélés de droite à gauche, position 1 à 4. Les unités stratégiques révélés à cette seule mise en place retournent sous leur pioche. Les cases libérées seront complétées durant le premier déploiement.",
       "tip": "En partie normale, Skydeck organise ces opérations pour vous."
     },
     "en": {
       "title": "First contact",
       "intro": "The lookout reports the first enemy sails.",
-      "body": "Four enemies are revealed from right to left, positions 1–4. Face cards and aces revealed during setup only return to the bottom of their deck. Empty slots are filled during the first deployment.",
+      "body": "Four enemies are revealed from right to left, positions 1–4. Strategic units revealed during setup only return to the bottom of their deck. Empty slots are filled during the first deployment.",
       "tip": "In normal play, Skydeck handles these operations for you."
     }
   },
@@ -194,13 +194,13 @@ export const skydeckManualPages = [
       "title": "A · Capturer",
       "intro": "Retournez la puissance adverse à votre avantage.",
       "body": "Choisissez un ennemi visible. Engagez une ou plusieurs unités de sa faction dont la puissance cumulée atteint ou dépasse la sienne. Exemple : Marine 3 + Marine 5 contre Marine 8. Les trois unités rejoignent vos réserves.",
-      "tip": "Les captures renforcent votre paquet à long terme."
+      "tip": "Les captures renforcent vos forces à long terme."
     },
     "en": {
       "title": "A · Capture",
       "intro": "Turn enemy strength to your advantage.",
       "body": "Choose a visible enemy. Engage one or more units of its faction whose combined power meets or exceeds its own. Example: Navy 3 + Navy 5 against Navy 8. All three units join your reserves.",
-      "tip": "Captures strengthen your deck over time."
+      "tip": "Captures strengthen your forces over time."
     }
   },
   {
@@ -210,13 +210,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Une puissance insuffisante",
       "intro": "Une attaque mal préparée ne peut être lancée.",
-      "body": "Marine 3 + Marine 5 totalisent 8. Face à une Marine 9, il manque un point. L’attaque est refusée ; aucune carte n’est dépensée. L’action refusée ne termine pas la manche.",
+      "body": "Marine 3 + Marine 5 totalisent 8. Face à une Marine 9, il manque un point. L’attaque est refusée ; aucune unité n’est perdue. L’action refusée ne termine pas la manche.",
       "tip": "Changez de cible ou engagez une unité compatible supplémentaire si possible."
     },
     "en": {
       "title": "Insufficient power",
       "intro": "A poorly prepared attack cannot be launched.",
-      "body": "Navy 3 + Navy 5 total 8. Against Navy 9, one point is missing. The attack is rejected; no card is spent. The rejected action does not end the round.",
+      "body": "Navy 3 + Navy 5 total 8. Against Navy 9, one point is missing. The attack is rejected; no unit is lost. The rejected action does not end the round.",
       "tip": "Change target or engage another compatible unit if possible."
     }
   },
@@ -278,13 +278,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "Les corsaires libres",
       "intro": "Les corsaires savent s’adapter aux forces qu’ils accompagnent.",
-      "body": "Lors d’une capture A, un Joker copie la faction et la puissance d’une autre unité non-Joker réellement engagée, y compris un officier ou un navire légendaire. Marine 4 + Joker donnent 8 de puissance Marine. Un Joker seul ne fournit aucune puissance autonome.",
+      "body": "Lors d’une capture A, un corsaire libre copie la faction et la puissance d’une autre unité autre qu’un corsaire libre réellement engagée, y compris un officier ou un navire légendaire. Marine 4 + corsaire libre donnent 8 de puissance Marine. Un corsaire libre seul ne fournit aucune puissance autonome.",
       "tip": "Choisissez une référence engagée compatible avec la cible."
     },
     "en": {
       "title": "Free corsairs",
       "intro": "Corsairs adapt to the forces they accompany.",
-      "body": "During capture A, a Joker copies the faction and power of another engaged non-Joker unit, including an officer or legendary ship. Navy 4 + Joker provide 8 Navy power. A Joker alone provides no independent power.",
+      "body": "During capture A, a free corsair copies the faction and power of another engaged unit other than a free corsair, including an officer or legendary ship. Navy 4 + corsaire libre provide 8 Navy power. A free corsair alone provides no independent power.",
       "tip": "Choose an engaged reference compatible with the target."
     }
   },
@@ -295,14 +295,14 @@ export const skydeckManualPages = [
     "fr": {
       "title": "L’alliance des corsaires",
       "intro": "Deux corsaires peuvent unir leurs talents.",
-      "body": "Les deux Jokers peuvent copier la même unité engagée. Marine 4 + deux Jokers donnent 4 + 4 + 4 = 12 de puissance Marine. Ils ne peuvent pas attaquer seuls. Les Jokers engagés dans une capture réussie rejoignent les réserves avec les autres unités.",
-      "tip": "Deux Jokers sans unité de référence ne constituent pas une attaque valide."
+      "body": "Les deux corsaires libres peuvent copier la même unité engagée. Marine 4 + deux corsaires libres donnent 4 + 4 + 4 = 12 de puissance Marine. Ils ne peuvent pas attaquer seuls. Les corsaires libres engagés dans une capture réussie rejoignent les réserves avec les autres unités.",
+      "tip": "Deux corsaires libres sans unité de référence ne constituent pas une attaque valide."
     },
     "en": {
       "title": "Corsair alliance",
       "intro": "Two corsairs can combine their talents.",
-      "body": "Both Jokers may copy the same engaged unit. Navy 4 + two Jokers provide 4 + 4 + 4 = 12 Navy power. They cannot attack alone. Jokers used in a successful capture join reserves with the other units.",
-      "tip": "Two Jokers without a reference unit are not a legal attack."
+      "body": "Both free corsairs may copy the same engaged unit. Navy 4 + two free corsairs provide 4 + 4 + 4 = 12 Navy power. They cannot attack alone. Free corsairs used in a successful capture join reserves with the other units.",
+      "tip": "Two free corsairs without a reference unit are not a legal attack."
     }
   },
   {
@@ -312,13 +312,13 @@ export const skydeckManualPages = [
     "fr": {
       "title": "La gloire ou la chute",
       "intro": "La dernière bataille décide du sort de votre campagne.",
-      "body": "Victoire : la ligne et la pioche ennemies sont toutes deux vides après la résolution d’une action de combat. Défaite immédiate : une figure ou un As entre dans les captures ennemies, qu’il s’agisse d’une unité personnelle ou adverse. Une flotte personnelle restante n’empêche pas la victoire. La défaite est prioritaire si les deux conditions surviennent simultanément.",
+      "body": "Victoire : la ligne et la pioche ennemies sont toutes deux vides après la résolution d’une action de combat. Défaite immédiate : une unité stratégique entre dans les captures ennemies, qu’il s’agisse d’une unité personnelle ou adverse. Une flotte personnelle restante n’empêche pas la victoire. La défaite est prioritaire si les deux conditions surviennent simultanément.",
       "tip": "Protégez les unités stratégiques, même lorsqu’elles se trouvent en face de vous."
     },
     "en": {
       "title": "Glory or downfall",
       "intro": "The final battle decides the fate of your campaign.",
-      "body": "Victory: both the enemy line and deck are empty after a combat action resolves. Immediate defeat: any face card or ace enters enemy captures, whether personal or enemy. Remaining personal units do not prevent victory. Defeat takes precedence if both conditions occur simultaneously.",
+      "body": "Victory: both the enemy line and deck are empty after a combat action resolves. Immediate defeat: any strategic unit enters enemy captures, whether personal or enemy. Remaining personal units do not prevent victory. Defeat takes precedence if both conditions occur simultaneously.",
       "tip": "Protect strategic units even when they are facing you."
     }
   },

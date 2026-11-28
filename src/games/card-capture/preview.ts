@@ -11,7 +11,7 @@ export function createSkydeckPreview(seed:number){
   };
 }
 export function describeSkydeckCard(id:string,locale:'fr'|'en'){
-  if(id==='joker-1'||id==='joker-2')return {power:'★',symbol:'✧',faction:locale==='fr'?'Corsaire libre':'Free corsair',name:'Joker '+id.slice(-1)};
+  if(id==='joker-1'||id==='joker-2')return {power:'★',symbol:'✧',faction:locale==='fr'?'Corsaire libre':'Free corsair',name:(locale==='fr'?'Corsaire libre ':'Free corsair ')+id.slice(-1)};
   const [suit,rank]=id.split('-');
   const {symbol,fr,en}=skydeckFactions[suit as keyof typeof skydeckFactions];
   const power=rank==='1'?'14':rank;
