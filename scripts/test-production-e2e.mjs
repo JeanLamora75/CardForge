@@ -1111,11 +1111,62 @@ async function coldOfflineGameChunks(){
  }finally{await context.close();}
 }
 
+async function skydeckLearningParity(){
+ for(const locale of ['fr','en']){
+  const context=await browser.newContext({locale:locale==='fr'?'fr-FR':'en-US',viewport:{width:390,height:844},reducedMotion:'reduce'});
+  try{
+   await context.addInitScript(lang=>{localStorage.setItem('cardforge.language.v1',lang);localStorage.setItem('cardforge.settings.v1',JSON.stringify({hints:false,animations:'off',musicVolume:0,soundsVolume:0,ambienceVolume:0}));},locale);
+   const page=await context.newPage();await page.goto(HOST);await ready(page);
+   await page.goto(HOST+'#game/card-capture/board');
+   await page.locator('.sd-console[data-phase="capture"]').waitFor();
+   const snapshot=()=>page.evaluate(async()=>{
+    const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+    try{return await Promise.all(['sessions','results','statistics'].map(name=>new Promise((resolve,reject)=>{const r=db.transaction(name,'readonly').objectStore(name).getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);})))}finally{db.close();}
+   });
+   const durable=await snapshot();
+   const enterTraining=async()=>{
+    await page.goto(HOST+'#game/card-capture');
+    await page.getByRole('button',{name:locale==='fr'?'Apprendre':'Learn',exact:true}).click();
+    await page.locator('.sd-training').waitFor();
+    await page.locator('.sd-console[data-phase="capture"]').waitFor();
+   };
+   const cards=()=>page.locator('.sd-board [data-card-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.cardId));
+   await enterTraining();
+   const initial=await cards();
+   assert.equal(await page.locator('.sd-hand button').count(),4);
+   await page.locator('.sd-hint').waitFor();
+   assert.equal(await page.locator('.sd-preview').isDisabled(),true,'combat remains a player choice');
+   assert.deepEqual(await snapshot(),durable);
+   await page.locator('.sd-command-header').getByRole('button',{name:locale==='fr'?'Aide':'Help',exact:true}).click();
+   await page.locator('dialog[open] .sd-manual').waitFor();
+   assert.deepEqual(await cards(),initial);
+   await page.keyboard.press('Escape');
+   await page.locator('dialog[open]').waitFor({state:'hidden'});
+   await page.locator('.sd-command-header .sd-menu-toggle').click();
+   await page.getByRole('button',{name:locale==='fr'?'Recommencer l’entraînement':'Restart training',exact:true}).click();
+   await page.locator('.sd-confirm .primary-action').click();
+   await page.locator('.sd-console[data-phase="capture"]').waitFor();
+   assert.deepEqual(await cards(),initial);
+   for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
+    await page.setViewportSize(viewport);
+    const layout=await page.locator('.sd-board').evaluate(node=>({bottom:node.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,viewport:innerWidth}));
+    assert.ok(layout.bottom<=layout.height+2&&layout.scroll<=layout.height+2&&layout.width<=layout.viewport+2,JSON.stringify({locale,viewport,layout}));
+   }
+   assert.deepEqual(await snapshot(),durable);
+   await context.setOffline(true);await enterTraining();
+   assert.deepEqual(await cards(),initial);
+   assert.deepEqual(await snapshot(),durable);
+  }finally{await context.close();}
+ }
+ console.log('Skydeck learning: automatic opening, strategic choice, forced hints, deterministic restart, FR/EN, 8 viewports, offline, durable data unchanged');
+}
+
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
   await coldOfflineGameChunks();
   await skydeckStatisticsScreens();
+  await skydeckLearningParity();
   await immersiveScreens();
   await stalePreviewRecovery();
   for(const locale of ['fr','en'])

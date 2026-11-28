@@ -16,6 +16,11 @@ Ces exigences complètent les principes BMAD et s'appliquent à chaque activatio
 | CF-QUAL-08 | Aucune intégration déclarée validée sans preuves techniques. |
 | CF-QUAL-09 | Les erreurs précédemment identifiées deviennent des contraintes obligatoires. |
 | CF-QUAL-10 | Privilégier systématiquement la solution la plus simple répondant au besoin. |
+| CF-QUAL-11 | Toute amélioration ergonomique ou automatisation du plateau s'applique au mode Apprendre, sauf justification pédagogique explicite et validée. |
+| CF-QUAL-12 | Jouer et Apprendre partagent les composants, interactions et règles de jeu ; seules les adaptations pédagogiques et la persistance diffèrent. |
+| CF-QUAL-13 | Toute modification du plateau exige des tests de non-régression dans les deux modes. |
+
+Extension CF-QUAL-11 à 13 validée le 28 novembre 2026. Applicable aux cinq jeux.
 
 ## Application concrète
 

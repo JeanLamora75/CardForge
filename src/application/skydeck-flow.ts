@@ -1,6 +1,6 @@
 import type {SkydeckPublicState,SkydeckAction} from '../games/card-capture/engine.ts';
-export function automaticSkydeckAction(view:SkydeckPublicState|null,tutorial=false):SkydeckAction|undefined{
- if(tutorial||!view||view.outcome!=='in-progress'||view.blockedReason)return;
+export function automaticSkydeckAction(view:SkydeckPublicState|null):SkydeckAction|undefined{
+ if(!view||view.outcome!=='in-progress'||view.blockedReason)return;
  if(view.phase==='enemy'&&view.actions.length===1&&view.actions[0].type==='advance-enemy')return view.actions[0];
  if(view.phase==='draw'&&view.actions.length===1&&view.actions[0].type==='draw')return view.actions[0];
  if(view.phase==='discard'&&!view.actions.some(a=>a.type==='discard'&&a.cardIds.length>0))return view.actions.find(a=>a.type==='discard-none');

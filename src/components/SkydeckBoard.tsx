@@ -20,7 +20,7 @@ type Kind='capture-a'|'capture-b'|'capture-c';
 const positions=[4,3,2,1];
 const ui=(category:string,name:string)=>import.meta.env.BASE_URL+`art/${category}/skydeck/${name}.webp`;
 const phaseIcons={enemy:'enemy',discard:'discard',draw:'draw',capture:'capture'} as const;
-export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,paused=false,onManualPage}:{language:Locale;hintsEnabled?:boolean;tutorial?:boolean;paused?:boolean;onManualPage?:(page:SkydeckManualPage)=>void}){
+export default function SkydeckBoard({language,hintsEnabled:configuredHints=true,tutorial=false,paused=false,onManualPage}:{language:Locale;hintsEnabled?:boolean;tutorial?:boolean;paused?:boolean;onManualPage?:(page:SkydeckManualPage)=>void}){
   const tr=(fr:string,en:string)=>language==='fr'?fr:en;
   const boardRef=useRef<HTMLElement>(null);
   const activeAnimations=useRef<Animation[]>([]);
@@ -64,10 +64,9 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
     mounted.current=true;
     void(async()=>{
       try{
-        const storage=createIndexedDbGameStorage();
-        const existing=tutorial?practiceSkydeck({seed:54}):await resumeSkydeck(storage);
+        const existing=tutorial?practiceSkydeck({seed:54}):await resumeSkydeck(createIndexedDbGameStorage());
         if(cancelled)return;
-        const next=existing??await startSkydeck(storage,crypto.randomUUID(),setup());
+        const next=existing??await startSkydeck(createIndexedDbGameStorage(),crypto.randomUUID(),setup());
         if(cancelled)return;
         session.current=skydeckSessionView(next);
         setView(session.current.inspect());
@@ -100,10 +99,10 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
   async function replayFinished(){
     await run(async()=>{
       if(!view||view.outcome==='in-progress')return;
-      const storage=createIndexedDbGameStorage();
       let next;
       if(tutorial)next=practiceSkydeck({seed:54});
       else {
+        const storage=createIndexedDbGameStorage();
         const saved=await storage.readGame('card-capture');
         const live=await resumeSkydeck(storage);
         if(!saved||!live||live.getOutcome()!==view.outcome)throw new Error('Terminal save changed');
@@ -184,7 +183,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
     });
   }
   useEffect(()=>{if(!paused&&view)onManualPage?.(view.phase==='capture'?(kind==='capture-a'?'a':kind==='capture-b'?'b':'c'):view.phase==='finished'?'ending':view.phase);},[view,kind,paused,onManualPage]);
-  const automatic=automaticSkydeckAction(view,tutorial);
+  const automatic=automaticSkydeckAction(view);
   const autoConfirm=useRef(confirm);autoConfirm.current=confirm;
   useEffect(()=>{
     if(paused||!automatic||busy||blocked||error||storageError||menu||restart||abandon)return;
@@ -203,6 +202,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
   const {choices:copyChoices,effective:effectiveCopy,chosen}=resolveSkydeckCopy(matching,copy);
   const attack=skydeckAttackSummary(chosen,view?.enemyLine??[]);
   const feedback=kind==='capture-a'&&!attack?skydeckAttackFeedback(view,selected,target,copy):undefined;
+  const hintsEnabled=tutorial||configuredHints;
   const compatible=hintsEnabled?skydeckCompatibleTargets(view,kind,selected):[];
   const dragStart=(event:ReactPointerEvent<HTMLButtonElement>,id:string)=>{
     if(busy||automatic||restart||abandon||event.button!==0)return;
@@ -254,14 +254,14 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
   const headerMenu=menuHost&&view?.outcome==='in-progress'?createPortal(<div className="sd-header-menu" ref={menuRef}>
     <button ref={menuButtonRef} className="sd-menu-toggle" type="button" aria-label={tr('Options de partie','Game options')} aria-expanded={menu} aria-controls={menu?'sd-game-options':undefined} disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound(menu?'close':'open');setMenu(v=>!v);}}><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M5 6h14M5 12h14M5 18h14"/></svg></button>
     {menu?<div id="sd-game-options" className="sd-game-options" role="group" aria-label={tr('Options de partie','Game options')}>
-      <button type="button" disabled={busy} onClick={()=>{setMenu(false);void requestRestart();}}><img src={ui('buttons','gold')} alt=""/><span>{tr('Nouvelle partie','New game')}</span></button>
+      <button type="button" disabled={busy} onClick={()=>{setMenu(false);void requestRestart();}}><img src={ui('buttons','gold')} alt=""/><span>{tutorial?tr('Recommencer l’entraînement','Restart training'):tr('Nouvelle partie','New game')}</span></button>
       {!tutorial?<button type="button" disabled={busy} onClick={()=>{setMenu(false);playSkydeckSound('open');setAbandon(true);}}><img src={ui('buttons','red')} alt=""/><span>{tr('Abandonner','Abandon')}</span></button>:null}
     </div>:null}
   </div>,menuHost):null;
   if(view&&view.outcome!=='in-progress')return <SkydeckEnding view={view} language={language} tutorial={tutorial} busy={busy} storageError={storageError} onReplay={()=>void replayFinished()}/>;
   return <section ref={boardRef} className={"sd-board"+(view?.outcome==="in-progress"?" sd-live":"")} style={{'--sd-phase-panel': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/phase-panel.webp")','--sd-counter': 'url("'+import.meta.env.BASE_URL+'art/hud/skydeck/counter-blank.webp")','--sd-section': 'url("'+import.meta.env.BASE_URL+'art/banners/skydeck/section-heading.webp")','--sd-enemy-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/enemy-slot.webp")','--sd-hand-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/hand-slot.webp")','--sd-wood': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/wood-deck.webp")','--sd-dark': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/dark.webp")','--sd-gold': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/gold.webp")','--sd-neutral': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/neutral.webp")','--sd-victory': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/victory-portrait.webp")','--sd-defeat': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/defeat-portrait.webp")'} as CSSProperties} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
     {headerMenu}
-    {tutorial?<p className="sd-training">{tr("Entraînement sans sauvegarde ni statistiques.","Training without saves or statistics.")}</p>:null}
+    {tutorial?<p className="sd-training">{tr("Entraînement · phases automatiques · sans sauvegarde", "Training · automatic phases · no saves")}</p>:null}
     {resumed?<p className="sd-resumed" aria-live="polite">{tr('✓ Partie reprise','✓ Game resumed')}</p>:null}
     {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Action non enregistrée. La sauvegarde précédente est conservée.','Action not saved. Previous save preserved.')}</p>:null}
     {!view?<>{busy?<p role="status">{tr("Préparation de la flotte…","Preparing the fleet…")}</p>:!blocked?<button type="button" className="primary-action" onClick={()=>void start()}>{tr("Réessayer","Retry")}</button>:null}</>:<>
@@ -279,7 +279,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
         </button>;
       })}</div>
       </section><section className="sd-fleet sd-player-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Votre flotte','Your fleet')}</span></h3>
-      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className={"sd-card"+(view.phase==='discard'&&selected.includes(id)?" sd-recall-selected":"")+(effectiveCopy===id?" sd-copy-source":"")+(copyChoices.length>1&&copyChoices.includes(id)?" sd-copy-choice":"")} aria-label={cardName(id)+(effectiveCopy===id?tr(" · Copié par le corsaire libre"," · Copied by free corsair"):"")} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||restart||abandon||busy} onPointerDown={event=>dragStart(event,id)} onPointerMove={dragMove} onPointerUp={event=>dragEnd(event)} onPointerCancel={event=>dragEnd(event,true)} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return;}playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
+      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className={"sd-card"+(view.phase==='discard'&&selected.includes(id)?" sd-recall-selected":"")+(effectiveCopy===id?" sd-copy-source":"")+(copyChoices.length>1&&copyChoices.includes(id)?" sd-copy-choice":"")} aria-label={cardName(id)+(effectiveCopy===id?tr(" · Copié par le corsaire libre"," · Copied by free corsair"):"")} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||!!automatic||restart||abandon||busy} onPointerDown={event=>dragStart(event,id)} onPointerMove={dragMove} onPointerUp={event=>dragEnd(event)} onPointerCancel={event=>dragEnd(event,true)} onClick={()=>{if(suppressClick.current){suppressClick.current=false;return;}playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
       </section></div><section className="sd-console" data-phase={view.phase}><h3 ref={heading} tabIndex={-1}>{consoleTitles[view.phase]}</h3>
       {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}><img className="sd-action-art" src={ui('buttons',k==='capture-a'?'green':k==='capture-b'?'red':'blue')} alt=""/><img className="sd-action-icon" src={ui('icons',k==='capture-a'?'capture':k==='capture-b'?'sacrifice':'repel')} alt=""/><span>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Sacrifier','B · Sacrifice'):tr('C · Repousser','C · Push back')}</span></button>)}</div>:null}
       {hintsEnabled&&view.phase==='discard'&&!automatic?<p className="sd-hint sd-recall-hint" aria-live="polite">{selected.length?tr('Les unités rappelées rejoindront vos réserves et pourront revenir en renfort.','Recalled units join your reserves and may return as reinforcements.'):tr('Amiral, sélectionnez les unités à rappeler ou maintenez votre formation.','Admiral, select units to recall or maintain your formation.')}</p>:null}
@@ -291,7 +291,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,
       {error?<p role="alert">{tr('Action refusée. L’état précédent est conservé.','Action rejected. Previous state preserved.')}</p>:null}
       {abandon?<div className="sd-confirm"><p>{tr('Abandonner définitivement cette partie ?','Abandon this game permanently?')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void confirm({type:'abandon'})}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setAbandon(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}
 
-      {restart?<div className="sd-confirm"><p>{tr('Remplacer cette partie ? La partie actuelle sera abandonnée.','Replace this game? The current game will be abandoned.')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void replace()}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setRestart(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}
+      {restart?<div className="sd-confirm"><p>{tutorial?tr('Recommencer cet entraînement depuis le début ?','Restart this training from the beginning?'):tr('Remplacer cette partie ? La partie actuelle sera abandonnée.','Replace this game? The current game will be abandoned.')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void replace()}><img className="sd-dialog-art" src={ui('buttons','gold')} alt=""/><span>{tr('Confirmer','Confirm')}</span></button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setRestart(false);}}><img className="sd-dialog-art" src={ui('buttons','dark')} alt=""/><span>{tr('Annuler','Cancel')}</span></button></div>:null}
     </section></>}
   </section>;
 }
