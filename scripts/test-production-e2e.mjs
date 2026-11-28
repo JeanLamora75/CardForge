@@ -33,10 +33,13 @@ async function thunderScreens(page,label){
    const heroRect=hero?.getBoundingClientRect();
    const heroPanel=consoleNode.querySelector('.tf-hero-card').getBoundingClientRect();
    const heroFits=!heroRect||heroRect.bottom<=heroPanel.bottom+1&&heroRect.right<=heroPanel.right+1;
+   const heroRatio=Math.abs(heroPanel.width/heroPanel.height-2/3)<.03;
    const z=consoleNode.getBoundingClientRect();
    const radio=document.querySelector('.tf-transmission-band');const radioRect=radio.getBoundingClientRect();
-   const radioFits=radioRect.bottom<=z.top+1&&radioRect.top>=0&&radio.scrollHeight<=radio.clientHeight+1;
-   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,radioFits,arsenalRows:rows.size,arsenalColumns:columns.size,heroFits,heroWidth:heroRect?.width??0,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
+   const radioFits=radioRect.bottom<=z.top+1&&radioRect.top>=0&&radioRect.height<=32&&radio.scrollHeight<=radio.clientHeight+1;
+   const track=radio.querySelector('.tf-radio-track');const loop=getComputedStyle(track).animationIterationCount==='infinite'||getComputedStyle(track).animationName==='none';
+   const layout=document.querySelector('.tf-combat-layout').getBoundingClientRect();const maxBoard=Math.abs(r.width-Math.min(layout.width,layout.height,550))<=2;
+   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,radioFits,loop,maxBoard,heroRatio,arsenalRows:rows.size,arsenalColumns:columns.size,heroFits,heroWidth:heroRect?.width??0,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
   });
   const hud=await page.evaluate(()=>{
    const header=document.querySelector('.tf-command-header'),logo=header.querySelector('h1');
@@ -56,7 +59,7 @@ async function thunderScreens(page,label){
   const geometry=[result.left,result.top,result.width,result.height,result.consoleTop,result.consoleHeight];
   if(matrix.has(key))assert.deepEqual(geometry,matrix.get(key),'stable radar and console '+key);else matrix.set(key,geometry);
   console.log('TF V3.1',label,width,height,JSON.stringify(result));
-  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.arsenalRows!==2||result.arsenalColumns!==3||!result.heroFits||!result.radioFits||(result.heroWidth>0&&result.heroWidth<85)||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
+  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.arsenalRows!==2||result.arsenalColumns!==3||!result.heroFits||!result.heroRatio||!result.radioFits||!result.loop||!result.maxBoard||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
  }
  await page.setViewportSize(original);
  assert.deepEqual(failures,[],'Thunderfighter V5 viewport matrix '+label);
@@ -141,7 +144,7 @@ async function ready(page){
   return probe;
 }
 const GAMES=[{id:'clear-the-dungeon',name:'Grim Delve',root:'.grim-board',actions:'.grim-hand button.grim-card',confirm:false},
- {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.tf-target, .thunder-actions button.secondary-action',confirm:true},
+ {id:'gridcannon',name:'Thunderfighter',root:'.thunder-board',actions:'.tf-target, .tf-scanner:not(:disabled), .thunder-actions button.secondary-action',confirm:true},
  {id:'loot-the-loop',name:'Midnight Syndicate',root:'.ms-board',actions:'.ms-actions button,.ms-decision-action',confirm:true}];
 
 async function stalePreviewRecovery(){
@@ -519,7 +522,7 @@ async function journey(locale,mobile){
         const direct=await target.count()>0;
         const action=direct?target:page.locator(game.actions).first();
         const source=page.locator('.tf-current-card .tf-tactical').first();
-        const geometry=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm').getBoundingClientRect(),cells=[...n.querySelectorAll('.thunder-slot,.thunder-pile')].map(e=>{const b=e.getBoundingClientRect();return [b.width,b.height]});return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,confirm:c.bottom,scroll:document.documentElement.scrollHeight,viewport:innerHeight,cells};});
+        const geometry=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect(),c=document.querySelector('.thunder-confirm')?.getBoundingClientRect(),cells=[...n.querySelectorAll('.thunder-slot,.thunder-pile')].map(e=>{const b=e.getBoundingClientRect();return [b.width,b.height]});return {x:r.x,y:r.y,w:r.width,h:r.height,bottom:r.bottom,confirm:c?.bottom??0,scroll:document.documentElement.scrollHeight,viewport:innerHeight,cells};});
         await thunderScreens(page,label+'-initial');
         assert.equal(await page.locator('.tf-console-scroll').count(),0);
         assert.ok(await page.locator('.thunder-action-zone').evaluate(n=>getComputedStyle(n).overflowY==='visible'),'console must not clip');
@@ -544,7 +547,7 @@ async function journey(locale,mobile){
             else{await page.mouse.move(sx,sy);await page.mouse.down();await page.mouse.move(x,y,{steps:24});await page.mouse.up();}
           };
           await dragTo(2,2);
-          assert.equal(await page.locator('.thunder-confirm').getAttribute('data-selected'),'false');
+          assert.equal(await page.locator('.thunder-confirm[data-selected=true]').count(),0);
           assert.deepEqual(await readSaved(page,game.id),before,'invalid drop must not write');
           const currentDest=await target.boundingBox();assert.ok(currentDest);
           await dragTo(currentDest.x+currentDest.width/2,currentDest.y+currentDest.height/2);
@@ -583,7 +586,7 @@ async function journey(locale,mobile){
       }
       let after=await waitSavedChanged(page,game.id,before);
       if(game.id==='gridcannon'){
-        const draw=page.locator('.thunder-actions button').filter({hasText:/Révéler la prochaine carte|Reveal next card/});
+        const draw=page.locator('.tf-scanner:not(:disabled)').filter({hasText:/Révéler la prochaine carte|Reveal next card/});
         if(await draw.count()===1){
           const bounds=()=>page.locator('.thunder-battlefield').evaluate(n=>{const r=n.getBoundingClientRect();return [r.x,r.y,r.width,r.height];});
           const drawBounds=await bounds();
