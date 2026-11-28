@@ -16,3 +16,7 @@ La face est ancrée directement aux quatre bords du bouton carte, indépendammen
 
 ## Intégration du pack plateau original — SD-BOARD-14 à 27
 Fusion de 59 entrées dans le manifeste commun sans remplacement. Fonds dédiés portrait/paysage, logo et icônes, compteurs, phases, emplacements, console bois, boutons, quatre places de main, libellés d’action contextuels, menu de partie, indicateur de reprise compact, attribution conservée dans les règles, résultat illustré. Les ornements et autres variantes non indispensables sont disponibles hors ligne mais non imposés à l’écran. Adaptation CSS et ergonomique à valider en recette, pas de garantie de zéro défilement sur tous les écrans. Moteur, sauvegarde et sons inchangés. Tests E2E et pré-cache adaptés ; CI à constater. Workflow uv non exécuté.
+
+
+## SD-BOARD-28 à 42 — finition du rendu
+CSS Skydeck chargé après les styles génériques, couches images explicites pour compteurs, emplacements, bandeaux et bouton principal, contraste renforcé, navigation harmonisée. Plateau actif contraint à la hauteur disponible, cartes dimensionnées par la taille réelle de leur rangée (2:3), console fixe dans le flux, confirmations superposées. Tests E2E sur huit tailles, décodage et géométrie des ressources ; validation effective CI et recette requises. Aucun nouveau graphisme, moteur et sauvegardes inchangés. Adaptation manuelle sans uv.

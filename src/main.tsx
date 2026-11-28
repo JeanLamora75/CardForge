@@ -4,6 +4,7 @@ import App from "./App";
 import { readLanguage } from "./i18n/language";
 import "./styles.css";
 import "./grim-delve.css";
+import "./skydeck.css";
 
 const splash = document.getElementById("cf-startup");
 let storage: Storage | null = null;

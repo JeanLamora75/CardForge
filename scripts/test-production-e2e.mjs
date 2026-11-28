@@ -733,6 +733,15 @@ async function journey(locale,mobile){
     await page.locator('dialog[open]').waitFor();
     await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    const sdOriginalViewport=page.viewportSize();
+    for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
+      await page.setViewportSize(viewport);
+      const layout=await sd.evaluate(node=>{const consoleRect=node.querySelector('.sd-console').getBoundingClientRect();const cards=[...node.querySelectorAll('.sd-card')].map(c=>{const r=c.getBoundingClientRect();return {w:r.width,h:r.height,top:r.top,bottom:r.bottom,left:r.left,right:r.right}});return {bottom:consoleRect.bottom,scroll:document.documentElement.scrollHeight,width:innerWidth,height:innerHeight,cards};});
+      assert.ok(layout.bottom<=layout.height+2&&layout.scroll<=layout.height+2,JSON.stringify({viewport,layout}));
+      assert.ok(layout.cards.every(c=>c.w>0&&c.h>0&&Math.abs(c.w/c.h-2/3)<.05&&c.left>=-1&&c.right<=layout.width+1&&c.bottom<=layout.height+1),JSON.stringify({viewport,layout}));
+      for(const img of await sd.locator('.sd-counter-art,.sd-heading-art,.sd-slot-art,.sd-button-art').all()){const painted=await img.evaluate(async n=>{await n.decode();const r=n.getBoundingClientRect();return n.naturalWidth>0&&r.width>0&&r.height>0&&getComputedStyle(n).visibility==='visible';});assert.ok(painted,'Skydeck board art must decode and occupy a visible rectangle');}
+    }
+    await page.setViewportSize(sdOriginalViewport);
     const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));
     saved['card-capture']=await readSaved(page,'card-capture');
