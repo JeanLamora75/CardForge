@@ -29,3 +29,28 @@ Validation porteur : 28/11/2026. Périmètre : console inférieure uniquement, m
 
 ## Décisions d'implémentation
 Inventaire fixe sans révéler les cartes non détenues. Confirmation contextualisée pour les coups tactiques irréversibles. La console ne change pas le moteur et conserve la sauvegarde existante. Éviter toute automatisation si une alternative légale existe. Réutiliser les assets et les effets existants. Sur petits écrans, densité adaptée au viewport, sans masquer les actions. Publication main autorisée. Aucun uv ; workflow adapté manuellement. Statut : spécifié, validation technique à établir.
+
+## V3.1 — Finitions validées le 28 novembre 2026
+
+| ID | Critère |
+|---|---|
+| TF-CONSOLE-23 | Radar de géométrie identique entre phases à viewport constant. |
+| TF-CONSOLE-24 | Hauteur de console réservée par résolution, indépendante du contenu. |
+| TF-CONSOLE-25 | Une transmission remplace la précédente. |
+| TF-CONSOLE-26 | Supprimer le titre Décision tactique. |
+| TF-CONSOLE-27 | Arsenal tactique / Tactical arsenal. |
+| TF-CONSOLE-28 | Six logements instrumentés. |
+| TF-CONSOLE-29 | Couleurs de faction, y compris logements vides. |
+| TF-CONSOLE-30 | Illustrations carrées sans écrasement. |
+| TF-CONSOLE-31 | Témoins et libellés accessibles des quatre états. |
+| TF-CONSOLE-32 | Consignes de manœuvre dans la transmission. |
+| TF-CONSOLE-33 | Annuler compact dans une ligne de commande stable. |
+| TF-CONSOLE-34 | Équipement sélectionné clairement signalé. |
+| TF-CONSOLE-35 | Messages distincts extraction / déplacement source / destination. |
+| TF-CONSOLE-36 | Pas de répétition des consignes. |
+| TF-CONSOLE-37 | Garder drag/drop, clic et clavier. |
+| TF-CONSOLE-38 | Commandes cohérentes avec le HUD. |
+| TF-CONSOLE-39 | Jouer/Apprendre, FR/EN. |
+| TF-CONSOLE-40 | Mesurer radar et console avant/après sélection, confirmation, annulation et action sur huit résolutions ; vérifier absence de débordement. |
+
+Conserver règles et ressources existantes. Pas de nouvelle production graphique. Aucun uv. Les confirmations sensibles restent disponibles. Statut : critères validés, recette technique à démontrer.
