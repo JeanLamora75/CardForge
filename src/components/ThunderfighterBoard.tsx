@@ -151,15 +151,18 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       setState(restored.getState());
       setLegal(restored.getLegalActions());
       setSelection(null);setSpecial(null);setTargetChoice(null);
-      setNotice("Nouvelle mission enregistrée. Bonne chance !");
+      setNotice("");
     } catch {
       setNotice("Impossible de rejouer : la sauvegarde a peut-être changé. Aucune partie active n'a été abandonnée.");
     } finally { setBusy(false); }
   }
+  function directAction(action: ThunderfighterAction) {
+    return action.type==="draw-card" || action.type==="skip-replacement" || action.type==="draw-replacement" || action.type==="place-figure" && state?.phase==="initial-figures";
+  }
   function choose(action: ThunderfighterAction) {
     if (busy || committing.current || !isThunderActionLegal(legal,action)) return;
     if(!targetChoice)actionTrigger.current=document.activeElement as HTMLElement;
-    if(action.type==="draw-card"){void confirm(action);return;}
+    if(directAction(action)){void confirm(action);return;}
     setTargetChoice(null);
     setSelection(action);
   }
@@ -173,7 +176,16 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     committing.current=true;
     setBusy(true);
     try {
-      const result = await session.current.dispatch(action);
+      let result = await session.current.dispatch(action);
+      // Draw only when preparation has just ended and no tactical alternative exists.
+      if(result.accepted && (action.type==="skip-replacement" || action.type==="draw-replacement" || state.phase==="replacement-figures") && result.state.phase==="playing") {
+        const nextActions=session.current.getLegalActions();
+        if(nextActions.length===1 && nextActions[0].type==="draw-card") {
+          setState(result.state);setLegal(nextActions);
+          const drawn=await session.current.dispatch(nextActions[0]);
+          if(drawn.accepted)result=drawn;
+        }
+      }
       if (!result.accepted) setNotice("Action refusée : " + result.reason);
       else {
         const nextResult = getThunderfighterResult(result.state);
@@ -207,7 +219,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     if(context&&context.from===undefined&&actions.some(a=>a.type==="reassign")){
       setSelection(null);setTargetChoice(null);setSpecial({...context,from:index});return true;
     }
-    if(actions.length===1){setSelection(actions[0]);setTargetChoice(null);}
+    if(actions.length===1){if(directAction(actions[0])){void confirm(actions[0]);}else{setSelection(actions[0]);setTargetChoice(null);}}
     else{setSelection(null);setTargetChoice({kind,index});}
     return true;
   }
@@ -216,7 +228,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     if(!actions.length)return null;
     const selected=selectedTarget?.kind===kind&&selectedTarget.index===index;
     const label=(en?(kind==="pile"?(choosingSource?"Select source pile ":"Select pile "):"Select sector "):(kind==="pile"?(choosingSource?"Sélectionner la pile source ":"Sélectionner la pile "):"Sélectionner le secteur "))+(index+1);
-    return <button type="button" data-i18n-ignore className="tf-target" data-target-kind={kind} data-target-index={index} aria-label={label} aria-pressed={selected} disabled={busy} onClick={event=>selectTarget(kind,index,special,event.currentTarget)}><span aria-hidden="true">{selected?"✓":actions.every(a=>a.type==="assign-armor")?"⬡":"+"}</span></button>;
+    return <button type="button" data-i18n-ignore className="tf-target" data-target-kind={kind} data-target-index={index} aria-label={label} aria-pressed={selected} disabled={busy} onClick={event=>selectTarget(kind,index,special,event.currentTarget)}><span aria-hidden="true">{selected?"✓":actions.every(a=>a.type==="assign-armor")?"⬡":"⌖"}</span></button>;
   }
   function startDrag(event:ReactPointerEvent<HTMLElement>,id:string,context:SpecialSelection|null){
     if(busy||committing.current||!event.isPrimary||event.button!==0||drag.current)return;
@@ -251,7 +263,10 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
   function renderPreview(kind:BoardTarget["kind"],index:number){if(!state||!previewId||selectedTarget?.kind!==kind||selectedTarget.index!==index||selection?.type==="assign-armor")return null;const view=thunderCardView(state,previewId,language);return view?<span className="tf-drop-preview" data-preview-id={view.id} data-suit={view.suit??"joker"} aria-hidden="true"><ThunderCardFace card={view}/></span>:null;}
   function targetState(kind:BoardTarget["kind"],index:number){if(kind==="pile"&&special?.from===index)return "source";return selectedTarget?.kind===kind&&selectedTarget.index===index?"selected":contextualThunderActions(legal,figures,special,kind,index).length?"legal":undefined;}
   const armorRequired=legal.length>0&&legal.every(a=>a.type==="assign-armor");
-  const instruction=armorRequired?(en?"Armor required · select the indicated enemy.":"Armure obligatoire · sélectionnez l’adversaire indiqué."):state?.pendingFigures.length?(en?"Choose an indicated sector.":"Choisissez un secteur indiqué."):en?"Drag or select a highlighted destination.":"Glissez ou sélectionnez une destination.";
+  const initialDeployment=state?.phase==="initial-figures";
+  const replacementOffer=state?.phase==="replacement-offer";
+  const deployed=figures.filter(Boolean).length;
+  const instruction=armorRequired?(en?"Armor required · select the indicated enemy.":"Armure obligatoire · sélectionnez l’adversaire indiqué."):state?.pendingFigures.length?(en?"Deploy in a highlighted sector.":"Déployez le contact dans un secteur signalé."):en?"Drag or select a highlighted destination.":"Glissez ou sélectionnez une destination.";
   const shotPreview=state&&selection?getActionShotAnalysis(state,selection):[];
   const result = state ? getThunderfighterResult(state) : null;
   const search = state ? getSearchPresentation(state) : null;
@@ -301,12 +316,13 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       <div className="thunder-action-zone" data-console-phase={selection?"confirm":special?"special":state.phase==="searching"?"search":state.pendingNumeric||state.pendingFigures.length?"place":"draw"}>
 {tutorial?<div className="tf-training-guide" data-i18n-ignore><strong>{en?"Training · no save":"Entraînement · sans sauvegarde"}</strong></div>:null}
-<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<div className="tf-action-copy"><p className="thunder-pending">Figure à positionner : <strong>{thunderCardLabel(state.pendingFigures[0],language)}</strong>. {placement?.mode === "rescue" ? "Choisissez un secteur disponible." : ""}</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
-      {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<div className="tf-action-copy"><p className="thunder-pending">Carte piochée : <strong>{thunderCardLabel(state.pendingNumeric,language)}</strong>.</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
+<div className="tf-current-card">      {state.pendingFigures[0] ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingFigures[0],null)}>{renderCard(state.pendingFigures[0])}<div className="tf-action-copy"><p className="thunder-pending" data-i18n-ignore>{en?"Hostile contact: ":"Contact hostile : "}<strong>{thunderCardLabel(state.pendingFigures[0],language)}</strong>. {placement?.mode === "rescue" ? (en?"Choose a free sector.":"Choisissez un secteur disponible.") : ""}{initialDeployment?<small className="tf-deploy-progress"> · {en?"Deployment":"Déploiement"} {deployed+1}/{deployed+state.pendingFigures.length}</small>:null}</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
+      {state.pendingNumeric ? <div className="tf-pending-card tf-drag-source" {...dragHandlers(state.pendingNumeric,null)}>{renderCard(state.pendingNumeric)}<div className="tf-action-copy"><p className="thunder-pending" data-i18n-ignore>{en?"Reinforcement: ":"Renfort détecté : "}<strong>{thunderCardLabel(state.pendingNumeric,language)}</strong>.</p>{!selection&&!special&&(!tutorial||hintsEnabled||armorRequired)?<span className="tf-inline-instruction" data-i18n-ignore>{instruction}</span>:null}</div></div> : null}
 </div>
       <div className="tf-console-controls">
-      <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Special reserve":"Réserve spéciale"} data-i18n-ignore>
-        <h3 className="thunder-sr-only">{en?"Special reserve":"Réserve spéciale"} · {state.specialReserve.length}</h3>
+      {replacementOffer&&!selection?<p className="tf-tactical-brief" data-i18n-ignore>{en?"Tactical preparation: select one fighter to replace it, or engage combat.":"Préparation tactique : sélectionnez un chasseur à remplacer, ou engagez le combat."}</p>:null}
+      <section hidden={!state.specialReserve.length} className="tf-special-console" aria-label={en?"Tactical equipment":"Équipements tactiques"} data-i18n-ignore>
+        <h3 className="thunder-sr-only">{en?"Tactical equipment":"Équipements tactiques"} · {state.specialReserve.length}</h3>
         {state.specialReserve.length>0?<div className="tf-special-list">{state.specialReserve.map(id=>{const view=thunderCardView(state,id,language,revealed);const available=specialThunderActions(legal,id).length>0;return <div key={id} data-active={special?.cardId===id} data-faction={view?.faction??"Singularity"} className="tf-special-unit tf-drag-source" {...dragHandlers(id,special?.cardId===id?special:{cardId:id})}>{renderCard(id)}<button type="button" className="secondary-action tf-special-use" data-special-id={id} aria-label={(en?"Use ":"Utiliser ")+(view?.label??"")} aria-pressed={special?.cardId===id} disabled={busy||!available} onClick={event=>{specialTrigger.current=event.currentTarget;setSelection(null);setTargetChoice(null);setSpecial({cardId:id});}}><span>{view?.rank===1?(en?"Extract":"Extraire"):(en?"Move":"Déplacer")}</span><small>{view?.rank===1?"Alpha "+view.faction:(en?"Singularity":"Singularité")}</small></button></div>;})}</div>:null}
         
         {special&&!selection?<div className="tf-special-instruction"><p>{choosingSource?(en?"Choose the source pile.":"Choisissez la pile source."):special.from!==undefined?(en?"Choose the destination for pile ":"Choisissez la destination de la pile ")+(special.from+1):en?"Choose the pile to extract.":"Choisissez la pile à extraire."}</p><button type="button" className="back-link" disabled={busy} onClick={cancelSelection}>{en?"Cancel special action":"Annuler l’action spéciale"}</button></div>:null}
@@ -321,7 +337,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         
         {targetChoice?<div className="tf-target-choices"><p data-i18n-ignore>{en?"Choose an action":"Choisissez une action"}</p>{ambiguousActions.map((action,index)=><button type="button" className="secondary-action" key={index} disabled={busy} onClick={()=>choose(action)}>{actionLabel(action)}</button>)}<button type="button" className="back-link" onClick={cancelSelection}>{en?"Cancel":"Annuler"}</button></div>:null}
         {legal.length ? fallbackActions.map((action, index) =>
-          <button type="button" className={action.type==="draw-card"?"secondary-action tf-draw-command":"secondary-action"} key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-card"?<><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 8 9-5 9 5-9 5zM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" strokeWidth="1.6"/></svg><span data-i18n-ignore>{en?"Draw a card":"Piocher une carte"}</span><span className="tf-draw-chevron" aria-hidden="true">›</span></>:action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:actionLabel(action)}</button>
+          <button type="button" className={action.type==="draw-card"||action.type==="skip-replacement"?"secondary-action tf-draw-command":"secondary-action"} key={index} disabled={busy} onClick={() => choose(action)}>{action.type==="draw-card"?<><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 8 9-5 9 5-9 5zM3 12l9 5 9-5M3 16l9 5 9-5" fill="none" stroke="currentColor" strokeWidth="1.6"/></svg><span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span><span className="tf-draw-chevron" aria-hidden="true">›</span></>:action.type==="draw-search"?<span data-i18n-ignore>{en?"Reveal next card":"Révéler la prochaine carte"}</span>:action.type==="skip-replacement"?<span data-i18n-ignore>{en?"Engage combat":"Engager le combat"}</span>:action.type==="draw-replacement"?<span data-i18n-ignore>{en?"Reveal replacement":"Révéler le renfort"}</span>:actionLabel(action)}</button>
         ) : <p>Aucune action disponible.</p>}
       </div> : null}
       </div>
@@ -329,7 +345,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
         <p className="tf-preview-line" aria-live="polite">{selection&&preview?preview.message:null}</p>
         {shotPreview.length?<div className="thunder-sr-only" aria-live="polite" data-i18n-ignore>{shotPreview.map(shot=><p key={shot.figureId}>{thunderCardView(state,shot.figureId,language)?.label}: {shot.power}/{shot.resistance} — {shot.success?(en?"Target neutralized":"Cible neutralisée"):(en?"Insufficient power":"Puissance insuffisante")}. {shot.contributors.map(c=>c.power).join(" + ")}.</p>)}</div>:null}
         <button type="button" className="back-link" disabled={busy||!selection} onClick={cancelSelection} data-i18n-ignore>{en?"Cancel":"Annuler"}</button>
-        <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{en?"Confirm":"Confirmer"}</button>
+        <button ref={confirmButton} type="button" className="primary-action" disabled={busy || !selection || !preview?.accepted} onClick={() => void confirm()} data-i18n-ignore>{selection?.type==="start-replacement"?(en?"Replace fighter":"Remplacer le chasseur"):selection?.type==="extract"?(en?"Extract":"Extraire"):selection?.type==="reassign"?(en?"Move":"Déplacer"):en?"Confirm":"Confirmer"}</button>
       </div>
       <p className="thunder-notice tf-action-status" role="status" aria-live="polite" data-transient={/^(Coup enregistré|Coup d’entraînement) :/.test(notice)}>{notice}</p>
       </div>
