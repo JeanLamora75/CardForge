@@ -1503,3 +1503,42 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
  .thunder-board.tf-live .tf-transmission-band{grid-column:2;grid-row:2;}
  .thunder-board.tf-live .thunder-action-zone.tf-console-v33{grid-column:2;grid-row:3;align-self:start;}
 }
+
+/* V3.4: bottom dock, single-line radio, no separate command row. */
+.thunder-board.tf-live{--tf-radio-budget:26px;--tf-console-budget:clamp(136px,21dvh,190px);grid-template-rows:auto minmax(0,1fr) var(--tf-radio-budget) var(--tf-console-budget);}
+.thunder-board.tf-live .tf-transmission-band{display:flex;align-items:center;gap:6px;padding:2px 6px;overflow:hidden;white-space:nowrap;}
+.tf-radio-symbol{flex:none;color:#8de4ff;}
+.tf-transmission-band[data-tone=alert] .tf-radio-symbol,.tf-transmission-band[data-tone=alert] .tf-radio-segment strong{color:#ffc36b;}
+.tf-radio-ticker{flex:1;min-width:0;overflow:hidden;font-size:.72rem;}
+.tf-radio-track{display:flex;width:max-content;animation:tf-radio-loop 20s linear infinite;}
+.tf-radio-ticker .tf-radio-segment{display:block;flex:none;min-width:0;padding-right:48px;animation:none;white-space:nowrap;}
+.tf-radio-segment strong{color:#8de4ff;}
+@keyframes tf-radio-loop{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tf-radio-ticker:hover .tf-radio-track,.tf-radio-ticker:focus .tf-radio-track,.thunder-board:has([data-dragging=true]) .tf-radio-track{animation-play-state:paused;}
+:root[data-motion=off] .tf-radio-track{animation:none;}
+:root[data-motion=off] .tf-radio-ticker{overflow-x:auto;scrollbar-width:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-radio-track{animation:none;} :root:not([data-motion=on]) .tf-radio-ticker{overflow-x:auto;scrollbar-width:none;}}
+.thunder-board.tf-live .thunder-action-zone.tf-console-v34{--tf-dock-card-h:calc(var(--tf-console-budget) - 29px);grid-template-columns:calc(var(--tf-dock-card-h) * 2 / 3) minmax(0,1fr);grid-template-rows:14px minmax(0,1fr);gap:3px 6px;padding:4px 6px;align-self:end;position:relative;}
+.thunder-board.tf-live .tf-console-v34>.tf-hero-card{height:var(--tf-dock-card-h);aspect-ratio:2/3;position:relative;align-self:end;}
+.thunder-board.tf-live .tf-console-v34 .tf-hero-card .tf-pending-card{height:100%;padding:3px;gap:3px;justify-content:center;}
+.thunder-board.tf-live .tf-console-v34 .tf-hero-card .tf-tactical{width:100%;height:auto;aspect-ratio:1;flex:none;}
+.thunder-board.tf-live .tf-console-v34 .tf-hero-card .thunder-pending{font-size:.66rem;line-height:1.12;}
+.thunder-board.tf-live .tf-console-v34>.tf-hero-arsenal{height:var(--tf-dock-card-h);align-self:end;}
+.thunder-board.tf-live .tf-console-v34 .tf-special-unit .tf-tactical{width:clamp(20px,4dvh,36px);height:clamp(20px,4dvh,36px);}
+.thunder-board.tf-live .tf-console-v34 .tf-special-use{min-height:18px;}
+.thunder-board.tf-live .tf-console-v34 .tf-scanner{width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:3px;padding:4px;border:1px solid #52a9a1;background:radial-gradient(circle,#123a37,#081e2b);color:#b8ffda;cursor:pointer;}
+.tf-scanner svg{width:100%;max-height:75%;min-height:0;flex:1;}
+.tf-scanner strong{font-size:.66rem;text-align:center;line-height:1.1;}
+.tf-scanner-sweep{transform-origin:50px 50px;animation:tf-scan-spin 3s linear infinite;}
+.tf-scanner:disabled .tf-scanner-sweep{animation:none;}
+@keyframes tf-scan-spin{to{transform:rotate(360deg)}}
+:root[data-motion=off] .tf-scanner-sweep{animation:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-scanner-sweep{animation:none;}}
+.thunder-board.tf-live .tf-console-v34>.tf-hero-controls{display:none;}
+.thunder-board.tf-live .tf-console-v34>.tf-hero-controls[data-exception=true]{display:flex;position:absolute;z-index:8;bottom:5px;left:6px;right:6px;background:#102838;border:1px solid #4a8098;padding:3px;border-radius:4px;}
+.thunder-board.tf-live .tf-console-v34 .thunder-confirm:not([hidden]){position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#102638f5;border:1px solid #edbc72;border-radius:5px;padding:2px;min-height:0;}
+.thunder-board.tf-live .tf-console-v34 .thunder-confirm .tf-preview-line{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.thunder-board.tf-live .tf-console-v34 .thunder-confirm button{width:100%;min-height:25px;line-height:1.1;font-size:.65rem;padding:2px;white-space:normal;}
+.thunder-board.tf-live .tf-console-v34 .tf-action-status{position:absolute!important;top:0;left:0;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+@media(max-height:700px){.thunder-board.tf-live{--tf-console-budget:136px;--tf-radio-budget:24px;}}
+@media(orientation:landscape) and (min-width:650px){.thunder-board.tf-live{grid-template-rows:auto minmax(0,1fr) var(--tf-radio-budget) var(--tf-console-budget);}.thunder-board.tf-live .tf-combat-layout{grid-row:2/5;}.thunder-board.tf-live .tf-transmission-band{grid-row:3;}.thunder-board.tf-live .thunder-action-zone.tf-console-v34{grid-row:4;align-self:end;}}
