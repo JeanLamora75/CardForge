@@ -15,7 +15,7 @@ async function thunderScreens(page,label){
  const original=page.viewportSize();
  const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});
  const failures=[];
- for(const [width,height] of [[360,640],[390,844],[412,915],[600,900],[844,390],[1366,768]]){
+ for(const [width,height] of [[320,568],[360,640],[390,844],[412,915],[768,1024],[844,390],[1024,768],[1920,1080]]){
   await page.setViewportSize({width,height});
   await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
   await page.screenshot({path:'ux-screenshots/tf-v5-'+label+'-'+width+'x'+height+'.png'});
@@ -508,6 +508,17 @@ async function journey(locale,mobile){
         assert.equal(await page.locator('.tf-console-scroll').count(),0);
         assert.ok(await page.locator('.thunder-action-zone').evaluate(n=>getComputedStyle(n).overflowY==='visible'),'console must not clip');
         const original=await geometry();
+        assert.equal(await page.locator('[data-equipment-id]').count(),6,'six stable tactical equipment slots');
+        if(before.state.phase==='initial-figures'||before.state.phase==='replacement-offer'){
+          await interact(page,action,mobile);
+          if(before.state.phase==='replacement-offer'){
+            await page.locator('.thunder-confirm[data-selected=true]').waitFor();
+            await interact(page,page.locator('.thunder-confirm button.primary-action'),mobile);
+          }else{
+            await waitSavedChanged(page,game.id,before);
+            assert.equal(await page.locator('.thunder-confirm[data-selected=true]').count(),0,'initial deployment commits directly');
+          }
+        }else{
         if(direct&&await source.count()){
           const src=await source.boundingBox(),dest=await target.boundingBox();
           assert.ok(src&&dest);
@@ -543,6 +554,7 @@ async function journey(locale,mobile){
         if(direct)assert.equal(await target.getAttribute('aria-pressed'),'false');
         await interact(page,action,mobile);
         await interact(page,page.locator('.thunder-confirm button.primary-action'),mobile);
+        }
       }else{
         await interact(page,page.locator(game.actions).first(),mobile);
         await page.locator('.grim-actions button.secondary-action').first().waitFor({state:'visible'});
@@ -896,6 +908,8 @@ async function journey(locale,mobile){
         async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
         async function selectAction(){if(scenario==='extract'||scenario==='reassign')await selectSpecial();else if(scenario==='armor')await interact(offline,target('sector',0),mobile);else if(scenario==='replacement')await interact(offline,target('pile',0),mobile);else await interact(offline,tf.getByRole('button',{name:locale==='fr'?'Révéler la prochaine carte':'Reveal next card',exact:true}),mobile);}
         await thunderScreens(offline,label+'-'+scenario);
+        assert.equal(await tf.locator('[data-equipment-id]').count(),6);
+        assert.equal(await tf.locator('[data-equipment-status="ready"]').count(),reserve.length);
         await selectAction();await tf.locator('.thunder-confirm[data-selected=true]').waitFor();
         await thunderScreens(offline,label+'-'+scenario+'-confirm');
         assert.deepEqual(await readSaved(offline,'gridcannon'),fixture);
