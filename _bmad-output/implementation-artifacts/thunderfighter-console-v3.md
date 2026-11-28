@@ -96,3 +96,39 @@ Validation du porteur : 28 novembre 2026.
 | TF-CONSOLE-66 | Contrôles huit résolutions, Jouer/Apprendre, FR/EN. |
 
 Ne pas modifier le moteur. Conserver les confirmations Alpha/Singularité conformément au lot validé. Préserver les effets de tir après placement direct. Aucun uv. Validation technique à démontrer.
+
+## V3.4 — Instruments intégrés
+Validation porteur : 28 novembre 2026.
+
+| ID | Critère |
+|---|---|
+| TF-CONSOLE-67 | Ancrage inférieur du tableau de bord |
+| TF-CONSOLE-68 | Position fixe carte |
+| TF-CONSOLE-69 | Position fixe arsenal |
+| TF-CONSOLE-70 | Supprimer espaces verticaux inutilisés |
+| TF-CONSOLE-71 | Transmission sur une ligne |
+| TF-CONSOLE-72 | Défilement continu droite vers gauche |
+| TF-CONSOLE-73 | Transmission au-dessus du tableau de bord |
+| TF-CONSOLE-74 | Radar principal dans tout espace restant |
+| TF-CONSOLE-75 | Géométrie stable entre états |
+| TF-CONSOLE-76 | Préférences de mouvement |
+| TF-CONSOLE-77 | Jouer et Apprendre |
+| TF-CONSOLE-78 | Huit résolutions |
+| TF-CONSOLE-79 | Aucune rangée de commandes inférieure |
+| TF-CONSOLE-80 | Commandes contextuelles dans les logements |
+| TF-CONSOLE-81 | Logement carte 2:3 |
+| TF-CONSOLE-82 | Radar SVG/CSS dans logement vide |
+| TF-CONSOLE-83 | Cercles et balayage 360° |
+| TF-CONSOLE-84 | Pioche par activation radar |
+| TF-CONSOLE-85 | Apparition carte via effet existant |
+| TF-CONSOLE-86 | Géométrie constante du logement |
+| TF-CONSOLE-87 | Commandes spéciales intégrées |
+| TF-CONSOLE-88 | Boucle unidirectionnelle sans retour |
+| TF-CONSOLE-89 | Aucun espace vertical superflu |
+| TF-CONSOLE-90 | Maximiser radar principal |
+| TF-CONSOLE-91 | Tactile souris clavier |
+| TF-CONSOLE-92 | Mouvement réduit et hors ligne |
+| TF-CONSOLE-93 | FR/EN et Jouer/Apprendre |
+| TF-CONSOLE-94 | Tests huit résolutions et états |
+
+Le logement de la carte reçoit les commandes de pioche, recherche et engagement. Les confirmations sensibles restent explicites dans le logement actif ; les choix ambigus demeurent accessibles. Aucun changement du moteur ni uv. La validation de rendu et CI reste à établir.
