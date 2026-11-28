@@ -63,6 +63,6 @@ assert.equal(new Set(skyFrames).size,5,"all Skydeck frames must be precached");
 
 assert.equal(new Set(paths.filter(p=>p.startsWith("./assets/audio/skydeck/")&&p.endsWith(".wav"))).size,25,"all Skydeck audio must be precached");
 
-const skyBoardManifest=JSON.parse(readFileSync("skydeck-assets-manifest.json","utf8"));
+const skyBoardManifest=JSON.parse(readFileSync("docs/assets/skydeck/skydeck-assets-manifest.json","utf8"));
 assert.equal(skyBoardManifest.length,59);
 for(const item of skyBoardManifest){const asset="./"+item.path.replace(/^public\/assets\//,"art/").replace(/\.png$/,".webp");assert.ok(paths.includes(asset),"missing Skydeck board artwork: "+asset);}

@@ -30,3 +30,7 @@ Pour une intégration, Amelia vérifie le rendu dans le jeu aux tailles cibles, 
 ## Critère de sortie d'un lot
 
 Liste minimale convenue avec Amelia, fichiers individuels présents et contrôlés, manifeste (nom, usage, dimensions, format, transparence), archive vérifiée si applicable, limites éventuelles explicites. Toute exigence non satisfaite interdit le passage au lot suivant. Ce contrôle est interne et ne doit pas imposer une validation manuelle supplémentaire au porteur pour des vérifications techniques ordinaires.
+
+## Rangement des livraisons
+
+Les ZIP sont extractibles à la racine mais ne contiennent aucun fichier documentaire à ce niveau : README, manifestes et aperçus vont dans `docs/assets/<jeu>/`, ressources de production dans `public/assets/`. Voir `docs/repository-layout.md`. Ne pas écraser le README principal.
