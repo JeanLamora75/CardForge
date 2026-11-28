@@ -27,6 +27,14 @@ function offlineBuild(): Plugin {
       const assets = Object.keys(bundle).filter(path => path !== "index.html" && !path.endsWith(".map"));
       const sw = createServiceWorkerScript(version, [...assets,...originals,...art,...audio,...fontLicences,...startup]);
       this.emitFile({ type: "asset", fileName: "sw.js", source: sw });
+      const chunks = Object.values(bundle).flatMap(entry => entry.type === "chunk" ? [{
+        file: entry.fileName, bytes: Buffer.byteLength(entry.code), entry: entry.isEntry,
+        imports: entry.imports, dynamicImports: entry.dynamicImports,
+        modules: Object.keys(entry.modules).map(id => id.replaceAll("\\","/").split("/src/").pop() ?? id)
+          .filter(id => !id.includes("node_modules") && !id.startsWith("/") && !id.includes(":")),
+      }] : []);
+      // The report contains only relative module paths, not developer filesystem paths.
+      this.emitFile({type:"asset",fileName:"build-report.json",source:JSON.stringify({chunks},null,2)});
     },
   };
 }

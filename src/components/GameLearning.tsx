@@ -1,13 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import type { PlayableLearningGame, LearningChoice, LearningPreferences } from "../application/learning.ts";
 import { readLearningPreferences, saveLearningPreferences } from "../application/learning.ts";
-import GrimDelveBoard, { type GrimHelpStatus } from "./GrimDelveBoard.tsx";
-import ThunderfighterBoard from "./ThunderfighterBoard.tsx";
-import MidnightSyndicateBoard from "./MidnightSyndicateBoard.tsx";
-import MidnightSyndicateRulebook from "./MidnightSyndicateRulebook.tsx";
-import SkydeckBoard from "./SkydeckBoard.tsx";
-import SkydeckRulebook, {type SkydeckManualPage} from "./SkydeckRulebook.tsx";
+import type { GrimHelpStatus } from "./GrimDelveBoard.tsx";
+import type { SkydeckManualPage } from "./SkydeckRulebook.tsx";
+import RouteLoading from "./RouteLoading.tsx";
 import type {Locale} from "../i18n/language.ts";
+
+const GrimDelveBoard = lazy(() => import("./GrimDelveBoard.tsx"));
+const ThunderfighterBoard = lazy(() => import("./ThunderfighterBoard.tsx"));
+const MidnightSyndicateBoard = lazy(() => import("./MidnightSyndicateBoard.tsx"));
+const MidnightSyndicateRulebook = lazy(() => import("./MidnightSyndicateRulebook.tsx"));
+const SkydeckBoard = lazy(() => import("./SkydeckBoard.tsx"));
+const SkydeckRulebook = lazy(() => import("./SkydeckRulebook.tsx"));
 
 const names: Record<PlayableLearningGame, string> = {
   "clear-the-dungeon": "Grim Delve",
@@ -19,8 +23,8 @@ function local(): Storage | null {
   try { return globalThis.localStorage ?? null; } catch { return null; }
 }
 export function Rulebook({ gameId, language="fr" }: { gameId: PlayableLearningGame; language?:Locale }) {
-  if (gameId === "card-capture") return <SkydeckRulebook language={language} />;
-  if (gameId === "loot-the-loop") return <MidnightSyndicateRulebook />;
+  if (gameId === "card-capture") return <Suspense fallback={<RouteLoading language={language}/>}><SkydeckRulebook language={language} /></Suspense>;
+  if (gameId === "loot-the-loop") return <Suspense fallback={<RouteLoading language={language}/>}><MidnightSyndicateRulebook /></Suspense>;
   const grim = gameId === "clear-the-dungeon";
   return <article className="learning-rulebook" aria-labelledby="learning-rulebook-title">
     <h2 id="learning-rulebook-title">Règles de {names[gameId]}</h2>
@@ -90,14 +94,16 @@ export default function GameLearning({ gameId, language="fr", hintsEnabled, onHi
         <button className="secondary-action" type="button" onClick={() => choose("play")}>Jouer directement</button>
       </div>
     </section> : <>
-      {immersiveBoard?<dialog ref={helpDialog} className={gameId==="card-capture"?"sd-manual-dialog":gameId==="clear-the-dungeon"?"tf-help-dialog tf-game-help gd-help-dialog":"tf-help-dialog tf-game-help"} aria-label={language==="en"?"Help and rules":"Aide et règles"} onClose={()=>{setShowRules(false);onCloseThunderHelp?.();}} onCancel={event=>{event.preventDefault();event.stopPropagation();closeHelp();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();closeHelp();}}}><header className="tf-help-header" data-i18n-ignore><button type="button" className="tf-dialog-close" onClick={closeHelp}>{language==="en"?"Resume game":"Reprendre la partie"}</button></header>{gameId==="card-capture"?(thunderHelp?<SkydeckRulebook language={language} initialPage={skyPage}/>:null):<div className="tf-help-content">{controls}<p data-i18n-ignore>{gameId==="clear-the-dungeon"?(language==="en"?"Select a card, then a highlighted monster. Only legal actions are available.":"Sélectionnez une carte, puis un monstre en surbrillance. Seules les actions légales sont proposées."):gameId==="loot-the-loop"?(language==="en"?"Observe or play an available action directly. Drag the current card to an empty note, or a note back to exploration. Use Shift+Enter on a movable card for the same action. Hidden cards stay secret.":"Observez ou jouez directement une action autorisée. Glissez la carte actuelle vers une note libre, ou une note vers l’exploration. Utilisez Maj+Entrée sur une carte déplaçable pour la même action. Les cartes cachées restent secrètes."):(language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup.")}</p></div>}</dialog>:controls}
+      {immersiveBoard?<dialog ref={helpDialog} className={gameId==="card-capture"?"sd-manual-dialog":gameId==="clear-the-dungeon"?"tf-help-dialog tf-game-help gd-help-dialog":"tf-help-dialog tf-game-help"} aria-label={language==="en"?"Help and rules":"Aide et règles"} onClose={()=>{setShowRules(false);onCloseThunderHelp?.();}} onCancel={event=>{event.preventDefault();event.stopPropagation();closeHelp();}} onKeyDown={event=>{if(event.key==="Escape"){event.preventDefault();event.stopPropagation();closeHelp();}}}><header className="tf-help-header" data-i18n-ignore><button type="button" className="tf-dialog-close" onClick={closeHelp}>{language==="en"?"Resume game":"Reprendre la partie"}</button></header>{gameId==="card-capture"?(thunderHelp?<Suspense fallback={<RouteLoading language={language}/>}><SkydeckRulebook language={language} initialPage={skyPage}/></Suspense>:null):<div className="tf-help-content">{controls}<p data-i18n-ignore>{gameId==="clear-the-dungeon"?(language==="en"?"Select a card, then a highlighted monster. Only legal actions are available.":"Sélectionnez une carte, puis un monstre en surbrillance. Seules les actions légales sont proposées."):gameId==="loot-the-loop"?(language==="en"?"Observe or play an available action directly. Drag the current card to an empty note, or a note back to exploration. Use Shift+Enter on a movable card for the same action. Hidden cards stay secret.":"Observez ou jouez directement une action autorisée. Glissez la carte actuelle vers une note libre, ou une note vers l’exploration. Utilisez Maj+Entrée sur une carte déplaçable pour la même action. Les cartes cachées restent secrètes."):(language==="en"?"Select a highlighted destination, inspect a card by tapping it, then confirm your move.":"Sélectionnez une destination en surbrillance, touchez une carte pour la consulter, puis confirmez votre coup.")}</p></div>}</dialog>:controls}
       {mode === "learn" && !immersiveBoard ? <p className="learning-safety" role="status">Entraînement isolé : ni sauvegardes ordinaires, ni résultats, ni statistiques ne seront créés ou modifiés. Vous pouvez quitter à tout moment.</p> : null}
+      <Suspense fallback={<RouteLoading language={language}/>}>
       {mode === "learn" ? <div key={tutorialRun} className={gameId==="gridcannon"?"tf-training-wrap":gameId==="loot-the-loop"?"ms-training-wrap":undefined}>
         {gameId === "clear-the-dungeon" ? <GrimDelveBoard tutorial language={language} onHelpStatus={setGrimHelpStatus} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> :
           gameId === "card-capture" ? <SkydeckBoard tutorial language={language} hintsEnabled={hintsEnabled} paused={thunderHelp} onManualPage={setSkyPage} /> : gameId === "loot-the-loop" ? <MidnightSyndicateBoard language={language} tutorial hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} /> : <ThunderfighterBoard tutorial language={language} hintsEnabled={hintsEnabled} onReplayTutorial={() => setTutorialRun(v => v + 1)} onExitTutorial={()=>choose("play")} />}
       </div> : gameId === "clear-the-dungeon" ?
         <GrimDelveBoard language={language} onHelpStatus={setGrimHelpStatus} hintsEnabled={hintsEnabled} /> : gameId === "loot-the-loop" ?
         <MidnightSyndicateBoard language={language} hintsEnabled={hintsEnabled} /> : gameId === "card-capture" ? <SkydeckBoard language={language} hintsEnabled={hintsEnabled} paused={thunderHelp} onManualPage={setSkyPage} /> : <ThunderfighterBoard language={language} hintsEnabled={false} />}
+      </Suspense>
     </>}
     {saveWarning ? <p role="status" className="help-note">Les préférences ne peuvent pas être mémorisées sur cet appareil ; votre choix fonctionne pour cette visite.</p> : null}
     {mode === null ? <button className="back-link" type="button" aria-expanded={showRules} onClick={() => setShowRules(v => !v)}>{showRules ? "Masquer les règles" : "Lire les règles avant de choisir"}</button> : null}

@@ -1081,9 +1081,40 @@ async function skydeckStatisticsScreens(){
  console.log("Skydeck statistics: 8 scenarios, 8 viewports, FR/EN, offline and navigation");
 }
 
+async function coldOfflineGameChunks(){
+ const context=await browser.newContext({locale:"fr-FR",viewport:{width:390,height:844},reducedMotion:"reduce"});
+ try{
+  const page=await context.newPage();
+  const report=JSON.parse(readFileSync("dist/build-report.json","utf8"));
+  const boards=[["clear-the-dungeon","GrimDelveBoard",".grim-board"],["gridcannon","ThunderfighterBoard",".thunder-board"],["loot-the-loop","MidnightSyndicateBoard",".ms-board"],["card-capture","SkydeckBoard",".sd-board"],["regicide","RegicideBoard",".ldt-board"]];
+  const boardFiles=boards.map(([,name])=>report.chunks.find(c=>c.modules.includes("components/"+name+".tsx")).file);
+  const requested=new Set();
+  page.on("request",request=>{if(request.resourceType()==="script")requested.add(new URL(request.url()).pathname);});
+  await page.goto(HOST);await page.locator(".forge-gallery").waitFor();await ready(page);
+  for(const file of boardFiles)assert.ok(!requested.has("/"+file),"gallery fetched game script "+file);
+  const initialMs=await page.evaluate(()=>performance.getEntriesByType("navigation")[0]?.domContentLoadedEventEnd??0);
+  console.log("Cold gallery DOMContentLoaded: "+Math.round(initialMs)+" ms");
+  await context.setOffline(true);
+  const offline=await context.newPage();
+  try{
+   await offline.goto(HOST);await offline.locator(".forge-gallery").waitFor();
+   for(const [id,name,root] of boards){
+    const started=Date.now();
+    await offline.goto(HOST+"#game/"+id+"/board");
+    const choice=offline.locator(".learning-intro button.secondary-action");
+    await Promise.race([choice.waitFor({state:"visible",timeout:15000}),offline.locator(root).waitFor({state:"visible",timeout:15000})]);
+    if(await choice.isVisible())await choice.click();
+    await offline.locator(root).waitFor({state:"visible",timeout:20000});
+    console.log("Cold offline game "+name+": "+(Date.now()-started)+" ms");
+   }
+  }finally{await offline.close();}
+ }finally{await context.close();}
+}
+
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
+  await coldOfflineGameChunks();
   await skydeckStatisticsScreens();
   await immersiveScreens();
   await stalePreviewRecovery();

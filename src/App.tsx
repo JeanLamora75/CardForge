@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { readLanguage, saveLanguage, type Locale } from "./i18n/language.ts";
 import { localizeSurface } from "./i18n/surface.ts";
 import { readSharedSettings, saveSharedSettings, type SharedSettings } from "./application/shared-settings.ts";
@@ -13,16 +13,19 @@ import {
   backRoute, HOME, parseCatalogRoute, routeHash, type CatalogRoute, type GameSection,
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
-import GameLearning, { Rulebook } from "./components/GameLearning";
-import SkydeckRulebook from "./components/SkydeckRulebook.tsx";
-import SkydeckStatistics from "./components/SkydeckStatistics.tsx";
+import RouteLoading from "./components/RouteLoading.tsx";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import Settings from "./components/Settings";
 import OfflineReadiness from "./components/OfflineReadiness";
 import CreditsPage from "./components/CreditsPage";
-import RegicideLearning from "./components/RegicideLearning.tsx";
-import RegicideRulebook from "./components/RegicideRulebook.tsx";
 import { Gallery, WorldMenu, WorldLogo, WorldBackdrop } from "./components/ImmersiveMenu";
+
+const GameLearning = lazy(() => import("./components/GameLearning.tsx"));
+const Rulebook = lazy(() => import("./components/GameLearning.tsx").then(module => ({default: module.Rulebook})));
+const SkydeckRulebook = lazy(() => import("./components/SkydeckRulebook.tsx"));
+const SkydeckStatistics = lazy(() => import("./components/SkydeckStatistics.tsx"));
+const RegicideLearning = lazy(() => import("./components/RegicideLearning.tsx"));
+const RegicideRulebook = lazy(() => import("./components/RegicideRulebook.tsx"));
 
 const statusLabel = (game: GameEntry) => canPlay(game) ? "Disponible" : "À venir";
 
@@ -277,9 +280,9 @@ export default function App() {
       {route.page === "about" ? <CreditsPage language={language} onBack={()=>navigate({page:"settings"})} /> :
       route.page === "settings" ? <Settings onBack={back} onCredits={()=>navigate({page:"about"})} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
-        <GameDetail game={currentGame} section={route.section}
+        <Suspense fallback={<RouteLoading language={language}/>}><GameDetail game={currentGame} section={route.section}
           progress={progress[currentGame.id] ?? EMPTY_PROGRESS} statisticsPending={!progress[currentGame.id]&&!error} statisticsError={!!error} onNavigate={navigate} onBack={back} onSettings={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} language={language}
-          hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
+          hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} /></Suspense>
       ) : (
         <Gallery language={language} progress={progress} openSettings={button=>{lastTrigger.current=button;lastGalleryControl.current=".forge-settings-tile";settingsOrigin.current=HOME;navigate({page:"settings"});}} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>
       )}

@@ -43,3 +43,10 @@ test("only complete cache and controlling service worker can announce ready", ()
   assert.equal(hasServiceWorkerSupport(true,false,true),false);
   assert.equal(hasServiceWorkerSupport(true,true,false),false);
 });
+
+test("all deferred game chunks are included in the versioned precache",()=>{
+ const files=["assets/index.js","assets/index.css","assets/GrimDelveBoard.js","assets/ThunderfighterBoard.js","assets/MidnightSyndicateBoard.js","assets/SkydeckBoard.js","assets/RegicideLearning.js","assets/SkydeckBoard.css","startup.css"];
+ const script=createServiceWorkerScript("cafebabe",files);
+ const required=JSON.parse(script.split("const REQUIRED = ")[1].split(";")[0]);
+ for(const file of files)assert.ok(required.includes("./"+file));
+});

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, statSync } from "node:fs";
+import { readFileSync, statSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 const dist = resolve("dist");
@@ -17,6 +17,28 @@ for (const file of paths) {
 }
 assert.ok(paths.some(file => /^\.\/assets\/.*\.js$/.test(file)), "built JS must be cached");
 assert.ok(paths.some(file => /^\.\/assets\/.*\.css$/.test(file)), "built CSS must be cached");
+assert.ok(paths.includes("./startup.css"),"startup stylesheet must be cached");
+assert.match(text("index.html"),/href=["']\.\/startup\.css["']/,"startup CSS must resolve relative to deployment");
+assert.match(text("startup.css"),/\.cf-startup/);
+for(const file of readdirSync(resolve(dist,"assets"))) {
+  if(/\.(js|css)$/.test(file)) assert.ok(paths.includes("./assets/"+file),"missing offline chunk: "+file);
+}
+const report=JSON.parse(text("build-report.json"));
+const chunks=report.chunks;
+const initial=new Set();
+function visit(file){if(initial.has(file))return;initial.add(file);const chunk=chunks.find(c=>c.file===file);assert.ok(chunk,"unknown imported chunk "+file);chunk.imports.forEach(visit);}
+chunks.filter(c=>c.entry).forEach(c=>visit(c.file));
+assert.ok(initial.size>0,"entry chunk missing");
+for(const board of ["GrimDelveBoard","ThunderfighterBoard","MidnightSyndicateBoard","SkydeckBoard","RegicideBoard"]){
+ const owners=chunks.filter(c=>c.modules.some(m=>m==="components/"+board+".tsx"));
+ assert.equal(owners.length,1,"missing game chunk "+board);
+ assert.ok(!initial.has(owners[0].file),"game loaded eagerly: "+board);
+}
+for(const chunk of chunks)assert.ok(paths.includes("./"+chunk.file),"uncached JS chunk: "+chunk.file);
+const initialBytes=chunks.filter(c=>initial.has(c.file)).reduce((n,c)=>n+c.bytes,0);
+console.log("JS initial (including static dependencies): "+initialBytes+" bytes; baseline 602340 bytes; total "+chunks.reduce((n,c)=>n+c.bytes,0)+" bytes");
+assert.ok(initialBytes<602340,"initial JS must improve on measured baseline");
+assert.ok(chunks.every(c=>c.bytes<=500000),"JS chunk exceeds original 500 kB warning threshold");
 for (const family of ["rajdhani","cinzel","alegreyasc","josefinsans","kaushanscript"]) {
   assert.ok(paths.some(file=>file.startsWith("./assets/"+family+"-") && file.endsWith(".ttf")), "missing cached font: "+family);
   const notice = "./licenses/fonts/"+family+".txt";
