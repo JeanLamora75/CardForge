@@ -1,0 +1,289 @@
+[
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/02.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "2012766aa773a5dc744451ce66a58f9b6fae08e9c3c01a7c0008b01dace223c8"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/03.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "9d890b88a06418d25ea922395760679f4cdbf1daf544b8a2f96ee0a246723f57"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/04.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "f756f7ab4414b5e1a71980b26b8709c2af90f7c9db1f51dde607e0a5cb64396b"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/05.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "d3080efba431e2b3b570ac90ded1738a087d74cdf5e61632d63fdd80f7bb982d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/06.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "e3fc13a7d2e865e25706a762647afca4d7bf8e242e9364be5c8e214c7d79127e"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/07.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "f90dbff93c9c2d6ce59727471233c1f46a1a466369ba12cbe5d13f3cb4bd7f81"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/08.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "cc779fd6aedc357e4c69041ab43fb0c5482a21408e1c812d70ba7a00defe7081"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/09.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "f9f50dd9a4f39de26febd76f51165070c8c720ae2a5ed90ca9faf9b15e63de84"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/10.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "6fd06e038c8ed7ad923fb0e021523a94802384d388cea60076462f7bea5c1dd5"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/02.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "d7a0a236b37c568712c8ae8d04bd5d9b6a053380edeb9914a14c352faa11a9da"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/03.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "aa79664d6548d3be802997d35a05bce40b114aa0c0f54b040db6936ef8782f27"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/04.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "53f47400b5bcea4fd21839a511b17014d1842da705b7d653c65a2b48a06470b8"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/05.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "cd802aec36a3a619324bbcf5c33f046f162f110f3b26d84e7bc4d06e58725523"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/06.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "a453debc2b06aba52e0292118ad097964aaa606ab75767f98859a0e9bd2787b1"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/07.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "9e29adac72423ed4605cd5d3126f92e157b6bcf1508de96349ef67c524a887ca"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/08.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "8f5b33ea8201cd81be4c11fa74cf8c6a55825cb68066d3357e3181bc5653a08d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/09.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "99e65e052f928befb4763971145f9fcfec3502501df151f0b181b59fe024a997"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/10.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "7dbaa990ea89e80dc80ab0607011e066262879cd99f6ac2ae5fbc99f6f072afd"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/02.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "8d22ae12abaeb2f310f2180361d682db21684f4f46ed17e6257424d35e427092"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/03.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "f2c1ac08fa6841c77af79739bfa7c5fc784a7a22c2fe8db2d04f6b95d1580cb4"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/04.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "008b58f84b8c575d1dfb9f61ee819aaca9bd2b06927e2bf956944d533e6cdd19"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/05.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "1e1d9d9e5607357e5f1930d07ceb7c582e9d2f54304ebac4fe246942144443f8"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/06.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "580fd54609c3276e38364c4c8f6bc7ee517c06de156f784ce7dc158fe1005978"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/07.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "d0c7c9d9e0d0128ffbb918df46fa53179f6878add8379573c2fbab9b6d900073"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/08.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "09fc0ae542a71bd127871b1bb15fb43c2ea89614d1caa12b5ce32be53290c51d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/09.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "af89f7679448d2c27f7be68d5c8d0d66f584354be51b07187fd2a4c1c4bb4aaa"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/10.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "11da4aa51ddb9ae09212246663f70e9910d53d3041101b763b3d71d99a77dd8f"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/02.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "b1e6d2a937a5e1798c86b5692ce8d14dda2cfcfdf3730683d4457cd950d2f42d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/03.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "ca5c416dc3aab64fe33eaa61374776528ffc0a6a0322c3830f5edaa0ab9b54e4"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/04.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "7325f24def63d64d6d2fdd825f507107b9a9211c30d2501e5d8dc2b9a00be041"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/05.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "825548b29d0da546ca1d13007758456a4b81ced2fbd1a728f4d73fb39a76352d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/06.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "3c47376c70b098bba855ddc4c9f459a51974e6233a820b01d67ac15bd0cfbe44"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/07.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "22283e33f26b03a91618e0fe1c86ee6b658d8ddcff3cb12ce4af5223dba0601e"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/08.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "6fd08a632928a82fabc70e8d77623d674ea61d56d44ce5c884617b6c1584d109"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/09.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "d244d5fbb9567fb409844882d439cb4e0a3438840828d52c95908c575d9fa055"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/10.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "89eeb47e889eba6d8ba42df76ebc6a49249dde159f18c67654409a283c7bb373"
+  },
+  {
+    "path": "public/assets/frames/skydeck/card-pirates.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGBA",
+    "sha256": "8a27fc0d8dda49092b1c0c5e72ad9793132a56d92c960953fa0a27af86af8659"
+  },
+  {
+    "path": "public/assets/frames/skydeck/card-marine.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGBA",
+    "sha256": "74a077cc3f841f96e412c0f20d804d3f4fad253df43a3da08621004e13246205"
+  },
+  {
+    "path": "public/assets/frames/skydeck/card-merchant-guild.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGBA",
+    "sha256": "45b037ea3be4444a00657dd03893c4a3b5ce3b94bbaf5f463732e915916008fa"
+  },
+  {
+    "path": "public/assets/frames/skydeck/card-sky-knights.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGBA",
+    "sha256": "6c0bd4801243bddcc005ac6abc1e9056cd7467c83b8c7a18f1c3901a17b82695"
+  },
+  {
+    "path": "public/assets/frames/skydeck/card-joker.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGBA",
+    "sha256": "3625b5bad5f4ddf23124007ace8943ee30a30bb74bf9d8d25f362d793d1f35fe"
+  }
+]

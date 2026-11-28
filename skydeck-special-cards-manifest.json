@@ -1,0 +1,128 @@
+[
+  {
+    "path": "public/assets/cards/skydeck/officers/pirates/lieutenant.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "4a230057fd10e5d9945f7e495b3596f9fffe4778cf7b31d47af197f22aacf7f4"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/pirates/commander.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "31b9852ec2e9b04f5793b27a110ffc564d61e4c85555844e9beb06e892b6ed8b"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/pirates/admiral.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "3b42afb4d76544f63ec38a4df5d76708dcbcbe7f6e2e58f3fb237c2cd5dfb508"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/marine/lieutenant.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "2ffa3e4a43cb57c0c7a8cda01164fadb7bc3e67671ec737963b87986b466919d"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/marine/commander.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "3472a07859f2418784a4a331fd5e9ad6876496f5f160143757dd2cc5ddeadedd"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/marine/admiral.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "9cb6d21e39f4811a339ce137fe6144aa9c130655aa8bd21d318e2e0769baefe0"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/merchant-guild/lieutenant.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "79172f7efb049ca7b64eb36e03f6ab13efdaa3023d66f8ae3c2620d0d3b5f144"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/merchant-guild/commander.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "32da0e96c7b3778b515a9ae5678579b226c36e28e657e576b99dae0965c50e91"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/merchant-guild/admiral.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "be7fd0456170f5946a4bdc2d6245e1aaec3fbe4efe8f2caccf7529ea877996c4"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/sky-knights/lieutenant.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "261612af06a9b7d9a2d58f4bf05295dc4e5f6d8e1c64ab1bd794b83519ae5249"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/sky-knights/commander.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "bf6561a98ab39157feae699ee37495c4edeed3691e4178412f36bd214d2dadf8"
+  },
+  {
+    "path": "public/assets/cards/skydeck/officers/sky-knights/admiral.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "a15182f304659039b4423da593a5013a818e3f6130aabb34df3d3129151ae5a5"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/pirates/01.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "18b154afcc57e69cf87399b9e6da3835621996308abfaae79caf53365c24ac87"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/marine/01.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "bf09cd961bae727d6b9fc0444f8f8b7c221bbf5b4f22f470eb2faf8bb32a919b"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/merchant-guild/01.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "6ef5c833640e1bcbefc35806610d12c9dc45cce52146fe52dc97de00a3f30a5c"
+  },
+  {
+    "path": "public/assets/cards/skydeck/ships/sky-knights/01.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "d8e2ee5c814ad0d54b3bc667d953bf6417559d5e4f397dabcbf7eaaa764a2d05"
+  },
+  {
+    "path": "public/assets/cards/skydeck/joker-1.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "1e4085512a9c60becedc26b16c6df204c084155c21d8220f7a61a095c6209320"
+  },
+  {
+    "path": "public/assets/cards/skydeck/joker-2.png",
+    "width": 768,
+    "height": 1152,
+    "mode": "RGB",
+    "sha256": "84958bab9be6b5ba923202963062aff0e9aaa036fd37a568e05dd79ff29fccc0"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "path": "public/assets/boards/skydeck/victory-portrait.png",
+    "width": 837,
+    "height": 1860,
+    "mode": "RGB",
+    "sha256": "3c7117d4317bb661654128bc62638f9ea22ba6b6b7ea2c428cc386ddf846eee2"
+  },
+  {
+    "path": "public/assets/boards/skydeck/defeat-portrait.png",
+    "width": 837,
+    "height": 1860,
+    "mode": "RGB",
+    "sha256": "58ac24dd7939e44c8071e32c87922765b08f1feb6cfe1c5b80ffcd9f54728d6e"
+  },
+  {
+    "path": "public/assets/boards/skydeck/victory-landscape.png",
+    "width": 1664,
+    "height": 936,
+    "mode": "RGB",
+    "sha256": "75d8b87793fa8f446dfaeb748c59dbe870dc6fe237357cf9bac51072263e4bf8"
+  },
+  {
+    "path": "public/assets/boards/skydeck/defeat-landscape.png",
+    "width": 1664,
+    "height": 936,
+    "mode": "RGB",
+    "sha256": "01773a8b6fd037879b0c36419df5928dbfb77820fc9bbe29f2f99609cab8102c"
+  },
+  {
+    "path": "public/assets/icons/skydeck/victory.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "4521e8e4c4deb35f728946b238a520dd06b78eae7744b892a685fef81ad2a94a"
+  },
+  {
+    "path": "public/assets/icons/skydeck/defeat.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "6c15c7e9c549e3745be087e5e6960caf06aa58f8b466315c67e73f3ac3e61afd"
+  }
+]
