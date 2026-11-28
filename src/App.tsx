@@ -14,6 +14,7 @@ import {
 } from "./application/catalog-route";
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
+import SkydeckRulebook from "./components/SkydeckRulebook.tsx";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import Settings from "./components/Settings";
 import OfflineReadiness from "./components/OfflineReadiness";
@@ -104,6 +105,7 @@ function GameDetail({
   const skyCommand = game.id === "card-capture" && section === "board";
   const immersiveCommand = thunderCommand || grimCommand || msCommand || skyCommand;
 
+  if(game.id==="card-capture"&&section==="rules")return <SkydeckRulebook language={language} onBack={onBack}/>;
   if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
     <section className={`detail ${game.accent}${thunderCommand?" thunder-command-page":grimCommand?" grim-command-page":msCommand?" ms-command-page":skyCommand?" sd-command-page":""}`} aria-labelledby="game-title">
@@ -250,7 +252,7 @@ export default function App() {
   const thunderSurface=route.page==="game"&&route.gameId==="gridcannon"&&route.section==="board";
   const msSurface=route.page==="game"&&route.gameId==="loot-the-loop"&&route.section==="board";
   const grimSurface=route.page==="game"&&route.gameId==="clear-the-dungeon"&&route.section==="board";
-  const skySurface=route.page==="game"&&route.gameId==="card-capture"&&route.section==="board";
+  const skySurface=route.page==="game"&&route.gameId==="card-capture"&&(route.section==="board"||route.section==="rules");
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (

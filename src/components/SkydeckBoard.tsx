@@ -1,5 +1,6 @@
 import {automaticSkydeckAction,skydeckAttackFeedback,skydeckCompatibleTargets,skydeckProtected} from '../application/skydeck-flow.ts';
 import SkydeckEnding from './SkydeckEnding.tsx';
+import type {SkydeckManualPage} from './SkydeckRulebook.tsx';
 import { resolveSkydeckCopy, skydeckAttackSummary } from '../application/skydeck-combat-ui.ts';
 import { skydeckMotionPlan } from '../application/skydeck-motion.ts';
 import { motionAllowed } from '../application/shared-settings.ts';
@@ -19,7 +20,7 @@ type Kind='capture-a'|'capture-b'|'capture-c';
 const positions=[4,3,2,1];
 const ui=(category:string,name:string)=>import.meta.env.BASE_URL+`art/${category}/skydeck/${name}.webp`;
 const phaseIcons={enemy:'enemy',discard:'discard',draw:'draw',capture:'capture'} as const;
-export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}:{language:Locale;hintsEnabled?:boolean;tutorial?:boolean}){
+export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false,paused=false,onManualPage}:{language:Locale;hintsEnabled?:boolean;tutorial?:boolean;paused?:boolean;onManualPage?:(page:SkydeckManualPage)=>void}){
   const tr=(fr:string,en:string)=>language==='fr'?fr:en;
   const boardRef=useRef<HTMLElement>(null);
   const activeAnimations=useRef<Animation[]>([]);
@@ -182,14 +183,15 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       }
     });
   }
+  useEffect(()=>{if(!paused&&view)onManualPage?.(view.phase==='capture'?(kind==='capture-a'?'a':kind==='capture-b'?'b':'c'):view.phase==='finished'?'ending':view.phase);},[view,kind,paused,onManualPage]);
   const automatic=automaticSkydeckAction(view,tutorial);
   const autoConfirm=useRef(confirm);autoConfirm.current=confirm;
   useEffect(()=>{
-    if(!automatic||busy||blocked||error||storageError||menu||restart||abandon)return;
+    if(paused||!automatic||busy||blocked||error||storageError||menu||restart||abandon)return;
     const motion=motionAllowed(document.documentElement.dataset.motion==='on'?'on':document.documentElement.dataset.motion==='off'?'off':'system',window.matchMedia('(prefers-reduced-motion: reduce)').matches);
     const timer=window.setTimeout(()=>{void autoConfirm.current(automatic);},motion?(notice.startsWith('capture-')?950:570):notice.startsWith('capture-')?900:30);
     return()=>window.clearTimeout(timer);
-  },[view,busy,blocked,error,storageError,menu,restart,abandon,tutorial,notice]);
+  },[view,busy,blocked,error,storageError,menu,restart,abandon,tutorial,notice,paused]);
   const same=(ids:readonly string[])=>ids.length===selected.length&&ids.every(id=>selected.includes(id));
   const matching=view?.actions.filter(a=>{
     if(view.phase==='discard')return selected.length===0?a.type==='discard-none':a.type==='discard'&&same(a.cardIds);

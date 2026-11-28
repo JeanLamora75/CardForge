@@ -753,7 +753,16 @@ async function journey(locale,mobile){
       assert.equal(dimensions.images.length,2);assert.ok(dimensions.images.every(img=>img.w>0&&img.h>0&&img.paint>0),JSON.stringify(dimensions));
     }
     await page.locator('.sd-command-header').getByRole('button',{name:locale==='fr'?'Aide':'Help',exact:true}).click();
-    await page.locator('dialog[open]').waitFor();
+    await page.locator('dialog[open] .sd-manual').waitFor();
+    const manual=page.locator('dialog[open] .sd-manual');
+    const beforeManual=await readSaved(page,'card-capture');
+    assert.match(await manual.locator('h2').textContent(),/^A ·/);
+    await manual.locator('.sd-manual-nav button').nth(1).click();
+    assert.equal(await manual.locator('.sd-manual-toc button').count(),7);
+    await manual.locator('.sd-manual-toc button').nth(1).click();
+    assert.equal(await manual.locator('.sd-manual-card').count(),4);
+    for(const img of await manual.locator('.sd-manual-card img').all())await img.evaluate(n=>n.decode());
+    assert.deepEqual(await readSaved(page,'card-capture'),beforeManual);
     await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
     await sd.getByRole('button',{name:locale==='fr'?'B · Sacrifier':'B · Sacrifice',exact:true}).waitFor();
     const sdOriginalViewport=page.viewportSize();
