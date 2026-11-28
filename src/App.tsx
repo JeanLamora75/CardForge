@@ -15,6 +15,7 @@ import {
 import { createIndexedDbGameStorage } from "./adapters/indexeddb-game-storage";
 import GameLearning, { Rulebook } from "./components/GameLearning";
 import SkydeckRulebook from "./components/SkydeckRulebook.tsx";
+import SkydeckStatistics from "./components/SkydeckStatistics.tsx";
 import { GameStatisticsPanel } from "./components/GameResultPanel";
 import Settings from "./components/Settings";
 import OfflineReadiness from "./components/OfflineReadiness";
@@ -81,12 +82,14 @@ const ruleReference: Record<GameId, string> = {
 };
 
 function GameDetail({
-  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange, language, onSettings,
+  game, section, progress, onNavigate, onBack, hintsEnabled, onHintsChange, language, onSettings, statisticsPending, statisticsError,
 }: {
   game: GameEntry;
   language: Locale;
   section: GameSection;
   progress: CatalogGameProgress;
+  statisticsPending: boolean;
+  statisticsError: boolean;
   onNavigate: (route: CatalogRoute) => void;
   onBack: () => void;
   onSettings: () => void;
@@ -105,6 +108,7 @@ function GameDetail({
   const skyCommand = game.id === "card-capture" && section === "board";
   const immersiveCommand = thunderCommand || grimCommand || msCommand || skyCommand;
 
+  if(game.id==="card-capture"&&section==="statistics")return <SkydeckStatistics language={language} statistics={progress.statistics} pending={statisticsPending} error={statisticsError} onBack={onBack} onSettings={onSettings}/>;
   if(game.id==="card-capture"&&section==="rules")return <SkydeckRulebook language={language} onBack={onBack}/>;
   if (section === "detail") return <WorldMenu key={game.id} id={game.id} title={game.title} language={language} active={progress.indicator==="active"} onBack={onBack} onBoard={()=>{setLearn(false);go("board");}} onLearn={()=>{setLearn(true);go("board");}} onRules={()=>go("rules")} onStats={()=>go("statistics")}/>;
   return (
@@ -252,7 +256,7 @@ export default function App() {
   const thunderSurface=route.page==="game"&&route.gameId==="gridcannon"&&route.section==="board";
   const msSurface=route.page==="game"&&route.gameId==="loot-the-loop"&&route.section==="board";
   const grimSurface=route.page==="game"&&route.gameId==="clear-the-dungeon"&&route.section==="board";
-  const skySurface=route.page==="game"&&route.gameId==="card-capture"&&(route.section==="board"||route.section==="rules");
+  const skySurface=route.page==="game"&&route.gameId==="card-capture"&&(route.section==="board"||route.section==="rules"||route.section==="statistics");
   const currentGame = route.page === "game" ? games.find(game => game.id === route.gameId) : undefined;
 
   return (
@@ -268,13 +272,13 @@ export default function App() {
       </header>:null}
       {settingsSaveFailed ? <p className="storage-warning" role="status" data-i18n-ignore>{language==="en"?"Your settings work for this session but could not be saved.":"Vos réglages s’appliquent pour cette session, mais n’ont pas pu être enregistrés."}</p> : null}
       {languageSaveFailed ? <p className="storage-warning" role="status" data-i18n-ignore>{language==="en"?"Your chosen language could not be saved for next time.":"Votre langue n’a pas pu être mémorisée pour la prochaine session."}</p> : null}
-      {error ? <p className="storage-warning" role="alert">{error}</p> : null}
+      {error && !(route.page==="game"&&route.gameId==="card-capture"&&route.section==="statistics") ? <p className="storage-warning" role="alert">{error}</p> : null}
       <OfflineReadiness language={language} />
       {route.page === "about" ? <CreditsPage language={language} onBack={()=>navigate({page:"settings"})} /> :
       route.page === "settings" ? <Settings onBack={back} onCredits={()=>navigate({page:"about"})} language={language} onLanguageChange={selectLanguage} preferences={preferences} onPreferencesChange={changePreferences} /> :
       currentGame && route.page === "game" ? (
         <GameDetail game={currentGame} section={route.section}
-          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} onNavigate={navigate} onBack={back} onSettings={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} language={language}
+          progress={progress[currentGame.id] ?? EMPTY_PROGRESS} statisticsPending={!progress[currentGame.id]&&!error} statisticsError={!!error} onNavigate={navigate} onBack={back} onSettings={()=>{settingsOrigin.current=route;navigate({page:"settings"});}} language={language}
           hintsEnabled={preferences.hints} onHintsChange={value => changePreferences({ ...preferences, hints: value })} />
       ) : (
         <Gallery language={language} progress={progress} openSettings={button=>{lastTrigger.current=button;lastGalleryControl.current=".forge-settings-tile";settingsOrigin.current=HOME;navigate({page:"settings"});}} scrollTop={galleryScroll.current} onScroll={v=>{galleryScroll.current=v;}} open={(id,button)=>{const game=games.find(g=>g.id===id);if(game)openGame(game,button);}}/>

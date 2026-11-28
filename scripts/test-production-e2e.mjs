@@ -1027,9 +1027,54 @@ async function journey(locale,mobile){
     }finally{await offline.close();}
   }finally{await context.close();}
 }
+async function skydeckStatisticsScreens(){
+ const scenarios=[[0,0,0,0,"—"],[1,0,0,1,"100 %"],[0,1,0,1,"0 %"],[0,0,1,1,"—"],[1,7,2,10,"13 %"],[5,5,10,20,"50 %"],[100,0,50,150,"100 %"],[999,999,999,2997,"50 %"]];
+ const sizes=[[320,568],[360,640],[390,844],[412,915],[768,1024],[844,390],[1024,768],[1920,1080]];
+ for(const locale of ["fr","en"]){
+  const context=await browser.newContext({locale:locale==="fr"?"fr-FR":"en-US",reducedMotion:"reduce",viewport:{width:390,height:844}});
+  try{
+   await context.addInitScript(lang=>localStorage.setItem("cardforge.language.v1",lang),locale);
+   const page=await context.newPage();
+   await page.goto(HOST+"#game/card-capture/statistics");
+   await page.locator(".sd-log-paper").waitFor();
+   const before=await readSaved(page,"card-capture");
+   for(const [won,lost,abandoned,total,rate] of scenarios){
+    const fixture={gameId:"card-capture",played:total,won,lost,abandoned};
+    await page.evaluate(async fixture=>{
+     const db=await new Promise((resolve,reject)=>{const r=indexedDB.open("cardforge",1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});
+     try{await new Promise((resolve,reject)=>{const tx=db.transaction("statistics","readwrite");tx.objectStore("statistics").put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}
+    },fixture);
+    await page.reload();await page.locator(".sd-log-paper").waitFor();
+    assert.equal(await page.locator('[data-stat="rate"]').textContent(),rate);
+    for(const [key,value] of Object.entries({won,lost,abandoned,total}))assert.equal(await page.locator('[data-stat="'+key+'"]').textContent(),new Intl.NumberFormat(locale).format(value));
+    assert.equal(await page.locator(".sd-log-total p").count(),total===0?1:0);
+    assert.deepEqual(await readSaved(page,"card-capture"),before);
+   }
+   for(const [width,height] of sizes){
+    await page.setViewportSize({width,height});
+    await page.evaluate(()=>document.fonts.ready);
+    await page.locator(".sd-log-header img,.sd-log-result img,.sd-log-total img").evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));
+    const fits=await page.locator(".sd-log").evaluate(node=>({height:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,clipped:[...node.querySelectorAll("button,h1,dt,dd,.sd-log-legend li,.sd-log-gauge")].filter(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>innerWidth+1||r.bottom>innerHeight+1||el.scrollWidth>el.clientWidth+1}).map(el=>el.textContent)}));
+    assert.ok(fits.height<=height+1&&fits.width<=width+1&&!fits.clipped.length,JSON.stringify({locale,width,height,fits}));
+   }
+   assert.equal(await page.locator("#game-title").textContent(),locale==="fr"?"Journal de bord":"Captain’s Log");
+   await page.getByRole("button",{name:locale==="fr"?"Paramètres":"Settings",exact:true}).click();
+   await page.waitForURL("**/#settings");
+   await page.keyboard.press("Escape");await page.locator(".sd-log-paper").waitFor();
+   await ready(page);
+   await context.setOffline(true);await page.reload();await page.locator(".sd-log-paper").waitFor();
+   assert.equal(await page.locator('[data-stat="rate"]').textContent(),"50 %");
+   await page.getByRole("button",{name:locale==="fr"?"Retour à Skydeck":"Back to Skydeck"}).click();
+   await page.locator('.forge-menu[data-world="skydeck"]').waitFor();
+  }finally{await context.close();}
+ }
+ console.log("Skydeck statistics: 8 scenarios, 8 viewports, FR/EN, offline and navigation");
+}
+
 try{
   await waitForServer();
   browser=await chromium.launch({headless:true});
+  await skydeckStatisticsScreens();
   await immersiveScreens();
   await stalePreviewRecovery();
   for(const locale of ['fr','en'])
