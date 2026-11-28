@@ -10,7 +10,7 @@ const base = [
   "clubs-5", "hearts-9", "clubs-9",
 ];
 function scenario() {
-  const figureSlots = Array.from({length:12}, (_,i) => ({3:"clubs-11",6:"spades-11"})[i] ?? null);
+  const figureSlots = Array.from({length:12}, (_,i) => ({3:"clubs-11",8:"spades-11"})[i] ?? null);
   const grid = base.map(id => [id]);
   const used = [...base,...figureSlots.filter(Boolean),"hearts-10"];
   const state = {

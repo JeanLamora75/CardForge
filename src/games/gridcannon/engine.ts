@@ -70,7 +70,7 @@ const isSpecial = (id: string) => {
 const peripheral = [0, 1, 2, 3, 5, 6, 7, 8] as const;
 /** top 0-2; right 3-5; bottom 6-8; left 9-11. */
 const adjacent: readonly (readonly number[])[] = [
-  [0, 9], [1], [2, 3], [10], [], [4], [8, 11], [7], [5, 6],
+  [0, 11], [1], [2, 3], [10], [], [4], [8, 9], [7], [5, 6],
 ];
 function record(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -117,12 +117,12 @@ export function getShotAnalysis(state: Readonly<ThunderfighterState>, cell: numb
   const targets:ThunderShot[] = [];
   for (const axis of axes) {
     if (axis[0] !== cell && axis[2] !== cell) continue;
-    const slot = axis === gridRows[0] ? cell === 0 ? 3 : 9
+    const slot = axis === gridRows[0] ? cell === 0 ? 3 : 11
       : axis === gridRows[1] ? cell === 3 ? 4 : 10
-      : axis === gridRows[2] ? cell === 6 ? 5 : 11
-      : axis === gridColumns[0] ? cell === 0 ? 6 : 0
+      : axis === gridRows[2] ? cell === 6 ? 5 : 9
+      : axis === gridColumns[0] ? cell === 0 ? 8 : 0
       : axis === gridColumns[1] ? cell === 1 ? 7 : 1
-      : cell === 2 ? 8 : 2;
+      : cell === 2 ? 6 : 2;
     const figureId = state.figureSlots[slot];
     if (!figureId || defeated.has(figureId)) continue;
     const middle = axis[0] === cell ? [axis[1],axis[2]] : [axis[1],axis[0]];

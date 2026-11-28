@@ -14,10 +14,10 @@ const grid9=['clubs-2','hearts-6','spades-5','diamonds-6','diamonds-7',
 function nearVictory({reserve=['hearts-1','joker-1']}={}) {
   const last=['clubs-11','spades-11'];
   const defeated=figures.filter(id=>!last.includes(id));
-  const slots=[0,1,2,4,5,7,8,9,10,11];
+  const slots=[0,1,2,4,5,6,7,9,10,11];
   const figureSlots=Array(12).fill(null);
   defeated.forEach((id,i)=>{figureSlots[slots[i]]=id});
-  figureSlots[3]=last[0];figureSlots[6]=last[1];
+  figureSlots[3]=last[0];figureSlots[8]=last[1];
   const grid=grid9.map(id=>[id]);
   const pendingNumeric='hearts-10';
   const used=[...grid.flat(),...figureSlots,...reserve,pendingNumeric];

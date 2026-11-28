@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDeckWithJokers } from '../src/core/cards.ts';
-import { thunderfighterEngine as engine, getShotTargets } from '../src/games/gridcannon/engine.ts';
+import { thunderfighterEngine as engine, getShotTargets, getActionShotAnalysis } from '../src/games/gridcannon/engine.ts';
 
 const ids = makeDeckWithJokers().map(card => card.id);
 const base = [
@@ -9,7 +9,7 @@ const base = [
   'diamonds-6', 'diamonds-7', 'spades-8',
   'clubs-5', 'hearts-9', 'clubs-9',
 ];
-function fixture({ grid = base, trigger = 'hearts-10', targets = { 3: 'clubs-11', 6: 'spades-11' },
+function fixture({ grid = base, trigger = 'hearts-10', targets = { 3: 'clubs-11', 8: 'spades-11' },
   defeated = [], armor = [], reserve = [], pending = true } = {}) {
   const piles = grid.map(id => id === null ? [] : [id]);
   const figureSlots = Array.from({length:12},(_,i) => targets[i] ?? null);
@@ -70,7 +70,7 @@ test('GC-T15 / GC-T31 / GC-V2-T28: a corner triggers horizontal and vertical vic
   const done=play(s,{type:'place-number',cell:0});
   assert.deepEqual(done.lastShot,['clubs-11','spades-11']);
   assert.deepEqual(done.defeatedFigures,['clubs-11','spades-11']);
-  assert.equal(done.figureSlots[3],'clubs-11');assert.equal(done.figureSlots[6],'spades-11');
+  assert.equal(done.figureSlots[3],'clubs-11');assert.equal(done.figureSlots[8],'spades-11');
   reject(done,{type:'place-number',cell:0});
 });
 test('GC-V2-T29/30: only the sufficient axis defeats its figure',()=>{
@@ -89,7 +89,7 @@ test('GC-V2-T31: insufficient shots keep both figures alive and preserve placed 
 });
 test('GC-T11 / GC-T13 / GC-V2-T33: queen counts only same-color power and king only same-suit',()=>{
   const grid=[...base];grid[1]='hearts-9';grid[2]='diamonds-5';grid[3]='clubs-10';grid[6]='hearts-7';grid[7]='spades-9';
-  const s=fixture({grid, targets:{3:'hearts-12',6:'clubs-13'}});
+  const s=fixture({grid, targets:{3:'hearts-12',8:'clubs-13'}});
   const out=play(s,{type:'place-number',cell:0});
   assert.deepEqual(out.lastShot,['hearts-12']);
   assert.equal(out.defeatedFigures.includes('clubs-13'),false);
@@ -110,7 +110,7 @@ test('armor raises resistance; an eleven-power shot cannot defeat a J with +3 ar
 test('GC-V2-T35: ten already defeated figures plus double kill wins once and fixes special score',()=>{
   const figures=ids.filter(id=>/-(11|12|13)$/.test(id));
   const remaining=figures.filter(id=>!['clubs-11','spades-11'].includes(id));
-  const targets=Object.fromEntries([...remaining.map((id,i)=>[[0,1,2,4,5,7,8,9,10,11][i],id]),[3,'clubs-11'],[6,'spades-11']]);
+  const targets=Object.fromEntries([...remaining.map((id,i)=>[[0,1,2,4,5,6,7,9,10,11][i],id]),[3,'clubs-11'],[8,'spades-11']]);
   // Ensure each of the twelve exterior slots is filled exactly once.
   assert.equal(Object.keys(targets).length,12);
   const s=fixture({targets,defeated:remaining,reserve:['joker-1','hearts-1']});
@@ -163,7 +163,7 @@ test('a King requires both middle cards in its own suit, exact thirteen succeeds
 });
 test('right-side trigger shoots across the row toward the left-hand figure',()=>{
   const grid=[...base];grid[0]='clubs-8';
-  const s=fixture({grid,targets:{9:'hearts-11'}});
+  const s=fixture({grid,targets:{11:'hearts-11'}});
   const out=play(s,{type:'place-number',cell:2});
   assert.deepEqual(out.lastShot,['hearts-11']);
 });
@@ -193,4 +193,15 @@ test('GC-T12: 6+7 of the same suit defeats the King at resistance 13',()=>{
   const done=play(s,{type:'place-number',cell:0});
   assert.deepEqual(done.lastShot,['clubs-13']);
   assert.deepEqual(done.defeatedFigures,['clubs-13']);
+});
+
+test('top-right placement preview and actual resolution agree on aligned targets only',()=>{
+ const s=fixture({targets:{11:'hearts-11',6:'clubs-11',9:'spades-11',8:'diamonds-11'}});
+ const action={type:'place-number',cell:2};
+ const preview=getActionShotAnalysis(s,action);
+ assert.deepEqual(preview.map(x=>x.slot),[11,6]);
+ const out=play(s,action);
+ assert.deepEqual(out.lastShot,preview.filter(x=>x.success).map(x=>x.figureId));
+ assert.ok(!out.defeatedFigures.includes('spades-11'));
+ assert.ok(!out.defeatedFigures.includes('diamonds-11'));
 });

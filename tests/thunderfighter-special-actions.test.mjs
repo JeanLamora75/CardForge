@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { makeDeckWithJokers } from '../src/core/cards.ts';
-import { thunderfighterEngine as engine } from '../src/games/gridcannon/engine.ts';
+import { thunderfighterEngine as engine, getActionShotAnalysis } from '../src/games/gridcannon/engine.ts';
 
 const all = makeDeckWithJokers().map(c => c.id);
 const gridBase = [
@@ -10,7 +10,7 @@ const gridBase = [
   'clubs-5','hearts-9','clubs-9',
 ];
 function fixture({grid=gridBase.map(id=>[id]),reserve=['hearts-1','joker-1'],
-  targets={3:'clubs-11',6:'spades-11'},phase='playing',pending=null,
+  targets={3:'clubs-11',8:'spades-11'},phase='playing',pending=null,
   buffer=[],defeated=[],drawFirst=[],spent=[]}={}) {
   const figureSlots=Array.from({length:12},(_,slot)=>targets[slot]??null);
   const used=[...grid.flat(),...reserve,...spent,...figureSlots.filter(Boolean),...buffer,
@@ -159,4 +159,16 @@ test('corrupt duplicate special and spent identity is rejected; cannot spend a f
   assert.equal(engine.validateState(invalid).valid,false);
   reject(invalid,{type:'reassign',cardId:'joker-1',from:1,to:0});
   reject(s,{type:'extract',cardId:'clubs-1',cell:0});
+});
+
+test('Singularity top-right move uses only aligned sectors and agrees with preview',()=>{
+ const grid=gridBase.map(id=>[id]);grid[4].push('hearts-10');
+ const s=fixture({grid,reserve:['joker-1'],targets:{11:'hearts-11',6:'clubs-11',9:'spades-11',8:'diamonds-11'}});
+ const action={type:'reassign',cardId:'joker-1',from:4,to:2};
+ const preview=getActionShotAnalysis(s,action);
+ assert.deepEqual(preview.map(x=>x.slot),[11,6]);
+ const out=apply(s,action);
+ assert.deepEqual(out.lastShot,preview.filter(x=>x.success).map(x=>x.figureId));
+ assert.ok(!out.defeatedFigures.includes('spades-11'));
+ assert.ok(!out.defeatedFigures.includes('diamonds-11'));
 });

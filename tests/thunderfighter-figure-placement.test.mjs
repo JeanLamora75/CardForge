@@ -60,7 +60,7 @@ test('GC-T32 / GC-01: the centre is excluded even if it exactly matches the figu
 test('GC-T02: same-suit numeric card outranks higher-ranked same-colour and other-colour cards', () => {
   const grid = [...defaultGrid]; grid[0] = 'hearts-8'; grid[1] = 'diamonds-10';
   const state = fixture({ grid });
-  assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 9] });
+  assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 11] });
 });
 test('GC-T03: without same suit, highest same-colour value wins over a larger opposite-colour card', () => {
   const grid = [...defaultGrid]; grid[0] = 'clubs-10'; grid[7] = 'diamonds-9';
@@ -76,25 +76,25 @@ test('GC-T04 / GC-01: tied candidates and a corner offer all adjacent legal slot
   // A real deck contains only one card per suit and value. A corner provides the two legal ties.
   const grid = [...defaultGrid]; grid[0] = 'hearts-8'; grid[2] = 'clubs-10';
   const state = fixture({ grid });
-  assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 9] });
-  assert.deepEqual(availableFigureSlots(state), [0, 9]);
-  const chosen = place(state, 9);
-  assert.equal(getFigureSlotStatus(chosen, 9), 'alive');
+  assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [0, 11] });
+  assert.deepEqual(availableFigureSlots(state), [0, 11]);
+  const chosen = place(state, 11);
+  assert.equal(getFigureSlotStatus(chosen, 11), 'alive');
   assert.equal(chosen.figureSlots[0], null);
 });
 test('GC-T05 / GC-T33 / GC-02: if the best suit-matched number has no adjacent slot, next available suit candidate wins', () => {
   const grid = [...defaultGrid]; grid[0] = 'hearts-10'; grid[2] = 'hearts-8';
-  const occupied = { 0: 'clubs-11', 9: 'spades-12' };
+  const occupied = { 0: 'clubs-11', 11: 'spades-12' };
   const state = fixture({ grid, occupied });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [2, 3] });
   refuse(state, 0);refuse(state, 1);
   const next = place(state, 3);
   assert.equal(next.figureSlots[0], 'clubs-11');
-  assert.equal(next.figureSlots[9], 'spades-12');
+  assert.equal(next.figureSlots[11], 'spades-12');
 });
 test('GC-02/13: a lower-ranked normal candidate prevents unrestricted rescue', () => {
   const grid = [...defaultGrid]; grid[0] = 'hearts-10';
-  const state = fixture({ grid, occupied: { 0: 'clubs-11', 9: 'spades-12' } });
+  const state = fixture({ grid, occupied: { 0: 'clubs-11', 11: 'spades-12' } });
   assert.deepEqual(getFigurePlacementOptions(state), { mode: 'normal', slots: [7] });
   refuse(state, 2);
 });
@@ -133,7 +133,7 @@ test('GC-13: a complete perimeter cannot accept a thirteenth figure or fabricate
   assert.equal(corrupt.outcome, 'in-progress');
 });
 test('figure status is persisted without freeing occupied slots; bad status metadata is refused', () => {
-  const state = fixture({ occupied: { 0: 'clubs-11', 9: 'spades-12' }, defeated: ['clubs-11'] });
+  const state = fixture({ occupied: { 0: 'clubs-11', 11: 'spades-12' }, defeated: ['clubs-11'] });
   const restored = JSON.parse(JSON.stringify(state));
   assert.equal(getFigureSlotStatus(restored, 0), 'defeated');
   assert.equal(getFigureSlotStatus(restored, 9), 'alive');
