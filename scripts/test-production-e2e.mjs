@@ -938,12 +938,23 @@ async function journey(locale,mobile){
         assert.equal((await readSaved(offline,'card-capture')).state.outcome,outcome);
         const end=offline.locator('.sd-end-screen');
         assert.equal(await end.getAttribute('data-outcome'),outcome);
+        const narratives={
+          fr:{win:['Votre flotte a triomphé de tous ses ennemis.','Les cieux sont à vous !'],loss:['Votre flotte a perdu un navire stratégique.','La bataille pour les cieux est perdue.'],abandoned:['Votre flotte se retire du champ de bataille.','Les cieux attendront votre retour.']},
+          en:{win:['Your fleet has overcome every enemy.','The skies are yours!'],loss:['Your fleet has lost a strategic ship.','The battle for the skies is lost.'],abandoned:['Your fleet withdraws from the battlefield.','The skies await your return.']}
+        };
+        assert.deepEqual(await end.locator('.sd-end-narrative span').allTextContents(),narratives[locale][outcome]);
+
         assert.equal(await offline.locator('.sd-fleets,.sd-console').count(),0);
         const originalViewport=offline.viewportSize();
         for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
           await offline.setViewportSize(viewport);
           const detail=end.getByRole('button',{name:locale==='fr'?'Rapport détaillé':'Detailed report'});
           await detail.click();
+          assert.equal(await end.locator('.sd-end-rule').count(),0);
+          assert.equal(await end.getByText(locale==='fr'?'Une figure ou un As a été perdu.':'A face card or an ace was lost.',{exact:true}).count(),0);
+          const narrativeLayout=await end.locator('.sd-end-narrative').evaluate(n=>{const r=n.getBoundingClientRect();const lines=[...n.children].map(x=>{const range=document.createRange();range.selectNodeContents(x);return [...range.getClientRects()].filter(t=>t.width>0&&t.height>0).length;});return {width:r.width,scroll:n.scrollWidth,lines};});
+          assert.ok(narrativeLayout.width+1>=narrativeLayout.scroll&&narrativeLayout.lines.every(n=>n<=2),JSON.stringify({viewport,narrativeLayout}));
+
           const result=await end.evaluate(async n=>{const image=n.querySelector('.sd-end-backdrop img');await image.decode();const r=n.querySelector('.sd-end-content').getBoundingClientRect();const buttons=[...n.querySelectorAll('.sd-end-buttons>*')].map(x=>x.getBoundingClientRect());return {source:image.currentSrc,decoded:image.naturalWidth>0,top:r.top,bottom:r.bottom,h:innerHeight,scroll:document.documentElement.scrollHeight,buttons:buttons.every(b=>b.top>=0&&b.bottom<=innerHeight+1)};});
           const name=outcome==='win'?'victory-':outcome==='loss'?'defeat-':'';
           assert.ok(result.decoded&&result.source.endsWith(name+(viewport.width>viewport.height?'landscape':'portrait')+'.webp')&&result.top>=-1&&result.bottom<=result.h+1&&result.scroll<=result.h+1&&result.buttons,JSON.stringify({outcome,viewport,result}));

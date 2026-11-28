@@ -48,3 +48,7 @@ Composant terminal dédié, plateau démonté et viewport contraint, fonds portr
 
 ## SD-END-21 à 35 — finition des résultats
 Rejeu immédiat après vérification de la sauvegarde terminale et du résultat durable ; remplacement protégé par identifiant de session et confirmation conservée en cours de partie. Dialogue actif thématisé, composition recentrée, emblème et titre agrandis, bandeau et compteurs existants, gradient allégé, marges adaptées. Motif exact de défaite dans le détail. Libellé « Captures ennemies » conservé plutôt que « Cartes perdues » : ce compteur inclut également des adversaires selon la règle B. Tests E2E de rejeu sans confirmation et nouvelle session ajoutés aux contrôles des trois issues et huit tailles ; CI/recette à constater. Aucun uv ni nouvelle ressource.
+
+
+## SD-END-36 à 41 — narration et finition
+Option A validée pour la défaite, message narratif en deux phrases, taille responsive et relief, espaces équilibrés, détails plus compacts. Suppression complète de la phrase technique « Une figure ou un As a été perdu. » conformément à la demande explicite, règle inchangée dans le moteur. Victoire et retrait reçoivent des messages narratifs cohérents en FR/EN. Deux lignes visées sur les écrans suffisamment larges ; retour à la ligne permis sur très petits écrans pour éviter de tronquer le texte. Tests E2E de contenu et géométrie ajoutés, validation effective CI et recette requises. Aucun uv ni modification graphique binaire.

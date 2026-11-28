@@ -236,10 +236,17 @@ html[data-motion=off] .sd-end-content{animation:none}
 .sd-end-report h3 img,.sd-end-metrics div img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1}
 .sd-end-metrics div{min-height:58px;padding:7px 9px}
 .sd-end-metrics dt{font-size:.72rem}
-.sd-end-rule{margin:4px 0 0;font-size:.7rem;color:#fff0d5}
 .sd-end-details{background:#152832e8;border-radius:5px;padding:4px}
 .sd-board .sd-confirm button{position:relative;isolation:isolate;overflow:hidden;min-height:44px;border:1px solid #b99a65;background:#382b1e;color:#fff0ce;text-shadow:0 1px 2px #000}
 .sd-board .sd-confirm button.primary-action{color:#261809;text-shadow:0 1px 1px #ffe9b4}
 .sd-dialog-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
 @media(orientation:landscape){.sd-command-page .sd-end-screen{justify-content:flex-end;align-items:center}.sd-end-content{width:min(58%,600px)}.sd-end-screen::before{background:linear-gradient(90deg,transparent,#101b23b8 55%)}}
 @media(max-height:600px){.sd-end-content{gap:4px;padding:6px 8px max(8px,env(safe-area-inset-bottom))}.sd-end-title img{width:clamp(40px,10dvh,65px);height:clamp(40px,10dvh,65px)}.sd-end-title h2{font-size:clamp(1.5rem,5vw,2rem)}.sd-end-metrics div{min-height:42px;padding:4px 6px}.sd-end-report h3{padding:3px}.sd-end-button{min-height:36px}.sd-end-details dt{font-size:.65rem}}
+
+.sd-end-title{display:flex;flex-direction:column;align-items:center;gap:5px}
+.sd-end-title .sd-end-narrative{font-family:"Alegreya SC",Georgia,serif;font-size:clamp(.95rem,3.5vw,1.4rem);font-weight:700;line-height:1.24;color:#ffe9b4;margin:3px auto 7px;max-width:100%;text-shadow:0 2px 4px #111b24,0 0 5px #111b24}
+.sd-end-narrative span{display:block}
+.sd-end-details{gap:2px;padding:3px;background:#152832d9}
+.sd-end-details div{min-width:0;padding:2px 5px;background:#0c1a22b8}
+.sd-end-details dt{flex:1;min-width:0}
+@media(max-height:600px){.sd-end-title{gap:2px}.sd-end-title .sd-end-narrative{font-size:clamp(.78rem,2.6vw,1rem);line-height:1.15;margin:2px auto 3px}.sd-end-details div{padding:1px 4px}}
