@@ -1321,3 +1321,12 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 /* Decorative game surfaces must not retain native browser selection on navigation. */
 .forge-menu,.forge-menu img,.sd-end-screen,.sd-end-screen img{-webkit-user-select:none;user-select:none}
 .forge-menu img,.sd-end-screen img{-webkit-user-drag:none}
+
+/* Tactical recovery: legal equipment is highlighted without changing board rules. */
+.thunder-board .tf-blocked-brief{display:grid;gap:2px;min-width:0;padding:4px 8px;border-left:3px solid #ffc36b;background:#392b244d;color:#ffe0af;line-height:1.2;font-size:clamp(.68rem,2.8vw,.83rem);}
+.thunder-board .tf-blocked-brief strong{font-size:inherit;letter-spacing:.035em;}
+.thunder-board .tf-blocked-brief span{color:#e2edf5;}
+.thunder-board.tf-live .tf-special-unit[data-recovery=true]{outline:2px solid #dfb7ff;outline-offset:-2px;box-shadow:0 0 9px #b779f1;animation:tf-recovery-beacon 1.6s ease-in-out infinite alternate;}
+@keyframes tf-recovery-beacon{from{box-shadow:0 0 3px #b779f1;}to{box-shadow:0 0 12px #e1b7ff;}}
+:root[data-motion=off] .thunder-board.tf-live .tf-special-unit[data-recovery=true]{animation:none;}
+@media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .thunder-board.tf-live .tf-special-unit[data-recovery=true]{animation:none;}}
