@@ -318,3 +318,53 @@ html[data-motion=off] .sd-end-content{animation:none}
 .sd-manual-dialog .tf-help-header{flex:none;display:flex;justify-content:center}
 .sd-manual-dialog .sd-manual{flex:1}
 @media(max-height:450px){.sd-manual{gap:3px;padding:4px}.sd-manual-header img{height:24px}.sd-manual-paper{padding:6px}.sd-manual-toc{grid-template-columns:1fr 1fr}.sd-manual-toc button{min-height:30px}.sd-manual-cards figure{width:65px}.sd-manual-nav button{min-height:30px}}
+
+/* The manual uses the same local artwork as the command deck. */
+.sd-command-page:has(>.sd-manual){height:100%;min-height:0;box-sizing:border-box;padding:0!important}
+.sd-manual-v2{height:100%;gap:5px;max-width:780px}
+.sd-manual-v2 .sd-manual-header{position:relative;padding:0 4px}
+.sd-manual-v2 .sd-manual-header .sd-manual-back{position:absolute;left:4px;top:0;width:44px;height:44px;border-radius:50%;font-size:1.5rem;background:radial-gradient(#62482d,#241c16);box-shadow:inset 0 0 0 2px #7d5629,inset 0 0 0 4px #d4a860,inset 0 0 0 6px #35281d}
+.sd-manual-v2 .sd-manual-logo{max-width:65%;height:clamp(36px,6dvh,55px)}
+.sd-manual-v2 h1{position:relative;isolation:isolate;overflow:hidden;padding:3px 8px}
+.sd-manual-v2 h1 img,.sd-manual-button-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none;max-width:none}
+.sd-manual-v2 .sd-manual-paper{position:relative;isolation:isolate;padding:0;display:block;background:#e8d4ac;border:0;overflow:auto}
+.sd-manual-texture,.sd-manual-frame{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;pointer-events:none;z-index:-1}
+.sd-manual-frame{z-index:1}
+.sd-manual-content{position:relative;z-index:2;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:clamp(4px,1dvh,10px);padding:clamp(16px,4vw,35px)}
+.sd-manual-v2 .sd-manual-content h2{font-size:clamp(1.3rem,4.5vw,2rem);line-height:1.05;color:#54371e}
+.sd-manual-v2 .sd-manual-content p{font-size:clamp(.84rem,3vw,1.14rem);line-height:1.32}
+.sd-manual-v2 .sd-manual-intro{font-style:italic;text-align:center;color:#654325}
+.sd-manual-separator{width:45%;height:clamp(8px,2dvh,18px);object-fit:contain;align-self:center}
+.sd-manual-rule{color:#382819}
+.sd-manual-v2 .sd-manual-toc{flex:none;gap:4px}
+.sd-manual-v2 .sd-manual-toc button{display:grid;grid-template-columns:30px 1fr 10px;gap:8px;background:#eee0be99;border-color:#a98d5e;padding:5px 8px;min-height:40px}
+.sd-manual-toc button img,.sd-manual-step img{width:26px;height:26px;object-fit:contain;filter:drop-shadow(0 1px 1px #5b3d20)}
+.sd-manual-toc button small{display:block;font-weight:400;font-size:.78em;line-height:1.2}
+.sd-manual-scenes{display:flex;justify-content:center;gap:6px;min-height:0}
+.sd-manual-scenes img{width:auto;max-width:100%;max-height:clamp(100px,24dvh,240px);object-fit:contain;border:1px solid #9e7b42;border-radius:5px}
+.sd-manual-scenes img:not(:only-child){max-width:48%}
+.sd-manual-tip{border-top:1px solid #a98b53;padding:5px 0;color:#624325}
+.sd-manual-tip b{font-family:"Alegreya SC",Georgia,serif}
+.sd-manual-tip p{font-style:italic}
+.sd-manual-v2 .sd-manual-page-number{margin-top:4px;font-size:.72rem;text-align:center}
+.sd-manual-v2 .sd-manual-card small{position:absolute;bottom:5%;left:6%;right:6%;background:#172832e8;color:#ffe9b4;font:700 9cqw Georgia,serif;text-align:center;line-height:1.1;padding:2px}
+.sd-manual-v2 .sd-manual-cards figure{width:min(23%,115px);flex:1;min-width:0}
+.sd-manual-v2 .sd-manual-cards figcaption{font-size:clamp(.6rem,2vw,.8rem)}
+.sd-manual-battle{display:grid;grid-template-columns:minmax(0,2fr) auto minmax(0,1fr);align-items:center;gap:5px}
+.sd-manual-battle section{min-width:0;text-align:center}
+.sd-manual-battle h3{font-size:.8rem;margin:0 0 4px;color:#654325}
+.sd-manual-battle .sd-manual-cards figure{width:auto;max-width:100px}
+.sd-manual-tactics .sd-manual-example{text-align:center;font-size:.75rem;font-style:italic}
+.sd-manual-result{font-size:.85rem;margin-top:5px;text-align:center}
+.sd-manual-result.success{background:#d9dfbf;color:#314d29}
+.sd-manual-result.invalid,.sd-manual-result.sacrifice{background:#e8cbb4;color:#752e24}
+.sd-manual-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.sd-manual-slots div{position:relative;height:55px;text-align:center}
+.sd-manual-slots img{width:100%;height:100%;object-fit:fill}
+.sd-manual-slots b{position:absolute;inset:0;display:grid;place-items:center;color:#ffe9b4}
+.sd-manual-diagram{display:grid;gap:4px}
+.sd-manual-step{display:flex;align-items:center;gap:8px;border-bottom:1px solid #b99b66;padding:3px;color:#54371e;font-size:.85rem}
+.sd-manual-v2 .sd-manual-nav button{position:relative;isolation:isolate;overflow:hidden;min-height:42px}
+.sd-manual-v2 button:focus-visible{outline:3px solid #a56d27;outline-offset:2px}
+@media(max-height:650px){.sd-manual-v2 .sd-manual-content{padding:14px;gap:4px}.sd-manual-v2 .sd-manual-cards figure{max-width:75px}.sd-manual-v2 .sd-manual-toc button{min-height:34px}.sd-manual-scenes img{max-height:18dvh}}
+@media(max-height:450px){.sd-manual-v2 .sd-manual-content{padding:12px 20px;justify-content:flex-start}.sd-manual-v2 .sd-manual-nav button{min-height:30px}.sd-manual-v2 .sd-manual-logo{height:28px}.sd-manual-v2 .sd-manual-header .sd-manual-back{width:32px;height:32px;font-size:1rem}.sd-manual-v2 .sd-manual-toc{grid-template-columns:1fr 1fr}.sd-manual-v2 .sd-manual-cards figure{max-width:58px}}

@@ -760,7 +760,7 @@ async function journey(locale,mobile){
     await manual.locator('.sd-manual-nav button').nth(1).click();
     assert.equal(await manual.locator('.sd-manual-toc button').count(),7);
     await manual.locator('.sd-manual-toc button').nth(1).click();
-    assert.equal(await manual.locator('.sd-manual-card').count(),4);
+    assert.equal(await manual.locator('.sd-manual-card').count(),2);
     for(const img of await manual.locator('.sd-manual-card img').all())await img.evaluate(n=>n.decode());
     assert.deepEqual(await readSaved(page,'card-capture'),beforeManual);
     await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
@@ -992,8 +992,16 @@ async function journey(locale,mobile){
 
       }
       await offline.goto(HOST+'#game/card-capture/rules');
-      await offline.getByRole('heading',{name:locale==='fr'?'Règles de Skydeck':'Skydeck rules'}).waitFor();
+      await offline.getByRole('heading',{name:locale==='fr'?'Manuel de l’Amiral':'Admiral’s manual'}).waitFor();
       assert.equal(await offline.locator('html').getAttribute('lang'),locale);
+      const book=offline.locator('.sd-manual');
+      await book.locator('.sd-manual-toc button').first().click();
+      for(let n=0;n<20;n++){
+        for(const img of await book.locator('img').all())await img.evaluate(i=>i.decode());
+        assert.match(await book.locator('.sd-manual-page-number').textContent(),new RegExp('Page '+(n+1)+'/20'));
+        assert.ok(await book.evaluate(el=>{const r=el.getBoundingClientRect();return r.bottom<=innerHeight+1&&r.right<=innerWidth+1;}),'manual stays in viewport');
+        if(n<19)await book.locator('.sd-manual-nav button').last().click();
+      }
       // Mobile browser uses real touch events, no desktop-only hover action.
       await offline.goto(HOST+'#game/loot-the-loop/board',{waitUntil:'domcontentloaded'});
       await offline.locator('.ms-board .ms-top').waitFor();

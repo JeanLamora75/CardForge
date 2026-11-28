@@ -68,3 +68,7 @@ Appellation Amiral / Admiral validée par le porteur. Phases Déploiement, Réor
 
 ## SD-RULES-01 à 25 — Manuel de l’Amiral
 Sept chapitres, treize pages FR/EN, sommaire, navigation, carte illustrée via assets existants, exemples A/B/C et Joker, crédits et cas limites. Route dédiée sans bandeau générique, dialogue contextuel selon phase/action et pause du déclenchement des nouvelles transitions automatiques ; une transaction déjà lancée peut finir. Plateau conservé monté. Adaptation : défilement interne de sécurité du parchemin si le contenu dépasse, notamment petits écrans/paysage, aucun défilement global visé. Mary : relecture du référentiel existant, pas de nouvelle recherche externe. Tests E2E de navigation, images et sauvegarde inchangée ajoutés ; contrôle effectif des huit tailles et accessibilité à compléter. Aucun uv ni modification moteur.
+
+
+## Manuel V2 — SD-RULES-26 à 59 / SD-MANUAL-QA-01 à 10
+20 pages FR/EN issues de Camille, corrections Joker et priorité défaite, exemples contextualisés, destinations explicites, cas limites distingués. Nouveaux assets intégrés au manifeste principal et utilisés localement ; navigation contextuelle et pause existantes conservées. Tests moteur des exemples et parcours offline des vingt pages ajoutés. Défilement interne de sécurité maintenu pour les écrans courts ; absence de défilement global et rendu huit tailles à constater. Aucun uv ; workflow BMAD officiel non exécutable, adaptation manuelle. Pas de modification moteur ni Jira.

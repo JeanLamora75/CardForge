@@ -2952,5 +2952,33 @@
     "height": 191,
     "mode": "RGBA",
     "sha256": "d6d6d1a6490bba3cd71218f3bf1d49194c84e4e1e5bd523a17da14bcc6125c61"
+  },
+  {
+    "path": "public/assets/manual/skydeck/parchment-texture.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGB",
+    "sha256": "ffac57a5a2cb7046dd35500db44de4b621d250b9b03c32dd56184aa08ad80bf7"
+  },
+  {
+    "path": "public/assets/manual/skydeck/page-frame.png",
+    "width": 1024,
+    "height": 1536,
+    "mode": "RGBA",
+    "sha256": "879f5d2a628e4ab2ff025ac4b02da8441a28be7bf77963cb2a84aaaac0c1b44c"
+  },
+  {
+    "path": "public/assets/manual/skydeck/admiral-mission.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB",
+    "sha256": "734555a6c39af2ef11826046fad3f5e6254f81b45a51fb05fded1bd35ed6e050"
+  },
+  {
+    "path": "public/assets/manual/skydeck/fleet-assembly.png",
+    "width": 1536,
+    "height": 1024,
+    "mode": "RGB",
+    "sha256": "60c75a44a815fc72b06371715d969f036f1286f001df9d0020e4495ba9a820fa"
   }
 ]
