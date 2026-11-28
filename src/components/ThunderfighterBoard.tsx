@@ -324,9 +324,13 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
       </div>
       </div>
       <section className="tf-transmission-band" data-tone={transmissionTone} data-i18n-ignore aria-label={en?"Tactical transmission":"Transmission tactique"}>
-        <div className="tf-radio-heading"><span aria-hidden="true">◈</span><strong>{transmissionTitle}</strong></div>
-        <p className="tf-radio-instruction" role="status">{transmissionInstruction}</p>
-        <div className="tf-radio-ticker"><span key={narrative}>{narrative}</span></div>
+        <span className="tf-radio-symbol" aria-hidden="true">◈</span>
+        <span className="thunder-sr-only" role="status">{transmissionTitle} — {transmissionInstruction} — {narrative}</span>
+        <div className="tf-radio-ticker" tabIndex={0} aria-label={transmissionTitle+" — "+transmissionInstruction+" — "+narrative}>
+          <div className="tf-radio-track" key={transmissionTitle+transmissionInstruction+narrative}>
+            {[0,1].map(index=><span className="tf-radio-segment" key={index} aria-hidden="true"><strong>{transmissionTitle}</strong> — {transmissionInstruction} · {narrative}<i> ◈ </i></span>)}
+          </div>
+        </div>
       </section>
       <div className="thunder-action-zone tf-console-hero tf-console-v33" data-console-tone={transmissionTone} data-console-phase={selection?"confirm":special?"special":state.phase==="searching"?"search":state.pendingNumeric||state.pendingFigures.length?"place":"draw"}>
 <div className="tf-console-heading" data-i18n-ignore><strong>{en?"TACTICAL COMMAND":"COMMANDEMENT TACTIQUE"}</strong><span className="tf-console-signal">{tutorial?<span className="tf-training-guide">{en?"Training · no save":"Entraînement · sans sauvegarde"}</span>:transmissionTone==="special"?(en?"ENGAGED":"ACTIF"):transmissionTone==="alert"?(en?"ALERT":"ALERTE"):(en?"ONLINE":"OPÉRATIONNEL")}</span></div>
