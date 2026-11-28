@@ -25,8 +25,16 @@ async function thunderScreens(page,label){
    const r=board.getBoundingClientRect();
    const controls=[...consoleNode.querySelectorAll('button')].filter(n=>n.checkVisibility()&&!n.closest('dialog:not([open])'));
    const clipped=controls.filter(n=>{const b=n.getBoundingClientRect();return b.top<0||b.bottom>innerHeight+1||b.left<0||b.right>innerWidth+1;}).map(n=>n.textContent);
+   const arsenal=consoleNode.querySelector('.tf-special-list');
+   const hero=consoleNode.querySelector('.tf-hero-card .tf-tactical');
+   const slots=[...arsenal.querySelectorAll('[data-equipment-id]')];
+   const rows=new Set(slots.map(n=>Math.round(n.getBoundingClientRect().top)));
+   const columns=new Set(slots.map(n=>Math.round(n.getBoundingClientRect().left)));
+   const heroRect=hero?.getBoundingClientRect();
+   const heroPanel=consoleNode.querySelector('.tf-hero-card').getBoundingClientRect();
+   const heroFits=!heroRect||heroRect.bottom<=heroPanel.bottom+1&&heroRect.right<=heroPanel.right+1;
    const z=consoleNode.getBoundingClientRect();
-   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
+   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,arsenalRows:rows.size,arsenalColumns:columns.size,heroFits,heroWidth:heroRect?.width??0,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
   });
   const hud=await page.evaluate(()=>{
    const header=document.querySelector('.tf-command-header'),logo=header.querySelector('h1');
@@ -46,7 +54,7 @@ async function thunderScreens(page,label){
   const geometry=[result.left,result.top,result.width,result.height,result.consoleTop,result.consoleHeight];
   if(matrix.has(key))assert.deepEqual(geometry,matrix.get(key),'stable radar and console '+key);else matrix.set(key,geometry);
   console.log('TF V3.1',label,width,height,JSON.stringify(result));
-  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
+  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.arsenalRows!==2||result.arsenalColumns!==3||!result.heroFits||(result.heroWidth>0&&result.heroWidth<70)||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
  }
  await page.setViewportSize(original);
  assert.deepEqual(failures,[],'Thunderfighter V5 viewport matrix '+label);
