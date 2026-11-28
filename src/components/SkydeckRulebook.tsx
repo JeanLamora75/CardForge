@@ -29,7 +29,7 @@ function Visual({visual,language,page}:{visual:string;language:Locale;page:Skyde
 export default function SkydeckRulebook({language,initialPage,onBack}:{language:Locale;initialPage?:SkydeckManualPage;onBack?:()=>void}){
  const tr=(fr:string,en:string)=>language==='fr'?fr:en;
  const [page,setPage]=useState<SkydeckManualPage|null>(initialPage??null);
- const heading=useRef<HTMLHeadingElement>(null),paper=useRef<HTMLElement>(null);
+ const heading=useRef<HTMLHeadingElement>(null),paper=useRef<HTMLDivElement>(null);
  useEffect(()=>{paper.current?.scrollTo(0,0);heading.current?.focus({preventScroll:true});},[page]);
  const chapters=[['enemy',tr('Votre mission','Your mission'),tr('Prenez le commandement de votre flotte.','Take command of your fleet.')],['compass',tr('Les quatre factions','The four factions'),tr('Identifiez les forces et unités stratégiques.','Identify forces and strategic units.')],['draw',tr('Préparation de la flotte','Fleet setup'),tr('Découvrez la composition des forces.','Discover how forces are assembled.')],['discard',tr('Le cycle des affrontements','The battle cycle'),tr('Maîtrisez les quatre phases.','Master the four phases.')],['capture',tr('Stratégies de combat','Combat strategies'),tr('Choisissez la bonne manœuvre.','Choose the right maneuver.')],['compass',tr('Les corsaires libres','Free corsairs'),tr('Exploitez les talents des corsaires libres.','Use the free corsairs’ talents.')],['victory',tr('L’issue de la bataille','Battle outcome'),tr('Comprenez les conditions de fin.','Understand the ending conditions.')]];
  const index=skydeckManualPages.findIndex(p=>p.id===page),current=skydeckManualPages[index],copy=current?.[language];
