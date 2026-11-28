@@ -11,6 +11,7 @@ vite.stdout.on('data',chunk=>{output+=String(chunk);});
 vite.stderr.on('data',chunk=>{output+=String(chunk);});
 let browser;
 
+const tfGeometryByViewport=new WeakMap();
 async function thunderScreens(page,label){
  const original=page.viewportSize();
  const {mkdirSync}=await import("node:fs");mkdirSync("ux-screenshots",{recursive:true});
@@ -24,7 +25,8 @@ async function thunderScreens(page,label){
    const r=board.getBoundingClientRect();
    const controls=[...consoleNode.querySelectorAll('button')].filter(n=>n.checkVisibility()&&!n.closest('dialog:not([open])'));
    const clipped=controls.filter(n=>{const b=n.getBoundingClientRect();return b.top<0||b.bottom>innerHeight+1||b.left<0||b.right>innerWidth+1;}).map(n=>n.textContent);
-   return {width:r.width,height:r.height,top:r.top,bottom:r.bottom,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
+   const z=consoleNode.getBoundingClientRect();
+   return {width:r.width,height:r.height,top:r.top,left:r.left,bottom:r.bottom,consoleTop:z.top,consoleHeight:z.height,consoleBottom:z.bottom,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
   });
   const hud=await page.evaluate(()=>{
    const header=document.querySelector('.tf-command-header'),logo=header.querySelector('h1');
@@ -39,8 +41,12 @@ async function thunderScreens(page,label){
   assert.ok(hud.gaugeHeight>=7,'readable progress segments');
   assert.ok(hud.disabledOpaque,'disabled controls must remain opaque');
   assert.ok(!hud.consoleBackground.includes('tf-bottom-console'),'console artwork must not run behind controls');
-  console.log('TF V5',label,width,height,JSON.stringify(result));
-  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.clipped.length||result.scroll>height+1)failures.push({width,height,...result});
+  const key=label.replace(/-confirm$/,'')+'-'+width+'x'+height;
+  let matrix=tfGeometryByViewport.get(page);if(!matrix){matrix=new Map();tfGeometryByViewport.set(page,matrix);}
+  const geometry=[result.left,result.top,result.width,result.height,result.consoleTop,result.consoleHeight];
+  if(matrix.has(key))assert.deepEqual(geometry,matrix.get(key),'stable radar and console '+key);else matrix.set(key,geometry);
+  console.log('TF V3.1',label,width,height,JSON.stringify(result));
+  if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.clipped.length||result.consoleBottom>height+1||result.scroll>height+1)failures.push({width,height,...result});
  }
  await page.setViewportSize(original);
  assert.deepEqual(failures,[],'Thunderfighter V5 viewport matrix '+label);
@@ -905,7 +911,7 @@ async function journey(locale,mobile){
         await offline.evaluate(async fixture=>{const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('cardforge',1);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});try{await new Promise((resolve,reject)=>{const tx=db.transaction('sessions','readwrite');tx.objectStore('sessions').put(fixture);tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error);});}finally{db.close();}},fixture);
         await offline.reload();await tf.locator('.thunder-battlefield[data-ready=true]').waitFor();
         const target=(kind,index)=>tf.locator('.tf-target[data-target-kind="'+kind+'"][data-target-index="'+index+'"]');
-        async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
+        async function selectSpecial(){await interact(offline,tf.locator('.tf-special-use').first(),mobile);await thunderScreens(offline,label+'-'+scenario);if(scenario==='extract')await interact(offline,target('pile',0),mobile);else{await interact(offline,target('pile',8),mobile);await interact(offline,target('pile',0),mobile);}}
         async function selectAction(){if(scenario==='extract'||scenario==='reassign')await selectSpecial();else if(scenario==='armor')await interact(offline,target('sector',0),mobile);else if(scenario==='replacement')await interact(offline,target('pile',0),mobile);else await interact(offline,tf.getByRole('button',{name:locale==='fr'?'Révéler la prochaine carte':'Reveal next card',exact:true}),mobile);}
         await thunderScreens(offline,label+'-'+scenario);
         assert.equal(await tf.locator('[data-equipment-id]').count(),6);
