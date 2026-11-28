@@ -266,7 +266,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     {!state ? <button type="button" className="primary-action" onClick={() => void start()} disabled={busy}>Commencer une partie</button> : <>
       <div className="thunder-metrics">
         <span><small>Pioche</small><strong>{state.drawPile.length}</strong></span>
-        <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong></span>
+        <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong><div className="tf-progress" aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-filled={i<(result?.defeatedCount??0)} data-complete={result?.defeatedCount===12}/>)}</div></span>
         <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
 
@@ -282,7 +282,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
             return <g key={shot.figureId} className={shotPreview.length?"tf-shot-preview":"tf-shot-live"} data-success={shot.success} data-figure={shot.figureId}>
               <path d={`M${x} ${y}L${tx} ${ty}`} pathLength="1"/>
               {shot.contributors.map(c=>{const [cx,cy]=xy(c.cell);return <g key={c.cell} data-contributes={c.power>0}><rect x={cx-43} y={cy-43} width="86" height="86" rx="7"/><text x={cx} y={cy+18} textAnchor="middle">+{c.power}</text></g>;})}
-              <circle cx={tx} cy={ty} r="31"/>
+              {!shotPreview.length?<><image className="tf-v2-laser" href={import.meta.env.BASE_URL+"assets/hud/thunderfighter/v2/tf-effect-laser.png"} x="0" y="-12" width={Math.hypot(tx-x,ty-y)} height="24" preserveAspectRatio="none" transform={`translate(${x} ${y}) rotate(${Math.atan2(ty-y,tx-x)*180/Math.PI})`}/><image className="tf-v2-impact" href={import.meta.env.BASE_URL+"assets/hud/thunderfighter/v2/tf-effect-impact.png"} x={tx-45} y={ty-45} width="90" height="90"/></>:null}<circle cx={tx} cy={ty} r="31"/>
               <text x={tx} y={ty+5} textAnchor="middle">{shot.power}/{shot.resistance}</text>
             </g>;
           })}
