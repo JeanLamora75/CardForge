@@ -1372,3 +1372,51 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
  .thunder-board.tf-live .thunder-action-zone{gap:2px;padding:3px 4px;}
  .thunder-board.tf-live .tf-current-card .tf-pending-card{min-height:44px;}
 }
+
+/* V3.1: viewport-reserved console and a radar independent of changing commands. */
+.thunder-board.tf-live{--tf-console-budget:clamp(236px,29dvh,268px);grid-template-rows:auto minmax(0,1fr) var(--tf-console-budget);}
+.thunder-board.tf-live .thunder-action-zone{height:var(--tf-console-budget);min-height:0;max-height:none;display:grid;grid-template-rows:auto 68px minmax(0,1fr) auto;align-content:start;gap:3px;overflow:visible;}
+.thunder-board.tf-live .tf-current-card{min-height:0;display:block;}
+.thunder-board.tf-live .tf-current-card .tf-pending-card,.thunder-board.tf-live .tf-idle-transmission{box-sizing:border-box;height:100%;min-height:0;}
+.thunder-board.tf-live .tf-current-card .tf-tactical{height:54px;width:54px;flex-basis:54px;}
+.thunder-board.tf-live .tf-console-controls{min-height:0;display:flex;flex-direction:column;gap:3px;}
+.thunder-board.tf-live .tf-special-console{padding:0;margin:0;flex:none;}
+.thunder-board.tf-live .tf-special-list{margin-top:2px;gap:3px;}
+.thunder-board.tf-live :is(.tf-special-unit,.tf-equipment-empty){--tf-slot-color:#b78ce9;position:relative;border:1px solid color-mix(in srgb,var(--tf-slot-color) 46%,#294354);background:linear-gradient(145deg,#203b4a,#0c1d2a 35%,#142737);border-radius:7px;box-shadow:inset 0 0 0 2px #0b1824;height:60px;padding:2px;overflow:visible;}
+.thunder-board.tf-live [data-faction=Aegis]{--tf-slot-color:#63bcfa;}
+.thunder-board.tf-live [data-faction=Vector]{--tf-slot-color:#f6c55c;}
+.thunder-board.tf-live [data-faction=Nova]{--tf-slot-color:#ee8c63;}
+.thunder-board.tf-live [data-faction=Solaris]{--tf-slot-color:#91d76d;}
+.thunder-board.tf-live .tf-special-unit .tf-tactical{width:34px;height:34px;flex:0 0 34px;aspect-ratio:1;align-self:center;}
+.thunder-board.tf-live .tf-special-unit .tf-special-use{min-height:0;flex:1;color:var(--tf-slot-color);font-size:.66rem;}
+.thunder-board.tf-live .tf-equipment-empty strong{color:var(--tf-slot-color);opacity:.65;}
+.thunder-board.tf-live .tf-equipment-empty small{color:#a9bdcc;}
+.thunder-board.tf-live .tf-equipment-empty[data-equipment-status=spent]{border-style:dashed;}
+.thunder-board.tf-live .tf-equipment-empty[data-equipment-status=spent] strong{text-decoration:line-through;}
+.thunder-board.tf-live .tf-equipment-lamp{display:block;width:65%;height:3px;border-radius:3px;background:#566c7c;margin:1px auto;}
+.thunder-board.tf-live [data-equipment-status=ready] .tf-equipment-lamp{background:var(--tf-slot-color);box-shadow:0 0 5px var(--tf-slot-color);}
+.thunder-board.tf-live .tf-special-unit[data-active=true]{border-color:var(--tf-slot-color);box-shadow:inset 0 0 8px var(--tf-slot-color),0 0 6px var(--tf-slot-color);}
+.thunder-board.tf-live .tf-command-line{display:flex;gap:4px;justify-content:flex-end;align-items:center;min-height:30px;}
+.thunder-board.tf-live .tf-command-line .thunder-actions{flex:1;min-width:0;}
+.thunder-board.tf-live .tf-special-cancel{font-size:.76rem;min-height:30px;padding:3px 9px;flex:none;}
+.thunder-board.tf-live .thunder-confirm{position:relative;margin:0;gap:3px;}
+.thunder-board.tf-live .thunder-confirm[hidden]{display:none;}
+.thunder-board.tf-live .thunder-confirm:not([hidden]){grid-row:4;align-self:end;}
+.thunder-board.tf-live .thunder-confirm button{min-height:32px;font-size:.78rem;padding:3px 6px;}
+.thunder-board.tf-live .tf-preview-line{font-size:.7rem;line-height:1.1;margin:0;}
+.thunder-board.tf-live .tf-action-status{position:absolute!important;bottom:2px;left:6px;right:6px;margin:0;font-size:.62rem;pointer-events:none;}
+.thunder-board.tf-live .tf-action-status:empty{display:none;}
+.thunder-board.tf-live .thunder-search{display:flex;gap:3px;margin:0;padding:0;}
+.thunder-board.tf-live .tf-search-history{min-height:26px;font-size:.7rem;padding:2px 5px;}
+@media(max-height:700px){
+ .thunder-board.tf-live{--tf-console-budget:224px;}
+ .thunder-board.tf-live .thunder-action-zone{grid-template-rows:auto 51px minmax(0,1fr) auto;}
+ .thunder-board.tf-live .tf-current-card .tf-tactical{width:42px;height:42px;flex-basis:42px;}
+ .thunder-board.tf-live :is(.tf-special-unit,.tf-equipment-empty){height:48px;}
+ .thunder-board.tf-live .tf-special-unit .tf-tactical{width:25px;height:25px;flex-basis:25px;}
+ .thunder-board.tf-live .tf-command-line{min-height:24px;}
+}
+@media(orientation:landscape) and (min-width:650px){
+ .thunder-board.tf-live{grid-template-rows:auto minmax(0,1fr);}
+ .thunder-board.tf-live .thunder-action-zone{height:var(--tf-console-budget);align-self:center;}
+}
