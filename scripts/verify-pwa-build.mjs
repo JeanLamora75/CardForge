@@ -50,3 +50,8 @@ for(const path of grimCardPaths)assert.ok(paths.includes(path),"missing Grim Del
 assert.equal(new Set(grimCardPaths).size,64);
 
 for(const scene of ["defeat-damage","defeat-exhaustion","victory"])assert.ok(paths.includes("./art/banners/grim-delve/end-"+scene+".webp"),"missing offline Grim Delve ending: "+scene);
+
+// All cockpit graphics must survive a cold offline restart.
+const thunderHudFiles=["tf-bg-space.webp","tf-bottom-console.png","tf-frame-main.png","tf-grid-background.webp","tf-header-bar.png","tf-separator-h.png","tf-counter-alert.png","tf-counter-large.png","tf-counter-small.png","tf-progress-segment-active.png","tf-progress-segment-complete.png","tf-progress-segment-empty.png","tf-radar-overlay.png","tf-slot-deploy-glow.png","tf-slot-deploy.png","tf-slot-empty.png","tf-slot-selected.png","tf-target-reticle.png","tf-mission-card-frame.png","tf-mission-hologram.png","tf-mission-panel.png","tf-action-button-aegis.png","tf-action-button-nova.png","tf-action-button-singularity.png","tf-action-button-vector.png","tf-effect-impact.png","tf-effect-laser.png","tf-effect-shield.png","tf-effect-singularity.png","tf-nav-back.png","tf-nav-help.png","tf-nav-settings.png"];
+assert.equal(new Set(thunderHudFiles).size,32);
+for(const file of thunderHudFiles)assert.ok(paths.includes("./assets/hud/thunderfighter/v2/"+file),"missing offline Thunderfighter cockpit artwork: "+file);
