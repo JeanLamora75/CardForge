@@ -1,3 +1,4 @@
+import { resolveSkydeckCopy, skydeckAttackSummary } from '../application/skydeck-combat-ui.ts';
 import { skydeckMotionPlan } from '../application/skydeck-motion.ts';
 import { motionAllowed } from '../application/shared-settings.ts';
 import { skydeckCardArt } from '../application/skydeck-art.ts';
@@ -26,7 +27,6 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   const [selected,setSelected]=useState<string[]>([]);
   const [target,setTarget]=useState<number|null>(null);
   const [copy,setCopy]=useState<string|null>(null);
-  const [pending,setPending]=useState<SkydeckAction|null>(null);
   const [error,setError]=useState(false);
   const [menu,setMenu]=useState(false);
   const [restart,setRestart]=useState(false);
@@ -61,8 +61,8 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
   useEffect(()=>{setSkydeckFinished(!!view&&view.outcome!=='in-progress');},[view?.outcome]);
   const confirmRef=useRef<HTMLButtonElement>(null);
   const heading=useRef<HTMLHeadingElement>(null);
-  useEffect(()=>{if(pending||restart||abandon)confirmRef.current?.focus();},[pending,restart,abandon]);
-  function reset(){setMenu(false);setSelected([]);setTarget(null);setCopy(null);setPending(null);setError(false);setRestart(false);setAbandon(false);setKind('capture-a');}
+  useEffect(()=>{if(restart||abandon)confirmRef.current?.focus();},[restart,abandon]);
+  function reset(){setMenu(false);setSelected([]);setTarget(null);setCopy(null);setError(false);setRestart(false);setAbandon(false);setKind('capture-a');}
   async function run(work:()=>Promise<void>){
     if(lock.current||busy||blocked)return;
     lock.current=true;setBusy(true);setStorageError(false);
@@ -91,13 +91,13 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       session.current=skydeckSessionView(next);setView(session.current.inspect());setResumed(false);reset();playSkydeckSound('shuffle');
     });
   }
-  async function confirm(command:SkydeckAction|null=pending){
+  async function confirm(command:SkydeckAction){
     if(!command||!session.current)return;
     await run(async()=>{
       const before=session.current!.inspect();
       const accepted=await session.current!.confirm(command);
       if(!mounted.current)return;
-      if(!accepted){playSkydeckSound('invalid');setError(true);setPending(null);setAbandon(false);return;}
+      if(!accepted){playSkydeckSound('invalid');setError(true);setAbandon(false);return;}
       const after=session.current!.inspect();
       const preference=document.documentElement.dataset.motion;
       const animate=motionAllowed(preference==='on'||preference==='off'?preference:'system',window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -150,8 +150,8 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     if(a.type!==kind||a.targetPosition!==target||!same(a.cardIds))return false;
     return true;
   })??[];
-  const copyChoices=matching.flatMap(a=>a.type==='capture-a'&&a.jokerCopyId?[a.jokerCopyId]:[]);
-  const chosen=matching.find(a=>a.type!=='capture-a'||!a.jokerCopyId||a.jokerCopyId===copy);
+  const {choices:copyChoices,effective:effectiveCopy,chosen}=resolveSkydeckCopy(matching,copy);
+  const attack=skydeckAttackSummary(chosen,view?.enemyLine??[]);
   const cardName=(id:string)=>describeSkydeckCard(id,language).name;
   const actionName=(a:SkydeckAction)=>{
     switch(a.type){
@@ -186,29 +186,23 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
         const id=view.enemyLine[position-1];
         const forcedTarget=view.phase==='capture'&&kind==='capture-b'&&position===1&&!!id;
         const active=view.phase==='capture'&&(kind==='capture-b'?forcedTarget:target===position);
-        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')+(forcedTarget?' sd-forced-target':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||!!pending||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+ ' · '+(id?cardName(id):tr('Vide','Empty'))+(forcedTarget?tr(' · Cible imposée',' · Required target'):'')} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
+        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')+(forcedTarget?' sd-forced-target':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+ ' · '+(id?cardName(id):tr('Vide','Empty'))+(forcedTarget?tr(' · Cible imposée',' · Required target'):'')} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
           {id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/><span className="sd-slot-label">{tr('Libre','Empty')}</span></>}
         </button>;
       })}</div>
       </section><section className="sd-fleet sd-player-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Votre flotte','Your fleet')}</span></h3>
-      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className="sd-card" aria-label={cardName(id)} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||!!pending||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
+      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className={"sd-card"+(effectiveCopy===id?" sd-copy-source":"")+(copyChoices.length>1&&copyChoices.includes(id)?" sd-copy-choice":"")} aria-label={cardName(id)+(effectiveCopy===id?tr(" · Copié par le Joker"," · Copied by Joker"):"")} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
       </section></div><section className="sd-console"><h3 ref={heading} tabIndex={-1}>{tr('Commandement','Command')}</h3>
-      {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={!!pending||restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Laisser capturer','B · Let enemy capture'):tr('C · Repousser','C · Push back')}</button>)}</div>:null}
+      {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}><img className="sd-action-art" src={ui('buttons',k==='capture-a'?'green':k==='capture-b'?'red':'blue')} alt=""/><img className="sd-action-icon" src={ui('icons',k==='capture-a'?'capture':k==='capture-b'?'sacrifice':'repel')} alt=""/><span>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Laisser capturer','B · Let enemy capture'):tr('C · Repousser','C · Push back')}</span></button>)}</div>:null}
       {hintsEnabled&&view.phase==='capture'?<p className="sd-hint">{kind==='capture-a'?tr('Choisissez une cible et des cartes de même enseigne. Le Joker copie une carte engagée.','Choose a target and matching-suit cards. A Joker copies a selected card.'):kind==='capture-b'?tr('Sacrifiez une carte de main face à l’ennemi le plus à droite. Une figure ou un As perdu entraîne la défaite.','Sacrifice one hand card against the rightmost enemy. Losing a face card or ace causes defeat.'):tr('Sacrifiez deux cartes pour renvoyer la cible sous la pioche adverse.','Sacrifice two cards to return the target to the bottom of the enemy deck.')}</p>:null}
-      {copyChoices.length>0?<fieldset disabled={!!pending||restart||abandon||busy}><legend>{tr('Carte copiée par le Joker','Card copied by the Joker')}</legend>{copyChoices.map(id=><label key={id}><input type="radio" name="sd-copy" checked={copy===id} onChange={()=>{playSkydeckSound('joker');setCopy(id);}}/>{cardName(id)}</label>)}</fieldset>:null}
+      {copyChoices.length>1?<div className="sd-copy-picker" role="group" aria-label={tr('Carte copiée par le Joker','Card copied by Joker')}><span>{tr('Copie du Joker :','Joker copy:')}</span>{copyChoices.map(id=><button key={id} type="button" aria-pressed={effectiveCopy===id} disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound('joker');setCopy(id);}}>{describeSkydeckCard(id,language).power} {describeSkydeckCard(id,language).symbol}</button>)}</div>:null}
+      {hintsEnabled&&attack?<p className="sd-tactical" aria-live="polite">{attack.values.join(' + ')} = {attack.total} · {tr('Ennemi','Enemy')} {attack.enemy} · {tr('Capture possible','Capture possible')}</p>:null}
       {view.blockedReason?<p role="alert">{tr('Cartes personnelles insuffisantes. Règle d’impasse à confirmer ; aucune défaite attribuée.','Not enough personal cards. Deadlock rule pending confirmation; no defeat recorded.')}</p>:null}
-      {view.outcome==='in-progress'&&!view.blockedReason?<button type="button" className="primary-action sd-preview" disabled={!chosen||!!pending||restart||abandon||busy||blocked} onClick={()=>{if(chosen){playSkydeckSound('open');setPending(chosen);}}}><img className="sd-button-art" src={ui('buttons',chosen&&!busy&&!pending&&!restart&&!abandon&&!blocked?'gold':'neutral')} alt=""/><span>{chosen?actionName(chosen):view.phase==='capture'?tr('Choisir les cartes','Select cards'):phaseLabels[view.phase]}</span></button>:null}
-      {pending?<div className="sd-confirm" role="group" aria-label={tr('Confirmation du coup','Confirm move')}>
-        <p>{actionName(pending)} {pending.type==='capture-a'||pending.type==='capture-c'?tr('Position','Position')+' '+pending.targetPosition:''}</p>
-        <p>{'cardIds' in pending?pending.cardIds.map(cardName).join(' · '):'cardId' in pending?cardName(pending.cardId):''}</p>
-        {pending.type==='capture-a'&&pending.jokerCopyId?<p>{tr('Copie :','Copy:')} {cardName(pending.jokerCopyId)}</p>:null}
-        <button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void confirm()}>{tr('Confirmer','Confirm')}</button>
-        <button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setPending(null);heading.current?.focus();}}>{tr('Annuler','Cancel')}</button>
-      </div>:null}
+      {view.outcome==='in-progress'&&!view.blockedReason?<button type="button" className="primary-action sd-preview" disabled={!chosen||restart||abandon||busy||blocked} onClick={()=>{if(chosen)void confirm(chosen);}}><img className="sd-button-art" src={ui('buttons',chosen&&!busy&&!restart&&!abandon&&!blocked?'gold':'neutral')} alt=""/><span>{chosen?actionName(chosen):view.phase==='capture'?tr('Choisir les cartes','Select cards'):phaseLabels[view.phase]}</span></button>:null}
       {error?<p role="alert">{tr('Action refusée. L’état précédent est conservé.','Action rejected. Previous state preserved.')}</p>:null}
-      <button className="sd-menu-toggle secondary-action" type="button" aria-expanded={menu} onClick={()=>setMenu(x=>!x)}>{tr('Options de partie','Game options')}</button>
-      {menu||view.outcome!=='in-progress'?<div className="sd-game-options"><button className="secondary-action" disabled={!!pending||restart||abandon||busy} onClick={()=>void requestRestart()}>{view.outcome==='in-progress'?tr('Nouvelle partie','New game'):tr('Rejouer','Replay')}</button>
-      {!tutorial&&view.outcome==='in-progress'?<button className="secondary-action" disabled={busy||!!pending||restart||abandon} onClick={()=>{playSkydeckSound('open');setAbandon(true);}}>{tr('Abandonner','Abandon')}</button>:null}</div>:null}
+      <button className="sd-menu-toggle secondary-action" type="button" aria-expanded={menu} onClick={()=>setMenu(x=>!x)}><img className="sd-action-art" src={ui('buttons','dark')} alt=""/><span>{tr('Options de partie','Game options')}</span></button>
+      {menu||view.outcome!=='in-progress'?<div className="sd-game-options"><button className="secondary-action" disabled={restart||abandon||busy} onClick={()=>void requestRestart()}>{view.outcome==='in-progress'?tr('Nouvelle partie','New game'):tr('Rejouer','Replay')}</button>
+      {!tutorial&&view.outcome==='in-progress'?<button className="secondary-action" disabled={busy||restart||abandon} onClick={()=>{playSkydeckSound('open');setAbandon(true);}}>{tr('Abandonner','Abandon')}</button>:null}</div>:null}
       {abandon?<div className="sd-confirm"><p>{tr('Abandonner définitivement cette partie ?','Abandon this game permanently?')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void confirm({type:'abandon'})}>{tr('Confirmer','Confirm')}</button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setAbandon(false);}}>{tr('Annuler','Cancel')}</button></div>:null}
       {view.outcome!=='in-progress'?<div className={'sd-confirm sd-ending '+(view.outcome==='win'?'sd-win':view.outcome==='loss'?'sd-loss':'')} role="status">{view.outcome==='win'||view.outcome==='loss'?<img className="sd-end-icon" src={ui('icons',view.outcome==='win'?'victory':'defeat')} alt=""/>:null}<p>{view.outcome==='win'?tr('Victoire : tous les ennemis ont été éliminés.','Victory: all enemies have been cleared.'):view.outcome==='loss'?tr('Défaite : une figure ou un As a été perdu.','Defeat: a face card or ace was lost.'):tr('Partie abandonnée.','Game abandoned.')}</p><a className="secondary-action" href="#">{tr('Retour au catalogue','Back to catalogue')}</a></div>:null}
       {restart?<div className="sd-confirm"><p>{view.outcome==='in-progress'?tr('Remplacer cette partie ? La partie actuelle sera abandonnée.','Replace this game? The current game will be abandoned.'):tr('Commencer une nouvelle partie ?','Start a new game?')}</p><button ref={confirmRef} className="primary-action" disabled={busy} onClick={()=>void replace()}>{tr('Confirmer','Confirm')}</button><button className="secondary-action" disabled={busy} onClick={()=>{playSkydeckSound('close');setRestart(false);}}>{tr('Annuler','Cancel')}</button></div>:null}

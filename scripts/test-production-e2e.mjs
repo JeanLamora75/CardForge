@@ -713,14 +713,11 @@ async function journey(locale,mobile){
     assert.equal(await sd.locator('.sd-preview span').evaluate(n=>getComputedStyle(n).backgroundColor),'rgba(0, 0, 0, 0)');
     const assertSkyPhaseFits=async()=>{const r=await sd.evaluate(n=>({bottom:n.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight}));assert.ok(r.bottom<=r.height+2&&r.scroll<=r.height+2,JSON.stringify(r));};
     await assertSkyPhaseFits();
-    const initial=await sd.locator('[role=status]').textContent();
-    await interact(page,sd.locator('.sd-preview'),mobile);
-    await interact(page,sd.locator('.sd-confirm button.secondary-action'),mobile);
-    assert.equal(await sd.locator('[role=status]').textContent(),initial);
     for(let phase=0;phase<3;phase++){
+      const previous=await sd.locator('.sd-round').textContent();
       await interact(page,sd.locator('.sd-preview'),mobile);
-      await interact(page,sd.locator('.sd-confirm button.primary-action'),mobile);
-      await sd.locator('.sd-confirm').waitFor({state:'hidden'});
+      await page.waitForFunction(old=>document.querySelector('.sd-round')?.textContent!==old,previous);
+      assert.equal(await sd.locator('.sd-confirm').count(),0,'ordinary actions need no confirmation');
       await assertSkyPhaseFits();
     }
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
@@ -932,7 +929,7 @@ async function journey(locale,mobile){
           if(outcome==='win')await interact(offline,sd.locator('.sd-hand button').nth(1),mobile);
           await interact(offline,sd.locator('.sd-preview'),mobile);
         }
-        await interact(offline,sd.locator('.sd-confirm button.primary-action'),mobile);
+        if(outcome==='abandoned')await interact(offline,sd.locator('.sd-confirm button.primary-action'),mobile);
         await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
         assert.equal((await readSaved(offline,'card-capture')).state.outcome,outcome);
         await offline.reload();

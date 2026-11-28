@@ -28,3 +28,7 @@ Texte sans cartouche sur bouton doré, état désactivé contrasté, rose des ve
 
 ## SD-BOARD-59 à 62
 Suppression des numéros visibles et du texte de sens de déplacement. Cible imposée B mise en évidence et annoncée pour l’accessibilité ; aide contextuelle évoquant l’ennemi le plus à droite. Attributs de position, ordre 4-3-2-1 et moteur inchangés. Contrôles E2E ajoutés. CI à constater ; aucun uv.
+
+
+## SD-BOARD-63 à 76
+Sélection et cible différenciées, boutons de combat illustrés, choix unique Joker automatique, choix multiples par boutons compacts correspondant aux cartes compatibles et indication sur la carte copiée (pas de clic direct sur la carte pour éviter l’ambiguïté avec la désélection). Bilan des seules captures légales, masqué sans aide. Exécution directe des actions ordinaires via validation du moteur ; abandon et remplacement toujours confirmés. Tests adaptés ; validation CI et recette requises. Aucun uv.

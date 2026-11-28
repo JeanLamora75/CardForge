@@ -155,3 +155,21 @@ html[data-motion=off] .sd-board *,html[data-motion=off] .sd-board{animation:none
 @media(max-height:450px){.sd-live .sd-console fieldset label{min-height:20px}.sd-live .sd-menu-toggle{min-height:26px}.sd-live .sd-console .sd-preview{min-height:38px}.sd-live .sd-phases span{min-height:20px}}
 
 .sd-board .sd-card.sd-forced-target{outline:3px solid #ffe9a6;outline-offset:-3px;box-shadow:inset 0 0 12px #ffda79,0 0 8px #ffda7999;opacity:1}
+
+.sd-board .sd-card[aria-pressed=true]::after{font-size:10px;line-height:1;right:6%;bottom:16%;padding:3px;box-shadow:none}
+.sd-board .sd-hand .sd-card[aria-pressed=true]{outline:2px solid #ffe28b;box-shadow:0 0 8px #ffd65f,inset 0 0 8px #ffd65f}
+.sd-board .sd-enemy-fleet .sd-card[aria-pressed=true]{outline:3px solid #d98558;outline-offset:-3px;box-shadow:0 0 8px #e76f46}
+.sd-board .sd-enemy-fleet .sd-card[aria-pressed=true]::after{content:'⊕';color:#fff3dc;background:#923e26;font-size:15px}
+.sd-board .sd-actions button,.sd-board .sd-menu-toggle{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:3px;background:#30291e;border:1px solid #a68a53;color:#fff4d9;text-shadow:0 1px 3px #000}
+.sd-board .sd-action-art{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
+.sd-board .sd-action-icon{width:16px;height:16px;object-fit:contain;flex:none}
+.sd-board .sd-actions button span,.sd-board .sd-menu-toggle span{line-height:1.1}
+.sd-board .sd-actions button[aria-pressed=true]{outline:2px solid #ffe2a3;outline-offset:-2px}
+.sd-board .sd-actions button:disabled{filter:grayscale(.7);opacity:.6}
+.sd-board .sd-copy-source .sd-face{box-shadow:inset 0 0 0 3px #c893ff}
+.sd-board .sd-copy-source::before{content:'✧';position:absolute;z-index:6;right:6%;top:6%;background:#412364;color:#fff0ff;border-radius:50%;padding:2px 5px}
+.sd-board .sd-copy-picker{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;font-size:.7rem}
+.sd-board .sd-copy-picker button{min-height:28px;padding:2px 6px;background:#422c59;color:#fff0ff;border:1px solid #c893ff}
+.sd-board .sd-tactical{text-align:center;color:#cce8a5;font-weight:bold;font-size:.75rem}
+.sd-live .sd-menu-toggle{display:flex;min-width:120px}
+@media(max-width:420px){.sd-board .sd-action-icon{width:12px;height:12px}.sd-board .sd-actions button{font-size:.64rem}}
