@@ -74,3 +74,25 @@ Validation du porteur : 28 novembre 2026, TF-CONSOLE-41 à 52.
 | TF-CONSOLE-52 | Même composant Jouer/Apprendre. |
 
 Disposition retenue : carte à gauche, arsenal à droite, transmission sous les deux blocs et ligne de commande réservée. Adapter la densité aux écrans courts. Réutiliser les composants, conserver le moteur et les sauvegardes. Aucun uv. Validation de rendu à démontrer.
+
+## V3.3 — Transmission et fluidité (TF-CONSOLE-53 à 66)
+Validation du porteur : 28 novembre 2026.
+
+| ID | Critère |
+|---|---|
+| TF-CONSOLE-53 | Bande de transmission entre radar et console en portrait, au-dessus de la console en paysage. |
+| TF-CONSOLE-54 | Messages prioritaires liés à l'état réel. |
+| TF-CONSOLE-55 | Titre, consigne fixe et narration secondaire distincts. |
+| TF-CONSOLE-56 | Animation horizontale ponctuelle de la narration seulement. |
+| TF-CONSOLE-57 | Respect des préférences de mouvement et pause à l'interaction. |
+| TF-CONSOLE-58 | Vocabulaire tactique FR/EN. |
+| TF-CONSOLE-59 | Carte dominante dans le tableau de bord. |
+| TF-CONSOLE-60 | Agrandissement sans déformation. |
+| TF-CONSOLE-61 | Déplacer les consignes hors du tableau de bord. |
+| TF-CONSOLE-62 | Confirmation des ressources rares, remplacement et armure seulement ; choix explicite si ambigu. |
+| TF-CONSOLE-63 | Placement ordinaire, figure et pioche directe ; aucune action implicite en cas d'ambiguïté. |
+| TF-CONSOLE-64 | Libellés de validation spécifiques aux manœuvres. |
+| TF-CONSOLE-65 | Géométrie réservée indépendante de la phase. |
+| TF-CONSOLE-66 | Contrôles huit résolutions, Jouer/Apprendre, FR/EN. |
+
+Ne pas modifier le moteur. Conserver les confirmations Alpha/Singularité conformément au lot validé. Préserver les effets de tir après placement direct. Aucun uv. Validation technique à démontrer.
