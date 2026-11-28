@@ -727,10 +727,12 @@ async function journey(locale,mobile){
 
     assert.ok(await sd.locator('.sd-counter strong,.sd-counter small').evaluateAll(nodes=>nodes.every(n=>getComputedStyle(n).backgroundColor==='rgba(0, 0, 0, 0)')),'counter text must be integrated without background');
     assert.equal((await readSaved(page,'card-capture')).state.phase,'capture','opening mandatory actions complete without clicks');
+    assert.deepEqual(await sd.locator('.sd-phase-label').allTextContents(),locale==='fr'?['Déploiement','Réorganisation','Renforts','Combat']:['Deployment','Reorganization','Reinforcements','Combat']);
+    assert.match(await sd.locator('.sd-console h3').textContent(),locale==='fr'?/^Commandement$/:/^Command$/);
     await assertSkyPhaseFits();
-    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    await sd.getByRole('button',{name:locale==='fr'?'B · Sacrifier':'B · Sacrifice',exact:true}).waitFor();
     assert.equal(await sd.locator('.sd-hand button').count(),4);
-    const sdActionB=sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true});
+    const sdActionB=sd.getByRole('button',{name:locale==='fr'?'B · Sacrifier':'B · Sacrifice',exact:true});
     if(await sdActionB.count()&&await sdActionB.isEnabled()){
       await interact(page,sdActionB,mobile);
       assert.equal(await sd.locator('.sd-forced-target').count(),1);
@@ -753,7 +755,7 @@ async function journey(locale,mobile){
     await page.locator('.sd-command-header').getByRole('button',{name:locale==='fr'?'Aide':'Help',exact:true}).click();
     await page.locator('dialog[open]').waitFor();
     await page.keyboard.press('Escape');await page.locator('dialog[open]').waitFor({state:'hidden'});
-    await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
+    await sd.getByRole('button',{name:locale==='fr'?'B · Sacrifier':'B · Sacrifice',exact:true}).waitFor();
     const sdOriginalViewport=page.viewportSize();
     for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
       await page.setViewportSize(viewport);
@@ -934,7 +936,7 @@ async function journey(locale,mobile){
           await interact(offline,offline.locator('.sd-command-header .sd-menu-toggle'),mobile);
           await interact(offline,offline.locator('.sd-header-menu').getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
         }else{
-          if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}),mobile);
+          if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Sacrifier':'B · Sacrifice',exact:true}),mobile);
           else await interact(offline,sd.locator('[data-position="1"]'),mobile);
           await interact(offline,sd.locator('.sd-hand button').nth(outcome==='win'?0:2),mobile);
           if(outcome==='win')await interact(offline,sd.locator('.sd-hand button').nth(1),mobile);
