@@ -1,0 +1,69 @@
+{
+  "game": "skydeck",
+  "lot": 3,
+  "format": "PCM WAV mono 16 bits",
+  "origin": "Synthèse procédurale originale sans échantillons tiers",
+  "validation": "En-têtes, durées, amplitude, énergie, extrémités nulles et unicité contrôlés numériquement. Écoute subjective et intégration non réalisées.",
+  "tracks": [
+    {
+      "path": "public/assets/audio/skydeck/sfx/cards/shuffle.wav",
+      "duration": 1.5,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 48044,
+      "loop": false,
+      "gitBlobSha": "2de77e5fc5b34af7c621213782503135d14a3d38",
+      "peakDbfs": -4.15,
+      "rmsDbfs": -18.58
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/cards/deal.wav",
+      "duration": 0.3,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 9644,
+      "loop": false,
+      "gitBlobSha": "c8524b2ef6a999d505ae6979a3cb87f150eb87ad",
+      "peakDbfs": -4.15,
+      "rmsDbfs": -16.91
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/cards/select.wav",
+      "duration": 0.2,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 6444,
+      "loop": false,
+      "gitBlobSha": "4375f6ebfea2291d2f4f882164f471f1b5bde0d1",
+      "peakDbfs": -4.15,
+      "rmsDbfs": -24.01
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/cards/move.wav",
+      "duration": 0.4,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 12844,
+      "loop": false,
+      "gitBlobSha": "fb2093c7e7b727613cb8eb280520447729ee594c",
+      "peakDbfs": -4.15,
+      "rmsDbfs": -20.21
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/cards/flip.wav",
+      "duration": 0.3,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 9644,
+      "loop": false,
+      "gitBlobSha": "df7105dfb134b5ac6544429fb8b429a388a314f0",
+      "peakDbfs": -4.15,
+      "rmsDbfs": -21.15
+    }
+  ]
+}

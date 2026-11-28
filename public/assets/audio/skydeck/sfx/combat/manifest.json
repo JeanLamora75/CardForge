@@ -1,0 +1,105 @@
+{
+  "game": "skydeck",
+  "lot": 4,
+  "format": "PCM WAV mono 16 bits",
+  "origin": "Synthèse procédurale originale sans échantillons tiers",
+  "validation": "En-têtes, durées, amplitude, énergie, extrémités nulles et unicité contrôlés numériquement. Écoute subjective et intégration non réalisées.",
+  "tracks": [
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/cannon.wav",
+      "duration": 1.5,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 48044,
+      "loop": false,
+      "gitBlobSha": "60e1c9d30ac86514e53da8e708c0ce7257d4295e",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -21.59
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/capture.wav",
+      "duration": 1.2,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 38444,
+      "loop": false,
+      "gitBlobSha": "3b7a1300bae1493f8a63dfbbadb5db7bb282249c",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -16.3
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/enemy-capture.wav",
+      "duration": 1.2,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 38444,
+      "loop": false,
+      "gitBlobSha": "5567ffe939837aefdea475c3d494a33fe39d6d00",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -18.98
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/sacrifice.wav",
+      "duration": 2,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 64044,
+      "loop": false,
+      "gitBlobSha": "5971e688b7f7f99e2fede6cb698e0df7a9e72ded",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -20.43
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/repel.wav",
+      "duration": 1,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 32044,
+      "loop": false,
+      "gitBlobSha": "59c5be4fa2c6a258e7bb61ceec38c93fd36095fe",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -16.95
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/joker.wav",
+      "duration": 1.5,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 48044,
+      "loop": false,
+      "gitBlobSha": "338afe8eaaad48c3e2e6389072f7d9c04d3c2ae4",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -15.74
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/legendary-ship.wav",
+      "duration": 2,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 64044,
+      "loop": false,
+      "gitBlobSha": "6d3b352434c054e1ac36cf49bd87d855a3817103",
+      "peakDbfs": -3.1,
+      "rmsDbfs": -17.28
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/combat/invalid-action.wav",
+      "duration": 0.3,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 9644,
+      "loop": false,
+      "gitBlobSha": "f32aae55e3c6b59868e8effcd0ce61c65303ed64",
+      "peakDbfs": -9.12,
+      "rmsDbfs": -16.14
+    }
+  ]
+}

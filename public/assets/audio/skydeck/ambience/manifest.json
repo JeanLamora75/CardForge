@@ -1,0 +1,61 @@
+{
+  "game": "skydeck",
+  "lot": 2,
+  "format": "PCM WAV mono 16 bits",
+  "origin": "Synthèse procédurale originale, sans échantillon tiers.",
+  "validation": "Durées, amplitude, énergie et raccord numérique contrôlés. Écoute subjective et intégration non réalisées. Fondu de 0,5 s aux extrémités pour éviter les clics ; raccord perceptuel non garanti.",
+  "tracks": [
+    {
+      "path": "public/assets/audio/skydeck/ambience/celestial-wind.wav",
+      "duration": 30,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 960044,
+      "loop": true,
+      "gitBlobSha": "823f92715ec490c6109d56041a59d6f7303b62c3",
+      "rmsDbfs": -20.31,
+      "peakDbfs": -4.44,
+      "seamDelta": 0
+    },
+    {
+      "path": "public/assets/audio/skydeck/ambience/wood-and-rigging.wav",
+      "duration": 30,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 960044,
+      "loop": true,
+      "gitBlobSha": "bafb58dc1aac7fcaa4510568189df83836cc9bb6",
+      "rmsDbfs": -17.94,
+      "peakDbfs": -4.44,
+      "seamDelta": 0
+    },
+    {
+      "path": "public/assets/audio/skydeck/ambience/steam-machinery.wav",
+      "duration": 30,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 960044,
+      "loop": true,
+      "gitBlobSha": "ab3d6769014b58a67afd90ee5b1272cc9c533b38",
+      "rmsDbfs": -17.09,
+      "peakDbfs": -4.44,
+      "seamDelta": 0
+    },
+    {
+      "path": "public/assets/audio/skydeck/ambience/sails-and-flags.wav",
+      "duration": 30,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 960044,
+      "loop": true,
+      "gitBlobSha": "5c3e4dea448afd0ce4b2ff3f841936d982654cee",
+      "rmsDbfs": -20.77,
+      "peakDbfs": -4.44,
+      "seamDelta": 0
+    }
+  ]
+}
