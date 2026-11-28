@@ -32,3 +32,7 @@ Suppression des numéros visibles et du texte de sens de déplacement. Cible imp
 
 ## SD-BOARD-63 à 76
 Sélection et cible différenciées, boutons de combat illustrés, choix unique Joker automatique, choix multiples par boutons compacts correspondant aux cartes compatibles et indication sur la carte copiée (pas de clic direct sur la carte pour éviter l’ambiguïté avec la désélection). Bilan des seules captures légales, masqué sans aide. Exécution directe des actions ordinaires via validation du moteur ; abandon et remplacement toujours confirmés. Tests adaptés ; validation CI et recette requises. Aucun uv.
+
+
+## SD-CARD-01 à 18 — puissance intégrée
+Valeur seule, sans fond ni bordure, police Alegreya SC, ivoire doré et ombre légère. Taille relative à la carte, variante deux chiffres et Joker. Emblèmes, noms, libellés accessibles, sélection et moteur inchangés. Position initiale commune estimée à partir de la capture de recette (connecteur ne permet pas de décoder les PNG originaux) : gauche 5 %, haut 5 %, largeur 29 %, hauteur 18 %. Centrage exact sur chacun des cinq blasons à confirmer visuellement. Tests navigateur de géométrie, contraste CSS et texte ajoutés à la matrice existante, qui ne couvre pas exhaustivement les 54 cartes dans chaque résolution. CI à constater. Aucun uv, aucune modification des images.

@@ -169,7 +169,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     const art=skydeckCardArt(id);
     return <span className="sd-face">
       {art?<><img className="sd-illustration" src={import.meta.env.BASE_URL+art.image} alt="" draggable={false}/><img className="sd-frame" src={import.meta.env.BASE_URL+art.frame} alt="" draggable={false}/></>:null}
-      <span className="sd-power">{c.power} {c.symbol}</span><small>{c.faction}</small>
+      <span className={"sd-power"+(c.power.length>1?" sd-power-double":"")+(c.power==="★"?" sd-power-joker":"")}>{c.power}</span><small>{c.faction}</small>
     </span>;
   };
   const phaseLabels={enemy:tr('Ennemis','Enemies'),discard:tr('Défausse','Discard'),draw:tr('Pioche','Draw'),capture:tr('Capture','Capture'),finished:tr('Terminée','Finished')};
