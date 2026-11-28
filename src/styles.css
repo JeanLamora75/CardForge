@@ -1317,3 +1317,7 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
 :root[data-motion=off] .tf-shot-overlay .tf-shot-live{display:none;}
 @media(prefers-reduced-motion:reduce){:root:not([data-motion=on]) .tf-shot-overlay .tf-shot-live{display:none;}}
 .thunder-board.tf-live .thunder-metrics .tf-progress{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:2px;height:8px;margin:2px 9% 1px;padding:0;min-height:0;border:0;background:none;}
+
+/* Decorative game surfaces must not retain native browser selection on navigation. */
+.forge-menu,.forge-menu img,.sd-end-screen,.sd-end-screen img{-webkit-user-select:none;user-select:none}
+.forge-menu img,.sd-end-screen img{-webkit-user-drag:none}

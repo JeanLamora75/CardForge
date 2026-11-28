@@ -72,3 +72,7 @@ Sept chapitres, treize pages FR/EN, sommaire, navigation, carte illustrée via a
 
 ## Manuel V2 — SD-RULES-26 à 59 / SD-MANUAL-QA-01 à 10
 20 pages FR/EN issues de Camille, corrections Joker et priorité défaite, exemples contextualisés, destinations explicites, cas limites distingués. Nouveaux assets intégrés au manifeste principal et utilisés localement ; navigation contextuelle et pause existantes conservées. Tests moteur des exemples et parcours offline des vingt pages ajoutés. Défilement interne de sécurité maintenu pour les écrans courts ; absence de défilement global et rendu huit tailles à constater. Aucun uv ; workflow BMAD officiel non exécutable, adaptation manuelle. Pas de modification moteur ni Jira.
+
+
+## SD-NAV-01 à 06 — retour au menu
+Hypothèse issue de la capture : sélection native du décor et du logo. Nettoyage explicite au retour Skydeck et au montage de WorldMenu commun ; protection CSS des surfaces décoratives et désactivation du glissement des images de résultat. Navigation hash et ressources inchangées ; transition locale réinitialisée au remontage. E2E des trois issues avec sélection forcée, contrôle du menu et de la sauvegarde ajouté. Reproduction visuelle réelle et CI à confirmer. Aucun uv.

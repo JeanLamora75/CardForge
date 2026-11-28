@@ -28,6 +28,7 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  useLayoutEffect(()=>{
    const menu=menuRef.current;
    if(!menu)return;
+   window.getSelection()?.removeAllRanges();
    function fit(){
      if(!menu)return;
      const vv=window.visualViewport;
@@ -45,7 +46,7 @@ export function WorldMenu({id,title,language,active,onBack,onBoard,onLearn,onRul
  },[]);
  const fr=language==="fr";const slug=slugs[id];const [transition,setTransition]=useState(false);const timer=useRef<number|undefined>(undefined);const locked=useRef(false);
  useEffect(()=>()=>window.clearTimeout(timer.current),[]);
- function go(action:()=>void){if(locked.current)return;locked.current=true;const motion=document.documentElement.dataset.motion;const reduce=motion==="off"||(motion!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches);if(reduce){action();return;}setTransition(true);timer.current=window.setTimeout(action,320);}
+ function go(action:()=>void){if(locked.current)return;window.getSelection()?.removeAllRanges();locked.current=true;const motion=document.documentElement.dataset.motion;const reduce=motion==="off"||(motion!=="on"&&matchMedia("(prefers-reduced-motion: reduce)").matches);if(reduce){action();return;}setTransition(true);timer.current=window.setTimeout(action,320);}
  return <section ref={menuRef} className={"forge-menu"+(transition?" forge-transition":"")} data-world={slug} data-saved={active?"yes":"no"} data-i18n-ignore aria-labelledby="game-title">
  <WorldBackdrop slug={slug}/>{transition?<img className="forge-exit-art" src={art("effects",slug)} alt="" aria-hidden="true"/>:null}
  <h1 id="game-title" className="forge-title" tabIndex={-1}><WorldLogo slug={slug} title={title}/></h1>

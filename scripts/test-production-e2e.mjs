@@ -983,6 +983,17 @@ async function journey(locale,mobile){
         await offline.reload();
         await sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}).waitFor();
         assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
+        await offline.evaluate(()=>{const range=document.createRange();range.selectNodeContents(document.querySelector('.sd-end-content'));const selection=getSelection();selection.removeAllRanges();selection.addRange(range);});
+        await interact(offline,sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}),mobile);
+        const menu=offline.locator('.forge-menu[data-world="skydeck"]');
+        await menu.waitFor();
+        assert.equal(await menu.evaluate(n=>({collapsed:getSelection().isCollapsed,transition:n.classList.contains('forge-transition'),select:getComputedStyle(n).userSelect}).collapsed),true);
+        assert.equal(await menu.evaluate(n=>n.classList.contains('forge-transition')),false);
+        assert.equal(await menu.evaluate(n=>getComputedStyle(n).userSelect),'none');
+        assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
+        await offline.goto(HOST+'#game/card-capture/board');
+        await sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}).waitFor();
+
         await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Rejouer':'Replay',exact:true}),mobile);
         await offline.locator('.sd-live').waitFor();
         assert.equal(await offline.locator('.sd-end-dialog,.sd-confirm').count(),0,'terminal replay needs no extra confirmation');
