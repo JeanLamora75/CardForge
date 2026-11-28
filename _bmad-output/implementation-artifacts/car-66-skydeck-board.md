@@ -40,3 +40,7 @@ Valeur seule, sans fond ni bordure, police Alegreya SC, ivoire doré et ombre l�
 
 ## SD-BOARD-77 à 84 — finition HUD et aide
 Compteurs sans fonds rapportés, relief typographique, consignes FR/EN adaptées à la sélection, bilan de capture légale remplaçant la consigne lorsque disponible. Indicateur de reprise contrasté et superposé, disparition après 3,5 secondes (ou action), sans réserver d’espace. Contrôles E2E de transparence et exclusivité de l’aide ajoutés ; matrice existante conservée. Validation des dimensions et rendu en CI/recette requise. Moteur, sauvegardes et graphismes inchangés. Adaptation manuelle sans uv.
+
+
+## SD-END-01 à 20 — écrans de résultat
+Composant terminal dédié, plateau démonté et viewport contraint, fonds portrait/paysage de victoire/défaite, retrait neutre avec décor existant, icônes et boutons du pack. Rapport résumé et détaillé fondés sur l’état public (manche, ennemis restants, cartes capturées par l’ennemi, réserves) ; aucun total historique de captures inventé. Raison de défaite conforme au moteur, sans identification de carte précise non exposée. Entraînement distingué, sauvegardes inchangées, retour au menu Skydeck, rejeu via confirmation existante. Musiques de résultat déjà déclenchées à la transition confirmée, animation d’apparition respectant le réglage. Tests de trois issues × huit tailles et décodage hors connexion ajoutés ; exécution CI et recette à constater. Aucun uv, adaptation manuelle.

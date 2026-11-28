@@ -934,10 +934,25 @@ async function journey(locale,mobile){
           await interact(offline,sd.locator('.sd-preview'),mobile);
         }
         if(outcome==='abandoned')await interact(offline,sd.locator('.sd-confirm button.primary-action'),mobile);
-        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        await sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}).waitFor();
         assert.equal((await readSaved(offline,'card-capture')).state.outcome,outcome);
+        const end=offline.locator('.sd-end-screen');
+        assert.equal(await end.getAttribute('data-outcome'),outcome);
+        assert.equal(await offline.locator('.sd-fleets,.sd-console').count(),0);
+        const originalViewport=offline.viewportSize();
+        for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
+          await offline.setViewportSize(viewport);
+          const detail=end.getByRole('button',{name:locale==='fr'?'Rapport détaillé':'Detailed report'});
+          await detail.click();
+          const result=await end.evaluate(async n=>{const image=n.querySelector('.sd-end-backdrop img');await image.decode();const r=n.querySelector('.sd-end-content').getBoundingClientRect();const buttons=[...n.querySelectorAll('.sd-end-buttons>*')].map(x=>x.getBoundingClientRect());return {source:image.currentSrc,decoded:image.naturalWidth>0,top:r.top,bottom:r.bottom,h:innerHeight,scroll:document.documentElement.scrollHeight,buttons:buttons.every(b=>b.top>=0&&b.bottom<=innerHeight+1)};});
+          const name=outcome==='win'?'victory-':outcome==='loss'?'defeat-':'';
+          assert.ok(result.decoded&&result.source.endsWith(name+(viewport.width>viewport.height?'landscape':'portrait')+'.webp')&&result.top>=-1&&result.bottom<=result.h+1&&result.scroll<=result.h+1&&result.buttons,JSON.stringify({outcome,viewport,result}));
+          await end.getByRole('button',{name:locale==='fr'?'Résumé':'Summary'}).click();
+        }
+        await offline.setViewportSize(originalViewport);
+
         await offline.reload();
-        await sd.getByRole('link',{name:locale==='fr'?'Retour au catalogue':'Back to catalogue'}).waitFor();
+        await sd.getByRole('link',{name:locale==='fr'?'Retour à Skydeck':'Back to Skydeck'}).waitFor();
         assert.equal((await readSaved(offline,'card-capture')).sessionId,fixture.sessionId);
       }
       await offline.goto(HOST+'#game/card-capture/rules');

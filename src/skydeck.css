@@ -186,3 +186,40 @@ html[data-motion=off] .sd-board *,html[data-motion=off] .sd-board{animation:none
 .sd-board .sd-tactical-enemy{color:#f5bd9b}
 .sd-board .sd-tactical-result{color:#d1e8aa}
 @media(max-width:420px){.sd-board .sd-tactical{gap:2px 4px;font-size:.65rem}.sd-board .sd-console .sd-hint{font-size:.68rem}}
+
+/* Terminal views own the viewport, independently of the active board layout. */
+.shell.sd-command-surface:has(.sd-end-screen){position:fixed;inset:0;width:100%;height:100dvh;min-height:0;overflow:hidden;padding:0}
+.sd-command-page:has(.sd-end-screen){height:100%;max-width:none!important;display:flex;flex-direction:column;box-sizing:border-box;padding:0!important;min-height:0}
+.sd-command-page:has(.sd-end-screen) .sd-command-header{display:none}
+.sd-command-page:has(.sd-end-screen) :is(.board-page,.game-learning),.sd-command-page:has(.sd-end-screen) .game-learning>div:has(>.sd-end-screen){display:flex;flex-direction:column;flex:1;min-height:0;width:100%}
+.sd-command-page .sd-end-screen{position:relative;isolation:isolate;flex:1;min-height:0;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center;background:#16252c;padding:0;border:0;border-radius:0;overflow:hidden}
+.sd-end-backdrop{position:absolute;inset:0;z-index:-2}
+.sd-end-backdrop img{width:100%;height:100%;object-fit:cover;display:block}
+.sd-end-screen::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(transparent 4%,#101b2366 28%,#101b23f5 76%)}
+.sd-end-content{width:min(100%,560px);max-height:100%;box-sizing:border-box;padding:8px max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));display:grid;gap:6px;color:#ffe9b4;text-align:center;text-shadow:0 2px 3px #160f08}
+.sd-end-title img{width:clamp(40px,12vh,100px);height:clamp(40px,12vh,100px);object-fit:contain}
+.sd-end-title h2{font-family:"Alegreya SC",Georgia,serif;font-size:clamp(1.7rem,6vw,3.3rem);line-height:1.05;margin:0;color:#ffe9b4}
+.sd-end-title p,.sd-end-content>p{margin:3px 0;font-size:clamp(.7rem,2.8vw,1rem);line-height:1.2;color:#fff0d5}
+.sd-end-report{border:1px solid #ba9b60;background:#152832e8;border-radius:8px;padding:5px}
+.sd-end-report h3{font-size:1rem;margin:0 0 4px;color:#ffe9b4}
+.sd-end-metrics,.sd-end-details{margin:0;display:grid;gap:3px}
+.sd-end-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sd-end-metrics div{border:1px solid #987745;border-radius:5px;padding:4px;display:flex;flex-direction:column-reverse;justify-content:center;min-width:0}
+.sd-end-metrics dt,.sd-end-details dt{font-size:.68rem;line-height:1.15;color:#fff2d8}
+.sd-end-metrics dd{margin:0;font-size:1.35rem;font-weight:700}
+.sd-end-details{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:4px}
+.sd-end-details div{display:flex;justify-content:space-between;align-items:center;gap:3px;padding:2px 3px;background:#0c1a22;border-radius:3px;text-align:left}
+.sd-end-details dd{margin:0;font-weight:bold;font-size:.8rem}
+.sd-end-buttons{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.sd-end-button{position:relative;isolation:isolate;display:flex;justify-content:center;align-items:center;text-align:center;min-height:44px;padding:4px 8px;box-sizing:border-box;border:1px solid #b99a65;border-radius:6px;background:#382b1e;color:#fff0ce;font:700 .85rem Georgia,serif;text-decoration:none;text-shadow:0 1px 2px #000}
+.sd-end-button img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;z-index:-1;pointer-events:none}
+.sd-end-primary{grid-column:1/-1;color:#261809;text-shadow:0 1px 1px #ffe9b4;font-size:1rem}
+.sd-end-button:disabled{opacity:.6}
+.sd-end-dialog{position:absolute;z-index:5;left:50%;top:50%;transform:translate(-50%,-50%);width:min(90%,400px);padding:12px;border:2px solid #d5b37a;border-radius:8px;background:#152832;color:#ffe9b4;box-shadow:0 0 0 100vmax #0008;text-align:center}
+.sd-end-dialog button{min-height:44px;margin:3px;padding:5px 12px}
+.sd-end-content{animation:sd-end-reveal .45s ease-out both}
+@keyframes sd-end-reveal{from{opacity:0}to{opacity:1}}
+html[data-motion=off] .sd-end-content{animation:none}
+@media(prefers-reduced-motion:reduce){html:not([data-motion=on]) .sd-end-content{animation:none}}
+@media(orientation:landscape){.sd-command-page .sd-end-screen{justify-content:flex-end;align-items:center}.sd-end-content{width:min(58%,560px)}.sd-end-screen::before{background:linear-gradient(90deg,transparent,#101b23e8 48%)}}
+@media(max-height:450px){.sd-end-content{gap:3px;padding:5px 8px}.sd-end-title img{width:35px;height:35px}.sd-end-title h2{font-size:1.55rem}.sd-end-report h3{font-size:.85rem}.sd-end-metrics dd{font-size:1rem}.sd-end-button{min-height:36px}.sd-end-details dt{font-size:.6rem}.sd-end-details div{padding:1px 3px}}
