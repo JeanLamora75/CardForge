@@ -56,9 +56,13 @@ const thunderHudFiles=["tf-bg-space.webp","tf-bottom-console.png","tf-frame-main
 assert.equal(new Set(thunderHudFiles).size,32);
 for(const file of thunderHudFiles)assert.ok(paths.includes("./assets/hud/thunderfighter/v2/"+file),"missing offline Thunderfighter cockpit artwork: "+file);
 
-const skyCards=paths.filter(p=>/^\.\/art\/cards\/skydeck\/.*\.webp$/.test(p));
+const skyCards=paths.filter(p=>/^\.\/art\/cards\/skydeck\/(ships\/|officers\/|joker-[12]\.webp$)/.test(p)&&p.endsWith(".webp"));
 assert.equal(new Set(skyCards).size,54,"all Skydeck cards must be precached");
 const skyFrames=paths.filter(p=>/^\.\/art\/frames\/skydeck\/card-.*\.webp$/.test(p));
 assert.equal(new Set(skyFrames).size,5,"all Skydeck frames must be precached");
 
 assert.equal(new Set(paths.filter(p=>p.startsWith("./assets/audio/skydeck/")&&p.endsWith(".wav"))).size,25,"all Skydeck audio must be precached");
+
+const skyBoardManifest=JSON.parse(readFileSync("skydeck-assets-manifest.json","utf8"));
+assert.equal(skyBoardManifest.length,59);
+for(const item of skyBoardManifest){const asset="./"+item.path.replace(/^public\/assets\//,"art/").replace(/\.png$/,".webp");assert.ok(paths.includes(asset),"missing Skydeck board artwork: "+asset);}

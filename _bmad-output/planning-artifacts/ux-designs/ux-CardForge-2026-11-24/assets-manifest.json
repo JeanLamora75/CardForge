@@ -2539,5 +2539,418 @@
     "height": 1254,
     "mode": "RGBA",
     "sha256": "6c15c7e9c549e3745be087e5e6960caf06aa58f8b466315c67e73f3ac3e61afd"
+  },
+  {
+    "path": "public/assets/banners/skydeck/enemy-capture.png",
+    "width": 2085,
+    "height": 726,
+    "mode": "RGBA",
+    "sha256": "5f08ce548281f04af62fb0d84ddb2a87b9073e1a974c84aa838a1d496d136f4e"
+  },
+  {
+    "path": "public/assets/banners/skydeck/enemy-fleet.png",
+    "width": 2166,
+    "height": 560,
+    "mode": "RGBA",
+    "sha256": "d21e0d50e2b1514352e21a005b765ed9d839a63b2c9c11b47274615116e250c0"
+  },
+  {
+    "path": "public/assets/banners/skydeck/hand.png",
+    "width": 2170,
+    "height": 725,
+    "mode": "RGBA",
+    "sha256": "84c60dfd06375e390b591ed78535ed3ae1fba0b0a0653a2e49eabbc23f9c092d"
+  },
+  {
+    "path": "public/assets/banners/skydeck/parchment.png",
+    "width": 2192,
+    "height": 602,
+    "mode": "RGBA",
+    "sha256": "47f04b7f11a39090c46e39c0c6687fd1dda3ae8fc4b00995c94d20e825284143"
+  },
+  {
+    "path": "public/assets/banners/skydeck/section-heading.png",
+    "width": 560,
+    "height": 68,
+    "mode": "RGBA",
+    "sha256": "b83673788bcc79b17369d47e9b3b7c0e27140ad85e4aee00c411d9c5e12f7549"
+  },
+  {
+    "path": "public/assets/boards/skydeck/landscape.png",
+    "width": 1664,
+    "height": 936,
+    "mode": "RGB",
+    "sha256": "419a9de64c1200d72482702005e0d1d0028b35dee590ef72b5e9af441eff3070"
+  },
+  {
+    "path": "public/assets/boards/skydeck/portrait.png",
+    "width": 792,
+    "height": 1760,
+    "mode": "RGB",
+    "sha256": "ba9fb3774bd90e411921ae5f863538b65110896b52504147899e56ab6294fbca"
+  },
+  {
+    "path": "public/assets/boards/skydeck/sky-railing.png",
+    "width": 887,
+    "height": 763,
+    "mode": "RGB",
+    "sha256": "8750fb82ebdac709f41259b35bf2b968f798a89f3a6d2b1e7c84488c0a1eb74a"
+  },
+  {
+    "path": "public/assets/boards/skydeck/wood-deck.png",
+    "width": 887,
+    "height": 1011,
+    "mode": "RGB",
+    "sha256": "4761a23156c1c43686bd36f4604bb282ac8233f59852fa91564574fb42bba243"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/blue.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "38ee2661bb3629c2b499a448142faa8fd003a6b6cba81f25f50fbb585eba69a9"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/dark.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "b77a8b8a403d2d2e58664de864f60996626f9b12b29b3549811bba24d72616eb"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/gold.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "8580de9d72f67f78945c33b4bec35ff3b859d92df8b30579ad96a40192a4f99e"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/green.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "9a61b8e5d7ce31d052f6372a7322f3192e426df92c9589c8958fbd39f379cb12"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/neutral.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "52766b245ee43f1d33d41b3a7ebc07ae95d062fad6f45203e4b1115b661524f5"
+  },
+  {
+    "path": "public/assets/buttons/skydeck/red.png",
+    "width": 600,
+    "height": 112,
+    "mode": "RGBA",
+    "sha256": "17e3a1f9496e162688cd8d672eb5089482ad5a81140820544d8d7465baef8bb5"
+  },
+  {
+    "path": "public/assets/cards/skydeck/back.png",
+    "width": 160,
+    "height": 230,
+    "mode": "RGBA",
+    "sha256": "ab3282d73ad3b8e81fb2f0fc1dc2001ea04ec1faeea9f40c18fee2d2548112ad"
+  },
+  {
+    "path": "public/assets/cards/skydeck/draw-stack.png",
+    "width": 123,
+    "height": 155,
+    "mode": "RGBA",
+    "sha256": "3c48c78f65ee219731e4af0f099f6042b624bfbdd9bd268a5b1ae7bd311b0d9c"
+  },
+  {
+    "path": "public/assets/frames/skydeck/enemy-capture.png",
+    "width": 2178,
+    "height": 747,
+    "mode": "RGBA",
+    "sha256": "a39438a41fea7192cf50929b401c6b57d1d2e02387b4a1ff9983d206ca6b8bf1"
+  },
+  {
+    "path": "public/assets/frames/skydeck/enemy-card.png",
+    "width": 942,
+    "height": 1435,
+    "mode": "RGBA",
+    "sha256": "18c28f563120175bc8f11b9c3d685ff11f93ea78558a5c2c9d2335103e8e10f5"
+  },
+  {
+    "path": "public/assets/frames/skydeck/enemy-panel.png",
+    "width": 800,
+    "height": 320,
+    "mode": "RGBA",
+    "sha256": "464870207df9e8af77f12463981bf741d5ed508119cdcc6f03544785c2dfd2ec"
+  },
+  {
+    "path": "public/assets/frames/skydeck/enemy-slot.png",
+    "width": 160,
+    "height": 230,
+    "mode": "RGBA",
+    "sha256": "f0592bb79b3b8ce527a6572c05443cda3d23cb89c548f773a24635adb0b00a78"
+  },
+  {
+    "path": "public/assets/frames/skydeck/hand-slot.png",
+    "width": 160,
+    "height": 230,
+    "mode": "RGBA",
+    "sha256": "70a6943e7f50429b3281ee6e5602088d958dc7be56f1dcda44123b8fe6e2f8d4"
+  },
+  {
+    "path": "public/assets/frames/skydeck/phase-panel.png",
+    "width": 760,
+    "height": 120,
+    "mode": "RGBA",
+    "sha256": "98adf5e28f7bec0edde065c7d6d3c241177ab798871b419621daaac3de3be9c9"
+  },
+  {
+    "path": "public/assets/frames/skydeck/player-card.png",
+    "width": 1019,
+    "height": 1428,
+    "mode": "RGBA",
+    "sha256": "076b48699c6c08db70bb6b24a3f5c2e7955ea6efa9d90e410231eec136ed410e"
+  },
+  {
+    "path": "public/assets/frames/skydeck/selection.png",
+    "width": 1037,
+    "height": 1356,
+    "mode": "RGBA",
+    "sha256": "4ccdd8a95a36310ddaf37b8611e2558ca524365482c06094f7722fae56003fa9"
+  },
+  {
+    "path": "public/assets/hud/skydeck/counter-blank.png",
+    "width": 2123,
+    "height": 551,
+    "mode": "RGBA",
+    "sha256": "865a78756a245189f36630fd1504f39f075dca360081f6fbdfd4b8c15bf0ae1d"
+  },
+  {
+    "path": "public/assets/icons/skydeck/arrow-right.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "26d9b315ed25d8a4fe85979f175dc6a8fc47d91777f770575b73f673a971023b"
+  },
+  {
+    "path": "public/assets/icons/skydeck/capture.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "8273685de39884a4ec7a9589841b8eba147886987dd3f0af25a54b4afd2c81a0"
+  },
+  {
+    "path": "public/assets/icons/skydeck/club.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "4ac39847c5cad0a98e667d2be981bdaedfd28933ddb8b5d6f797188245cb8c6b"
+  },
+  {
+    "path": "public/assets/icons/skydeck/compass.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "d2aad4a4b1156ce31856c6d6e44afff67da2bdd9585536fe3983d28111da9348"
+  },
+  {
+    "path": "public/assets/icons/skydeck/diamond.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "8629c8bf43884529280dd2de637cc98ac231eb0c0a43124b53d4f121c3b43797"
+  },
+  {
+    "path": "public/assets/icons/skydeck/discard.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "532aaf1581b3a4a9af3381df46188da880c66e001845535aecb1416d00cef6c2"
+  },
+  {
+    "path": "public/assets/icons/skydeck/draw.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "379e239f1156490e1bfdd85e581b3439e731a1d0d260fdfedbcc726be5d6b2a9"
+  },
+  {
+    "path": "public/assets/icons/skydeck/enemy.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "2ac28b5864f95d6c2ee91c0ef29510e2ad1a8bdb267d186844124060bc390267"
+  },
+  {
+    "path": "public/assets/icons/skydeck/heart.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "40f1e5eda2276805b5dc1733d5bd3510780ea16430b2d61c8b12f54e94e8722a"
+  },
+  {
+    "path": "public/assets/icons/skydeck/help.png",
+    "width": 95,
+    "height": 93,
+    "mode": "RGBA",
+    "sha256": "8452546f89e9489fedaec8aabb31f81037c7b4bc2fca036788aec84b9f354eab"
+  },
+  {
+    "path": "public/assets/icons/skydeck/repel.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "f7fdcae1a87624c2d853f03526f3cf8c000314deb149470006afe5450423f5bb"
+  },
+  {
+    "path": "public/assets/icons/skydeck/sacrifice.png",
+    "width": 48,
+    "height": 48,
+    "mode": "RGBA",
+    "sha256": "86344773b87258e4d57470084cdceb2b2681012de05ddf209c69ebc9cb76e773"
+  },
+  {
+    "path": "public/assets/icons/skydeck/settings.png",
+    "width": 94,
+    "height": 93,
+    "mode": "RGBA",
+    "sha256": "85b6234a6534e039fcd70cd2c2df4ad882c9266981275e48c30103498854b3d9"
+  },
+  {
+    "path": "public/assets/icons/skydeck/spade.png",
+    "width": 1254,
+    "height": 1254,
+    "mode": "RGBA",
+    "sha256": "d30448a84eb6237df4718924c92a178ed77a1c377bd48ec3a3d31d5e75333ef0"
+  },
+  {
+    "path": "public/assets/logos/skydeck/board.png",
+    "width": 555,
+    "height": 108,
+    "mode": "RGBA",
+    "sha256": "fa0e650417489fe8843c61ecc35c6550a860a278f95d66eb36fc379e11e86f50"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/anchor.png",
+    "width": 232,
+    "height": 287,
+    "mode": "RGBA",
+    "sha256": "c534e266b8bb226af16d11c6c5128aed8ea158f4e27e74aad02cf89124547d50"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/barrel.png",
+    "width": 199,
+    "height": 243,
+    "mode": "RGBA",
+    "sha256": "e650e78af5e6f52bb95c48f79271ca66a684fca8afd585e97a12293e42051b27"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/bell.png",
+    "width": 248,
+    "height": 311,
+    "mode": "RGBA",
+    "sha256": "88fef699756e9a5c316b177f29079c05b0f19d518c4ffef798206796b28c74d5"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/coin-pouch.png",
+    "width": 273,
+    "height": 260,
+    "mode": "RGBA",
+    "sha256": "dc07a01743ebf12cdec85a5889551f850dcdea84042d7cc75bf0ae0067b5c43c"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/compass.png",
+    "width": 241,
+    "height": 277,
+    "mode": "RGBA",
+    "sha256": "41a98d34414cfba3ea543dfac0b47aa6b6ec8f5d90ede985e93358e2ad5cd4f2"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/crate.png",
+    "width": 285,
+    "height": 249,
+    "mode": "RGBA",
+    "sha256": "a7024458cd161d0127a87ab9c687c9b5fc1b2750fd7d6d79239e1ad92926d885"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/dividers.png",
+    "width": 178,
+    "height": 252,
+    "mode": "RGBA",
+    "sha256": "495a82f51466d5f1748cb7170e6c9eac6ef5f8894323c97371d8d9cfbdb536af"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/hourglass.png",
+    "width": 169,
+    "height": 261,
+    "mode": "RGBA",
+    "sha256": "9828c7e3e6f3afd26e6003f4f1ed93c3d253e6495849c5106ff7cfca4ae30b1f"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/ink-quill.png",
+    "width": 231,
+    "height": 273,
+    "mode": "RGBA",
+    "sha256": "80f79d3ab838aed02660ca7bf9e1de0cb83ce2762b5f8f2837214bd4b5b0a74f"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/lantern.png",
+    "width": 173,
+    "height": 295,
+    "mode": "RGBA",
+    "sha256": "82d68cf0c35ad583f750a05b8633d570bc912cee30701959ea4b65173c33cdda"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/navigation-map.png",
+    "width": 391,
+    "height": 283,
+    "mode": "RGBA",
+    "sha256": "f2dbba4ef4ea4a564a15ff2db565c9027d0487bf4094805ee9efa98e717da812"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/pennant.png",
+    "width": 303,
+    "height": 438,
+    "mode": "RGBA",
+    "sha256": "d011cff2e067a0cfd9112ce59be8803f8118c767e93d74a94a574c1de8b82709"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/rope-cleat.png",
+    "width": 266,
+    "height": 181,
+    "mode": "RGBA",
+    "sha256": "11d3ba1de217a1ee54407461d0f2fd55aa5351c50289cc76aca78f0f685fa015"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/rope-coil.png",
+    "width": 313,
+    "height": 259,
+    "mode": "RGBA",
+    "sha256": "0b9820cd6a7f45557ffbaf2453f342fd1c8e2f49b6f11c8ea45d6928b80df013"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/separator.png",
+    "width": 2112,
+    "height": 168,
+    "mode": "RGBA",
+    "sha256": "43c3fe782a95a5b35468b518ccfabf083777d5a9bcbee5e53205d2be3ce78a02"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/sextant.png",
+    "width": 259,
+    "height": 268,
+    "mode": "RGBA",
+    "sha256": "87ec11b023af8a2cd12d7e834c11a033f4379287e1150422e1732bf949ac24b2"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/ship-wheel.png",
+    "width": 295,
+    "height": 286,
+    "mode": "RGBA",
+    "sha256": "bdf1d57358da0b6b764520f31ecfae3da724313d0fdea39d414ff91323dd85b5"
+  },
+  {
+    "path": "public/assets/ornaments/skydeck/spyglass.png",
+    "width": 415,
+    "height": 191,
+    "mode": "RGBA",
+    "sha256": "d6d6d1a6490bba3cd71218f3bf1d49194c84e4e1e5bd523a17da14bcc6125c61"
   }
 ]

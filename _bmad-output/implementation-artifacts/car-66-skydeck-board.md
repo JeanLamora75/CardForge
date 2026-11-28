@@ -12,3 +12,7 @@ Fond pleine page et logo existants, navigation par icônes, suppression de l’e
 
 ## SD-BOARD-20 — correction de rendu
 La face est ancrée directement aux quatre bords du bouton carte, indépendamment du dimensionnement de la grille. Empilement explicite illustration/cadre/valeurs/position/sélection. Test navigateur ajouté : quatre illustrations en main, décodage des deux images par carte, dimensions de la face et des valeurs, ouverture/fermeture de l’aide. Cause CSS probable, à confirmer par CI et recette. Dernière CI b50c647 en échec sur stalePreviewRecovery (ERR_INTERNET_DISCONNECTED), défaut distinct non masqué. Aucun changement moteur ni nouvelle illustration.
+
+
+## Intégration du pack plateau original — SD-BOARD-14 à 27
+Fusion de 59 entrées dans le manifeste commun sans remplacement. Fonds dédiés portrait/paysage, logo et icônes, compteurs, phases, emplacements, console bois, boutons, quatre places de main, libellés d’action contextuels, menu de partie, indicateur de reprise compact, attribution conservée dans les règles, résultat illustré. Les ornements et autres variantes non indispensables sont disponibles hors ligne mais non imposés à l’écran. Adaptation CSS et ergonomique à valider en recette, pas de garantie de zéro défilement sur tous les écrans. Moteur, sauvegarde et sons inchangés. Tests E2E et pré-cache adaptés ; CI à constater. Workflow uv non exécuté.

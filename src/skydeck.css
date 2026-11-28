@@ -44,3 +44,48 @@
 .sd-board .sd-face .sd-power,.sd-board .sd-face small{z-index:2}
 .sd-board .sd-card > .sd-position{z-index:4}
 .sd-board .sd-card[aria-pressed=true]::after{z-index:5}
+
+/* Skydeck board assets use relative URLs resolved against the application base. */
+.sd-deck-backdrop{position:fixed;inset:0;z-index:-1;pointer-events:none;background:#14252d}
+.sd-deck-backdrop img{width:100%;height:100%;object-fit:cover;display:block}
+.sd-command-header{margin:0 0 4px;gap:4px;grid-template-columns:40px minmax(0,1fr) 44px 44px}
+.sd-command-header h1 img{height:clamp(34px,8vw,52px);width:auto}
+.sd-command-header button img{width:100%;height:100%;object-fit:contain}
+.sd-command-page .sd-board{background:none;border:0;padding:0;display:grid;gap:4px}
+.sd-board .sd-round{font-size:clamp(.75rem,2.5vw,1rem);margin:0;padding:3px;background:#10202de6;border-radius:5px}
+.sd-board .sd-resumed{font-size:.65rem;margin:0;text-align:right;text-shadow:0 1px 3px #000}
+.sd-board .sd-phases{margin:0;padding:4px;background-image:var(--sd-phase-panel);background-size:100% 100%;background-color:#12252d;border-radius:8px}
+.sd-board .sd-phases span{display:flex;align-items:center;justify-content:center;gap:3px;border:0;background:transparent}
+.sd-board .sd-phases span img{width:18px;height:18px;object-fit:contain}
+.sd-board .sd-phases [aria-current]{background:#674c28;border:1px solid #ffe0a1}
+.sd-board .sd-counts{margin:0;gap:4px}
+.sd-board .sd-counts span{position:relative;display:grid;grid-template-columns:18px auto;justify-content:center;gap:0 4px;background-image:var(--sd-counter);background-size:100% 100%;border:0;box-shadow:none;padding:6px 4px;min-height:43px}
+.sd-board .sd-counts img{width:18px;height:18px;object-fit:contain}
+.sd-board .sd-counts small{grid-column:1/-1;font-size:clamp(.6rem,1.6vw,.8rem);white-space:normal}
+.sd-board .sd-counts strong{font-size:1.1rem;text-shadow:0 1px 3px #000}
+.sd-board .sd-fleets{display:grid;gap:4px}
+.sd-board .sd-fleet{padding:4px;background:#10202d80;border-radius:7px}
+.sd-board .sd-fleet h3{margin:0 0 3px;padding:4px;text-align:center;background-image:var(--sd-section);background-size:100% 100%;font-size:.85rem;text-shadow:0 1px 3px #000}
+.sd-board .sd-direction{font-size:.65rem;margin:0 0 2px}
+.sd-board .sd-line{width:100%;max-width:min(620px,calc((100dvh - 240px)*1.33));gap:4px}
+.sd-board .sd-card{min-height:0;aspect-ratio:2/3}
+.sd-board .sd-card.sd-empty{background-size:100% 100%;background-repeat:no-repeat;border:0;box-shadow:none;display:grid;place-items:center}
+.sd-board .sd-enemy-slot{background-image:var(--sd-enemy-slot)}
+.sd-board .sd-hand-slot{background-image:var(--sd-hand-slot)}
+.sd-board .sd-slot-label{font-size:.72rem;color:#ead5a3;text-shadow:0 1px 3px #000}
+.sd-board .sd-card[aria-pressed=true]{outline:2px solid #ffe9a6;outline-offset:-2px}
+.sd-board .sd-console{background-image:linear-gradient(#17232cbd,#17232ce8),var(--sd-wood);background-size:cover;border:1px solid #a98a53;border-radius:8px;padding:5px;min-width:0}
+.sd-board .sd-console h3{margin:0 0 4px;text-align:center;font-size:.85rem}
+.sd-board .sd-console p{margin:3px 0;font-size:.8rem}
+.sd-board .sd-console button{background-image:var(--sd-dark);background-size:100% 100%;border:0;color:#fff0cc;text-shadow:0 1px 2px #000}
+.sd-board .sd-console button.primary-action{background-image:var(--sd-gold);color:#191810;text-shadow:none}
+.sd-board .sd-console button:disabled{background-image:var(--sd-neutral);opacity:.65}
+.sd-board .sd-preview{margin:3px 0}
+.sd-board .sd-menu-toggle{font-size:.7rem;min-height:32px}
+.sd-board .sd-game-options{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0}
+.sd-board .sd-ending{background-size:cover;background-position:center;min-height:150px;text-shadow:0 1px 4px #000}
+.sd-board .sd-win{background-image:linear-gradient(#10202d88,#10202dbb),var(--sd-victory)}
+.sd-board .sd-loss{background-image:linear-gradient(#10202d88,#10202dbb),var(--sd-defeat)}
+.sd-board .sd-end-icon{width:64px;height:64px;object-fit:contain}
+@media(orientation:landscape) and (min-width:650px){.sd-board .sd-fleets{grid-template-columns:1fr 1fr;align-items:end}.sd-board .sd-line{max-width:min(520px,calc((100dvh - 170px)*2.66))}.sd-command-header h1 img{height:36px}}
+@media(max-height:640px) and (orientation:portrait){.sd-board .sd-line{max-width:min(100%,calc((100dvh - 240px)*1.1))}.sd-board .sd-counts span{padding:3px;min-height:35px}.sd-board .sd-phases span{padding:2px}}

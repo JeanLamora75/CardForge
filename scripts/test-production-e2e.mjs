@@ -706,6 +706,8 @@ async function journey(locale,mobile){
     assert.equal(await page.locator('.learning-intro').count(),0);
     await sd.locator('.sd-line:not(.sd-hand) button[data-position="1"]').waitFor();
     assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
+    assert.equal(await sd.locator('.sd-hand .sd-card').count(),4);
+    for(const img of await page.locator('.sd-command-header img,.sd-deck-backdrop img,.sd-phases img,.sd-counts img').all()){await img.evaluate(n=>n.decode());assert.ok(await img.evaluate(n=>n.naturalWidth>0));}
     const initial=await sd.locator('[role=status]').textContent();
     await interact(page,sd.locator('.sd-preview'),mobile);
     await interact(page,sd.locator('.sd-confirm button.secondary-action'),mobile);
@@ -896,6 +898,7 @@ async function journey(locale,mobile){
       for(const outcome of ['win','loss','abandoned']){
         const fixture=await installSkydeckFixture(offline,saved['card-capture'],outcome);
         if(outcome==='abandoned'){
+          await interact(offline,sd.locator('.sd-menu-toggle'),mobile);
           await interact(offline,sd.getByRole('button',{name:locale==='fr'?'Abandonner':'Abandon',exact:true}),mobile);
         }else{
           if(outcome==='loss')await interact(offline,sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}),mobile);
