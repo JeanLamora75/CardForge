@@ -1046,6 +1046,11 @@ async function skydeckStatisticsScreens(){
     },fixture);
     await page.reload();await page.locator(".sd-log-paper").waitFor();
     assert.equal(await page.locator('[data-stat="rate"]').textContent(),rate);
+    const needle=page.locator(".sd-log-needle");
+    assert.equal(await needle.count(),won+lost?1:0);
+    if(won+lost){assert.equal(Number(await needle.getAttribute("data-rate")),won/(won+lost));assert.equal(await needle.getAttribute("transform"),"rotate("+(won/(won+lost)*180)+" 130 127)");}
+    assert.equal(await page.locator('[data-stat="ratio"]').textContent(),won+lost?(locale==="fr"?new Intl.NumberFormat(locale).format(won)+(won===1?" victoire sur ":" victoires sur ")+new Intl.NumberFormat(locale).format(won+lost):new Intl.NumberFormat(locale).format(won)+(won===1?" victory out of ":" victories out of ")+new Intl.NumberFormat(locale).format(won+lost)):(locale==="fr"?"Aucune campagne achevée":"No completed campaigns"));
+    assert.equal(await page.locator(".sd-log-distribution-title").textContent(),locale==="fr"?"Répartition des campagnes":"Campaign distribution");
     for(const [key,value] of Object.entries({won,lost,abandoned,total}))assert.equal(await page.locator('[data-stat="'+key+'"]').textContent(),new Intl.NumberFormat(locale).format(value));
     assert.equal(await page.locator(".sd-log-total p").count(),total===0?1:0);
     assert.deepEqual(await readSaved(page,"card-capture"),before);
@@ -1053,8 +1058,8 @@ async function skydeckStatisticsScreens(){
    for(const [width,height] of sizes){
     await page.setViewportSize({width,height});
     await page.evaluate(()=>document.fonts.ready);
-    await page.locator(".sd-log-header img,.sd-log-result img,.sd-log-total img").evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));
-    const fits=await page.locator(".sd-log").evaluate(node=>({height:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,clipped:[...node.querySelectorAll("button,h1,dt,dd,.sd-log-legend li,.sd-log-gauge")].filter(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>innerWidth+1||r.bottom>innerHeight+1||el.scrollWidth>el.clientWidth+1}).map(el=>el.textContent)}));
+    await page.locator(".sd-log-header img,.sd-log h1 img,.sd-log-result img,.sd-log-total img").evaluateAll(imgs=>Promise.all(imgs.map(img=>img.decode())));
+    const fits=await page.locator(".sd-log").evaluate(node=>({height:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,clipped:[...node.querySelectorAll("button,h1,dt,dd,.sd-log-legend li,.sd-log-gauge,.sd-log-ratio,.sd-log-distribution-title")].filter(el=>{const r=el.getBoundingClientRect();return r.left<0||r.top<0||r.right>innerWidth+1||r.bottom>innerHeight+1||el.scrollWidth>el.clientWidth+1}).map(el=>el.textContent)}));
     assert.ok(fits.height<=height+1&&fits.width<=width+1&&!fits.clipped.length,JSON.stringify({locale,width,height,fits}));
    }
    assert.equal(await page.locator("#game-title").textContent(),locale==="fr"?"Journal de bord":"Captain’s Log");
