@@ -24,3 +24,7 @@ CSS Skydeck chargé après les styles génériques, couches images explicites po
 
 ## SD-BOARD-43 à 58 — finitions et animations
 Texte sans cartouche sur bouton doré, état désactivé contrasté, rose des vents existante, marges/espacements et options centrées, phase harmonisée. Animations issues du différentiel des états réellement confirmés : avancée, arrivée, distribution, départs de combat, Joker et phase. Sons déclenchés au même événement confirmé, pas de synchronisation audio à l’échantillon. Réglage commun et préférence système pris en compte ; aucune attente d’animation imposée au moteur. Tests unitaires de planification et contrôles navigateur des phases ajoutés ; huit résolutions déjà couvertes en capture. CI et recette non validées au moment du commit. Adaptation manuelle sans uv.
+
+
+## SD-BOARD-59 à 62
+Suppression des numéros visibles et du texte de sens de déplacement. Cible imposée B mise en évidence et annoncée pour l’accessibilité ; aide contextuelle évoquant l’ennemi le plus à droite. Attributs de position, ordre 4-3-2-1 et moteur inchangés. Contrôles E2E ajoutés. CI à constater ; aucun uv.

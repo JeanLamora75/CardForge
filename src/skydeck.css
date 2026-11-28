@@ -7,7 +7,6 @@
 .sd-board .sd-frame {object-fit:fill}
 .sd-board .sd-power {position:absolute;top:6%;left:6%;background:#101b24eb;border:1px solid #d6b77a;border-radius:5px;padding:2px 4px;color:#fff4db;line-height:1.1;font-size:clamp(.8rem,2.8vw,1.35rem)}
 .sd-board .sd-card small {position:absolute;bottom:5%;left:5%;right:5%;padding:3px 1px;background:#101b24e8;color:#fff4db;font-size:clamp(.55rem,1.6vw,.8rem);line-height:1.1}
-.sd-board .sd-position {position:absolute;top:5%;right:5%;z-index:2;background:#101b24eb;padding:2px 4px;border-radius:4px}
 .sd-board .sd-card[aria-pressed=true]::after {position:absolute;right:5%;bottom:19%;z-index:3;background:#f4d8a3;color:#18232d;border-radius:50%;padding:2px 5px}
 .sd-board .sd-counts span,.sd-board .sd-phases span,.sd-board .sd-confirm {background:#13232de8;border-color:#a98a53}
 .sd-board .sd-phases [aria-current] {border-color:#f4d8a3;background:#5c4428}
@@ -42,7 +41,6 @@
 .sd-board .sd-face .sd-illustration{z-index:0}
 .sd-board .sd-face .sd-frame{z-index:1}
 .sd-board .sd-face .sd-power,.sd-board .sd-face small{z-index:2}
-.sd-board .sd-card > .sd-position{z-index:4}
 .sd-board .sd-card[aria-pressed=true]::after{z-index:5}
 
 /* Skydeck board assets use relative URLs resolved against the application base. */
@@ -155,3 +153,5 @@
 html[data-motion=off] .sd-board *,html[data-motion=off] .sd-board{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){html:not([data-motion=on]) .sd-board *,html:not([data-motion=on]) .sd-board{animation:none!important;transition:none!important}}
 @media(max-height:450px){.sd-live .sd-console fieldset label{min-height:20px}.sd-live .sd-menu-toggle{min-height:26px}.sd-live .sd-console .sd-preview{min-height:38px}.sd-live .sd-phases span{min-height:20px}}
+
+.sd-board .sd-card.sd-forced-target{outline:3px solid #ffe9a6;outline-offset:-3px;box-shadow:inset 0 0 12px #ffda79,0 0 8px #ffda7999;opacity:1}

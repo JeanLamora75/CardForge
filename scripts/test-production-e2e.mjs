@@ -706,6 +706,7 @@ async function journey(locale,mobile){
     assert.equal(await page.locator('.learning-intro').count(),0);
     await sd.locator('.sd-line:not(.sd-hand) button[data-position="1"]').waitFor();
     assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
+    assert.equal(await sd.locator('.sd-position,.sd-direction').count(),0,'no visible technical position markers');
     assert.equal(await sd.locator('.sd-hand .sd-card').count(),4);
     for(const img of await page.locator('.sd-command-header img,.sd-deck-backdrop img,.sd-phases img,.sd-counts img').all()){await img.evaluate(n=>n.decode());assert.ok(await img.evaluate(n=>n.naturalWidth>0));}
     assert.equal(await sd.locator('.sd-hand .sd-slot-emblem').count(),4);
@@ -724,6 +725,15 @@ async function journey(locale,mobile){
     }
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     assert.equal(await sd.locator('.sd-hand button').count(),4);
+    const sdActionB=sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true});
+    if(await sdActionB.count()&&await sdActionB.isEnabled()){
+      await interact(page,sdActionB,mobile);
+      assert.equal(await sd.locator('.sd-forced-target').count(),1);
+      assert.equal(await sd.locator('.sd-forced-target').getAttribute('data-position'),'1');
+      assert.equal(await sd.locator('.sd-forced-target').getAttribute('aria-pressed'),'true');
+      const actionA=sd.getByRole('button',{name:locale==='fr'?'A · Capturer':'A · Capture',exact:true});
+      if(await actionA.isEnabled()){await interact(page,actionA,mobile);assert.equal(await sd.locator('.sd-forced-target').count(),0);}
+    }
     await sd.locator('.sd-hand .sd-illustration').first().waitFor({state:'visible'});
     assert.equal(await sd.locator('.sd-hand .sd-illustration').count(),4);
     for(const face of await sd.locator('.sd-face').all()){
