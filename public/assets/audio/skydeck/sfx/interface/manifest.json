@@ -1,0 +1,57 @@
+{
+  "game": "skydeck",
+  "lot": 5,
+  "format": "PCM WAV mono 16 bits",
+  "origin": "Synthèse procédurale originale sans échantillons tiers",
+  "validation": "En-têtes, durées, amplitude, énergie, extrémités nulles et unicité contrôlés numériquement. Écoute subjective et intégration non réalisées.",
+  "tracks": [
+    {
+      "path": "public/assets/audio/skydeck/sfx/interface/button.wav",
+      "duration": 0.15,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 4844,
+      "loop": false,
+      "gitBlobSha": "7a64529c1fed7274ae5388e984c2b7a1c73720e7",
+      "peakDbfs": -9.9,
+      "rmsDbfs": -27.28
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/interface/panel-open.wav",
+      "duration": 0.5,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 16044,
+      "loop": false,
+      "gitBlobSha": "1f44a3c7583684e6bf8d4933b77576c55744dd74",
+      "peakDbfs": -7.33,
+      "rmsDbfs": -20.72
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/interface/panel-close.wav",
+      "duration": 0.4,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 12844,
+      "loop": false,
+      "gitBlobSha": "5b9dca140a7885fe4d06d9995555be6f5decc4e0",
+      "peakDbfs": -7.33,
+      "rmsDbfs": -23.74
+    },
+    {
+      "path": "public/assets/audio/skydeck/sfx/interface/notification.wav",
+      "duration": 0.7,
+      "sampleRate": 16000,
+      "channels": 1,
+      "bitDepth": 16,
+      "bytes": 22444,
+      "loop": false,
+      "gitBlobSha": "8449cf19ed28e5c1631cc19ab6dc206d8f778159",
+      "peakDbfs": -6.94,
+      "rmsDbfs": -19.06
+    }
+  ]
+}
