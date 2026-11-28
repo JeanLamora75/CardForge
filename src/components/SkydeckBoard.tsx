@@ -5,6 +5,7 @@ import { resolveSkydeckCopy, skydeckAttackSummary } from '../application/skydeck
 import { skydeckMotionPlan } from '../application/skydeck-motion.ts';
 import { motionAllowed } from '../application/shared-settings.ts';
 import { skydeckCardArt } from '../application/skydeck-art.ts';
+import { cardArtworkStyle } from '../application/card-artwork-framing.ts';
 import { playSkydeckSound, setSkydeckFinished, skydeckActionSounds } from '../application/skydeck-audio.ts';
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
@@ -243,8 +244,8 @@ export default function SkydeckBoard({language,hintsEnabled:configuredHints=true
   const renderCard=(id:string)=>{
     const c=describeSkydeckCard(id,language);
     const art=skydeckCardArt(id);
-    return <span className="sd-face">
-      {art?<><img className="sd-illustration" src={import.meta.env.BASE_URL+art.image} alt="" draggable={false}/><img className="sd-frame" src={import.meta.env.BASE_URL+art.frame} alt="" draggable={false}/></>:null}
+    return <span className="sd-face" style={art?{"--sd-art-underlay":`url("${import.meta.env.BASE_URL+art.image}")`} as CSSProperties:undefined}>
+      {art?<><img className="sd-illustration" src={import.meta.env.BASE_URL+art.image} alt="" draggable={false} style={cardArtworkStyle(art.framing) as CSSProperties}/><img className="sd-frame" src={import.meta.env.BASE_URL+art.frame} alt="" draggable={false}/></>:null}
       <span className={"sd-power"+(c.power.length>1?" sd-power-double":"")+(c.power==="★"?" sd-power-joker":"")}>{c.power}</span><small>{c.faction}</small>
     </span>;
   };

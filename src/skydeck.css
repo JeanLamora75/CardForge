@@ -396,3 +396,7 @@ html[data-motion=off] .sd-end-content{animation:none}
 .sd-manual-v2 footer{flex:none;margin:0;padding:2px 0}
 @media(max-height:650px){.sd-manual-v2 .sd-manual-content{gap:3px}.sd-manual-v2 .sd-manual-faction figure{width:48px}.sd-manual-v2 .sd-manual-content p{font-size:.84rem}.sd-manual-v2 .sd-manual-separator{height:8px}}
 @media(orientation:landscape) and (max-height:500px){.sd-manual-v2 .sd-manual-content{gap:3px}.sd-manual-v2 .sd-manual-factions{grid-template-columns:1fr 1fr}.sd-manual-v2 .sd-manual-toc{grid-template-columns:1fr 1fr}}
+
+/* Artwork is independent of the frame, power shield and faction label. */
+.sd-board .sd-face::before{content:"";position:absolute;inset:0;background:var(--sd-art-underlay,none) center/cover no-repeat;filter:blur(5px) brightness(.75);transform:scale(1.08);pointer-events:none;z-index:0}
+.sd-board .sd-face .sd-illustration{inset:auto;left:var(--card-art-inset,0%);top:calc(var(--card-art-inset,0%) + var(--card-art-offset-y,0%));width:calc(100% - 2 * var(--card-art-inset,0%));height:calc(100% - 2 * var(--card-art-inset,0%));object-fit:cover;object-position:var(--card-art-focus,50% 50%);border-radius:0;mask-image:linear-gradient(to bottom,transparent 0%,#000 8%,#000 91%,transparent 100%);}

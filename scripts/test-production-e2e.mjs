@@ -777,7 +777,9 @@ async function journey(locale,mobile){
       assert.ok(powers.length>0&&powers.every(p=>/^(?:[2-9]|1[0-4]|★)$/.test(p.value)&&p.transparent&&p.border==='0px'&&p.font.includes('Alegreya SC')&&p.color==='rgb(255, 233, 180)'&&p.inside&&p.upperLeft),JSON.stringify({viewport,powers}));
       for(const img of await sd.locator('.sd-counter-art,.sd-heading-art,.sd-slot-art,.sd-button-art').all()){const painted=await img.evaluate(async n=>{await n.decode();const r=n.getBoundingClientRect();return n.naturalWidth>0&&r.width>0&&r.height>0&&getComputedStyle(n).visibility==='visible';});assert.ok(painted,'Skydeck board art must decode and occupy a visible rectangle');}
     }
+    await assertSkydeckFraming(page);
     await page.setViewportSize(sdOriginalViewport);
+    await assertSkydeckFraming(page);
     const sdScreen=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert.ok(sdScreen.scroll<=sdScreen.width+4,JSON.stringify({label,sdScreen}));
     saved['card-capture']=await readSaved(page,'card-capture');
@@ -1111,6 +1113,22 @@ async function coldOfflineGameChunks(){
  }finally{await context.close();}
 }
 
+async function assertSkydeckFraming(page){
+ const data=await page.locator('.sd-board .sd-face').evaluateAll(nodes=>nodes.map(face=>{
+  const art=face.querySelector('.sd-illustration'),frame=face.querySelector('.sd-frame');
+  const a=art.getBoundingClientRect(),f=frame.getBoundingClientRect(),r=face.getBoundingClientRect();
+  const style=getComputedStyle(art),id=face.closest('[data-card-id]').dataset.cardId;
+  return {id,fit:style.objectFit,inset:parseFloat(style.getPropertyValue('--card-art-inset')),offset:parseFloat(style.getPropertyValue('--card-art-offset-y')),frameFits:Math.abs(f.width-r.width)<1&&Math.abs(f.height-r.height)<1,artFits:a.width>0&&a.height>0&&a.left>=r.left-1&&a.right<=r.right+1,clipped:getComputedStyle(face).overflow==='hidden'};
+ }));
+ assert.ok(data.length>0);
+ for(const card of data){
+  assert.equal(card.fit,'cover');
+  assert.ok(card.frameFits&&card.artFits&&card.clipped,JSON.stringify(card));
+  assert.ok(card.id.startsWith('joker-')||Number(card.id.split('-')[1])>=11?card.offset>0:card.offset===0);
+  assert.ok(card.inset>=2&&card.inset<=5);
+ }
+}
+
 async function skydeckLearningParity(){
  for(const locale of ['fr','en']){
   const context=await browser.newContext({locale:locale==='fr'?'fr-FR':'en-US',viewport:{width:390,height:844},reducedMotion:'reduce'});
@@ -1133,6 +1151,7 @@ async function skydeckLearningParity(){
    const cards=()=>page.locator('.sd-board [data-card-id]').evaluateAll(nodes=>nodes.map(n=>n.dataset.cardId));
    await enterTraining();
    const initial=await cards();
+   await assertSkydeckFraming(page);
    assert.equal(await page.locator('.sd-hand button').count(),4);
    await page.locator('.sd-hint').waitFor();
    assert.equal(await page.locator('.sd-preview').isDisabled(),true,'combat remains a player choice');
@@ -1149,6 +1168,7 @@ async function skydeckLearningParity(){
    assert.deepEqual(await cards(),initial);
    for(const viewport of [{width:320,height:568},{width:360,height:640},{width:390,height:844},{width:412,height:915},{width:768,height:1024},{width:844,height:390},{width:1024,height:768},{width:1920,height:1080}]){
     await page.setViewportSize(viewport);
+    await assertSkydeckFraming(page);
     const layout=await page.locator('.sd-board').evaluate(node=>({bottom:node.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight,width:document.documentElement.scrollWidth,viewport:innerWidth}));
     assert.ok(layout.bottom<=layout.height+2&&layout.scroll<=layout.height+2&&layout.width<=layout.viewport+2,JSON.stringify({locale,viewport,layout}));
    }
