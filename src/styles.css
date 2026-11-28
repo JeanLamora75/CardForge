@@ -1420,3 +1420,58 @@ main.shell.forge-full{position:fixed;inset:0;height:100dvh;min-height:0;overflow
  .thunder-board.tf-live{grid-template-rows:auto minmax(0,1fr);}
  .thunder-board.tf-live .thunder-action-zone{height:var(--tf-console-budget);align-self:center;}
 }
+
+/* V3.2: a prominent incoming card beside a two-row tactical arsenal.
+   The viewport budget is constant across actions; commands occupy the same grid row. */
+.thunder-board.tf-live{--tf-console-budget:clamp(244px,29dvh,270px);--tf-hero-size:clamp(84px,12dvh,116px);}
+.thunder-board.tf-live .thunder-action-zone.tf-console-hero{
+ display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+ grid-template-rows:16px minmax(0,1fr) 45px;gap:4px 7px;padding:5px 7px 8px;
+}
+.tf-console-hero>.tf-console-heading{grid-column:1/-1;grid-row:1;}
+.thunder-board.tf-live .tf-console-hero>.tf-hero-card{grid-column:1;grid-row:2;min-width:0;min-height:0;max-width:none;}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .tf-pending-card{
+ display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+ gap:4px;padding:3px 4px;background:linear-gradient(155deg,#102c3e,#081724);
+ border:1px solid #365e74;border-radius:7px;
+}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .tf-pending-card::after{display:none;}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .tf-tactical{
+ width:min(100%,var(--tf-hero-size));height:auto;aspect-ratio:1;flex:0 0 auto;min-height:0;max-width:100%;
+}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .tf-tactical .tf-card-corner strong{font-size:clamp(.95rem,3.1vw,1.45rem);}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .tf-action-copy{
+ width:100%;flex:1 1 auto;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:1px;min-height:0;
+}
+.thunder-board.tf-live .tf-console-hero .tf-transmission-title{font-size:clamp(.54rem,1.5vw,.7rem);line-height:1.1;}
+.thunder-board.tf-live .tf-console-hero .tf-hero-card .thunder-pending{font-size:clamp(.7rem,2vw,.9rem);line-height:1.1;padding:0;}
+.thunder-board.tf-live .tf-console-hero .tf-inline-instruction{font-size:clamp(.62rem,1.65vw,.78rem);line-height:1.12;}
+.thunder-board.tf-live .tf-console-hero>.tf-hero-arsenal{grid-column:2;grid-row:2;min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);align-content:stretch;gap:3px;}
+.tf-console-hero .tf-equipment-heading{font-size:clamp(.54rem,1.45vw,.68rem);letter-spacing:0;}
+.thunder-board.tf-live .tf-console-hero .tf-special-list{
+ grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));height:100%;min-height:0;margin:0;gap:4px;
+}
+.thunder-board.tf-live .tf-console-hero :is(.tf-special-unit,.tf-equipment-empty){height:100%;min-height:0;padding:2px;}
+.thunder-board.tf-live .tf-console-hero .tf-special-unit .tf-tactical{width:clamp(26px,5.4dvh,46px);height:clamp(26px,5.4dvh,46px);flex:0 0 auto;max-width:100%;aspect-ratio:1;}
+.thunder-board.tf-live .tf-console-hero .tf-special-unit .tf-special-use{width:100%;min-height:20px;flex:1;}
+.thunder-board.tf-live .tf-console-hero>.tf-hero-controls{grid-column:1/-1;grid-row:3;display:flex;flex-direction:row;align-items:center;gap:4px;min-height:0;}
+.thunder-board.tf-live .tf-console-hero .tf-command-line{flex:1;min-width:0;min-height:0;}
+.thunder-board.tf-live .tf-console-hero .thunder-actions{margin:0;gap:3px;}
+.thunder-board.tf-live .tf-console-hero .thunder-actions button{min-height:32px;padding:3px 5px;font-size:.75rem;}
+.thunder-board.tf-live .tf-console-hero .thunder-search{flex:0 1 auto;}
+.thunder-board.tf-live .tf-console-hero>.thunder-confirm:not([hidden]){
+ grid-column:1/-1;grid-row:3;align-self:stretch;display:grid;grid-template-columns:1fr 1.5fr;grid-template-rows:auto minmax(25px,1fr);align-items:center;gap:2px 4px;
+}
+.thunder-board.tf-live .tf-console-hero .tf-preview-line{grid-column:1/-1;font-size:.66rem;line-height:1.1;}
+.thunder-board.tf-live .tf-console-hero>.thunder-confirm button{min-height:25px;padding:2px 5px;}
+.thunder-board.tf-live .tf-console-hero[data-console-phase=confirm]>.tf-hero-controls{visibility:hidden;}
+.thunder-board.tf-live .tf-console-hero .tf-action-status{bottom:1px;font-size:.56rem;}
+@media(max-height:700px){
+ .thunder-board.tf-live{--tf-console-budget:224px;--tf-hero-size:76px;}
+ .thunder-board.tf-live .thunder-action-zone.tf-console-hero{grid-template-rows:14px minmax(0,1fr) 42px;gap:3px 5px;}
+ .thunder-board.tf-live .tf-console-hero .tf-special-unit .tf-tactical{width:28px;height:28px;}
+}
+@media(orientation:landscape) and (min-width:650px){
+ .thunder-board.tf-live{--tf-hero-size:clamp(76px,11dvh,110px);}
+ .thunder-board.tf-live .thunder-action-zone.tf-console-hero{height:var(--tf-console-budget);}
+}
