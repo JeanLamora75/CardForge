@@ -708,6 +708,10 @@ async function journey(locale,mobile){
     assert.deepEqual(await sd.locator('.sd-line:not(.sd-hand) button').evaluateAll(nodes=>nodes.map(n=>n.dataset.position)),['4','3','2','1']);
     assert.equal(await sd.locator('.sd-hand .sd-card').count(),4);
     for(const img of await page.locator('.sd-command-header img,.sd-deck-backdrop img,.sd-phases img,.sd-counts img').all()){await img.evaluate(n=>n.decode());assert.ok(await img.evaluate(n=>n.naturalWidth>0));}
+    assert.equal(await sd.locator('.sd-hand .sd-slot-emblem').count(),4);
+    assert.equal(await sd.locator('.sd-preview span').evaluate(n=>getComputedStyle(n).backgroundColor),'rgba(0, 0, 0, 0)');
+    const assertSkyPhaseFits=async()=>{const r=await sd.evaluate(n=>({bottom:n.querySelector('.sd-console').getBoundingClientRect().bottom,height:innerHeight,scroll:document.documentElement.scrollHeight}));assert.ok(r.bottom<=r.height+2&&r.scroll<=r.height+2,JSON.stringify(r));};
+    await assertSkyPhaseFits();
     const initial=await sd.locator('[role=status]').textContent();
     await interact(page,sd.locator('.sd-preview'),mobile);
     await interact(page,sd.locator('.sd-confirm button.secondary-action'),mobile);
@@ -715,6 +719,8 @@ async function journey(locale,mobile){
     for(let phase=0;phase<3;phase++){
       await interact(page,sd.locator('.sd-preview'),mobile);
       await interact(page,sd.locator('.sd-confirm button.primary-action'),mobile);
+      await sd.locator('.sd-confirm').waitFor({state:'hidden'});
+      await assertSkyPhaseFits();
     }
     await sd.getByRole('button',{name:locale==='fr'?'B · Laisser capturer':'B · Let enemy capture',exact:true}).waitFor();
     assert.equal(await sd.locator('.sd-hand button').count(),4);

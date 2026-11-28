@@ -132,3 +132,26 @@
 .sd-live .sd-confirm button{min-height:44px}
 @media(orientation:landscape) and (min-width:650px){.sd-live .sd-fleets{grid-template-columns:1fr 1fr;grid-template-rows:minmax(0,1fr);align-items:stretch}.sd-command-header h1 img{height:36px}.sd-live .sd-counts span{min-height:32px;padding:2px}.sd-live .sd-phases{padding:2px}.sd-live .sd-console .sd-actions button{min-height:32px}}
 @media(max-height:650px){.sd-live .sd-phases span{padding:2px;font-size:.65rem}.sd-live .sd-counts .sd-counter{min-height:32px;padding:2px}.sd-live .sd-round{padding:2px}.sd-live .sd-resumed,.sd-live .sd-training{line-height:1}.sd-live .sd-fleet h3{font-size:.75rem;min-height:16px}.sd-live .sd-direction{line-height:1}.sd-live .sd-console h3{font-size:.75rem}}
+
+/* Final visual polish */
+.sd-command-page:has(.sd-live){padding:5px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important}
+.sd-command-page .sd-live{gap:4px}
+.sd-live .sd-fleets{gap:5px}
+.sd-live .sd-line{gap:5px}
+.sd-live .sd-line>.sd-card{width:min(calc((100cqw - 15px)/4),calc(100cqh * 2 / 3))}
+.sd-board .sd-console .sd-preview span{background:none;padding:2px 8px;color:#24170b;text-shadow:0 1px 1px #ffe9b1;font-weight:800}
+.sd-board .sd-console .sd-preview:disabled span{color:#fff4d8;text-shadow:0 1px 3px #000}
+.sd-board .sd-console .sd-preview:disabled{opacity:1}
+.sd-board .sd-slot-emblem{position:absolute;left:50%;top:50%;width:36%;height:auto;aspect-ratio:1;object-fit:contain;transform:translate(-50%,-50%);opacity:.22;pointer-events:none}
+.sd-board .sd-slot-label{align-self:end;margin-bottom:12%;background:transparent}
+.sd-live .sd-menu-toggle{display:block;margin:2px auto 0;min-height:32px;padding:3px 14px}
+.sd-live .sd-game-options{right:50%;transform:translateX(50%);width:max-content;max-width:95%}
+.sd-board .sd-phases span{border:1px solid transparent;border-radius:6px;min-height:26px}
+.sd-board .sd-phases [aria-current]{border-color:#ffe0a1}
+.sd-board .sd-card[aria-pressed=true]{box-shadow:inset 0 0 10px #ffda79,0 0 8px #ffda7999}
+.sd-board .sd-motion-ghost{isolation:isolate;overflow:hidden}
+.sd-board .sd-console fieldset{display:flex;flex-wrap:wrap;gap:2px 6px;margin:2px 0;padding:2px 4px;font-size:.7rem}
+.sd-board .sd-console fieldset label{min-height:24px;font-size:.7rem}
+html[data-motion=off] .sd-board *,html[data-motion=off] .sd-board{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){html:not([data-motion=on]) .sd-board *,html:not([data-motion=on]) .sd-board{animation:none!important;transition:none!important}}
+@media(max-height:450px){.sd-live .sd-console fieldset label{min-height:20px}.sd-live .sd-menu-toggle{min-height:26px}.sd-live .sd-console .sd-preview{min-height:38px}.sd-live .sd-phases span{min-height:20px}}

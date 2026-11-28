@@ -20,3 +20,7 @@ Fusion de 59 entrées dans le manifeste commun sans remplacement. Fonds dédiés
 
 ## SD-BOARD-28 à 42 — finition du rendu
 CSS Skydeck chargé après les styles génériques, couches images explicites pour compteurs, emplacements, bandeaux et bouton principal, contraste renforcé, navigation harmonisée. Plateau actif contraint à la hauteur disponible, cartes dimensionnées par la taille réelle de leur rangée (2:3), console fixe dans le flux, confirmations superposées. Tests E2E sur huit tailles, décodage et géométrie des ressources ; validation effective CI et recette requises. Aucun nouveau graphisme, moteur et sauvegardes inchangés. Adaptation manuelle sans uv.
+
+
+## SD-BOARD-43 à 58 — finitions et animations
+Texte sans cartouche sur bouton doré, état désactivé contrasté, rose des vents existante, marges/espacements et options centrées, phase harmonisée. Animations issues du différentiel des états réellement confirmés : avancée, arrivée, distribution, départs de combat, Joker et phase. Sons déclenchés au même événement confirmé, pas de synchronisation audio à l’échantillon. Réglage commun et préférence système pris en compte ; aucune attente d’animation imposée au moteur. Tests unitaires de planification et contrôles navigateur des phases ajoutés ; huit résolutions déjà couvertes en capture. CI et recette non validées au moment du commit. Adaptation manuelle sans uv.

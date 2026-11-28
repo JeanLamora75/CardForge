@@ -1,3 +1,5 @@
+import { skydeckMotionPlan } from '../application/skydeck-motion.ts';
+import { motionAllowed } from '../application/shared-settings.ts';
 import { skydeckCardArt } from '../application/skydeck-art.ts';
 import { playSkydeckSound, setSkydeckFinished, skydeckActionSounds } from '../application/skydeck-audio.ts';
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
@@ -15,6 +17,9 @@ const ui=(category:string,name:string)=>import.meta.env.BASE_URL+`art/${category
 const phaseIcons={enemy:'enemy',discard:'discard',draw:'draw',capture:'capture'} as const;
 export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}:{language:Locale;hintsEnabled?:boolean;tutorial?:boolean}){
   const tr=(fr:string,en:string)=>language==='fr'?fr:en;
+  const boardRef=useRef<HTMLElement>(null);
+  const activeAnimations=useRef<Animation[]>([]);
+  useEffect(()=>()=>{for(const a of activeAnimations.current)a.cancel();},[]);
   const session=useRef<Preview|null>(null);
   const [view,setView]=useState<SkydeckPublicState|null>(null);
   const [kind,setKind]=useState<Kind>('capture-a');
@@ -94,9 +99,47 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       if(!mounted.current)return;
       if(!accepted){playSkydeckSound('invalid');setError(true);setPending(null);setAbandon(false);return;}
       const after=session.current!.inspect();
+      const preference=document.documentElement.dataset.motion;
+      const animate=motionAllowed(preference==='on'||preference==='off'?preference:'system',window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      const plan=skydeckMotionPlan(command,before,after);
+      const root=boardRef.current;
+      for(const animation of activeAnimations.current)animation.cancel();
+      activeAnimations.current=[];
+      const departed:HTMLElement[]=[];
+      if(animate&&root){
+        for(const item of plan.filter(x=>['capture','sacrifice','repel','discard'].includes(x.effect))){
+          const original=Array.from(root.querySelectorAll<HTMLElement>('[data-card-id]')).find(n=>n.dataset.cardId===item.id);
+          if(!original)continue;
+          const rect=original.getBoundingClientRect();
+          const ghost=original.cloneNode(true) as HTMLElement;
+          ghost.removeAttribute('data-card-id');ghost.removeAttribute('aria-label');ghost.setAttribute('aria-hidden','true');ghost.setAttribute('tabindex','-1');
+          ghost.classList.add('sd-motion-ghost');
+          Object.assign(ghost.style,{position:'fixed',left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',pointerEvents:'none',margin:'0',zIndex:'22'});
+          root.appendChild(ghost);departed.push(ghost);
+          const frames=item.effect==='capture'?[{filter:'brightness(1.7)',transform:'scale(1.03)',opacity:1},{filter:'brightness(.7)',transform:'scale(.65)',opacity:0}]:item.effect==='repel'?[{opacity:1,transform:'translateX(0)'},{opacity:0,transform:'translateX(70px) scale(.5)'}]:[{filter:'brightness(.65)',opacity:1},{filter:'brightness(.2)',opacity:0,transform:'translateY(24px) scale(.8)'}];
+          const animation=ghost.animate(frames,{duration:360,easing:'ease-out',fill:'forwards'});
+          activeAnimations.current.push(animation);
+          void animation.finished.catch(()=>{}).finally(()=>ghost.remove());
+        }
+      }
       for(const sound of skydeckActionSounds(command,before,after))playSkydeckSound(sound);
       if(after.outcome==='win'||after.outcome==='loss'){setSkydeckFinished(true);playSkydeckSound(after.outcome==='win'?'victory':'defeat','music');}
       setView(after);setResumed(false);reset();heading.current?.focus();
+      if(animate&&root){
+        requestAnimationFrame(()=>requestAnimationFrame(()=>{
+          if(!mounted.current||!root.isConnected){departed.forEach(n=>n.remove());return;}
+          for(const item of plan.filter(x=>['advance','arrive','deal'].includes(x.effect))){
+            const node=Array.from(root.querySelectorAll<HTMLElement>('[data-card-id]')).find(n=>n.dataset.cardId===item.id);
+            if(!node)continue;
+            const distance=item.effect==='advance'?((item.index-(item.from??item.index))*(node.offsetWidth+5)):item.effect==='arrive'?node.offsetWidth:0;
+            const animation=node.animate([{transform:item.effect==='deal'?'translateY(-32px) scale(.8)':`translateX(${distance}px)`,opacity:item.effect==='advance'?1:.15},{transform:'none',opacity:1}],{duration:300,delay:item.effect==='deal'?item.index*65:0,easing:'ease-out',fill:'backwards'});
+            activeAnimations.current.push(animation);
+          }
+          if(command.type==='capture-a'&&command.jokerCopyId)activeAnimations.current.push(root.animate([{boxShadow:'inset 0 0 32px #c98aff'},{boxShadow:'inset 0 0 0 transparent'}],{duration:500}));
+          const phase=root.querySelector<HTMLElement>('.sd-phases [aria-current]');
+          if(phase&&before.phase!==after.phase)activeAnimations.current.push(phase.animate([{filter:'brightness(1.65)'},{filter:'brightness(1)'}],{duration:320}));
+        }));
+      }
     });
   }
   const same=(ids:readonly string[])=>ids.length===selected.length&&ids.every(id=>selected.includes(id));
@@ -130,7 +173,7 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
     </span>;
   };
   const phaseLabels={enemy:tr('Ennemis','Enemies'),discard:tr('Défausse','Discard'),draw:tr('Pioche','Draw'),capture:tr('Capture','Capture'),finished:tr('Terminée','Finished')};
-  return <section className={"sd-board"+(view?.outcome==="in-progress"?" sd-live":"")} style={{'--sd-phase-panel': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/phase-panel.webp")','--sd-counter': 'url("'+import.meta.env.BASE_URL+'art/hud/skydeck/counter-blank.webp")','--sd-section': 'url("'+import.meta.env.BASE_URL+'art/banners/skydeck/section-heading.webp")','--sd-enemy-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/enemy-slot.webp")','--sd-hand-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/hand-slot.webp")','--sd-wood': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/wood-deck.webp")','--sd-dark': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/dark.webp")','--sd-gold': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/gold.webp")','--sd-neutral': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/neutral.webp")','--sd-victory': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/victory-portrait.webp")','--sd-defeat': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/defeat-portrait.webp")'} as CSSProperties} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
+  return <section ref={boardRef} className={"sd-board"+(view?.outcome==="in-progress"?" sd-live":"")} style={{'--sd-phase-panel': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/phase-panel.webp")','--sd-counter': 'url("'+import.meta.env.BASE_URL+'art/hud/skydeck/counter-blank.webp")','--sd-section': 'url("'+import.meta.env.BASE_URL+'art/banners/skydeck/section-heading.webp")','--sd-enemy-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/enemy-slot.webp")','--sd-hand-slot': 'url("'+import.meta.env.BASE_URL+'art/frames/skydeck/hand-slot.webp")','--sd-wood': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/wood-deck.webp")','--sd-dark': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/dark.webp")','--sd-gold': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/gold.webp")','--sd-neutral': 'url("'+import.meta.env.BASE_URL+'art/buttons/skydeck/neutral.webp")','--sd-victory': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/victory-portrait.webp")','--sd-defeat': 'url("'+import.meta.env.BASE_URL+'art/boards/skydeck/defeat-portrait.webp")'} as CSSProperties} data-i18n-ignore aria-busy={busy} aria-label={tr('Plateau Skydeck','Skydeck board')}>
     {tutorial?<p className="sd-training">{tr("Entraînement sans sauvegarde ni statistiques.","Training without saves or statistics.")}</p>:null}
     {resumed?<p className="sd-resumed">{tr('✓ Partie reprise','✓ Game resumed')}</p>:null}
     {storageError?<p role="alert">{blocked?tr('Sauvegarde incompatible ou inaccessible. Elle est conservée.','Incompatible or inaccessible save. It is preserved.'):tr('Action non enregistrée. La sauvegarde précédente est conservée.','Action not saved. Previous save preserved.')}</p>:null}
@@ -143,12 +186,12 @@ export default function SkydeckBoard({language,hintsEnabled=true,tutorial=false}
       <div className="sd-line">{positions.map(position=>{
         const id=view.enemyLine[position-1];
         const active=kind==='capture-b'?position===1:target===position;
-        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')} data-position={position} disabled={!id||view.phase!=='capture'||kind==='capture-b'||!!pending||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+' · '+(id?cardName(id):tr('Vide','Empty'))} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
-          <span className="sd-position">{position}</span>{id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><span className="sd-slot-label">{tr('Libre','Empty')}</span></>}
+        return <button type="button" key={position} className={'sd-card'+(!id?' sd-empty sd-enemy-slot':'')} data-position={position} data-card-id={id??undefined} disabled={!id||view.phase!=='capture'||kind==='capture-b'||!!pending||restart||abandon||busy} aria-pressed={active&&!!id} aria-label={tr('Position','Position')+' '+position+' · '+(id?cardName(id):tr('Vide','Empty'))} onClick={()=>{playSkydeckSound('select');setTarget(position);setCopy(null);}}>
+          <span className="sd-position">{position}</span>{id?renderCard(id):<><img className="sd-slot-art" src={ui('frames','enemy-slot')} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/><span className="sd-slot-label">{tr('Libre','Empty')}</span></>}
         </button>;
       })}</div>
       </section><section className="sd-fleet sd-player-fleet"><h3><img className="sd-heading-art" src={ui('banners','section-heading')} alt=""/><span>{tr('Votre flotte','Your fleet')}</span></h3>
-      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} className="sd-card" aria-label={cardName(id)} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||!!pending||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/></span>)}</div>
+      <div className="sd-line sd-hand">{view.hand.map(id=><button type="button" key={id} data-card-id={id} className="sd-card" aria-label={cardName(id)} aria-pressed={selected.includes(id)} disabled={!['discard','capture'].includes(view.phase)||!!pending||restart||abandon||busy} onClick={()=>{playSkydeckSound('select');setSelected(old=>old.includes(id)?old.filter(x=>x!==id):kind==='capture-b'&&view.phase==='capture'?[id]:[...old,id]);setCopy(null);}}>{renderCard(id)}</button>)}{Array.from({length:Math.max(0,4-view.hand.length)},(_,i)=><span key={'empty-'+i} className="sd-card sd-empty sd-hand-slot" aria-hidden="true"><img className="sd-slot-art" src={ui("frames","hand-slot")} alt=""/><img className="sd-slot-emblem" src={ui("icons","compass")} alt=""/></span>)}</div>
       </section></div><section className="sd-console"><h3 ref={heading} tabIndex={-1}>{tr('Commandement','Command')}</h3>
       {view.phase==='capture'?<div className="sd-actions">{(['capture-a','capture-b','capture-c'] as const).map(k=><button key={k} type="button" className="secondary-action" aria-pressed={kind===k} disabled={!!pending||restart||abandon||busy||!view.actions.some(a=>a.type===k)} onClick={()=>{playSkydeckSound('button');setKind(k);setSelected([]);setTarget(null);setCopy(null);}}>{k==='capture-a'?tr('A · Capturer','A · Capture'):k==='capture-b'?tr('B · Laisser capturer','B · Let enemy capture'):tr('C · Repousser','C · Push back')}</button>)}</div>:null}
       {hintsEnabled&&view.phase==='capture'?<p className="sd-hint">{kind==='capture-a'?tr('Choisissez une cible et des cartes de même enseigne. Le Joker copie une carte engagée.','Choose a target and matching-suit cards. A Joker copies a selected card.'):kind==='capture-b'?tr('Sacrifiez une carte de main avec la position 1. Une figure ou un As perdu entraîne la défaite.','Sacrifice one hand card with position 1. Losing a face card or ace causes defeat.'):tr('Sacrifiez deux cartes pour renvoyer la cible sous la pioche adverse.','Sacrifice two cards to return the target to the bottom of the enemy deck.')}</p>:null}
