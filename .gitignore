@@ -11,3 +11,4 @@ dist/
 !/public/art/thunderfighter/**
 
 /.cardforge-cache/
+tsconfig.tsbuildinfo
