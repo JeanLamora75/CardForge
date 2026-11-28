@@ -26,6 +26,19 @@ async function thunderScreens(page,label){
    const clipped=controls.filter(n=>{const b=n.getBoundingClientRect();return b.top<0||b.bottom>innerHeight+1||b.left<0||b.right>innerWidth+1;}).map(n=>n.textContent);
    return {width:r.width,height:r.height,top:r.top,bottom:r.bottom,clipped,scroll:document.documentElement.scrollHeight,viewport:innerHeight};
   });
+  const hud=await page.evaluate(()=>{
+   const header=document.querySelector('.tf-command-header'),logo=header.querySelector('h1');
+   const h=header.getBoundingClientRect(),l=logo.getBoundingClientRect();
+   const gauge=document.querySelector('.tf-progress');
+   const disabled=[...document.querySelectorAll('.tf-special-use:disabled')];
+   const consoleNode=document.querySelector('.thunder-action-zone');
+   return {logoOffset:Math.abs((h.left+h.right-l.left-l.right)/2),segments:gauge.children.length,gaugeHeight:gauge.getBoundingClientRect().height,disabledOpaque:disabled.every(n=>getComputedStyle(n).opacity==='1'&&getComputedStyle(n.closest('.tf-special-unit')).opacity==='1'),consoleBackground:getComputedStyle(consoleNode).backgroundImage};
+  });
+  assert.ok(hud.logoOffset<=2,'centered Thunderfighter logo '+JSON.stringify(hud));
+  assert.equal(hud.segments,12);
+  assert.ok(hud.gaugeHeight>=7,'readable progress segments');
+  assert.ok(hud.disabledOpaque,'disabled controls must remain opaque');
+  assert.ok(!hud.consoleBackground.includes('tf-bottom-console'),'console artwork must not run behind controls');
   console.log('TF V5',label,width,height,JSON.stringify(result));
   if(Math.abs(result.width-result.height)>1||result.top<0||result.bottom>height+1||result.clipped.length||result.scroll>height+1)failures.push({width,height,...result});
  }

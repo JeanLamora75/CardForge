@@ -266,7 +266,7 @@ export default function ThunderfighterBoard({ tutorial = false, hintsEnabled = t
     {!state ? <button type="button" className="primary-action" onClick={() => void start()} disabled={busy}>Commencer une partie</button> : <>
       <div className="thunder-metrics">
         <span><small>Pioche</small><strong>{state.drawPile.length}</strong></span>
-        <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong><div className="tf-progress" aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-filled={i<(result?.defeatedCount??0)} data-complete={result?.defeatedCount===12}/>)}</div></span>
+        <span><small>Ennemis neutralisés</small><strong>{result?.defeatedCount} / 12</strong><span className="tf-progress" aria-hidden="true">{Array.from({length:12},(_,i)=><i key={i} data-filled={i<(result?.defeatedCount??0)} data-complete={result?.defeatedCount===12}/>)}</span></span>
         <span><small>Réserve</small><strong>{state.specialReserve.length}</strong></span>
       </div>
 
